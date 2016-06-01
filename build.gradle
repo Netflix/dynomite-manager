@@ -9,6 +9,12 @@ plugins {
     id 'nebula.netflixoss' version '3.2.3'
 }
 
+allprojects {
+      tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+      }
+}
+
 ext.githubProjectName = 'dynomite-manager'
 
 subprojects {
