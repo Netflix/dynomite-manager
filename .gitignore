@@ -6,3 +6,8 @@ build/
 *.iws
 .idea/
 /bin/
+
+
+*.classpath
+*.project
+*/.settings/*
