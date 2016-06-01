@@ -15,26 +15,29 @@
  */
 package com.netflix.dynomitemanager.defaultimpl;
 
-import com.amazonaws.services.ec2.AmazonEC2;
-import com.amazonaws.services.ec2.AmazonEC2Client;
-import com.amazonaws.services.ec2.model.*;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
-import com.netflix.dynomitemanager.sidecore.ICredential;
-import com.netflix.dynomitemanager.sidecore.IConfigSource;
-import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
-import com.netflix.dynomitemanager.sidecore.utils.SystemUtils;
-import com.netflix.dynomitemanager.sidecore.utils.RetryableCallable;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.amazonaws.services.ec2.AmazonEC2;
+import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.AvailabilityZone;
+import com.amazonaws.services.ec2.model.DescribeAvailabilityZonesResult;
+import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
+import com.amazonaws.services.ec2.model.DescribeInstancesResult;
+import com.amazonaws.services.ec2.model.Instance;
+import com.amazonaws.services.ec2.model.Reservation;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.netflix.dynomitemanager.sidecore.IConfigSource;
+import com.netflix.dynomitemanager.sidecore.IConfiguration;
+import com.netflix.dynomitemanager.sidecore.ICredential;
+import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
+import com.netflix.dynomitemanager.sidecore.utils.RetryableCallable;
 
 
 @Singleton
@@ -188,11 +191,10 @@ public class DynomitemanagerConfiguration implements IConfiguration
     
     // Cassandra default configuration
     private static final String DEFAULT_BOOTCLUSTER_NAME = "cass_dyno";
-    private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 7102;
+    private static final int DEFAULT_CASSANDRA_THRIFT_PORT =  9160; //7102;
     private static final String DEFAULT_CASSANDRA_KEYSPACE_NAME = "dyno_bootstrap";
-    private static final String DEFAULT_COMMA_SEPARATED_CASSANDRA_HOSTNAMES = "";
+    private static final String DEFAULT_COMMA_SEPARATED_CASSANDRA_HOSTNAMES = "127.0.0.1";
     private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
-
      
     @Inject
     public DynomitemanagerConfiguration(ICredential provider, IConfigSource configSource, 
