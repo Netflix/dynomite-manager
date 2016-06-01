@@ -1,6 +1,6 @@
 language: java
 sudo: false
-install: ./installViaTravis.sh
+install: true
 script: ./buildViaTravis.sh
 cache:
   directories:
