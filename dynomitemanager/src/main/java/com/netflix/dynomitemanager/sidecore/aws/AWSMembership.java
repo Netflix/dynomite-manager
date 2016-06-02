@@ -36,6 +36,7 @@ import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.AuthorizeSecurityGroupIngressRequest;
 import com.amazonaws.services.ec2.model.DescribeSecurityGroupsRequest;
 import com.amazonaws.services.ec2.model.DescribeSecurityGroupsResult;
+import com.amazonaws.services.ec2.model.Filter;
 import com.amazonaws.services.ec2.model.IpPermission;
 import com.amazonaws.services.ec2.model.RevokeSecurityGroupIngressRequest;
 import com.amazonaws.services.ec2.model.SecurityGroup;
@@ -43,25 +44,29 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.identity.IMembership;
+import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
+import com.netflix.dynomitemanager.sidecore.aws.AWSMembership;
+
 
 /**
  * Class to query amazon ASG for its members to provide - Number of valid nodes
  * in the ASG - Number of zones - Methods for adding ACLs for the nodes
  */
-@Singleton
 public class AWSMembership implements IMembership
 {
     private static final Logger logger = LoggerFactory.getLogger(AWSMembership.class);
     private final IConfiguration config;
-    private final ICredential provider;    
+    private final ICredential provider;
+	private InstanceEnvIdentity insEnvIdentity;    
 
     @Inject
-    public AWSMembership(IConfiguration config, ICredential provider)
+    public AWSMembership(IConfiguration config, ICredential provider, InstanceEnvIdentity insEnvIdentity)
     {
         this.config = config;
-        this.provider = provider;        
+        this.provider = provider;  
+        this.insEnvIdentity = insEnvIdentity;
     }
 
     @Override
@@ -82,7 +87,7 @@ public class AWSMembership implements IMembership
                             .equalsIgnoreCase("Terminated")))
                         instanceIds.add(ins.getInstanceId());
             }
-            logger.info(String.format("Querying Amazon returned following instance in the ASG: %s --> %s", config.getZone(), StringUtils.join(instanceIds, ",")));
+            logger.info(String.format("Querying Amazon returned following instance in the ASG: %s --> %s", config.getRack(), StringUtils.join(instanceIds, ",")));
             return instanceIds;
         }
         finally
@@ -122,11 +127,11 @@ public class AWSMembership implements IMembership
     @Override
     public int getRacCount()
     {
-        return config.getZones().size();
+        return config.getRacks().size();
     }
 
     /**
-     * Adds a iplist to the SG.
+     * Adding peers' IPs as ingress to the running instance SG.  The running instance could be in "classic" or "vpc"
      */
     public void addACL(Collection<String> listIPs, int from, int to)
     {
@@ -136,14 +141,53 @@ public class AWSMembership implements IMembership
             client = getEc2Client();
             List<IpPermission> ipPermissions = new ArrayList<IpPermission>();
             ipPermissions.add(new IpPermission().withFromPort(from).withIpProtocol("tcp").withIpRanges(listIPs).withToPort(to));
-            client.authorizeSecurityGroupIngress(new AuthorizeSecurityGroupIngressRequest(config.getACLGroupName(), ipPermissions));
-            logger.info("Done adding ACL to: " + StringUtils.join(listIPs, ","));
+            
+            if (this.insEnvIdentity.isClassic()) {
+                client.authorizeSecurityGroupIngress(new AuthorizeSecurityGroupIngressRequest(config.getACLGroupName(), ipPermissions));
+                logger.info("Done adding ACL to classic: " + StringUtils.join(listIPs, ","));
+            } else {
+                AuthorizeSecurityGroupIngressRequest sgIngressRequest = new AuthorizeSecurityGroupIngressRequest();
+                sgIngressRequest.withGroupId(getVpcGoupId()); //fetch SG group id for vpc account of the running instance.
+                client.authorizeSecurityGroupIngress(sgIngressRequest.withIpPermissions(ipPermissions)); //Adding peers' IPs as ingress to the running instance SG
+                logger.info("Done adding ACL to vpc: " + StringUtils.join(listIPs, ","));
+            }
+            
+
         }
         finally
         {
             if (client != null)
                 client.shutdown();
         }
+    }
+    
+    /*
+     * @return SG group id for a group name, vpc account of the running instance.
+     */
+    protected String getVpcGoupId()
+    {
+    	AmazonEC2 client = null;
+    	try
+    	{
+    		client = getEc2Client();
+    		Filter nameFilter = new Filter().withName("group-name").withValues(config.getACLGroupName()); //SG 
+    		Filter vpcFilter = new Filter().withName("vpc-id").withValues(config.getVpcId());
+    		
+    		DescribeSecurityGroupsRequest req = new DescribeSecurityGroupsRequest().withFilters(nameFilter, vpcFilter);
+    		DescribeSecurityGroupsResult result = client.describeSecurityGroups(req);
+    		for (SecurityGroup group : result.getSecurityGroups())
+    		{
+    			logger.debug(String.format("got group-id:%s for group-name:%s,vpc-id:%s", group.getGroupId(), config.getACLGroupName(), config.getVpcId()));
+    			return group.getGroupId();
+    		}
+    		logger.error(String.format("unable to get group-id for group-name=%s vpc-id=%s", config.getACLGroupName(), config.getVpcId()));
+    		return "";
+    	}
+    	finally
+    	{
+    		if (client != null)
+    			client.shutdown();
+    	}
     }
 
     /**
@@ -157,8 +201,18 @@ public class AWSMembership implements IMembership
             client = getEc2Client();
             List<IpPermission> ipPermissions = new ArrayList<IpPermission>();
             ipPermissions.add(new IpPermission().withFromPort(from).withIpProtocol("tcp").withIpRanges(listIPs).withToPort(to));
-            client.revokeSecurityGroupIngress(new RevokeSecurityGroupIngressRequest(config.getACLGroupName(), ipPermissions));
-            logger.info("Done removing from ACL: " + StringUtils.join(listIPs, ","));
+            
+            if (this.insEnvIdentity.isClassic()) {
+                client.revokeSecurityGroupIngress(new RevokeSecurityGroupIngressRequest(config.getACLGroupName(), ipPermissions));
+                logger.info("Done removing from ACL within classic env for running instance: " + StringUtils.join(listIPs, ","));            	
+            } else {
+            	RevokeSecurityGroupIngressRequest req = new RevokeSecurityGroupIngressRequest();
+            	req.withGroupId(getVpcGoupId());  //fetch SG group id for vpc account of the running instance.
+            	client.revokeSecurityGroupIngress(req.withIpPermissions(ipPermissions));  //Adding peers' IPs as ingress to the running instance SG
+            	logger.info("Done removing from ACL within vpc env for running instance: " + StringUtils.join(listIPs, ","));
+            }
+            
+
         }
         finally
         {
@@ -177,12 +231,37 @@ public class AWSMembership implements IMembership
         {
             client = getEc2Client();
             List<String> ipPermissions = new ArrayList<String>();
-            DescribeSecurityGroupsRequest req = new DescribeSecurityGroupsRequest().withGroupNames(Arrays.asList(config.getACLGroupName()));
-            DescribeSecurityGroupsResult result = client.describeSecurityGroups(req);
-            for (SecurityGroup group : result.getSecurityGroups())
-                for (IpPermission perm : group.getIpPermissions())
-                    if (perm.getFromPort() == from && perm.getToPort() == to)
-                        ipPermissions.addAll(perm.getIpRanges());
+            
+            if (this.insEnvIdentity.isClassic()) {
+            	
+                DescribeSecurityGroupsRequest req = new DescribeSecurityGroupsRequest().withGroupNames(Arrays.asList(config.getACLGroupName()));
+                DescribeSecurityGroupsResult result = client.describeSecurityGroups(req);
+                for (SecurityGroup group : result.getSecurityGroups())
+                    for (IpPermission perm : group.getIpPermissions())
+                        if (perm.getFromPort() == from && perm.getToPort() == to)
+                            ipPermissions.addAll(perm.getIpRanges());
+                
+                logger.info("Fetch current permissions for classic env of running instance");
+            } else {
+            	
+            	Filter nameFilter = new Filter().withName("group-name").withValues(config.getACLGroupName());
+            	String vpcid = config.getVpcId();
+            	if (vpcid == null || vpcid.isEmpty()) {
+            		throw new IllegalStateException("vpcid is null even though instance is running in vpc.");
+            	}
+            		
+            	Filter vpcFilter = new Filter().withName("vpc-id").withValues(vpcid); //only fetch SG for the vpc id of the running instance
+            	DescribeSecurityGroupsRequest req = new DescribeSecurityGroupsRequest().withFilters(nameFilter, vpcFilter);
+                DescribeSecurityGroupsResult result = client.describeSecurityGroups(req);
+                for (SecurityGroup group : result.getSecurityGroups())
+                    for (IpPermission perm : group.getIpPermissions())
+                        if (perm.getFromPort() == from && perm.getToPort() == to)
+                            ipPermissions.addAll(perm.getIpRanges());
+                
+                logger.info("Fetch current permissions for vpc env of running instance");
+            }
+            
+
             return ipPermissions;
         }
         finally
