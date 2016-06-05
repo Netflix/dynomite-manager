@@ -49,4 +49,15 @@ public class LocalInstanceDataRetriever implements InstanceDataRetriever
     {
         return "r3.2xlarge";
     }
+    
+	public String getMac() {
+        return System.getProperty(PREFIX + "instanceMac", "");
+	}
+
+	@Override
+	public String getVpcId() {
+		throw new UnsupportedOperationException("Not applicable as running instance is in classic environment");
+	}
+    
+    
 }
