@@ -147,8 +147,8 @@ public class AWSMembership implements IMembership
                 logger.info("Done adding ACL to classic: " + StringUtils.join(listIPs, ","));
             } else {
                 AuthorizeSecurityGroupIngressRequest sgIngressRequest = new AuthorizeSecurityGroupIngressRequest();
-                sgIngressRequest.withGroupId(getVpcGoupId()); //fetch SG group id for vpc account of the running instance.
-                client.authorizeSecurityGroupIngress(sgIngressRequest.withIpPermissions(ipPermissions)); //Adding peers' IPs as ingress to the running instance SG
+                sgIngressRequest.withGroupId(getVpcGroupId()); //fetch SG group id for vpc account of the running instances.
+                client.authorizeSecurityGroupIngress(sgIngressRequest.withIpPermissions(ipPermissions)); //Adding peers' IPs as ingress to the SG that the running instance belongs to
                 logger.info("Done adding ACL to vpc: " + StringUtils.join(listIPs, ","));
             }
             
@@ -164,7 +164,7 @@ public class AWSMembership implements IMembership
     /*
      * @return SG group id for a group name, vpc account of the running instance.
      */
-    protected String getVpcGoupId()
+    protected String getVpcGroupId()
     {
     	AmazonEC2 client = null;
     	try
@@ -207,7 +207,7 @@ public class AWSMembership implements IMembership
                 logger.info("Done removing from ACL within classic env for running instance: " + StringUtils.join(listIPs, ","));            	
             } else {
             	RevokeSecurityGroupIngressRequest req = new RevokeSecurityGroupIngressRequest();
-            	req.withGroupId(getVpcGoupId());  //fetch SG group id for vpc account of the running instance.
+            	req.withGroupId(getVpcGroupId());  //fetch SG group id for vpc account of the running instance.
             	client.revokeSecurityGroupIngress(req.withIpPermissions(ipPermissions));  //Adding peers' IPs as ingress to the running instance SG
             	logger.info("Done removing from ACL within vpc env for running instance: " + StringUtils.join(listIPs, ","));
             }
