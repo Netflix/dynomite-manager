@@ -89,6 +89,8 @@ public interface IConfiguration
      */
     public String getRack();
 
+    public List<String> getRacks();
+    
     
     /**
      * Amazon specific setting to query ASG Membership
@@ -181,6 +183,11 @@ public interface IConfiguration
     
     // VPC
     public boolean isVpc();
+    
+    /**
+     * @return the VPC id of the running instance.
+     */
+    public String getVpcId();
      
     // Backup and Restore
 

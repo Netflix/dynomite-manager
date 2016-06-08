@@ -180,7 +180,8 @@ public class DynomitemanagerConfiguration implements IConfiguration
     
     private final String CLUSTER_NAME = System.getenv("NETFLIX_APP");
     private final String AUTO_SCALE_GROUP_NAME = System.getenv("AUTO_SCALE_GROUP");
-    private static final String DEFAULT_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.configSource.AwsInstanceDataRetriever";
+    private static final String DEFAULT_INSTANCE_DATA_RETRIEVER = "com.netflix.florida.sidecore.config.AwsInstanceDataRetriever";
+    private static final String VPC_INSTANCE_DATA_RETRIEVER = "com.netflix.florida.sidecore.config.VpcInstanceDataRetriever";
 
     private static String ASG_NAME = System.getenv("ASG_NAME");
     private static String REGION = System.getenv("EC2_REGION");
@@ -326,12 +327,6 @@ public class DynomitemanagerConfiguration implements IConfiguration
     }
 
     @Override
-    public List<String> getZones()
-    {
-        return configSource.getList(CONFIG_AVAILABILITY_ZONES, DEFAULT_AVAILABILITY_ZONES);
-    }
-
-    @Override
     public String getHostname()
     {
         return this.retriever.getPublicHostname();
@@ -352,7 +347,14 @@ public class DynomitemanagerConfiguration implements IConfiguration
 		
 		return configSource.get(CONFIG_RACK_NAME, DEFAULT_DYN_RACK);
     }
-  
+    
+    @Override
+    public List<String> getZones()
+    {
+        return configSource.getList(CONFIG_AVAILABILITY_ZONES, DEFAULT_AVAILABILITY_ZONES);
+    }
+
+
     
     public List<String> getRacks()
     {
@@ -399,6 +401,11 @@ public class DynomitemanagerConfiguration implements IConfiguration
     public String getHostIP()
     {
         return this.retriever.getPublicIP();
+    }
+    
+    // VPC 
+    public String getVpcId() {
+      return this.retriever.getVpcId();
     }
 
     @Override
@@ -641,6 +648,8 @@ public class DynomitemanagerConfiguration implements IConfiguration
     public boolean isEurekaHostSupplierEnabled() {
     	return configSource.get(CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED, DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED);
     }
+    
+
     
     
 }
