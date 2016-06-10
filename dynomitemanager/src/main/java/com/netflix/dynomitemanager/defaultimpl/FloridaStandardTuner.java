@@ -21,6 +21,8 @@ import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
+import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.FloridaStandardTuner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +40,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_REDIS_CONF_PATH;
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
@@ -51,7 +54,12 @@ public class FloridaStandardTuner implements ProcessTuner
     private static final String PROC_MEMINFO_PATH = "/proc/meminfo";
     public static final long GB_2_IN_KB = 2L * 1024L * 1024L;
     public static final String REDIS_CONF_MAXMEMORY_PATTERN = "^maxmemory\\s*[0-9][0-9]*[a-zA-Z]*";
-
+    public static final String REDIS_CONF_APPENDONLY = "^appendonly\\s*[a-zA-Z]*";
+    public static final String REDIS_CONF_APPENDFSYNC = "^ appendfsync\\s*[a-zA-Z]*";
+    public static final String REDIS_CONF_AUTOAOFREWRITEPERCENTAGE = "^auto-aof-rewrite-percentage\\s*[0-9][0-9]*[a-zA-Z]*";
+    public static final String REDIS_CONF_STOP_WRITES_BGSAVE_ERROR = "^stop-writes-on-bgsave-error\\s*[a-zA-Z]*";
+    public static final String REDIS_CONF_SAVE_SCHEDULE = "^#\\ssave\\s[0-9]*\\s[0-9]*";
+    
     protected final IConfiguration config;
     protected final InstanceIdentity ii;
     public static final Pattern MEMINFO_PATTERN = Pattern.compile("MemTotal:\\s*([0-9]*)");
@@ -117,7 +125,7 @@ public class FloridaStandardTuner implements ProcessTuner
             servers.clear();
         }
 
-        if (config.getClusterType() == JedisConfiguration.DYNO_REDIS) {
+        if (config.getClusterType() == DynomitemanagerConfiguration.DYNO_REDIS) {
             entries.put("data_store", 0);
             servers.add("127.0.0.1:22122:1");
         } else {
@@ -128,10 +136,8 @@ public class FloridaStandardTuner implements ProcessTuner
         logger.info(yaml.dump(map));
         yaml.dump(map, new FileWriter(yamlLocation));
 
-
-        if (config.getClusterType() == JedisConfiguration.DYNO_REDIS) {
-            logger.info("Determining and configuring maxmemory for Redis.");
-            writeStorageMemAllocation();
+        if (config.getClusterType() == DynomitemanagerConfiguration.DYNO_REDIS) {
+            updateRedisConfiguration();
         }
     }
 
@@ -149,33 +155,85 @@ public class FloridaStandardTuner implements ProcessTuner
         logger.info("Updating yaml" + yaml.dump(map));
         yaml.dump(map, new FileWriter(yamlFile));
     }
+        
 
-    public void writeStorageMemAllocation() throws IOException {
+    private void updateRedisConfiguration() throws IOException {
         long storeMaxMem = getStoreMaxMem();
 
         // Updating the file.
-        logger.info("Updating Redis conf: " + JedisConfiguration.DYNO_REDIS_CONF_PATH);
-        Path confPath = Paths.get(JedisConfiguration.DYNO_REDIS_CONF_PATH);
-        Path backupPath = Paths.get(JedisConfiguration.DYNO_REDIS_CONF_PATH + ".bkp");
+        logger.info("Updating Redis conf: " + DYNO_REDIS_CONF_PATH);
+        Path confPath = Paths.get(DYNO_REDIS_CONF_PATH);
+        Path backupPath = Paths.get(DYNO_REDIS_CONF_PATH + ".bkp");
 
         // backup the original baked in conf only and not subsequent updates
         if (!Files.exists(backupPath)) {
             logger.info("Backing up baked in Redis config at: " + backupPath);
             Files.copy(confPath, backupPath, COPY_ATTRIBUTES);
         }
-
+        
+        
+        if (config.isPersistenceEnabled() && config.isAof()) {
+        	logger.info("Persistence with AOF is enabled");
+        }
+        else if (config.isPersistenceEnabled() && !config.isAof()) {
+        	logger.info("Persistence with RDB is enabled");
+        }
+        
         // Not using Properties file to load as we want to retain all comments,
         // and for easy diffing with the ami baked version of the conf file.
         List<String> lines = Files.readAllLines(confPath, Charsets.UTF_8);
+        boolean saveReplaced = false;
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            if (line.startsWith("#")) {
+            if (line.startsWith("#") && !line.matches(REDIS_CONF_SAVE_SCHEDULE)) {
                 continue;
             }
             if (line.matches(REDIS_CONF_MAXMEMORY_PATTERN)) {
                 String maxMemConf = "maxmemory " + storeMaxMem + "kb";
-                logger.info("Changing Redis maxmemory config directive to: " + maxMemConf);
+                logger.info("Updating Redis property: " + maxMemConf);
                 lines.set(i, maxMemConf);
+            }
+            // Persistence configuration
+            if (config.isPersistenceEnabled() && config.isAof()) {
+            	if (line.matches(REDIS_CONF_APPENDONLY)){
+                    String appendOnly = "appendonly yes";
+                    logger.info("Updating Redis property: " + appendOnly);
+                    lines.set(i, appendOnly);
+            	}
+            	else if (line.matches(REDIS_CONF_APPENDFSYNC)) {
+            	    String appendfsync = "appendfsync no";	
+            	    logger.info("Updating Redis property: " + appendfsync);
+            	    lines.set(i, appendfsync);
+            	}
+            	else if (line.matches(REDIS_CONF_AUTOAOFREWRITEPERCENTAGE)) {
+            		String autoAofRewritePercentage = "auto-aof-rewrite-percentage 100";
+            	    logger.info("Updating Redis property: " + autoAofRewritePercentage);
+            	    lines.set(i, autoAofRewritePercentage);
+            	}
+            	else if(line.matches(REDIS_CONF_SAVE_SCHEDULE)) {
+            		String saveSchedule = "# save 60 10000"; // if we select AOF, it is better to stop RDB
+            	    logger.info("Updating Redis property: " + saveSchedule);
+            	    lines.set(i, saveSchedule);
+            	}
+            }
+            else if (config.isPersistenceEnabled() && !config.isAof()) {
+
+            	if(line.matches(REDIS_CONF_STOP_WRITES_BGSAVE_ERROR)) {
+                    String bgsaveerror = "stop-writes-on-bgsave-error no";
+            	    logger.info("Updating Redis property: " + bgsaveerror);
+            	    lines.set(i, bgsaveerror);
+            	}
+            	else if(line.matches(REDIS_CONF_SAVE_SCHEDULE) && !saveReplaced) {
+            		saveReplaced = true;
+            		String saveSchedule = "save 60 10000"; //after 60 sec if at least 10000 keys changed
+            	    logger.info("Updating Redis property: " + saveSchedule);
+            	    lines.set(i, saveSchedule);
+            	}
+            	else if (line.matches(REDIS_CONF_APPENDONLY)){ // if we select RDB, it is better to stop AOF
+                    String appendOnly = "appendonly no";
+                    logger.info("Updating Redis property: " + appendOnly);
+                    lines.set(i, appendOnly);
+            	}
             }
         }
 

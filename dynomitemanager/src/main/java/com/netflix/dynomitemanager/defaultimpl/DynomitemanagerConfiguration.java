@@ -113,15 +113,17 @@ public class DynomitemanagerConfiguration implements IConfiguration
     
     // Backup and Restore
     private static final String CONFIG_BACKUP_ENABLED                  = DYNOMITEMANAGER_PRE + ".dyno.backup.snapshot.enabled";
-    private static final String CONFIG_RESTORE_ENABLED                 = DYNOMITEMANAGER_PRE + ".dyno.backup.restore.enabled";
-    private static final String CONFIG_AOF_DIR                         = DYNOMITEMANAGER_PRE + ".dyno.backup.aof.directory";
     private static final String CONFIG_BUCKET_NAME                     = DYNOMITEMANAGER_PRE + ".dyno.backup.bucket.name";    
     private static final String CONFIG_S3_BASE_DIR                     = DYNOMITEMANAGER_PRE + ".dyno.backup.s3.base_dir";
     private static final String CONFIG_BACKUP_HOUR                     = DYNOMITEMANAGER_PRE + ".dyno.backup.hour";
+    private static final String CONFIG_BACKUP_SCHEDULE				   = DYNOMITEMANAGER_PRE + ".dyno.backup.schedule";
+    private static final String CONFIG_RESTORE_ENABLED                 = DYNOMITEMANAGER_PRE + ".dyno.backup.restore.enabled";
     private static final String CONFIG_RESTORE_TIME					   = DYNOMITEMANAGER_PRE + ".dyno.backup.restore.date";
     
     // persistence
-    private static final String CONFIG_PERSISTENCE_AOF_ENABLED         = DYNOMITEMANAGER_PRE + ".dyno.persistence.aof.enabled";
+    private static final String CONFIG_PERSISTENCE_ENABLED             = DYNOMITEMANAGER_PRE + ".dyno.persistence.enabled";
+    private static final String CONFIG_PERSISTENCE_TYPE                = DYNOMITEMANAGER_PRE + ".dyno.persistence.type";
+    private static final String CONFIG_PERSISTENCE_DIR                 = DYNOMITEMANAGER_PRE + ".dyno.persistence.directory";
 
 
     // Defaults 
@@ -160,7 +162,6 @@ public class DynomitemanagerConfiguration implements IConfiguration
     // Backup & Restore
     private static final boolean DEFAULT_BACKUP_ENABLED = false;
     private static final boolean DEFAULT_RESTORE_ENABLED = false;
-    private static final String DEFAULT_AOF_LOCATION = "/mnt/data/nfredis";
     private static final String DEFAULT_BUCKET_NAME = "us-east-1.dynomite-backup-test";
     private static final String DEFAULT_BUCKET_FOLDER = "backup";
     private static final String DEFAULT_RESTORE_REPOSITORY_TYPE = "s3";
@@ -170,10 +171,13 @@ public class DynomitemanagerConfiguration implements IConfiguration
     private static final String DEFAULT_RESTORE_SOURCE_CLUSTER_NAME = "";
     private static final String DEFAULT_RESTORE_REPOSITORY_NAME = "testrepo";
     private static final String DEFAULT_RESTORE_TIME ="20101010";
-    private static final int DEFAULT_BACKUP_HOUR = 12;
+    private static final String DEFAULT_BACKUP_SCHEDULE = "day";
+    private static final int    DEFAULT_BACKUP_HOUR = 12;
     
     // Persistence
-    private static final boolean DEFAULT_PERSISTENCE_AOF_ENABLED = false;
+    private static final boolean DEFAULT_PERSISTENCE_ENABLED = false;
+    private static final String  DEFAULT_PERSISTENCE_TYPE = "aof";
+    private static final String  DEFAULT_PERSISTENCE_DIR = "/mnt/data/nfredis";
    
     private static final Logger logger = LoggerFactory.getLogger(DynomitemanagerConfiguration.class);
 
@@ -582,11 +586,11 @@ public class DynomitemanagerConfiguration implements IConfiguration
 
     
     // Backup & Restore Implementations
-        
+    
     @Override
-    public String getAOFLocation()
+    public String getPersistenceLocation()
     {
-    	return configSource.get(CONFIG_AOF_DIR, DEFAULT_AOF_LOCATION);
+    	return configSource.get(CONFIG_PERSISTENCE_DIR, DEFAULT_PERSISTENCE_DIR);
     }
     
     @Override
@@ -610,6 +614,20 @@ public class DynomitemanagerConfiguration implements IConfiguration
     public boolean isRestoreEnabled() {
         return configSource.get(CONFIG_RESTORE_ENABLED, DEFAULT_RESTORE_ENABLED);
     }
+    
+    @Override
+    public String getBackupSchedule()
+    {
+    	if (CONFIG_BACKUP_SCHEDULE != null &&
+    			!"day".equals(CONFIG_BACKUP_SCHEDULE) &&
+    			!"week".equals(CONFIG_BACKUP_SCHEDULE)) {
+
+      	   logger.error("The persistence schedule FP is wrong: day or week");
+      	   logger.error("Defaulting to day");
+           return configSource.get("day", DEFAULT_BACKUP_SCHEDULE);
+    	}
+        return configSource.get(CONFIG_BACKUP_SCHEDULE, DEFAULT_BACKUP_SCHEDULE);
+    }
      
     @Override
     public int getBackupHour()
@@ -624,10 +642,27 @@ public class DynomitemanagerConfiguration implements IConfiguration
     }
     
     @Override
-    public boolean isPersistenceAofEnabled() {
-    	return configSource.get(CONFIG_PERSISTENCE_AOF_ENABLED, DEFAULT_PERSISTENCE_AOF_ENABLED);
+    public boolean isPersistenceEnabled() {
+    	return configSource.get(CONFIG_PERSISTENCE_ENABLED, DEFAULT_PERSISTENCE_ENABLED);
     }
     
+    @Override
+    public boolean isAof() {
+    	
+    	if (configSource.get(CONFIG_PERSISTENCE_TYPE, DEFAULT_PERSISTENCE_TYPE).equals("rdb")) {
+    		return false;
+    	}
+    	else if (configSource.get(CONFIG_PERSISTENCE_TYPE, DEFAULT_PERSISTENCE_TYPE).equals("aof")) {
+    		return true;
+    	}
+    	else {
+     	   logger.error("The persistence type FP is wrong: aof or rdb");
+     	   logger.error("Defaulting to rdb");
+     	   return false;
+    	}
+    	
+    }
+   
     // Cassandra configuration for token management
     @Override
     public String getCassandraKeyspaceName() {
@@ -648,8 +683,5 @@ public class DynomitemanagerConfiguration implements IConfiguration
     public boolean isEurekaHostSupplierEnabled() {
     	return configSource.get(CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED, DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED);
     }
-    
-
-    
     
 }

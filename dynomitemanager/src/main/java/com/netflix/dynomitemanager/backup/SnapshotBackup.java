@@ -55,6 +55,7 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.ThreadSleeper;
 import com.netflix.dynomitemanager.sidecore.scheduler.CronTimer;
+import com.netflix.dynomitemanager.sidecore.scheduler.CronTimer.DayOfWeek;
 
 /**
  * Task for taking snapshots to S3
@@ -103,7 +104,13 @@ public class SnapshotBackup extends Task
             	   this.state.setBackingup(true);
             	   // the storage proxy takes a snapshot or compacts data
             	   boolean snapshot = this.storageProxy.takeSnapshot();
-                   File file = new File(config.getAOFLocation() + "/appendonly.aof");
+                   File file = null;
+                   if(config.isAof()){
+                	   file = new File(config.getPersistenceLocation() + "/appendonly.aof");
+                   }
+                   else {
+                	   file = new File(config.getPersistenceLocation() + "/nfredis.rdb");
+                   }
                    // upload the data to S3
                    if (file.length() > 0 && snapshot == true) {
                 	   uploadToS3(file);
@@ -134,18 +141,24 @@ public class SnapshotBackup extends Task
     }
     
     /**
-     * Returns a timer that enables this task to run once every day
+     * Returns a timer that enables this task to run on a scheduling basis defined by FP
+     * if the BackupSchedule == week, it runs on Monday
+     * if the BackupSchedule == day, it runs everyday.
      * @return TaskTimer
      */
     public static TaskTimer getTimer(IConfiguration config)
     {
         int hour = config.getBackupHour();
+        if (config.getBackupSchedule().equals("week")){
+        	return new CronTimer(DayOfWeek.MON, hour, 1, 0);
+        }
         return new CronTimer(hour, 1, 0);
+ 
     }
 
     
     /**
-     * Uses the Amazon S3 API to upload the AOF to S3
+     * Uses the Amazon S3 API to upload the AOF/RDB to S3
      * Filename: Backup location + DC + Rack + App + Token
      */
     private void uploadToS3(File file)
@@ -203,3 +216,4 @@ public class SnapshotBackup extends Task
     }
    
 }
+
