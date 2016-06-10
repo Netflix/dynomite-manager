@@ -46,6 +46,7 @@ import com.netflix.dynomitemanager.backup.RestoreFromS3Task;
 import com.netflix.dynomitemanager.backup.SnapshotBackup;
 import com.netflix.dynomitemanager.resources.DynomiteAdmin;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskScheduler;
+import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 
 
 @Path("/v1/admin")
@@ -63,6 +64,7 @@ public class DynomiteAdmin
     private final TaskScheduler scheduler;
     private SnapshotBackup snapshotBackup;
     private RestoreFromS3Task restoreBackup;
+    private IStorageProxy storage;
 
     
     @Inject
@@ -72,7 +74,9 @@ public class DynomiteAdmin
     public DynomiteAdmin(IConfiguration config, IFloridaProcess dynoProcess,
                          InstanceIdentity ii, InstanceState instanceState,
                          SnapshotBackup snapshotBackup, RestoreFromS3Task restoreBackup,
-                         TaskScheduler scheduler)
+                         TaskScheduler scheduler, IStorageProxy storage)
+
+                         
     {
         this.config = config;
         this.dynoProcess = dynoProcess;
@@ -81,6 +85,8 @@ public class DynomiteAdmin
         this.snapshotBackup = snapshotBackup;
         this.restoreBackup = restoreBackup;
         this.scheduler = scheduler;
+        this.storage = storage;
+
     }
 
     @GET
@@ -247,4 +253,23 @@ public class DynomiteAdmin
             return Response.serverError().build();
         }
     }
+    
+    
+    @GET
+    @Path("/takesnapshot")
+    public Response takeSnapshot()
+    {
+    	try
+    	{
+    		logger.info("REST call: Persisting Data to Disk");
+    		this.storage.takeSnapshot();
+            return Response.ok(REST_SUCCESS, MediaType.APPLICATION_JSON).build();
+    	}
+        catch (Exception e)
+        {
+            logger.error("Error while executing data persistence from REST call", e);
+            return Response.serverError().build();
+        }
+    }
+    
 }

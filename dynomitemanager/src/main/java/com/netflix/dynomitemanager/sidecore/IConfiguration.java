@@ -45,8 +45,8 @@ public interface IConfiguration
     public String getStorageStartupScript();
     
     
-    /**
-     * @return Script that stops the storage layer
+    /*
+     * 
      */
     public String getStorageStopScript();
     
@@ -88,9 +88,9 @@ public interface IConfiguration
      * @return Get the Data Center name (or region for AWS)
      */
     public String getRack();
-
-    public List<String> getRacks();
     
+    public List<String> getRacks();
+
     
     /**
      * Amazon specific setting to query ASG Membership
@@ -191,8 +191,6 @@ public interface IConfiguration
      
     // Backup and Restore
 
-	public String getAOFLocation();
-
 	public String getBucketName();
 
     public String getBackupLocation();
@@ -201,13 +199,19 @@ public interface IConfiguration
 
     public boolean isRestoreEnabled();
 
+    public String getBackupSchedule();
+    
 	public int getBackupHour();
 	
     public String getRestoreDate();
     
     // Persistence
+    
+	public String getPersistenceLocation();
 
-	boolean isPersistenceAofEnabled();
+	public boolean isPersistenceEnabled();
+
+	public boolean isAof();
 	
 	// Cassandra
     public String getCassandraKeyspaceName();
@@ -217,6 +221,5 @@ public interface IConfiguration
     public String getCommaSeparatedCassandraHostNames();
     
     public boolean isEurekaHostSupplierEnabled();
-
 
 }
