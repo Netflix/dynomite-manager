@@ -113,8 +113,12 @@ public class SnapshotBackup extends Task
                    }
                    // upload the data to S3
                    if (file.length() > 0 && snapshot == true) {
-                	   uploadToS3(file);
-                	   logger.info("S3 Backup Completed!");
+                	   if(uploadToS3(file)){
+                		   logger.info("S3 backup status: Completed!");
+                	   }
+                	   else{
+                		   logger.error("S3 backup status: Failed!");
+                	   }
                    }
                    else {
                        logger.warn("S3 backup: Redis AOF file length is zero - nothing to backup");
@@ -161,41 +165,40 @@ public class SnapshotBackup extends Task
      * Uses the Amazon S3 API to upload the AOF/RDB to S3
      * Filename: Backup location + DC + Rack + App + Token
      */
-    private void uploadToS3(File file)
+    private boolean uploadToS3(File file)
     {
     	logger.info("Snapshot backup: sending " + file.length() + " bytes to S3");
+        DateTime now = DateTime.now();
+        DateTime todayStart = now.withTimeAtStartOfDay();
+        
+        /* Key name is comprised of the 
+        * backupDir + DC + Rack + token + Date
+        */
+        String keyName = 
+        		config.getBackupLocation() + "/" +
+        		iid.getInstance().getDatacenter() + "/" +
+        		iid.getInstance().getRack() + "/" +
+        		iid.getInstance().getToken() + "/" +
+        		todayStart.getMillis();
+
+        // Get bucket location.
+        logger.info("Key in Bucket: " + keyName);
+        logger.info("S3 Bucket Name:" + config.getBucketName());
 
     	AmazonS3Client s3Client = new AmazonS3Client(this.cred.getAwsCredentialProvider());
         try {
             // Checking if the S3 bucket exists, and if does not, then we create it
             if(!(s3Client.doesBucketExist(config.getBucketName()))) {
       	       logger.error("Bucket with name: " + config.getBucketName() + " does not exist");
+      	       return false;
             }
             else {
                 logger.info("Uploading data to S3\n");
-                DateTime now = DateTime.now();
-                DateTime todayStart = now.withTimeAtStartOfDay();
-                
-                /* Key name is comprised of the 
-                * backupDir + DC + Rack + token + Date
-                */
-                String keyName = 
-                		config.getBackupLocation() + "/" +
-                		iid.getInstance().getDatacenter() + "/" +
-                		iid.getInstance().getRack() + "/" +
-                		iid.getInstance().getToken() + "/" +
-                		todayStart.getMillis();
 
-                // Get bucket location.
-                logger.info("S3 Bucket Name:" + config.getBucketName());
-                logger.info("Key in Bucket: " + keyName);
          	    s3Client.putObject(new PutObjectRequest(
         		            config.getBucketName(), keyName, file));
+         	    return true;
             }
-            
-
-   
-
        } catch (AmazonServiceException ase) {
     	   
     	   logger.error("AmazonServiceException;" +
@@ -205,6 +208,7 @@ public class SnapshotBackup extends Task
     	   logger.error("AWS Error Code:   " + ase.getErrorCode());
     	   logger.error("Error Type:       " + ase.getErrorType());
     	   logger.error("Request ID:       " + ase.getRequestId());
+    	   return false;
            
        } catch (AmazonClientException ace) {
     	   logger.error("AmazonClientException;"+
@@ -212,6 +216,7 @@ public class SnapshotBackup extends Task
                    "an internal error while trying to " +
                    "communicate with S3, ");
     	   logger.error("Error Message: " + ace.getMessage());
+    	   return false;
        }
     }
    
