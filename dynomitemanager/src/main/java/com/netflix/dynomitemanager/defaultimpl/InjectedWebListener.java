@@ -16,44 +16,39 @@
 
 package com.netflix.dynomitemanager.defaultimpl;
 
-import com.google.common.collect.Lists;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.Scopes;
-import com.google.inject.servlet.GuiceServletContextListener;
-import com.google.inject.servlet.ServletModule;
-import com.netflix.dynomitemanager.FloridaServer;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
-import com.netflix.dynomitemanager.sidecore.ICredential;
-import com.netflix.dynomitemanager.sidecore.aws.IAMCredential;
-import com.netflix.dynomitemanager.sidecore.config.AwsInstanceDataRetriever;
-import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
-import com.netflix.dynomitemanager.sidecore.config.LocalInstanceDataRetriever;
-import com.netflix.dynomitemanager.sidecore.scheduler.GuiceJobFactory;
-import com.netflix.dynomitemanager.defaultimpl.FloridaStandardTuner;
-import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
-import com.netflix.dynomitemanager.IFloridaProcess;
-import com.netflix.dynomitemanager.defaultimpl.FloridaProcessManager;
-import com.netflix.dynomitemanager.identity.CassandraInstanceFactory;
-import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
-import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
-import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
-import com.netflix.dynomitemanager.supplier.EurekaHostsSupplier;
-import com.netflix.dynomitemanager.supplier.HostSupplier;
-import com.netflix.dynomitemanager.supplier.LocalHostsSupplier;
-import com.sun.jersey.api.core.PackagesResourceConfig;
-import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.servlet.GuiceServletContextListener;
+import com.google.inject.servlet.ServletModule;
+import com.netflix.dynomitemanager.FloridaServer;
+import com.netflix.dynomitemanager.IFloridaProcess;
+import com.netflix.dynomitemanager.identity.CassandraInstanceFactory;
+import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
+import com.netflix.dynomitemanager.sidecore.IConfiguration;
+import com.netflix.dynomitemanager.sidecore.ICredential;
+import com.netflix.dynomitemanager.sidecore.aws.IAMCredential;
+import com.netflix.dynomitemanager.sidecore.config.AwsInstanceDataRetriever;
+import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
+import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
+import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
+import com.netflix.dynomitemanager.supplier.EurekaHostsSupplier;
+import com.netflix.dynomitemanager.supplier.LocalHostSupplier;
+import com.netflix.dynomitemanager.supplier.HostSupplier;
+import com.sun.jersey.api.core.PackagesResourceConfig;
+import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
 /**
  *
@@ -120,8 +115,8 @@ public class InjectedWebListener extends GuiceServletContextListener {
             binder().bind(IFloridaProcess.class).to(FloridaProcessManager.class);
             binder().bind(IStorageProxy.class).to(RedisStorageProxy.class);
             binder().bind(InstanceDataRetriever.class).to(AwsInstanceDataRetriever.class);
-            binder().bind(HostSupplier.class).to(EurekaHostsSupplier.class);
-
+            //binder().bind(HostSupplier.class).to(EurekaHostsSupplier.class);
+            binder().bind(HostSupplier.class).to(LocalHostsSupplier.class);
 
  //           binder().bind(GuiceContainer.class).asEagerSingleton();
  //           binder().bind(GuiceJobFactory.class).asEagerSingleton();
