@@ -35,7 +35,9 @@ import com.google.inject.servlet.ServletModule;
 import com.netflix.dynomitemanager.FloridaServer;
 import com.netflix.dynomitemanager.IFloridaProcess;
 import com.netflix.dynomitemanager.identity.CassandraInstanceFactory;
+import com.netflix.dynomitemanager.identity.DefaultVpcInstanceEnvIdentity;
 import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
+import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
 import com.netflix.dynomitemanager.sidecore.aws.IAMCredential;
@@ -44,9 +46,8 @@ import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
-import com.netflix.dynomitemanager.supplier.EurekaHostsSupplier;
-import com.netflix.dynomitemanager.supplier.LocalHostsSupplier;
 import com.netflix.dynomitemanager.supplier.HostSupplier;
+import com.netflix.dynomitemanager.supplier.LocalHostsSupplier;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
@@ -117,6 +118,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
             binder().bind(InstanceDataRetriever.class).to(AwsInstanceDataRetriever.class);
             //binder().bind(HostSupplier.class).to(EurekaHostsSupplier.class);
             binder().bind(HostSupplier.class).to(LocalHostsSupplier.class);
+            binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class).asEagerSingleton();
 
  //           binder().bind(GuiceContainer.class).asEagerSingleton();
  //           binder().bind(GuiceJobFactory.class).asEagerSingleton();
