@@ -45,7 +45,7 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
 import com.netflix.dynomitemanager.supplier.EurekaHostsSupplier;
-import com.netflix.dynomitemanager.supplier.LocalHostSupplier;
+import com.netflix.dynomitemanager.supplier.LocalHostsSupplier;
 import com.netflix.dynomitemanager.supplier.HostSupplier;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
