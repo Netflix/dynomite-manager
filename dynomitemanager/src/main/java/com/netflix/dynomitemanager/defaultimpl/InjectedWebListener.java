@@ -130,13 +130,12 @@ public class InjectedWebListener extends GuiceServletContextListener {
             binder().bind(IFloridaProcess.class).to(FloridaProcessManager.class);
             binder().bind(IStorageProxy.class).to(RedisStorageProxy.class);
             binder().bind(InstanceDataRetriever.class).to(AwsInstanceDataRetriever.class);
+            //binder().bind(InstanceDataRetriever.class).to(LocalInstanceDataRetriever.class);            
             //binder().bind(HostSupplier.class).to(EurekaHostsSupplier.class);
             binder().bind(HostSupplier.class).to(LocalHostsSupplier.class);
             binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class).asEagerSingleton();
-            binder().bind(HealthCheckHandler.class).to(FloridaHealthCheckHandler.class).asEagerSingleton();
-            //binder().bind(InstanceDataRetriever.class).to(LocalInstanceDataRetriever.class);
-            //binder().bind(HostSupplier.class).to(LocalHostsSupplier.class);
             //binder().bind(InstanceEnvIdentity.class).to(LocalInstanceEnvIdentity.class);
+            binder().bind(HealthCheckHandler.class).to(FloridaHealthCheckHandler.class).asEagerSingleton();
 
  //           binder().bind(GuiceContainer.class).asEagerSingleton();
  //           binder().bind(GuiceJobFactory.class).asEagerSingleton();

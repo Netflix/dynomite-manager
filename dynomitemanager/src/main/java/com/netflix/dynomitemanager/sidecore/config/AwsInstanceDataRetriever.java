@@ -60,7 +60,9 @@ public class AwsInstanceDataRetriever implements InstanceDataRetriever
 
 	@Override
 	public String getVpcId() {
-		throw new UnsupportedOperationException("Not applicable as running instance is in classic environment");
+		String macAddress = SystemUtils.getDataFromUrl("http://169.254.169.254/latest/meta-data/network/interfaces/macs/").trim();
+		if (macAddress==null || "".equals(macAddress)) throw new UnsupportedOperationException("Not applicable as running instance is in classic environment");
+		return SystemUtils.getDataFromUrl("http://169.254.169.254/latest/meta-data/network/interfaces/macs/" + macAddress + "/vpc-id").trim();
 	}
 
 }
