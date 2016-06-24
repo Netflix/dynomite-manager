@@ -56,6 +56,12 @@ public class VpcInstanceDataRetriever implements InstanceDataRetriever
         return SystemUtils.getDataFromUrl("http://169.254.169.254/latest/meta-data/instance-type");
     }
     
+    @Override
+    public String getSecurityGroupName() {
+    	String vpcId = getVpcId();
+    	return SystemUtils.getDataFromUrl("http://169.254.169.254/latest/meta-data/network/interfaces/macs/" + vpcId + "/security-groups").trim();
+    }
+    
 	@Override
 	/*
 	 * @return id of the network interface for running instance
