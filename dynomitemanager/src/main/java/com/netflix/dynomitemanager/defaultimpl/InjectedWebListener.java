@@ -43,6 +43,18 @@ import com.netflix.dynomitemanager.sidecore.ICredential;
 import com.netflix.dynomitemanager.sidecore.aws.IAMCredential;
 import com.netflix.dynomitemanager.sidecore.config.AwsInstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
+import com.netflix.dynomitemanager.sidecore.config.LocalInstanceDataRetriever;
+import com.netflix.dynomitemanager.sidecore.scheduler.GuiceJobFactory;
+import com.netflix.dynomitemanager.defaultimpl.FloridaStandardTuner;
+import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
+import com.netflix.dynomitemanager.IFloridaProcess;
+import com.netflix.dynomitemanager.defaultimpl.FloridaProcessManager;
+import com.netflix.dynomitemanager.identity.AwsInstanceEnvIdentity;
+import com.netflix.dynomitemanager.identity.CassandraInstanceFactory;
+import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
+import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
+import com.netflix.dynomitemanager.identity.LocalInstanceEnvIdentity;
+import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.FloridaHealthCheckHandler;
@@ -122,6 +134,9 @@ public class InjectedWebListener extends GuiceServletContextListener {
             binder().bind(HostSupplier.class).to(LocalHostsSupplier.class);
             binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class).asEagerSingleton();
             binder().bind(HealthCheckHandler.class).to(FloridaHealthCheckHandler.class).asEagerSingleton();
+            //binder().bind(InstanceDataRetriever.class).to(LocalInstanceDataRetriever.class);
+            //binder().bind(HostSupplier.class).to(LocalHostsSupplier.class);
+            //binder().bind(InstanceEnvIdentity.class).to(LocalInstanceEnvIdentity.class);
 
  //           binder().bind(GuiceContainer.class).asEagerSingleton();
  //           binder().bind(GuiceJobFactory.class).asEagerSingleton();

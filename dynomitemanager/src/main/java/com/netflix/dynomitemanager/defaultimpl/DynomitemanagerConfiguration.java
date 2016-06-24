@@ -38,6 +38,7 @@ import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.utils.RetryableCallable;
+import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 
 
 @Singleton
@@ -125,6 +126,9 @@ public class DynomitemanagerConfiguration implements IConfiguration
     private static final String CONFIG_PERSISTENCE_TYPE                = DYNOMITEMANAGER_PRE + ".dyno.persistence.type";
     private static final String CONFIG_PERSISTENCE_DIR                 = DYNOMITEMANAGER_PRE + ".dyno.persistence.directory";
 
+    //VPC
+    private static final String CONFIG_INSTANCE_DATA_RETRIEVER        = DYNOMITEMANAGER_PRE + ".instanceDataRetriever";
+
 
     // Defaults 
     private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
@@ -186,8 +190,8 @@ public class DynomitemanagerConfiguration implements IConfiguration
     
     private final String CLUSTER_NAME = System.getenv("NETFLIX_APP");
     private final String AUTO_SCALE_GROUP_NAME = System.getenv("AUTO_SCALE_GROUP");
-    private static final String DEFAULT_INSTANCE_DATA_RETRIEVER = "com.netflix.florida.sidecore.config.AwsInstanceDataRetriever";
-    private static final String VPC_INSTANCE_DATA_RETRIEVER = "com.netflix.florida.sidecore.config.VpcInstanceDataRetriever";
+    private static final String DEFAULT_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.AwsInstanceDataRetriever";
+    private static final String VPC_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever";
 
     private static String ASG_NAME = System.getenv("ASG_NAME");
     private static String REGION = System.getenv("EC2_REGION");
@@ -195,6 +199,8 @@ public class DynomitemanagerConfiguration implements IConfiguration
     private final InstanceDataRetriever retriever;
     private final ICredential provider;
     private final IConfigSource configSource;
+    private final InstanceEnvIdentity insEnvIdentity;
+
     
     // Cassandra default configuration
     private static final String DEFAULT_BOOTCLUSTER_NAME = "cass_dyno";
@@ -203,14 +209,60 @@ public class DynomitemanagerConfiguration implements IConfiguration
     private static final String DEFAULT_COMMA_SEPARATED_CASSANDRA_HOSTNAMES = "127.0.0.1";
     private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
      
+    
+
+    //= instance identity meta data
+    private String RAC, ZONE, PUBLIC_HOSTNAME, PUBLIC_IP, INSTANCE_ID, INSTANCE_TYPE;
+    private String NETWORK_MAC;  //Fetch metadata of the running instance's network interface    
+    
+    //== vpc specific   	
+    private String NETWORK_VPC;  //Fetch the vpc id of running instance
+    
+    
+
+    
     @Inject
     public DynomitemanagerConfiguration(ICredential provider, IConfigSource configSource, 
-    		InstanceDataRetriever retriever)
+    		InstanceDataRetriever retriever, InstanceEnvIdentity insEnvIdentity)
     {
     	this.retriever = retriever;
         this.provider = provider;
         this.configSource = configSource;
+        this.insEnvIdentity = insEnvIdentity;
+        		
+		
+	    RAC = retriever.getRac();
+	    ZONE = RAC;
+	    PUBLIC_HOSTNAME = retriever.getPublicHostname();
+	    PUBLIC_IP = retriever.getPublicIP();
+
+	    INSTANCE_ID = retriever.getInstanceId();
+	    INSTANCE_TYPE = retriever.getInstanceType();
+
+		NETWORK_MAC =  retriever.getMac();
+		if (insEnvIdentity.isNonDefaultVpc() || insEnvIdentity.isDefaultVpc()) {
+			NETWORK_VPC = retriever.getVpcId();
+			logger.info("vpc id for running instance: " + NETWORK_VPC);
+		}
     }
+    
+    private InstanceDataRetriever getInstanceDataRetriever() throws InstantiationException, IllegalAccessException, ClassNotFoundException
+    {
+    	String s = null;
+    	
+    	if (this.insEnvIdentity.isClassic()) {
+    		s = this.configSource.get(CONFIG_INSTANCE_DATA_RETRIEVER, DEFAULT_INSTANCE_DATA_RETRIEVER);
+    		
+    	} else if (this.insEnvIdentity.isNonDefaultVpc()) {
+    		s = this.configSource.get(CONFIG_INSTANCE_DATA_RETRIEVER, VPC_INSTANCE_DATA_RETRIEVER);
+    	} else {
+    		logger.error("environment cannot be found");
+    		throw new IllegalStateException("Unable to determine environemt (vpc, classic) for running instance.");
+    	}
+		return (InstanceDataRetriever)Class.forName(s).newInstance();
+
+    }
+
 
     public void initialize()
     {   
@@ -329,19 +381,19 @@ public class DynomitemanagerConfiguration implements IConfiguration
     @Override
     public String getZone()
     {
-        return this.retriever.getRac();
+        return ZONE;
     }
 
     @Override
     public String getHostname()
     {
-        return this.retriever.getPublicHostname();
+        return PUBLIC_HOSTNAME;
     }
 
     @Override
     public String getInstanceName()
     {
-        return this.retriever.getInstanceId();
+        return INSTANCE_ID;
     }
 
     @Override
@@ -403,15 +455,11 @@ public class DynomitemanagerConfiguration implements IConfiguration
     	return configSource.get(CONFIG_ACL_GROUP_NAME, this.getAppName());
     }
    
+    
     @Override
     public String getHostIP()
     {
-        return this.retriever.getPublicIP();
-    }
-    
-    // VPC 
-    public String getVpcId() {
-      return this.retriever.getVpcId();
+        return PUBLIC_IP;
     }
 
     @Override
@@ -663,6 +711,11 @@ public class DynomitemanagerConfiguration implements IConfiguration
      	   return false;
     	}
     	
+    }
+    
+    // VPC 
+    public String getVpcId() {
+      return NETWORK_VPC;
     }
    
     // Cassandra configuration for token management
