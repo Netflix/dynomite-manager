@@ -10,7 +10,7 @@ echo "$EC2_INSTANCE_TYPE"
 if [ "$EC2_INSTANCE_TYPE" == "r3.xlarge" ]; then
    dynomite_pid=`pgrep dynomite`
    echo "dynomite pid: $dynomite_pid"
-   taskset -pac 2,3 $dynomite_pid
+   taskset -p 2,3 $dynomite_pid
 
    redis_pid=`ps -ef | grep 22122 | grep redis | awk -F' '  '{print $2}'`
    echo "redis pid: $redis_pid"
@@ -20,7 +20,7 @@ else
 
    dynomite_pid=`pgrep dynomite`
    echo "dynomite pid: $dynomite_pid"
-   taskset -pac 2,5,6 $dynomite_pid
+   taskset -p 2,5,6 $dynomite_pid
 
    redis_pid=`ps -ef | grep 22122 | grep redis | awk -F' '  '{print $2}'`
    echo "redis pid: $redis_pid"
