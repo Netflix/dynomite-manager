@@ -175,11 +175,11 @@ public class AWSMembership implements IMembership
     		Filter vpcFilter = new Filter().withName("vpc-id").withValues(config.getVpcId());
     		
     		Filter nameFilter = null;
-    		if(instanceDataRetriever instanceof VpcInstanceDataRetriever){
-    			nameFilter = new Filter().withName("group-name").withValues(instanceDataRetriever.getSecurityGroupName()); //SG
-    		}else{
+//    		if(instanceDataRetriever instanceof VpcInstanceDataRetriever){
+//    			nameFilter = new Filter().withName("group-name").withValues(instanceDataRetriever.getSecurityGroupName()); //SG
+//    		}else{
     			nameFilter = new Filter().withName("group-name").withValues(config.getACLGroupName()); //SG
-    		}
+//    		}
     		
     		DescribeSecurityGroupsRequest req = new DescribeSecurityGroupsRequest().withFilters(nameFilter, vpcFilter);
     		DescribeSecurityGroupsResult result = client.describeSecurityGroups(req);
