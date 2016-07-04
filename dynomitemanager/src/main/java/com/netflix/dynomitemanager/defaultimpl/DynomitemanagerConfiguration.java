@@ -166,7 +166,9 @@ public class DynomitemanagerConfiguration implements IConfiguration
     // Backup & Restore
     private static final boolean DEFAULT_BACKUP_ENABLED = false;
     private static final boolean DEFAULT_RESTORE_ENABLED = false;
-    private static final String DEFAULT_BUCKET_NAME = "us-east-1.dynomite-backup-test";
+    //private static final String DEFAULT_BUCKET_NAME = "us-east-1.dynomite-backup-test";
+    private static final String DEFAULT_BUCKET_NAME = "dynomite-backup";
+    
     private static final String DEFAULT_BUCKET_FOLDER = "backup";
     private static final String DEFAULT_RESTORE_REPOSITORY_TYPE = "s3";
    

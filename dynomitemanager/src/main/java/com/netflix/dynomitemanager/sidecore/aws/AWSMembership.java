@@ -42,12 +42,12 @@ import com.amazonaws.services.ec2.model.RevokeSecurityGroupIngressRequest;
 import com.amazonaws.services.ec2.model.SecurityGroup;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.identity.IMembership;
 import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
-import com.netflix.dynomitemanager.sidecore.aws.AWSMembership;
+import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
+import com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever;
 
 
 /**
@@ -60,13 +60,15 @@ public class AWSMembership implements IMembership
     private final IConfiguration config;
     private final ICredential provider;
 	private InstanceEnvIdentity insEnvIdentity;    
+	private InstanceDataRetriever instanceDataRetriever;
 
     @Inject
-    public AWSMembership(IConfiguration config, ICredential provider, InstanceEnvIdentity insEnvIdentity)
+    public AWSMembership(IConfiguration config, ICredential provider, InstanceEnvIdentity insEnvIdentity,InstanceDataRetriever instanceDataRetriever)
     {
         this.config = config;
         this.provider = provider;  
         this.insEnvIdentity = insEnvIdentity;
+        this.instanceDataRetriever = instanceDataRetriever;
     }
 
     @Override
@@ -170,8 +172,10 @@ public class AWSMembership implements IMembership
     	try
     	{
     		client = getEc2Client();
-    		Filter nameFilter = new Filter().withName("group-name").withValues(config.getACLGroupName()); //SG 
     		Filter vpcFilter = new Filter().withName("vpc-id").withValues(config.getVpcId());
+    		
+    		Filter nameFilter = null;
+    		nameFilter = new Filter().withName("group-name").withValues(config.getACLGroupName()); //SG
     		
     		DescribeSecurityGroupsRequest req = new DescribeSecurityGroupsRequest().withFilters(nameFilter, vpcFilter);
     		DescribeSecurityGroupsResult result = client.describeSecurityGroups(req);
