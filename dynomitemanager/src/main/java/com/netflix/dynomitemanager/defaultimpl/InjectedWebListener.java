@@ -35,11 +35,11 @@ import com.google.inject.servlet.ServletModule;
 import com.netflix.dynomitemanager.FloridaServer;
 import com.netflix.dynomitemanager.IFloridaProcess;
 import com.netflix.dynomitemanager.identity.CassandraInstanceFactory;
+import com.netflix.dynomitemanager.identity.DefaultVpcInstanceEnvIdentity;
 import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
-import com.netflix.dynomitemanager.identity.IMembership;
+import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
-import com.netflix.dynomitemanager.sidecore.aws.AWSMembership;
 import com.netflix.dynomitemanager.sidecore.aws.IAMCredential;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever;
@@ -122,8 +122,8 @@ public class InjectedWebListener extends GuiceServletContextListener {
             //binder().bind(HostSupplier.class).to(EurekaHostsSupplier.class);
             binder().bind(HostSupplier.class).to(LocalHostsSupplier.class);
             
-            //binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class).asEagerSingleton();
-            binder().bind(IMembership.class).to(AWSMembership.class).asEagerSingleton();
+            binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class).asEagerSingleton();
+           // binder().bind(IMembership.class).to(AWSMembership.class).asEagerSingleton();
             
             //binder().bind(InstanceEnvIdentity.class).to(LocalInstanceEnvIdentity.class);
             binder().bind(HealthCheckHandler.class).to(FloridaHealthCheckHandler.class).asEagerSingleton();
