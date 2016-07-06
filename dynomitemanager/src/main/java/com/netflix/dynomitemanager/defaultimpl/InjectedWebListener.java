@@ -121,8 +121,8 @@ public class InjectedWebListener extends GuiceServletContextListener {
             //binder().bind(InstanceDataRetriever.class).to(LocalInstanceDataRetriever.class);            
             //binder().bind(HostSupplier.class).to(EurekaHostsSupplier.class);
             binder().bind(HostSupplier.class).to(LocalHostsSupplier.class);
-            //binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class).asEagerSingleton();
             
+            //binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class).asEagerSingleton();
             binder().bind(IMembership.class).to(AWSMembership.class).asEagerSingleton();
             
             //binder().bind(InstanceEnvIdentity.class).to(LocalInstanceEnvIdentity.class);
