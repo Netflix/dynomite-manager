@@ -59,5 +59,9 @@ public class LocalInstanceDataRetriever implements InstanceDataRetriever
 		throw new UnsupportedOperationException("Not applicable as running instance is in classic environment");
 	}
     
+	@Override
+	public String getSecurityGroupName() {
+		throw new UnsupportedOperationException("Not applicable as running instance is in classic environment");
+	}
     
 }
