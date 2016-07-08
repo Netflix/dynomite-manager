@@ -149,7 +149,15 @@ public class RestoreFromS3Task extends Task
                      logger.info("Content-Type: "  + 
              		       s3object.getObjectMetadata().getContentType());
              
-                     String filepath = config.getAOFLocation() + "/appendonly.aof";
+                     String filepath = null;
+                     
+                     if(config.isAof()){
+                    	 filepath = config.getPersistenceLocation() + "/appendonly.aof";
+                     }
+                     else {
+                    	 filepath = config.getPersistenceLocation() + "/nfredis.rdb";
+                     }                        
+                  
                      IOUtils.copy(s3object.getObjectContent(), new FileOutputStream(new File(filepath)));       
                   }
                 return true;
@@ -196,4 +204,3 @@ public class RestoreFromS3Task extends Task
     }
     
 }
-

@@ -55,6 +55,7 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.ThreadSleeper;
 import com.netflix.dynomitemanager.sidecore.scheduler.CronTimer;
+import com.netflix.dynomitemanager.sidecore.scheduler.CronTimer.DayOfWeek;
 
 /**
  * Task for taking snapshots to S3
@@ -103,11 +104,21 @@ public class SnapshotBackup extends Task
             	   this.state.setBackingup(true);
             	   // the storage proxy takes a snapshot or compacts data
             	   boolean snapshot = this.storageProxy.takeSnapshot();
-                   File file = new File(config.getAOFLocation() + "/appendonly.aof");
+                   File file = null;
+                   if(config.isAof()){
+                	   file = new File(config.getPersistenceLocation() + "/appendonly.aof");
+                   }
+                   else {
+                	   file = new File(config.getPersistenceLocation() + "/nfredis.rdb");
+                   }
                    // upload the data to S3
                    if (file.length() > 0 && snapshot == true) {
-                	   uploadToS3(file);
-                	   logger.info("S3 Backup Completed!");
+                	   if(uploadToS3(file)){
+                		   logger.info("S3 backup status: Completed!");
+                	   }
+                	   else{
+                		   logger.error("S3 backup status: Failed!");
+                	   }
                    }
                    else {
                        logger.warn("S3 backup: Redis AOF file length is zero - nothing to backup");
@@ -134,55 +145,60 @@ public class SnapshotBackup extends Task
     }
     
     /**
-     * Returns a timer that enables this task to run once every day
+     * Returns a timer that enables this task to run on a scheduling basis defined by FP
+     * if the BackupSchedule == week, it runs on Monday
+     * if the BackupSchedule == day, it runs everyday.
      * @return TaskTimer
      */
     public static TaskTimer getTimer(IConfiguration config)
     {
         int hour = config.getBackupHour();
+        if (config.getBackupSchedule().equals("week")){
+        	return new CronTimer(DayOfWeek.MON, hour, 1, 0);
+        }
         return new CronTimer(hour, 1, 0);
+ 
     }
 
     
     /**
-     * Uses the Amazon S3 API to upload the AOF to S3
+     * Uses the Amazon S3 API to upload the AOF/RDB to S3
      * Filename: Backup location + DC + Rack + App + Token
      */
-    private void uploadToS3(File file)
+    private boolean uploadToS3(File file)
     {
     	logger.info("Snapshot backup: sending " + file.length() + " bytes to S3");
+        DateTime now = DateTime.now();
+        DateTime todayStart = now.withTimeAtStartOfDay();
+        
+        /* Key name is comprised of the 
+        * backupDir + DC + Rack + token + Date
+        */
+        String keyName = 
+        		config.getBackupLocation() + "/" +
+        		iid.getInstance().getDatacenter() + "/" +
+        		iid.getInstance().getRack() + "/" +
+        		iid.getInstance().getToken() + "/" +
+        		todayStart.getMillis();
+
+        // Get bucket location.
+        logger.info("Key in Bucket: " + keyName);
+        logger.info("S3 Bucket Name:" + config.getBucketName());
 
     	AmazonS3Client s3Client = new AmazonS3Client(this.cred.getAwsCredentialProvider());
         try {
             // Checking if the S3 bucket exists, and if does not, then we create it
             if(!(s3Client.doesBucketExist(config.getBucketName()))) {
       	       logger.error("Bucket with name: " + config.getBucketName() + " does not exist");
+      	       return false;
             }
             else {
                 logger.info("Uploading data to S3\n");
-                DateTime now = DateTime.now();
-                DateTime todayStart = now.withTimeAtStartOfDay();
-                
-                /* Key name is comprised of the 
-                * backupDir + DC + Rack + token + Date
-                */
-                String keyName = 
-                		config.getBackupLocation() + "/" +
-                		iid.getInstance().getDatacenter() + "/" +
-                		iid.getInstance().getRack() + "/" +
-                		iid.getInstance().getToken() + "/" +
-                		todayStart.getMillis();
 
-                // Get bucket location.
-                logger.info("S3 Bucket Name:" + config.getBucketName());
-                logger.info("Key in Bucket: " + keyName);
          	    s3Client.putObject(new PutObjectRequest(
         		            config.getBucketName(), keyName, file));
+         	    return true;
             }
-            
-
-   
-
        } catch (AmazonServiceException ase) {
     	   
     	   logger.error("AmazonServiceException;" +
@@ -192,6 +208,7 @@ public class SnapshotBackup extends Task
     	   logger.error("AWS Error Code:   " + ase.getErrorCode());
     	   logger.error("Error Type:       " + ase.getErrorType());
     	   logger.error("Request ID:       " + ase.getRequestId());
+    	   return false;
            
        } catch (AmazonClientException ace) {
     	   logger.error("AmazonClientException;"+
@@ -199,7 +216,9 @@ public class SnapshotBackup extends Task
                    "an internal error while trying to " +
                    "communicate with S3, ");
     	   logger.error("Error Message: " + ace.getMessage());
+    	   return false;
        }
     }
    
 }
+

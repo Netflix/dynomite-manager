@@ -38,6 +38,7 @@ import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.utils.RetryableCallable;
+import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 
 
 @Singleton
@@ -113,15 +114,20 @@ public class DynomitemanagerConfiguration implements IConfiguration
     
     // Backup and Restore
     private static final String CONFIG_BACKUP_ENABLED                  = DYNOMITEMANAGER_PRE + ".dyno.backup.snapshot.enabled";
-    private static final String CONFIG_RESTORE_ENABLED                 = DYNOMITEMANAGER_PRE + ".dyno.backup.restore.enabled";
-    private static final String CONFIG_AOF_DIR                         = DYNOMITEMANAGER_PRE + ".dyno.backup.aof.directory";
     private static final String CONFIG_BUCKET_NAME                     = DYNOMITEMANAGER_PRE + ".dyno.backup.bucket.name";    
     private static final String CONFIG_S3_BASE_DIR                     = DYNOMITEMANAGER_PRE + ".dyno.backup.s3.base_dir";
     private static final String CONFIG_BACKUP_HOUR                     = DYNOMITEMANAGER_PRE + ".dyno.backup.hour";
+    private static final String CONFIG_BACKUP_SCHEDULE				   = DYNOMITEMANAGER_PRE + ".dyno.backup.schedule";
+    private static final String CONFIG_RESTORE_ENABLED                 = DYNOMITEMANAGER_PRE + ".dyno.backup.restore.enabled";
     private static final String CONFIG_RESTORE_TIME					   = DYNOMITEMANAGER_PRE + ".dyno.backup.restore.date";
     
     // persistence
-    private static final String CONFIG_PERSISTENCE_AOF_ENABLED         = DYNOMITEMANAGER_PRE + ".dyno.persistence.aof.enabled";
+    private static final String CONFIG_PERSISTENCE_ENABLED             = DYNOMITEMANAGER_PRE + ".dyno.persistence.enabled";
+    private static final String CONFIG_PERSISTENCE_TYPE                = DYNOMITEMANAGER_PRE + ".dyno.persistence.type";
+    private static final String CONFIG_PERSISTENCE_DIR                 = DYNOMITEMANAGER_PRE + ".dyno.persistence.directory";
+
+    //VPC
+    private static final String CONFIG_INSTANCE_DATA_RETRIEVER        = DYNOMITEMANAGER_PRE + ".instanceDataRetriever";
 
 
     // Defaults 
@@ -160,8 +166,9 @@ public class DynomitemanagerConfiguration implements IConfiguration
     // Backup & Restore
     private static final boolean DEFAULT_BACKUP_ENABLED = false;
     private static final boolean DEFAULT_RESTORE_ENABLED = false;
-    private static final String DEFAULT_AOF_LOCATION = "/mnt/data/nfredis";
-    private static final String DEFAULT_BUCKET_NAME = "us-east-1.dynomite-backup-test";
+    //private static final String DEFAULT_BUCKET_NAME = "us-east-1.dynomite-backup-test";
+    private static final String DEFAULT_BUCKET_NAME = "dynomite-backup";
+    
     private static final String DEFAULT_BUCKET_FOLDER = "backup";
     private static final String DEFAULT_RESTORE_REPOSITORY_TYPE = "s3";
    
@@ -170,18 +177,21 @@ public class DynomitemanagerConfiguration implements IConfiguration
     private static final String DEFAULT_RESTORE_SOURCE_CLUSTER_NAME = "";
     private static final String DEFAULT_RESTORE_REPOSITORY_NAME = "testrepo";
     private static final String DEFAULT_RESTORE_TIME ="20101010";
-    private static final int DEFAULT_BACKUP_HOUR = 12;
+    private static final String DEFAULT_BACKUP_SCHEDULE = "day";
+    private static final int    DEFAULT_BACKUP_HOUR = 12;
     
     // Persistence
-    private static final boolean DEFAULT_PERSISTENCE_AOF_ENABLED = false;
+    private static final boolean DEFAULT_PERSISTENCE_ENABLED = false;
+    private static final String  DEFAULT_PERSISTENCE_TYPE = "aof";
+    private static final String  DEFAULT_PERSISTENCE_DIR = "/mnt/data/nfredis";
    
     private static final Logger logger = LoggerFactory.getLogger(DynomitemanagerConfiguration.class);
 
     
     private final String CLUSTER_NAME = System.getenv("NETFLIX_APP");
     private final String AUTO_SCALE_GROUP_NAME = System.getenv("AUTO_SCALE_GROUP");
-    private static final String DEFAULT_INSTANCE_DATA_RETRIEVER = "com.netflix.florida.sidecore.config.AwsInstanceDataRetriever";
-    private static final String VPC_INSTANCE_DATA_RETRIEVER = "com.netflix.florida.sidecore.config.VpcInstanceDataRetriever";
+    private static final String DEFAULT_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.AwsInstanceDataRetriever";
+    private static final String VPC_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever";
 
     private static String ASG_NAME = System.getenv("ASG_NAME");
     private static String REGION = System.getenv("EC2_REGION");
@@ -189,6 +199,8 @@ public class DynomitemanagerConfiguration implements IConfiguration
     private final InstanceDataRetriever retriever;
     private final ICredential provider;
     private final IConfigSource configSource;
+    private final InstanceEnvIdentity insEnvIdentity;
+
     
     // Cassandra default configuration
     private static final String DEFAULT_BOOTCLUSTER_NAME = "cass_dyno";
@@ -197,14 +209,60 @@ public class DynomitemanagerConfiguration implements IConfiguration
     private static final String DEFAULT_COMMA_SEPARATED_CASSANDRA_HOSTNAMES = "127.0.0.1";
     private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
      
+    
+
+    //= instance identity meta data
+    private String RAC, ZONE, PUBLIC_HOSTNAME, PUBLIC_IP, INSTANCE_ID, INSTANCE_TYPE;
+    private String NETWORK_MAC;  //Fetch metadata of the running instance's network interface    
+    
+    //== vpc specific   	
+    private String NETWORK_VPC;  //Fetch the vpc id of running instance
+    
+    
+
+    
     @Inject
     public DynomitemanagerConfiguration(ICredential provider, IConfigSource configSource, 
-    		InstanceDataRetriever retriever)
+    		InstanceDataRetriever retriever, InstanceEnvIdentity insEnvIdentity)
     {
     	this.retriever = retriever;
         this.provider = provider;
         this.configSource = configSource;
+        this.insEnvIdentity = insEnvIdentity;
+        		
+		
+	    RAC = retriever.getRac();
+	    ZONE = RAC;
+	    PUBLIC_HOSTNAME = retriever.getPublicHostname();
+	    PUBLIC_IP = retriever.getPublicIP();
+
+	    INSTANCE_ID = retriever.getInstanceId();
+	    INSTANCE_TYPE = retriever.getInstanceType();
+
+		NETWORK_MAC =  retriever.getMac();
+		if (insEnvIdentity.isNonDefaultVpc() || insEnvIdentity.isDefaultVpc()) {
+			NETWORK_VPC = retriever.getVpcId();
+			logger.info("vpc id for running instance: " + NETWORK_VPC);
+		}
     }
+    
+    private InstanceDataRetriever getInstanceDataRetriever() throws InstantiationException, IllegalAccessException, ClassNotFoundException
+    {
+    	String s = null;
+    	
+    	if (this.insEnvIdentity.isClassic()) {
+    		s = this.configSource.get(CONFIG_INSTANCE_DATA_RETRIEVER, DEFAULT_INSTANCE_DATA_RETRIEVER);
+    		
+    	} else if (this.insEnvIdentity.isNonDefaultVpc()) {
+    		s = this.configSource.get(CONFIG_INSTANCE_DATA_RETRIEVER, VPC_INSTANCE_DATA_RETRIEVER);
+    	} else {
+    		logger.error("environment cannot be found");
+    		throw new IllegalStateException("Unable to determine environemt (vpc, classic) for running instance.");
+    	}
+		return (InstanceDataRetriever)Class.forName(s).newInstance();
+
+    }
+
 
     public void initialize()
     {   
@@ -323,19 +381,19 @@ public class DynomitemanagerConfiguration implements IConfiguration
     @Override
     public String getZone()
     {
-        return this.retriever.getRac();
+        return ZONE;
     }
 
     @Override
     public String getHostname()
     {
-        return this.retriever.getPublicHostname();
+        return PUBLIC_HOSTNAME;
     }
 
     @Override
     public String getInstanceName()
     {
-        return this.retriever.getInstanceId();
+        return INSTANCE_ID;
     }
 
     @Override
@@ -397,15 +455,11 @@ public class DynomitemanagerConfiguration implements IConfiguration
     	return configSource.get(CONFIG_ACL_GROUP_NAME, this.getAppName());
     }
    
+    
     @Override
     public String getHostIP()
     {
-        return this.retriever.getPublicIP();
-    }
-    
-    // VPC 
-    public String getVpcId() {
-      return this.retriever.getVpcId();
+        return PUBLIC_IP;
     }
 
     @Override
@@ -582,11 +636,11 @@ public class DynomitemanagerConfiguration implements IConfiguration
 
     
     // Backup & Restore Implementations
-        
+    
     @Override
-    public String getAOFLocation()
+    public String getPersistenceLocation()
     {
-    	return configSource.get(CONFIG_AOF_DIR, DEFAULT_AOF_LOCATION);
+    	return configSource.get(CONFIG_PERSISTENCE_DIR, DEFAULT_PERSISTENCE_DIR);
     }
     
     @Override
@@ -610,6 +664,20 @@ public class DynomitemanagerConfiguration implements IConfiguration
     public boolean isRestoreEnabled() {
         return configSource.get(CONFIG_RESTORE_ENABLED, DEFAULT_RESTORE_ENABLED);
     }
+    
+    @Override
+    public String getBackupSchedule()
+    {
+    	if (CONFIG_BACKUP_SCHEDULE != null &&
+    			!"day".equals(CONFIG_BACKUP_SCHEDULE) &&
+    			!"week".equals(CONFIG_BACKUP_SCHEDULE)) {
+
+      	   logger.error("The persistence schedule FP is wrong: day or week");
+      	   logger.error("Defaulting to day");
+           return configSource.get("day", DEFAULT_BACKUP_SCHEDULE);
+    	}
+        return configSource.get(CONFIG_BACKUP_SCHEDULE, DEFAULT_BACKUP_SCHEDULE);
+    }
      
     @Override
     public int getBackupHour()
@@ -624,10 +692,32 @@ public class DynomitemanagerConfiguration implements IConfiguration
     }
     
     @Override
-    public boolean isPersistenceAofEnabled() {
-    	return configSource.get(CONFIG_PERSISTENCE_AOF_ENABLED, DEFAULT_PERSISTENCE_AOF_ENABLED);
+    public boolean isPersistenceEnabled() {
+    	return configSource.get(CONFIG_PERSISTENCE_ENABLED, DEFAULT_PERSISTENCE_ENABLED);
     }
     
+    @Override
+    public boolean isAof() {
+    	
+    	if (configSource.get(CONFIG_PERSISTENCE_TYPE, DEFAULT_PERSISTENCE_TYPE).equals("rdb")) {
+    		return false;
+    	}
+    	else if (configSource.get(CONFIG_PERSISTENCE_TYPE, DEFAULT_PERSISTENCE_TYPE).equals("aof")) {
+    		return true;
+    	}
+    	else {
+     	   logger.error("The persistence type FP is wrong: aof or rdb");
+     	   logger.error("Defaulting to rdb");
+     	   return false;
+    	}
+    	
+    }
+    
+    // VPC 
+    public String getVpcId() {
+      return NETWORK_VPC;
+    }
+   
     // Cassandra configuration for token management
     @Override
     public String getCassandraKeyspaceName() {
@@ -648,8 +738,5 @@ public class DynomitemanagerConfiguration implements IConfiguration
     public boolean isEurekaHostSupplierEnabled() {
     	return configSource.get(CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED, DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED);
     }
-    
-
-    
     
 }
