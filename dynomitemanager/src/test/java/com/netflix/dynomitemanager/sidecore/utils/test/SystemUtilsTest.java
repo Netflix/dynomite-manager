@@ -1,4 +1,4 @@
-package com.netflix.dynomitemanager.sidecore.utils;
+package com.netflix.dynomitemanager.sidecore.utils.test;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,8 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.netflix.dynomitemanager.sidecore.utils.SystemUtils;
 
 /**
  * Unit Tests for SystemUtils

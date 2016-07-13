@@ -1,7 +1,9 @@
-package com.netflix.dynomitemanager.sidecore.utils;
+package com.netflix.dynomitemanager.sidecore.utils.test;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import com.netflix.dynomitemanager.sidecore.utils.RetryableCallable;
 
 /**
  * Unit Tests for RetryableCallable
