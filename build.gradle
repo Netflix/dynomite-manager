@@ -23,6 +23,17 @@ subprojects {
     apply plugin: 'nebula.provided-base'
     apply plugin: 'nebula.dependency-lock'
 
+    test {
+        testLogging {
+            events "passed", "skipped", "failed", "standardOut", "standardError"
+            afterSuite { desc, result ->
+	      if (!desc.parent) { // will match the outermost suite
+        	println "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+	      }
+            }
+       }
+    }
+
     group = 'com.netflix.dynomite-manager'
 
     repositories {
@@ -81,5 +92,5 @@ subprojects {
  
     }
 
-
 }
+
