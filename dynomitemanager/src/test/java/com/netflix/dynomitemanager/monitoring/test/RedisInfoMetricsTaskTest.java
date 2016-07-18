@@ -33,8 +33,10 @@ public class RedisInfoMetricsTaskTest {
 	@Test
 	public void executeTest() throws Exception{
 		
-		 File file = new File(new File(".").getCanonicalPath() + "/src/test/resources/redis_info.txt");
-		 final String info = new String(Files.readAllBytes((Paths.get(file.getPath()))));
+		int metricsCountSampleRedisInfo = 26;
+		
+		File file = new File(new File(".").getCanonicalPath() + "/src/test/resources/redis_info.txt");
+		final String info = new String(Files.readAllBytes((Paths.get(file.getPath()))));
 		
 		new Expectations() {{
 		   jedis.connect();
@@ -55,7 +57,7 @@ public class RedisInfoMetricsTaskTest {
 		mimt.execute();
 		
 		Assert.assertNotNull(DefaultMonitorRegistry.getInstance().getRegisteredMonitors());
-		Assert.assertEquals(26, DefaultMonitorRegistry.getInstance().getRegisteredMonitors().size());
+		Assert.assertEquals(metricsCountSampleRedisInfo, DefaultMonitorRegistry.getInstance().getRegisteredMonitors().size());
 		
 	}
 	
