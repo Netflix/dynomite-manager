@@ -18,20 +18,34 @@ package com.netflix.dynomitemanager;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.inject.Singleton;
+import org.joda.time.DateTime;
+
 
 /**
  * Contains the state of the health of processed managed by Florida, and
  * maintains the isHealthy flag used for reporting discovery health check.
+ *
  */
 @Singleton
 public class InstanceState {
     private final AtomicBoolean isSideCarProcessAlive = new AtomicBoolean(false);
     private final AtomicBoolean isBootstrapping = new AtomicBoolean(false);
+    private final AtomicBoolean isBootstrapSuccesful = new AtomicBoolean(false);
+    private final AtomicBoolean firstBootstrap = new AtomicBoolean(true);
     private final AtomicBoolean isBackup = new AtomicBoolean(false);
-    private final AtomicBoolean isRestore = new AtomicBoolean (false);
+    private final AtomicBoolean isBackupSuccessful = new AtomicBoolean(false);
+    private final AtomicBoolean firstBackup = new AtomicBoolean(true);
+    private final AtomicBoolean isRestore = new AtomicBoolean(false);
+    private final AtomicBoolean isRestoreSuccessful = new AtomicBoolean(false);
+    private final AtomicBoolean firstRestore = new AtomicBoolean(true);
     private final AtomicBoolean isStorageProxyAlive = new AtomicBoolean(false);
     private final AtomicBoolean isStorageProxyProcessAlive = new AtomicBoolean(false);
     private final AtomicBoolean isStorageAlive = new AtomicBoolean(false);
+    
+    private long bootstrapTime;
+    private long backupTime;
+    private long restoreTime;
+    
     // This is true if storage proxy and storage are alive.
     private final AtomicBoolean isHealthy = new AtomicBoolean(false);
     // State of whether the rest endpoints /admin/stop or /admin/start are invoked
@@ -43,6 +57,8 @@ public class InstanceState {
         return "InstanceState{" +
                 "isSideCarProcessAlive=" + isSideCarProcessAlive +
                 ", isBootstrapping=" + isBootstrapping +
+                ", isBackingup=" + isBackup +
+                ", isRestoring=" + isRestore +
                 ", isStorageProxyAlive=" + isStorageProxyAlive +
                 ", isStorageProxyProcessAlive=" + isStorageProxyProcessAlive +
                 ", isStorageAlive=" + isStorageAlive +
@@ -63,29 +79,104 @@ public class InstanceState {
     public int metricIsSideCarProcessAlive() {
         return isSideCarProcessAlive() ? 1 : 0;
     }
-
+   
+    /* Boostrap */
     public boolean isBootstrapping() {
         return isBootstrapping.get();
     }
     
+    public boolean isBootstrapSuccessful() {
+    	return isBootstrapSuccesful.get();
+    }
+    
+    public boolean firstBootstrap() {
+    	return firstBootstrap.get();
+    }    
+    
+    public long getBootstrapTime() {
+    	return bootstrapTime;
+    }
+    
+    public void setBootstrapping(boolean isBootstrapping) {
+        this.isBootstrapping.set(isBootstrapping);
+    }
+    
+    public void setBootstrapStatus(boolean isBootstrapSuccesful) {
+        this.isBootstrapSuccesful.set(isBootstrapSuccesful);
+    }
+    
+    public void setFirstBootstrap(boolean firstBootstrap) {
+    	this.firstBootstrap.set(firstBootstrap); 
+    }
+    
+    public void setBootstrapTime(DateTime bootstrapTime) {
+    	this.bootstrapTime = bootstrapTime.getMillis();
+    }
+    
+    /* Backup */
     public boolean isBackingup() {
     	return isBackup.get();
     }
     
-    public boolean isRestoring() {
-    	return isRestore.get();
+    public boolean isBackupSuccessful() {
+    	return isBackupSuccessful.get();
     }
-
-    public void setBootstrapping(boolean isBootstrapping) {
-        this.isBootstrapping.set(isBootstrapping);
+    
+    public boolean firstBackup() {
+    	return firstBackup.get();
+    }    
+    
+    public long getBackupTime() {
+    	return backupTime;
     }
     
     public void setBackingup(boolean isBackup) {
     	this.isBackup.set(isBackup);
     }
     
+    public void setBackUpStatus(boolean isBackupSuccessful) {
+    	this.isBackupSuccessful.set(isBackupSuccessful);
+    }
+    
+    public void setFirstBackup(boolean firstBackup) {
+    	this.firstBackup.set(firstBackup); 
+    }
+    
+    public void setBackupTime(DateTime backupTime) {
+    	this.backupTime = backupTime.getMillis();
+    }
+    
+    /* Restore */
+    public boolean isRestoring() {
+    	return isRestore.get();
+    }
+    
+    public boolean isRestoreSuccessful() {
+    	return isRestoreSuccessful.get();
+    }
+    
+    public boolean firstRestore() {
+    	return firstRestore.get();
+    }
+    
+    public long getRestoreTime() {
+    	return restoreTime;
+    }
+
     public void setRestoring(boolean isRestoring) {
     	this.isRestore.set(isRestoring);
+    }
+    
+    public void setRestoreStatus(boolean isRestoreSuccessful) {
+     this.isRestoreSuccessful.set(isRestoreSuccessful);
+    }
+    
+    public void setFirstRestore(boolean firstRestore) {
+    	this.firstRestore.set(firstRestore); 
+    }  
+
+    public void setRestoreTime(DateTime restoreTime) {
+    	this.restoreTime = restoreTime.getMillis();
     }
 
     //@Monitor(name="bootstrapping", type=DataSourceType.GAUGE)
@@ -141,7 +232,7 @@ public class InstanceState {
     private void setHealthy() {
         this.isHealthy.set(isStorageProxyAlive() && isStorageAlive());
     }
-
+    
     //@Monitor(name="healthy", type=DataSourceType.GAUGE)
     public int metricIsHealthy() {
         return isHealthy() ? 1 : 0;
@@ -159,4 +250,5 @@ public class InstanceState {
     public int metricIsProcessMonitoringSuspended() {
         return getIsProcessMonitoringSuspended() ? 1 : 0;
     }
+
 }

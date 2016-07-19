@@ -30,15 +30,16 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask;
+import com.netflix.dynomitemanager.defaultimpl.StorageProcessManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import redis.clients.jedis.Jedis;
 
 
 @Singleton
@@ -53,6 +54,9 @@ public class WarmBootstrapTask extends Task
     private final InstanceIdentity ii;
     private final InstanceState state;
     private final Sleeper sleeper;
+    
+    @Inject
+    private StorageProcessManager storageProcessMgr;
 
     @Inject
     public WarmBootstrapTask(IConfiguration config, IAppsInstanceFactory appsInstanceFactory,
@@ -71,24 +75,35 @@ public class WarmBootstrapTask extends Task
     public void execute() throws IOException
     {
         logger.info("Running warmbootstrapping ...");
+        this.state.setFirstBootstrap(false);
+        this.state.setBootstrapTime(DateTime.now());
+        
+
+        
         // Just to be sure testing again
         if (!state.isStorageAlive()) {
+            // starting storage
+        	this.storageProcessMgr.start();         	
             logger.info("Redis is up ---> Starting warm bootstrap.");
-            this.state.setBootstrapping(true);
-
-            //start dynProcess if it is not running.
-            this.dynProcess.start(false);
-            //sleep to make sure Dynomite process is up, Storage process is up.
-            this.sleeper.sleepQuietly(15000);
             
-            String[] peers = getPeersWithSameTokensRange();
+            // setting the status to bootsraping
+            this.state.setBootstrapping(true);
+        
+            //sleep to make sure Storage process is up.
+            this.sleeper.sleepQuietly(5000);
+            
+            String[] peers = getLocalPeersWithSameTokensRange();
             
             //try one node only for now 
             //TODOs: if this peer is not good, try the next one until we can get the data
             if (peers != null && peers.length != 0) {
-                this.storageProxy.warmUpStorage(peers);
+            	
+            	// if the warm up was successful set the corresponding state
+                if(this.storageProxy.warmUpStorage(peers, dynProcess) == true){
+                    this.state.setBootstrapStatus(true);
+                }
             } else {
-                logger.warn("Unable to find any peer for downstreaming!!!!");
+                logger.error("Unable to find any peer with the same token!");
             }
             
             /*
@@ -114,11 +129,11 @@ public class WarmBootstrapTask extends Task
         return new SimpleTimer(JOBNAME, 10* 60*1000);
     }
     
-    private String[] getPeersWithSameTokensRange() {
+    private String[] getLocalPeersWithSameTokensRange() {
         String tokens = ii.getTokens();
         
         logger.info("Warming up node's own token(s) : " + tokens);
-        List<AppsInstance> instances = appsInstanceFactory.getAllIds(config.getAppName());
+        List<AppsInstance> instances = appsInstanceFactory.getLocalDCIds(config.getAppName(), config.getRegion());
         List<String> peers = new ArrayList<String>();
         
         for(AppsInstance ins : instances) {
@@ -134,3 +149,4 @@ public class WarmBootstrapTask extends Task
 
     
 }
+
