@@ -37,6 +37,8 @@ public abstract class RetryableCallable<T> implements Callable<T>
 
     public RetryableCallable(int retrys, long waitTime)
     {
+    	if(retrys<=-1) throw new RuntimeException(new IllegalAccessException("Retrys should be >= 0"));
+    	if(waitTime<=-1) throw new RuntimeException(new IllegalAccessException("waitTime should be >= 0"));
         set(retrys, waitTime);
     }
 

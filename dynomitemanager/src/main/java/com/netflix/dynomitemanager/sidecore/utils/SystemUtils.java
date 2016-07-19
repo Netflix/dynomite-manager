@@ -99,7 +99,8 @@ public class SystemUtils
 
     public static byte[] md5(byte[] buf)
     {
-        try
+        if (buf==null) throw new IllegalArgumentException("buffer cannot be null!");
+    	try
         {
             MessageDigest mdigest = MessageDigest.getInstance("MD5");
             mdigest.update(buf, 0, buf.length);
@@ -116,6 +117,7 @@ public class SystemUtils
      */
     public static String md5(File file)
     {
+    	if (file==null) throw new IllegalArgumentException("file cannot be null");
         try
         {
             HashCode hc = Files.hash(file, Hashing.md5());
@@ -129,7 +131,8 @@ public class SystemUtils
 
     public static String toHex(byte[] digest)
     {
-        StringBuffer sb = new StringBuffer(digest.length * 2);
+    	if (digest==null) throw new IllegalArgumentException("digest cannot be null");
+    	StringBuffer sb = new StringBuffer(digest.length * 2);
         for (int i = 0; i < digest.length; i++)
         {
             String hex = Integer.toHexString(digest[i]);
@@ -148,6 +151,7 @@ public class SystemUtils
 
     public static String toBase64(byte[] md5)
     {
+    	if (md5==null) throw new IllegalArgumentException("md5 cannot be null");
         byte encoded[] = Base64.encodeBase64(md5, false);
         return new String(encoded);
     }

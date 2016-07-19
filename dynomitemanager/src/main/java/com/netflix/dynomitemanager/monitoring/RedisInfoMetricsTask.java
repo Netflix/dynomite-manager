@@ -58,20 +58,22 @@ public class RedisInfoMetricsTask extends Task {
 	private final ConcurrentHashMap<String, LongGauge> redisInfoGaugeMetrics = new ConcurrentHashMap<String, LongGauge>();
 	private final ConcurrentHashMap<String, NumericMonitor<Number>> redisInfoCounterMap = new ConcurrentHashMap<String, NumericMonitor<Number>>();
 	
+	private JedisFactory jedisFactory;
 	
     /**
 	 * Default constructor
 	 * @param config
 	 */
     @Inject
-	public RedisInfoMetricsTask(IConfiguration config) {
+	public RedisInfoMetricsTask(IConfiguration config,JedisFactory jedisFactory) {
     	super(config);
+    	this.jedisFactory = jedisFactory;
 	}
 
 	@Override
 	public void execute() throws Exception {
 		
-		Jedis jedis = new Jedis("localhost", 22122);
+		Jedis jedis = jedisFactory.newInstance();
 		try {
 			jedis.connect();
 			String s = jedis.info();
