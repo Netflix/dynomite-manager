@@ -31,7 +31,7 @@ import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 
 /**
- * Factory to use cassandra for managing instance data 
+ * Factory to use Cassandra for managing instance data 
  */
 
 @Singleton
@@ -58,6 +58,18 @@ public class CassandraInstanceFactory implements IAppsInstanceFactory
         sort(return_);
         return return_;
     }
+    
+    public List<AppsInstance> getLocalDCIds(String appName, String region)
+    {
+        List<AppsInstance> return_ = new ArrayList<AppsInstance>();
+        for (AppsInstance instance : dao.getLocalDCInstances(appName, region)) {
+            return_.add(instance);
+        }
+
+        sort(return_);
+        return return_;
+    }
+
 
     public void sort(List<AppsInstance> return_)
     {

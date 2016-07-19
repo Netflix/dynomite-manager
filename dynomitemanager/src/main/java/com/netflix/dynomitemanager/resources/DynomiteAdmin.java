@@ -31,10 +31,12 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 import com.google.inject.Inject;
 import com.netflix.dynomitemanager.IFloridaProcess;
@@ -42,11 +44,12 @@ import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.StorageProcessManager;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
-import com.netflix.dynomitemanager.backup.RestoreFromS3Task;
-import com.netflix.dynomitemanager.backup.SnapshotBackup;
+import com.netflix.dynomitemanager.sidecore.backup.RestoreTask;
+import com.netflix.dynomitemanager.sidecore.backup.SnapshotTask;
 import com.netflix.dynomitemanager.resources.DynomiteAdmin;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskScheduler;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+
 
 
 @Path("/v1/admin")
@@ -62,8 +65,8 @@ public class DynomiteAdmin
     private InstanceIdentity ii;
     private final InstanceState instanceState;
     private final TaskScheduler scheduler;
-    private SnapshotBackup snapshotBackup;
-    private RestoreFromS3Task restoreBackup;
+    private SnapshotTask snapshotBackup;
+    private RestoreTask restoreBackup;
     private IStorageProxy storage;
 
     
@@ -73,10 +76,8 @@ public class DynomiteAdmin
     @Inject
     public DynomiteAdmin(IConfiguration config, IFloridaProcess dynoProcess,
                          InstanceIdentity ii, InstanceState instanceState,
-                         SnapshotBackup snapshotBackup, RestoreFromS3Task restoreBackup,
+                         SnapshotTask snapshotBackup, RestoreTask restoreBackup,
                          TaskScheduler scheduler, IStorageProxy storage)
-
-                         
     {
         this.config = config;
         this.dynoProcess = dynoProcess;
@@ -86,7 +87,6 @@ public class DynomiteAdmin
         this.restoreBackup = restoreBackup;
         this.scheduler = scheduler;
         this.storage = storage;
-
     }
 
     @GET
@@ -221,39 +221,38 @@ public class DynomiteAdmin
     }
     
     @GET
-    @Path("/s3backup")
-    public Response doS3Backup()
+    @Path("/backup")
+    public Response doBackup()
     {
     	try
     	{
-    		logger.info("REST call: S3 backups");
+    		logger.info("REST call: backups");
             this.snapshotBackup.execute();
             return Response.ok(REST_SUCCESS, MediaType.APPLICATION_JSON).build();
     	}
         catch (Exception e)
         {
-            logger.error("Error while executing s3 backups from REST call", e);
+            logger.error("Error while executing backups from REST call", e);
             return Response.serverError().build();
         }
     }
     
     @GET
-    @Path("/s3restore")
-    public Response doS3Restore()
+    @Path("/restore")
+    public Response doRestore()
     {
     	try
     	{
-    		logger.info("REST call: S3 restore");
+    		logger.info("REST call: restore");
     		this.restoreBackup.execute();
             return Response.ok(REST_SUCCESS, MediaType.APPLICATION_JSON).build();
     	}
         catch (Exception e)
         {
-            logger.error("Error while executing s3 restores from REST call", e);
+            logger.error("Error while executing restores from REST call", e);
             return Response.serverError().build();
         }
     }
-    
     
     @GET
     @Path("/takesnapshot")
@@ -267,9 +266,98 @@ public class DynomiteAdmin
     	}
         catch (Exception e)
         {
-            logger.error("Error while executing data persistence from REST call", e);
+            logger.error("Error executing data persistence from REST call", e);
             return Response.serverError().build();
         }
+    }
+    
+    @GET
+    @Path("/Status")
+    public Response floridaStatus()
+    {
+    	try{
+    		JSONObject statusJson = new JSONObject();
+    		
+    		/* Warm up status */
+    		JSONObject warmupJson = new JSONObject();
+    		if (!this.instanceState.firstBootstrap()){
+    		    if (this.instanceState.isBootstrapping()) {
+    		    	warmupJson.put("status", "pending");
+    		    }
+    		    else if (!this.instanceState.isBootstrapping() && !this.instanceState.isBootstrapSuccessful()) {
+    		    	warmupJson.put("status", "unsuccessful");
+        		}
+    		    else if (!this.instanceState.isBootstrapping() && this.instanceState.isBootstrapSuccessful()) {
+    		    	warmupJson.put("status", "completed");
+        		}
+    		    warmupJson.put("time",this.instanceState.getBootstrapTime());
+    		}
+    		else{
+    			warmupJson.put("status", "not started");
+    		}
+    		statusJson.put("warmup", warmupJson);
+
+    		/* backup status */
+    		JSONObject backupJson = new JSONObject();
+        	if (!this.instanceState.firstBackup()){
+    		    if (this.instanceState.isBackingup()){
+    		    	backupJson.put("status", "pending");
+        		}
+    		    else if (!this.instanceState.isBackingup() && !this.instanceState.isBackupSuccessful()) {
+    		    	backupJson.put("status", "unsuccessful");
+        		}
+    		    else if (!this.instanceState.isBackingup() && this.instanceState.isBackupSuccessful()){
+    		    	backupJson.put("status", "completed");
+        		}
+    		    backupJson.put("time",this.instanceState.getBackupTime());
+        	}
+        	else{
+        		backupJson.put("status", "not started");
+        	}
+    		statusJson.put("backup", backupJson);
+
+    		
+    		/* restore status */
+    		JSONObject restoreJson = new JSONObject();
+        	if (!this.instanceState.firstRestore()){
+    		    if (this.instanceState.isRestoring()) {
+    		    	restoreJson.put("status", "pending");
+    		    }
+    		    else if (!this.instanceState.isRestoring() && !this.instanceState.isRestoreSuccessful()) {
+    		    	restoreJson.put("status", "unsuccessful");
+    		    }
+    		    else if (!this.instanceState.isRestoring() && this.instanceState.isRestoreSuccessful()){
+    		    	restoreJson.put("status", "completed");
+    		    }
+    		    restoreJson.put("time",this.instanceState.getRestoreTime());
+
+        	}
+        	else{
+        		restoreJson.put("status","not started");
+        	}
+    		statusJson.put("restore", restoreJson);
+	
+    		
+    		/* Dynomite status */
+    		statusJson.put("dynomiteAlive", this.instanceState.isStorageProxyProcessAlive() ? true : false);
+    		
+    		/* Redis status */
+    		statusJson.put("storageAlive", this.instanceState.isStorageAlive() ? true : false);
+    		
+    		/* Overall status */
+    		statusJson.put("healthy", this.instanceState.isHealthy() ? true : false);
+    		
+    		
+    		logger.info("REST call: Florida Status");
+            return Response.ok(statusJson, MediaType.APPLICATION_JSON).build();
+
+    	}
+        catch (Exception e)
+        {
+            logger.error("Error requesting Florida status from REST call", e);
+            return Response.serverError().build();
+        }
+
     }
     
 }

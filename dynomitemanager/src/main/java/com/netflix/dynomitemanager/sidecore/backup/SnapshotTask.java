@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.netflix.dynomitemanager.backup;
+package com.netflix.dynomitemanager.sidecore.backup;
 
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
 
@@ -22,19 +22,13 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.joda.time.DateTime;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.S3ResponseMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.CreateBucketRequest;
-import com.amazonaws.services.s3.model.GetBucketLocationRequest;
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
+
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -44,11 +38,10 @@ import com.google.inject.name.Named;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
-import com.netflix.dynomitemanager.backup.SnapshotBackup;
-import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
+import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
@@ -58,35 +51,38 @@ import com.netflix.dynomitemanager.sidecore.scheduler.CronTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.CronTimer.DayOfWeek;
 
 /**
- * Task for taking snapshots to S3
+ * Task for taking snapshots
  */
 @Singleton
-public class SnapshotBackup extends Task
+public class SnapshotTask extends Task
 {
-	public static final String TaskName =  "SnapshotBackup";
-	private static final Logger logger = LoggerFactory.getLogger(SnapshotBackup.class);
+	public static final String TaskName =  "SnapshotTask";
+	private static final Logger logger = LoggerFactory.getLogger(SnapshotTask.class);
     private final ThreadSleeper sleeper = new ThreadSleeper();
     private final ICredential cred;
     private final InstanceIdentity iid;
     private final InstanceState state;
     private final IStorageProxy storageProxy;
+    private final Backup backup;
 
     private final int storageRetries = 5;
+
     
     @Inject
-    public SnapshotBackup(IConfiguration config, InstanceIdentity id, ICredential cred, InstanceState state,
-    		IStorageProxy storageProxy)
+    public SnapshotTask(IConfiguration config, InstanceIdentity id, ICredential cred, InstanceState state,
+    		IStorageProxy storageProxy, Backup backup)
     {
         super(config);
         this.cred = cred;
         this.iid = id;
         this.state = state;
         this.storageProxy = storageProxy;
+        this.backup = backup;
     }
     
     public void execute() throws Exception
     {
-    	
+    	this.state.setFirstBackup(false);
     	if(!state.isRestoring() && !state.isBootstrapping()){
     	   /** Iterate five times until storage (Redis) is ready.
     	    *  We need storage to be ready to dumb the data,
@@ -102,6 +98,12 @@ public class SnapshotBackup extends Task
                }
                else{
             	   this.state.setBackingup(true);
+            	   /** 
+            	    * Set the status of the backup to false every time we start a backup.
+            	    * This will ensure that prior to backup we recapture the status of the backup.
+            	    */
+                   this.state.setBackUpStatus(false);
+
             	   // the storage proxy takes a snapshot or compacts data
             	   boolean snapshot = this.storageProxy.takeSnapshot();
                    File file = null;
@@ -113,7 +115,13 @@ public class SnapshotBackup extends Task
                    }
                    // upload the data to S3
                    if (file.length() > 0 && snapshot == true) {
-                	   if(uploadToS3(file)){
+                       DateTime now = DateTime.now();
+                       DateTime todayStart = now.withTimeAtStartOfDay();
+                       this.state.setBackupTime(todayStart);
+
+                       
+                	   if(this.backup.upload(file, todayStart)){
+                		   this.state.setBackUpStatus(true);
                 		   logger.info("S3 backup status: Completed!");
                 	   }
                 	   else{
@@ -158,67 +166,7 @@ public class SnapshotBackup extends Task
         }
         return new CronTimer(hour, 1, 0);
  
-    }
-
-    
-    /**
-     * Uses the Amazon S3 API to upload the AOF/RDB to S3
-     * Filename: Backup location + DC + Rack + App + Token
-     */
-    private boolean uploadToS3(File file)
-    {
-    	logger.info("Snapshot backup: sending " + file.length() + " bytes to S3");
-        DateTime now = DateTime.now();
-        DateTime todayStart = now.withTimeAtStartOfDay();
-        
-        /* Key name is comprised of the 
-        * backupDir + DC + Rack + token + Date
-        */
-        String keyName = 
-        		config.getBackupLocation() + "/" +
-        		iid.getInstance().getDatacenter() + "/" +
-        		iid.getInstance().getRack() + "/" +
-        		iid.getInstance().getToken() + "/" +
-        		todayStart.getMillis();
-
-        // Get bucket location.
-        logger.info("Key in Bucket: " + keyName);
-        logger.info("S3 Bucket Name:" + config.getBucketName());
-
-    	AmazonS3Client s3Client = new AmazonS3Client(this.cred.getAwsCredentialProvider());
-        try {
-            // Checking if the S3 bucket exists, and if does not, then we create it
-            if(!(s3Client.doesBucketExist(config.getBucketName()))) {
-      	       logger.error("Bucket with name: " + config.getBucketName() + " does not exist");
-      	       return false;
-            }
-            else {
-                logger.info("Uploading data to S3\n");
-
-         	    s3Client.putObject(new PutObjectRequest(
-        		            config.getBucketName(), keyName, file));
-         	    return true;
-            }
-       } catch (AmazonServiceException ase) {
-    	   
-    	   logger.error("AmazonServiceException;" +
-           		" request made it to Amazon S3, but was rejected with an error ");
-    	   logger.error("Error Message:    " + ase.getMessage());
-    	   logger.error("HTTP Status Code: " + ase.getStatusCode());
-    	   logger.error("AWS Error Code:   " + ase.getErrorCode());
-    	   logger.error("Error Type:       " + ase.getErrorType());
-    	   logger.error("Request ID:       " + ase.getRequestId());
-    	   return false;
-           
-       } catch (AmazonClientException ace) {
-    	   logger.error("AmazonClientException;"+
-           		" the client encountered " +
-                   "an internal error while trying to " +
-                   "communicate with S3, ");
-    	   logger.error("Error Message: " + ace.getMessage());
-    	   return false;
-       }
-    }
+    }  
    
 }
 

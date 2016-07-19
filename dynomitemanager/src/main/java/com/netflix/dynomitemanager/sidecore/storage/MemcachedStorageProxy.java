@@ -15,6 +15,8 @@
  */
 package com.netflix.dynomitemanager.sidecore.storage;
 
+import com.netflix.dynomitemanager.IFloridaProcess;
+
 public class MemcachedStorageProxy implements IStorageProxy {
 
     @Override
@@ -28,10 +30,10 @@ public class MemcachedStorageProxy implements IStorageProxy {
     }
 
     @Override
-    public boolean warmUpStorage(String[] peers) {
-        // TODO Auto-generated method stub
+    public boolean warmUpStorage(String[] peers, IFloridaProcess dynProcess) {
         return false;
     }
+    
     
     @Override
     public boolean resetStorage() {
