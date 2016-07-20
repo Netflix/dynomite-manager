@@ -251,6 +251,18 @@ public class InstanceDataDAOCassandra
 		}
 		return null;
 	}
+	
+	public Set<AppsInstance> getLocalDCInstances(String app, String region)
+	{
+		Set<AppsInstance> set = getAllInstances(app);
+		Set<AppsInstance> returnSet = new HashSet<AppsInstance>();
+
+		for (AppsInstance ins : set) {
+			if (ins.getDatacenter().equals(region))
+				returnSet.add(ins);
+		}
+		return returnSet;
+	}
 
 	public Set<AppsInstance> getAllInstances(String app)
 	{

@@ -26,14 +26,14 @@ import com.netflix.dynomitemanager.monitoring.RedisInfoMetricsTask;
 import com.netflix.dynomitemanager.monitoring.ServoMetricsTask;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.aws.UpdateSecuritySettings;
+import com.netflix.dynomitemanager.sidecore.backup.SnapshotTask;
+import com.netflix.dynomitemanager.sidecore.backup.RestoreTask;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskScheduler;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessMonitorTask;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.sidecore.utils.ProxyAndStorageResetTask;
 import com.netflix.dynomitemanager.sidecore.utils.TuneTask;
 import com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask;
-import com.netflix.dynomitemanager.backup.RestoreFromS3Task;
-import com.netflix.dynomitemanager.backup.SnapshotBackup;
 import com.netflix.servo.DefaultMonitorRegistry;
 import com.netflix.servo.monitor.Monitors;
 
@@ -106,8 +106,8 @@ public class FloridaServer
         // Determine if we need to restore from backup else start Dynomite.
         if (config.isRestoreEnabled()) {
     		logger.info("Restore is enabled.");
-            scheduler.runTaskNow(RestoreFromS3Task.class); //restore from the AWS
-            logger.info("Scheduled task " + RestoreFromS3Task.JOBNAME);
+            scheduler.runTaskNow(RestoreTask.class); //restore from the AWS
+            logger.info("Scheduled task " + RestoreTask.TaskName);
     	} else { //no restores needed
     		logger.info("Restore is disabled.");
 
@@ -129,7 +129,7 @@ public class FloridaServer
         // Backup       		
         if (config.isBackupEnabled() && config.getBackupHour() >= 0)
         {
-            scheduler.addTask(SnapshotBackup.TaskName, SnapshotBackup.class, SnapshotBackup.getTimer(config));
+            scheduler.addTask(SnapshotTask.TaskName, SnapshotTask.class, SnapshotTask.getTimer(config));
         }
 
         // Metrics

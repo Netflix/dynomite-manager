@@ -18,18 +18,15 @@ package com.netflix.dynomitemanager.sidecore.utils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.InstanceState;
-import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 
 @Singleton
 public class FloridaHealthCheckHandler implements com.netflix.karyon.spi.HealthCheckHandler {
 
     private InstanceState state;    
-    private final IStorageProxy storageProxy;
     
     @Inject
-    public FloridaHealthCheckHandler(InstanceState ss, IStorageProxy storageProxy) {
+    public FloridaHealthCheckHandler(InstanceState ss) {
         this.state = ss;
-        this.storageProxy = storageProxy;
     }
     
     @Override

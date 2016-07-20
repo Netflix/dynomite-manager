@@ -38,9 +38,15 @@ import com.netflix.dynomitemanager.identity.CassandraInstanceFactory;
 import com.netflix.dynomitemanager.identity.DefaultVpcInstanceEnvIdentity;
 import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
 import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
+import com.netflix.dynomitemanager.monitoring.JedisFactory;
+import com.netflix.dynomitemanager.monitoring.SimpleJedisFactory;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
 import com.netflix.dynomitemanager.sidecore.aws.IAMCredential;
+import com.netflix.dynomitemanager.sidecore.backup.Backup;
+import com.netflix.dynomitemanager.sidecore.backup.Restore;
+import com.netflix.dynomitemanager.sidecore.backup.S3Backup;
+import com.netflix.dynomitemanager.sidecore.backup.S3Restore;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
@@ -130,6 +136,11 @@ public class InjectedWebListener extends GuiceServletContextListener {
 
  //           binder().bind(GuiceContainer.class).asEagerSingleton();
  //           binder().bind(GuiceJobFactory.class).asEagerSingleton();
+            
+            binder().bind(JedisFactory.class).to(SimpleJedisFactory.class);
+            
+            binder().bind(Backup.class).to(S3Backup.class);
+            binder().bind(Restore.class).to(S3Restore.class);
 
         }
     }

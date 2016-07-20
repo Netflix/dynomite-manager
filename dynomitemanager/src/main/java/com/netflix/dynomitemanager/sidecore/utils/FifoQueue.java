@@ -25,7 +25,7 @@ public class FifoQueue<E extends Comparable<E>> extends TreeSet<E>
 
     public FifoQueue(int capacity)
     {
-        super(new Comparator<E>()
+    	super(new Comparator<E>()
         {
             @Override
             public int compare(E o1, E o2)
@@ -33,12 +33,18 @@ public class FifoQueue<E extends Comparable<E>> extends TreeSet<E>
                 return o1.compareTo(o2);
             }
         });
+    	validateCapacity(capacity);
         this.capacity = capacity;
     }
 
+    private void validateCapacity(int capacity){
+    	if (capacity <=0 ) throw new IllegalArgumentException("Capacity must be >= 1");
+    }
+    
     public FifoQueue(int capacity, Comparator<E> comparator)
     {
         super(comparator);
+        validateCapacity(capacity);
         this.capacity = capacity;
     }
 
