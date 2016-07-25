@@ -102,6 +102,8 @@ public class DynomitemanagerConfiguration implements IConfiguration
     private static final String CONFIG_REGION_NAME = DYNOMITEMANAGER_PRE + ".az.region";
     private static final String CONFIG_ACL_GROUP_NAME = DYNOMITEMANAGER_PRE + ".acl.groupname";
     private static final String CONFIG_VPC = DYNOMITEMANAGER_PRE + ".vpc";
+    private static final String CONFIG_EC2_ROLE_ASSUMPTION_ARN = DYNOMITEMANAGER_PRE + ".ec2.roleassumption.arn"; 
+    private static final String CONFIG_VPC_ROLE_ASSUMPTION_ARN = DYNOMITEMANAGER_PRE + ".vpc.roleassumption.arn";
     
     /* Dynomite Consistency */
     private static final String CONFIG_DYNO_READ_CONS 	               = DYNOMITEMANAGER_PRE + ".dyno.read.consistency";
@@ -716,7 +718,18 @@ public class DynomitemanagerConfiguration implements IConfiguration
     // VPC 
     public String getVpcId() {
       return NETWORK_VPC;
-    }
+    }   
+
+	@Override
+	public String getClassicAWSRoleAssumptionArn() {
+		return configSource.get(CONFIG_EC2_ROLE_ASSUMPTION_ARN);
+	}
+	
+	@Override
+	public String getVpcAWSRoleAssumptionArn() {
+		return configSource.get(CONFIG_VPC_ROLE_ASSUMPTION_ARN);
+	}
+
    
     // Cassandra configuration for token management
     @Override

@@ -16,6 +16,7 @@
 package com.netflix.dynomitemanager.identity;
 
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -36,6 +37,11 @@ import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.utils.ITokenManager;
 import com.netflix.dynomitemanager.sidecore.utils.RetryableCallable;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
+import com.netflix.dynomitemanager.identity.AppsInstance;
+import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
+import com.netflix.dynomitemanager.identity.IMembership;
+import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
+import com.netflix.dynomitemanager.identity.InstanceIdentity;
 
 /**
  * This class provides the central place to create and consume the identity of
@@ -61,6 +67,8 @@ public class InstanceIdentity
     private final IConfiguration config;
     private final Sleeper sleeper;
     private final ITokenManager tokenManager;
+	private final InstanceEnvIdentity insEnvIdentity;    
+
 
     private final Predicate<AppsInstance> differentHostPredicate = new Predicate<AppsInstance>() {
     		@Override
@@ -76,13 +84,14 @@ public class InstanceIdentity
 
     @Inject
     public InstanceIdentity(IAppsInstanceFactory factory, IMembership membership, IConfiguration config,
-                            Sleeper sleeper, ITokenManager tokenManager) throws Exception
+                            Sleeper sleeper, ITokenManager tokenManager, InstanceEnvIdentity insEnvIdentity) throws Exception
     {
         this.factory = factory;
         this.membership = membership;
         this.config = config;
         this.sleeper = sleeper;
         this.tokenManager = tokenManager;
+        this.insEnvIdentity = insEnvIdentity;
         init();
     }
 
@@ -152,7 +161,25 @@ public class InstanceIdentity
         public AppsInstance retriableCall() throws Exception
         {
             final List<AppsInstance> allIds = factory.getAllIds(config.getAppName());
-            List<String> asgInstances = membership.getRacMembership();
+            List<String> asgInstances = membership.getRacMembership();           
+            List<String> crossAccountAsgInstances = membership.getCrossAccountRacMembership();           
+
+            if (insEnvIdentity.isClassic()) {
+                logger.info("EC2 classic instances (local ASG): " + Arrays.toString(asgInstances.toArray()));
+                logger.info("VPC Account (cross-account ASG): " + Arrays.toString(crossAccountAsgInstances.toArray()));
+            }
+            else {
+                logger.info("VPC Account (local ASG): " + Arrays.toString(asgInstances.toArray()));
+                logger.info("EC2 classic instances (cross-account ASG): " + Arrays.toString(crossAccountAsgInstances.toArray()));
+            }
+          
+            // Remove duplicates (probably there are not)
+            asgInstances.removeAll(crossAccountAsgInstances);
+            
+            // Merge the two lists
+            asgInstances.addAll(crossAccountAsgInstances);
+            logger.info("Combined Instances in the AZ: " + asgInstances);
+            
             // Sleep random interval - upto 15 sec
             sleeper.sleep(new Random().nextInt(5000) + 10000);
             for (AppsInstance dead : allIds)

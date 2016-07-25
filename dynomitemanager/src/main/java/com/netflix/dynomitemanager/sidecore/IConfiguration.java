@@ -188,7 +188,18 @@ public interface IConfiguration
      * @return the VPC id of the running instance.
      */
     public String getVpcId();
-     
+    
+    /*
+     * @return the Amazon Resource Name (ARN) for EC2 classic. 
+     */
+	public String getClassicAWSRoleAssumptionArn();
+		
+    /*
+     * @return the Amazon Resource Name (ARN) for VPC. 
+     */
+	public String getVpcAWSRoleAssumptionArn();
+	
+	   
     // Backup and Restore
 
 	public String getBucketName();
