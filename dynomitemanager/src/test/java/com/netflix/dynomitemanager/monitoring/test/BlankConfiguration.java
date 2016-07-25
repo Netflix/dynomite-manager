@@ -336,5 +336,9 @@ public class BlankConfiguration implements IConfiguration {
 		return null;
 	}
 
+	@Override
+	public boolean isDualAccount() {
+		return false;
+	}
 
 }

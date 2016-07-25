@@ -199,6 +199,11 @@ public interface IConfiguration
      */
 	public String getVpcAWSRoleAssumptionArn();
 	
+	/*
+	 * @return cross-account deployments
+	 */
+	public boolean isDualAccount();
+
 	   
     // Backup and Restore
 

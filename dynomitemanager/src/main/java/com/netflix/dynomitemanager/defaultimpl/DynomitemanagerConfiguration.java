@@ -104,6 +104,7 @@ public class DynomitemanagerConfiguration implements IConfiguration
     private static final String CONFIG_VPC = DYNOMITEMANAGER_PRE + ".vpc";
     private static final String CONFIG_EC2_ROLE_ASSUMPTION_ARN = DYNOMITEMANAGER_PRE + ".ec2.roleassumption.arn"; 
     private static final String CONFIG_VPC_ROLE_ASSUMPTION_ARN = DYNOMITEMANAGER_PRE + ".vpc.roleassumption.arn";
+    private static final String CONFIG_DUAL_ACCOUNT = DYNOMITEMANAGER_PRE + "dualaccount"; 
     
     /* Dynomite Consistency */
     private static final String CONFIG_DYNO_READ_CONS 	               = DYNOMITEMANAGER_PRE + ".dyno.read.consistency";
@@ -186,6 +187,9 @@ public class DynomitemanagerConfiguration implements IConfiguration
     private static final boolean DEFAULT_PERSISTENCE_ENABLED = false;
     private static final String  DEFAULT_PERSISTENCE_TYPE = "aof";
     private static final String  DEFAULT_PERSISTENCE_DIR = "/mnt/data/nfredis";
+    
+    // AWS Dual Account
+    private static final boolean DEFAULT_DUAL_ACCOUNT = false;
    
     private static final Logger logger = LoggerFactory.getLogger(DynomitemanagerConfiguration.class);
 
@@ -729,6 +733,11 @@ public class DynomitemanagerConfiguration implements IConfiguration
 	public String getVpcAWSRoleAssumptionArn() {
 		return configSource.get(CONFIG_VPC_ROLE_ASSUMPTION_ARN);
 	}
+	
+    @Override
+    public boolean isDualAccount() {
+        return configSource.get(CONFIG_DUAL_ACCOUNT, DEFAULT_DUAL_ACCOUNT);
+    }
 
    
     // Cassandra configuration for token management

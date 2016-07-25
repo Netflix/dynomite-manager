@@ -161,24 +161,27 @@ public class InstanceIdentity
         public AppsInstance retriableCall() throws Exception
         {
             final List<AppsInstance> allIds = factory.getAllIds(config.getAppName());
-            List<String> asgInstances = membership.getRacMembership();           
-            List<String> crossAccountAsgInstances = membership.getCrossAccountRacMembership();           
+            List<String> asgInstances = membership.getRacMembership();
+            if (config.isDualAccount()){
+            	logger.info("Dual Account cluster");
+            	List<String> crossAccountAsgInstances = membership.getCrossAccountRacMembership();           
 
-            if (insEnvIdentity.isClassic()) {
-                logger.info("EC2 classic instances (local ASG): " + Arrays.toString(asgInstances.toArray()));
-                logger.info("VPC Account (cross-account ASG): " + Arrays.toString(crossAccountAsgInstances.toArray()));
-            }
-            else {
-                logger.info("VPC Account (local ASG): " + Arrays.toString(asgInstances.toArray()));
-                logger.info("EC2 classic instances (cross-account ASG): " + Arrays.toString(crossAccountAsgInstances.toArray()));
-            }
+            	if (insEnvIdentity.isClassic()) {
+            		logger.info("EC2 classic instances (local ASG): " + Arrays.toString(asgInstances.toArray()));
+            		logger.info("VPC Account (cross-account ASG): " + Arrays.toString(crossAccountAsgInstances.toArray()));
+            	}
+            	else {
+            		logger.info("VPC Account (local ASG): " + Arrays.toString(asgInstances.toArray()));
+            		logger.info("EC2 classic instances (cross-account ASG): " + Arrays.toString(crossAccountAsgInstances.toArray()));
+            	}
           
-            // Remove duplicates (probably there are not)
-            asgInstances.removeAll(crossAccountAsgInstances);
+            	// Remove duplicates (probably there are not)
+            	asgInstances.removeAll(crossAccountAsgInstances);
             
-            // Merge the two lists
-            asgInstances.addAll(crossAccountAsgInstances);
-            logger.info("Combined Instances in the AZ: " + asgInstances);
+            	// Merge the two lists
+            	asgInstances.addAll(crossAccountAsgInstances);
+            	logger.info("Combined Instances in the AZ: " + asgInstances);
+            }
             
             // Sleep random interval - upto 15 sec
             sleeper.sleep(new Random().nextInt(5000) + 10000);
