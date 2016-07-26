@@ -347,6 +347,8 @@ public class DynomiteAdmin
     		/* Overall status */
     		statusJson.put("healthy", this.instanceState.isHealthy() ? true : false);
     		
+    		/* My token */
+    		statusJson.put("tokens", this.ii.getTokens());
     		
     		logger.info("REST call: Florida Status");
             return Response.ok(statusJson, MediaType.APPLICATION_JSON).build();

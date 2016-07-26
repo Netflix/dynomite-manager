@@ -30,6 +30,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.name.Names;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 import com.netflix.dynomitemanager.FloridaServer;
@@ -37,11 +38,14 @@ import com.netflix.dynomitemanager.IFloridaProcess;
 import com.netflix.dynomitemanager.identity.CassandraInstanceFactory;
 import com.netflix.dynomitemanager.identity.DefaultVpcInstanceEnvIdentity;
 import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
+import com.netflix.dynomitemanager.identity.IMembership;
 import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 import com.netflix.dynomitemanager.monitoring.JedisFactory;
 import com.netflix.dynomitemanager.monitoring.SimpleJedisFactory;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
+import com.netflix.dynomitemanager.sidecore.aws.AWSMembership;
+import com.netflix.dynomitemanager.sidecore.aws.AwsRoleAssumptionCredential;
 import com.netflix.dynomitemanager.sidecore.aws.IAMCredential;
 import com.netflix.dynomitemanager.sidecore.backup.Backup;
 import com.netflix.dynomitemanager.sidecore.backup.Restore;
@@ -120,7 +124,6 @@ public class InjectedWebListener extends GuiceServletContextListener {
             binder().bind(ProcessTuner.class).to(FloridaStandardTuner.class);
             binder().bind(IAppsInstanceFactory.class).to(CassandraInstanceFactory.class);
             binder().bind(SchedulerFactory.class).to(StdSchedulerFactory.class).asEagerSingleton();
-            binder().bind(ICredential.class).to(IAMCredential.class);
             binder().bind(IFloridaProcess.class).to(FloridaProcessManager.class);
             binder().bind(IStorageProxy.class).to(RedisStorageProxy.class);
             binder().bind(InstanceDataRetriever.class).to(VpcInstanceDataRetriever.class);
@@ -128,8 +131,6 @@ public class InjectedWebListener extends GuiceServletContextListener {
             //binder().bind(HostSupplier.class).to(EurekaHostsSupplier.class);
             binder().bind(HostSupplier.class).to(LocalHostsSupplier.class);
             
-            binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class).asEagerSingleton();
-           // binder().bind(IMembership.class).to(AWSMembership.class).asEagerSingleton();
             
             //binder().bind(InstanceEnvIdentity.class).to(LocalInstanceEnvIdentity.class);
             binder().bind(HealthCheckHandler.class).to(FloridaHealthCheckHandler.class).asEagerSingleton();
@@ -139,8 +140,13 @@ public class InjectedWebListener extends GuiceServletContextListener {
             
             binder().bind(JedisFactory.class).to(SimpleJedisFactory.class);
             
-            binder().bind(Backup.class).to(S3Backup.class);
-            binder().bind(Restore.class).to(S3Restore.class);
+            /* AWS binding */
+            bind(IMembership.class).to(AWSMembership.class);
+            bind(ICredential.class).to(IAMCredential.class);
+            bind(ICredential.class).annotatedWith(Names.named("awsroleassumption")).to(AwsRoleAssumptionCredential.class);
+            binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class).asEagerSingleton();
+            bind(Backup.class).to(S3Backup.class);
+            bind(Restore.class).to(S3Restore.class);
 
         }
     }

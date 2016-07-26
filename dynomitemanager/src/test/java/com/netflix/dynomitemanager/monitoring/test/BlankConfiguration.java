@@ -325,5 +325,20 @@ public class BlankConfiguration implements IConfiguration {
 	public String getACLGroupName() {
 		return null;
 	}
+	
+	@Override
+	public String getClassicAWSRoleAssumptionArn() {
+		return null;
+	}
+	
+	@Override
+	public String getVpcAWSRoleAssumptionArn() {
+		return null;
+	}
+
+	@Override
+	public boolean isDualAccount() {
+		return false;
+	}
 
 }
