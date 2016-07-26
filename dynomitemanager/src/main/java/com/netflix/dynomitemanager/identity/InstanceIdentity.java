@@ -155,32 +155,42 @@ public class InstanceIdentity
         }
     }
 
+    private List<String> getDualAccountRacMembership(List<String> asgInstances){
+    	logger.info("Dual Account cluster");
+
+        List<String> crossAccountAsgInstances = membership.getCrossAccountRacMembership();           
+
+        if (insEnvIdentity.isClassic()) {
+           logger.info("EC2 classic instances (local ASG): " + Arrays.toString(asgInstances.toArray()));
+           logger.info("VPC Account (cross-account ASG): " + Arrays.toString(crossAccountAsgInstances.toArray()));
+        }
+        else {
+           logger.info("VPC Account (local ASG): " + Arrays.toString(asgInstances.toArray()));
+           logger.info("EC2 classic instances (cross-account ASG): " + Arrays.toString(crossAccountAsgInstances.toArray()));
+        }
+  
+        // Remove duplicates (probably there are not)
+        asgInstances.removeAll(crossAccountAsgInstances);
+    
+        // Merge the two lists
+        asgInstances.addAll(crossAccountAsgInstances);
+        logger.info("Combined Instances in the AZ: " + asgInstances);
+        
+    	return asgInstances;
+    }
+
     public class GetDeadToken extends RetryableCallable<AppsInstance>
     {
         @Override
         public AppsInstance retriableCall() throws Exception
         {
             final List<AppsInstance> allIds = factory.getAllIds(config.getAppName());
-            List<String> asgInstances = membership.getRacMembership();
+            List<String> asgInstances = membership.getRacMembership();       
             if (config.isDualAccount()){
-            	logger.info("Dual Account cluster");
-            	List<String> crossAccountAsgInstances = membership.getCrossAccountRacMembership();           
-
-            	if (insEnvIdentity.isClassic()) {
-            		logger.info("EC2 classic instances (local ASG): " + Arrays.toString(asgInstances.toArray()));
-            		logger.info("VPC Account (cross-account ASG): " + Arrays.toString(crossAccountAsgInstances.toArray()));
-            	}
-            	else {
-            		logger.info("VPC Account (local ASG): " + Arrays.toString(asgInstances.toArray()));
-            		logger.info("EC2 classic instances (cross-account ASG): " + Arrays.toString(crossAccountAsgInstances.toArray()));
-            	}
-          
-            	// Remove duplicates (probably there are not)
-            	asgInstances.removeAll(crossAccountAsgInstances);
-            
-            	// Merge the two lists
-            	asgInstances.addAll(crossAccountAsgInstances);
-            	logger.info("Combined Instances in the AZ: " + asgInstances);
+            	asgInstances = getDualAccountRacMembership(asgInstances);
+            }
+            else {
+            	logger.info("Single Account cluster");
             }
             
             // Sleep random interval - upto 15 sec
