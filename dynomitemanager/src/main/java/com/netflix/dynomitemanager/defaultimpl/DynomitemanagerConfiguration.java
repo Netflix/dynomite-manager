@@ -104,7 +104,7 @@ public class DynomitemanagerConfiguration implements IConfiguration
     private static final String CONFIG_VPC = DYNOMITEMANAGER_PRE + ".vpc";
     private static final String CONFIG_EC2_ROLE_ASSUMPTION_ARN = DYNOMITEMANAGER_PRE + ".ec2.roleassumption.arn"; 
     private static final String CONFIG_VPC_ROLE_ASSUMPTION_ARN = DYNOMITEMANAGER_PRE + ".vpc.roleassumption.arn";
-    private static final String CONFIG_DUAL_ACCOUNT = DYNOMITEMANAGER_PRE + ".dualaccount"; 
+    private static final String CONFIG_DUAL_ACCOUNT = DYNOMITEMANAGER_PRE + ".roleassumption.dualaccount"; 
     
     /* Dynomite Consistency */
     private static final String CONFIG_DYNO_READ_CONS 	               = DYNOMITEMANAGER_PRE + ".dyno.read.consistency";
