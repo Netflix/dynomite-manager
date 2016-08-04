@@ -113,7 +113,7 @@ public class RestoreTask extends Task
         	logger.info("Restore Completed, sleeping 5 seconds before starting Dynomite!");
         	
         	sleeper.sleepQuietly(5000);
-        	this.dynProcess.start(true);   	
+        	this.dynProcess.start();   	
         	logger.info("Dynomite started");
         	this.state.setRestoreStatus(true);
     	} else {
