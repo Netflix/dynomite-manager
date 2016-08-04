@@ -52,6 +52,7 @@ import com.netflix.dynomitemanager.sidecore.backup.Restore;
 import com.netflix.dynomitemanager.sidecore.backup.S3Backup;
 import com.netflix.dynomitemanager.sidecore.backup.S3Restore;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
+import com.netflix.dynomitemanager.sidecore.config.LocalInstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
