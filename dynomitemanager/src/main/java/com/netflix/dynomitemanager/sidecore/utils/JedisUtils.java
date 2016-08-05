@@ -91,9 +91,6 @@ public class JedisUtils {
             @Override
             public Boolean retriableCall() throws Exception {
                 jedis = connect(host, port);
-                if (jedis == null) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    throw new RuntimeException(String.format("Failed Jedis connect host:%s port:%s failed.", host, port));
-                }
                 return jedis.ping() != null;
             }
 
