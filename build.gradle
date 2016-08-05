@@ -67,7 +67,7 @@ subprojects {
         compile "redis.clients:jedis:2.7.3"
         compile "junit:junit:4.11"
         provided "javax.servlet:servlet-api:2.5"
-        compile "org.apache.cassandra:cassandra-all:[1.2.0,1.2.8["
+
         
         
         //Netflix
