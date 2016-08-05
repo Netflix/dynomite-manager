@@ -1,31 +1,16 @@
-/**
- * Copyright 2016 Netflix, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.netflix.dynomitemanager.monitoring.test;
+package com.netflix.dynomitemanager.identity.test;
 
 import java.util.List;
 
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 
 /**
- * Blanck IConfiguration class used for tests.
+ * IConfiguration implementation for tests.
  * 
  * @author diegopacheco
  *
  */
-public class BlankConfiguration implements IConfiguration {
+public class SimpleTestConfiguration implements IConfiguration {
 
 	@Override
 	public boolean isWarmBootstrap() {
@@ -248,7 +233,7 @@ public class BlankConfiguration implements IConfiguration {
 
 	@Override
 	public String getCommaSeparatedCassandraHostNames() {
-		return null;
+		return "localhost";
 	}
 
 	@Override
@@ -263,12 +248,12 @@ public class BlankConfiguration implements IConfiguration {
 
 	@Override
 	public int getCassandraThriftPortForAstyanax() {
-		return 0;
+		return 9911;
 	}
 
 	@Override
 	public String getCassandraKeyspaceName() {
-		return null;
+		return "dyno_bootstrap";
 	}
 
 	@Override
@@ -278,7 +263,7 @@ public class BlankConfiguration implements IConfiguration {
 
 	@Override
 	public String getBootClusterName() {
-		return null;
+		return "DynomiteManagerClusterTest";
 	}
 
 	@Override
@@ -313,7 +298,7 @@ public class BlankConfiguration implements IConfiguration {
 
 	@Override
 	public String getAppName() {
-		return null;
+		return "DynomiteManagerTestApp";
 	}
 
 	@Override
