@@ -46,9 +46,9 @@ subprojects {
         
         compile "com.google.inject:guice:3.0"
         compile "com.google.inject.extensions:guice-servlet:3.0"
-        compile ("com.sun.jersey.contribs:jersey-guice:1.9.1")
-        compile ("com.sun.jersey:jersey-core:1.17.1")
-        compile ("com.sun.jersey:jersey-server:1.17.1")
+        compile "com.sun.jersey.contribs:jersey-guice:1.9.1"
+        compile "com.sun.jersey:jersey-core:1.17.1"
+        compile "com.sun.jersey:jersey-server:1.17.1"
         compile "javax.ws.rs:jsr311-api:1.1.1"
         compile "org.apache.cassandra:cassandra-thrift:1.2.11"
         compile "org.quartz-scheduler:quartz:1.7.3"
