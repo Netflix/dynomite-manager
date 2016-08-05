@@ -67,11 +67,13 @@ public class FloridaProcessManager implements IFloridaProcess
 
     protected void setEnv(Map<String, String> env) {   
         env.put("MBUF_SIZE", String.valueOf(config.getMbufSize()));
-        env.put("ALLOC_MSGS",String.valueOf(config.getAllocatedMessages()));
+        if (config.getAllocatedMessages() > 0) {
+            env.put("ALLOC_MSGS",String.valueOf(config.getAllocatedMessages()));
+        }
     }
         
-    public void start(boolean joinRing) throws IOException {
-        logger.info(String.format("Starting dynomite server joinRing:%s", joinRing));
+    public void start() throws IOException {
+        logger.info(String.format("Starting dynomite server"));
 
         List<String> command = Lists.newArrayList();
         if (!"root".equals(System.getProperty("user.name"))) {
@@ -211,22 +213,24 @@ public class FloridaProcessManager implements IFloridaProcess
     }
         	
     /* Dynomite Healthcheck and Auto Restart */
-    public void dynomiteCheck(){
+    public boolean dynomiteCheck(){
     	if (config.getClusterType() == DYNO_MEMCACHED){    // TODO: we need to implement this once we use memcached
-    		logger.error("Dynomite check with Mecached ping is not functional");
+    		logger.error("Dynomite check with Memcached ping is not functional");
     	}
     	else if (config.getClusterType() == DYNO_REDIS) {  //use Redis API
         	logger.info("Dynomite check with Redis Ping");
         	if(!dynomiteRedisCheck()) {
         		try{
-            		logger.error("Dynomite was down ---> trying to restart it");
+            		logger.error("Dynomite was down");
         			this.dynProcess.stop();
         			sleeper.sleepQuietly(1000);
-        			this.dynProcess.start(true);
+        			return false;
             	} catch (IOException e) {
             		logger.error("Dynomite cannot be restarted --> Requires manual restart" + e.getMessage());
             	}
         	}
     	}
+    	
+    	return true;
     }
 }

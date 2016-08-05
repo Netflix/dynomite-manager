@@ -95,7 +95,7 @@ public class DynomiteAdmin
     {
         instanceState.setIsProcessMonitoringSuspended(false);
         // Let the ProcessMonitorTask take over the job of starting the process correctly.
-        dynoProcess.start(true);
+        dynoProcess.start();
         return Response.ok(REST_SUCCESS, MediaType.APPLICATION_JSON).build();
     }
 

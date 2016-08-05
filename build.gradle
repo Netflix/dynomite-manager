@@ -69,7 +69,7 @@ subprojects {
         compile "redis.clients:jedis:2.7.3"
         compile "junit:junit:4.11"
         provided "javax.servlet:servlet-api:2.5"
-		        
+
         //Netflix
         compile "com.netflix.servo:servo-core:0.5.5"
         compile 'com.netflix.archaius:archaius-core:0.6.0'

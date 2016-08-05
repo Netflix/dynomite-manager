@@ -30,7 +30,11 @@ Dynomite-manager comes with a Gradle wrapper
 
 The gradlew script will pull down all necessary gradle components/infrastructure automatically, then run the build.
 
-Dynomite-manager provides several default implementations (AWS, Configuration, credentials etc). You can use these or choose to create your own. Dynomite-manager is currently working on AWS but we are open to contributions to support other platforms.
+Dynomite-manager provides several default implementations (AWS, Configuration, credentials etc). You can use these or choose to create your own. Dynomite-manager is currently working on AWS and your local environment. We are open to contributions to support other platforms as well. 
+
+## Howto
+
+The first step before building dynomite-manager is to configure the interfaces related to your environment in the [InjectedWebListener](https://github.com/Netflix/dynomite-manager/blob/dev/dynomitemanager/src/main/java/com/netflix/dynomitemanager/defaultimpl/InjectedWebListener.java). Checkout the [Wiki](https://github.com/Netflix/dynomite-manager/wiki/Configuration) for further explanation on what interfaces to bind based on your environment. 
 
 1. Build the dynomite-manager
 2. Set up Auto-Scale Group (ASG) and spin up instances

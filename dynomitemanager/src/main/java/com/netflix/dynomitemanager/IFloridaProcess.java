@@ -27,10 +27,10 @@ import com.netflix.dynomitemanager.defaultimpl.FloridaProcessManager;
 @ImplementedBy(FloridaProcessManager.class)
 public interface IFloridaProcess
 {
-    void start(boolean join_ring) throws IOException;
+    void start() throws IOException;
 
     void stop() throws IOException;
     
-    void dynomiteCheck();
+    boolean dynomiteCheck();
 
 }

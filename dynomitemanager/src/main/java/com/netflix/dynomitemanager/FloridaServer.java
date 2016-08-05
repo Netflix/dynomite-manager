@@ -119,7 +119,7 @@ public class FloridaServer
     		}
     		else{
     			logger.info("Cold bootstraping, launching dynomite and storage process.");
-    			dynProcess.start(true);
+    			dynProcess.start();
     			sleeper.sleepQuietly(1000); //1s
     			scheduler.runTaskNow(ProxyAndStorageResetTask.class);
     		}
