@@ -232,11 +232,18 @@ public class ServoMetricsTask extends Task {
 		processCounterMetric(service + "__uptime", uptime);
 		
 		String[] fields = { "latency_max", "latency_999th", "latency_99th", "latency_95th", "latency_mean",
-                            "payload_size_max", "payload_size_999th", "payload_size_99th", "payload_size_95th",
-                            "payload_size_mean", "alloc_msgs", "free_msgs", "average_cross_region_rtt",
-                            "client_out_queue_99", "server_in_queue_99", "server_out_queue_99",
-                            "dnode_client_out_queue_99", "peer_in_queue_99", "peer_out_queue_99",
-                            "remote_peer_in_queue_99", "remote_peer_out_queue_99", "alloc_mbufs", "free_mbufs"};
+                "payload_size_max", "payload_size_999th", "payload_size_99th", "payload_size_95th",
+                "payload_size_mean", "alloc_msgs", "free_msgs", "average_cross_region_rtt",
+                "payload_size_mean", "alloc_msgs", "free_msgs",
+                "average_cross_region_rtt", "99_cross_region_rtt",
+                "average_cross_zone_latency", "99_cross_zone_latency",
+                "average_server_latency", "99_server_latency",
+				"average_cross_region_queue_wait", "99_cross_region_queue_wait",
+				"average_cross_zone_queue_wait", "99_cross_zone_queue_wait",
+                "average_server_queue_wait", "99_server_queue_wait",
+                "client_out_queue_99", "server_in_queue_99", "server_out_queue_99",
+                "dnode_client_out_queue_99", "peer_in_queue_99", "peer_out_queue_99",
+                "remote_peer_in_queue_99", "remote_peer_out_queue_99", "alloc_mbufs", "free_mbufs"};
         for (int i = 0; i < fields.length; i++) {
             Long val = (Long) obj.get(fields[i]);
             if (val == null) {
