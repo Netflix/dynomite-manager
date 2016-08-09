@@ -15,24 +15,15 @@
  */
 package com.netflix.dynomitemanager.sidecore.storage;
 
-import java.io.IOException;
-
 import com.google.common.base.Splitter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
 import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.utils.JedisUtils;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
-import com.netflix.dynomitemanager.IFloridaProcess;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -261,7 +252,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
   @Override
   //probably use our Retries Util here
-  public boolean warmUpStorage(String[] peers) {
+  public Bootstrap warmUpStorage(String[] peers) {
       String alivePeer = null;
       Jedis peerJedis = null;
       
@@ -278,7 +269,7 @@ public class RedisStorageProxy implements IStorageProxy {
       // We check if the select peer is alive and we connect to it.
       if (alivePeer == null) {
       	logger.error("Cannot connect to peer node to bootstrap");
-      	return false;
+      	return Bootstrap.CANNOT_CONNECT_FAIL;
       }
       else {   
           logger.info("Issue slaveof command on peer[" + alivePeer + "] and port[" + REDIS_PORT + "]");
@@ -322,14 +313,14 @@ public class RedisStorageProxy implements IStorageProxy {
               else if (diff == -1) {
               	logger.error("There was an error in the warm up process - do NOT start Dynomite");  
                   peerJedis.disconnect();
-                  return false;
+                  return Bootstrap.WARMUP_ERROR_FAIL;
               }                
               else if (diff == -2 ) {
               	startTime = System.currentTimeMillis();
               }
               else if (diff == -3 ) {
                   peerJedis.disconnect();
-              	return true;
+              	return Bootstrap.EXPIRED_BOOTSTRAPTIME_FAIL;
               }
            
               
@@ -342,7 +333,8 @@ public class RedisStorageProxy implements IStorageProxy {
               	retry++;
               	if (retry == 10){
                   	logger.error("Reached 10 consecutive retries, peer syncing cannot complete");
-                  	break;
+                      peerJedis.disconnect();
+                      return Bootstrap.RETRIES_FAIL;                   	
               	}
               }
               else{
@@ -358,8 +350,9 @@ public class RedisStorageProxy implements IStorageProxy {
           }
       }
 
-      return true;
+      return Bootstrap.IN_SYNC_SUCCESS;
   }
+  
   /**
    * Resets Redis to master if it was slave due to warm up failure.
    */
