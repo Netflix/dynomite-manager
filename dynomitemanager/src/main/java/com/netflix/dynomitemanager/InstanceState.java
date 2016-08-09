@@ -18,6 +18,8 @@ package com.netflix.dynomitemanager;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.inject.Singleton;
+import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
+
 import org.joda.time.DateTime;
 
 
@@ -30,7 +32,6 @@ import org.joda.time.DateTime;
 public class InstanceState {
     private final AtomicBoolean isSideCarProcessAlive = new AtomicBoolean(false);
     private final AtomicBoolean isBootstrapping = new AtomicBoolean(false);
-    private final AtomicBoolean isBootstrapSuccesful = new AtomicBoolean(false);
     private final AtomicBoolean firstBootstrap = new AtomicBoolean(true);
     private final AtomicBoolean isBackup = new AtomicBoolean(false);
     private final AtomicBoolean isBackupSuccessful = new AtomicBoolean(false);
@@ -41,6 +42,8 @@ public class InstanceState {
     private final AtomicBoolean isStorageProxyAlive = new AtomicBoolean(false);
     private final AtomicBoolean isStorageProxyProcessAlive = new AtomicBoolean(false);
     private final AtomicBoolean isStorageAlive = new AtomicBoolean(false);
+    
+    private Bootstrap bootstrapStatus;
     
     private long bootstrapTime;
     private long backupTime;
@@ -85,8 +88,8 @@ public class InstanceState {
         return isBootstrapping.get();
     }
     
-    public boolean isBootstrapSuccessful() {
-    	return isBootstrapSuccesful.get();
+    public Bootstrap isBootstrapStatus() {
+    	return bootstrapStatus;
     }
     
     public boolean firstBootstrap() {
@@ -101,8 +104,8 @@ public class InstanceState {
         this.isBootstrapping.set(isBootstrapping);
     }
     
-    public void setBootstrapStatus(boolean isBootstrapSuccesful) {
-        this.isBootstrapSuccesful.set(isBootstrapSuccesful);
+    public void setBootstrapStatus(Bootstrap bootstrapStatus) {
+        this.bootstrapStatus = bootstrapStatus;
     }
     
     public void setFirstBootstrap(boolean firstBootstrap) {

@@ -28,11 +28,10 @@ public class MemcachedStorageProxy implements IStorageProxy {
     }
 
     @Override
-    public boolean warmUpStorage(String[] peers) {
-        return false;
+    public Bootstrap warmUpStorage(String[] peers) {
+        return Bootstrap.IN_SYNC_SUCCESS;
     }
-    
-    
+      
     @Override
     public boolean resetStorage() {
     	return true;

@@ -22,7 +22,6 @@ import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 import com.netflix.dynomitemanager.IFloridaProcess;
 import com.netflix.dynomitemanager.InstanceState;
-import com.netflix.dynomitemanager.defaultimpl.JedisConfiguration;
 import com.netflix.dynomitemanager.identity.AppsInstance;
 import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
@@ -33,6 +32,7 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask;
+import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 import com.netflix.dynomitemanager.defaultimpl.StorageProcessManager;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
@@ -104,12 +104,11 @@ public class WarmBootstrapTask extends Task
             if (peers != null && peers.length != 0) {
             	
             	/** 
-            	 * Check the warm up status. The following 
-            	 * is true when (a) warm up is successful
-            	 * or (b) warm up cannot catch up.
-            	 * In any other case it will not start Dynomite.
+            	 * Check the warm up status. 
             	 */
-                if(this.storageProxy.warmUpStorage(peers)){
+            	Bootstrap boostrap = this.storageProxy.warmUpStorage(peers);
+                if(boostrap == Bootstrap.IN_SYNC_SUCCESS || boostrap == Bootstrap.EXPIRED_BOOTSTRAPTIME_FAIL ||
+                		boostrap == Bootstrap.RETRIES_FAIL) {
                     // Since we are ready let us start Dynomite.
                 	try { 
                 		this.dynProcess.start();
@@ -130,7 +129,8 @@ public class WarmBootstrapTask extends Task
                         sleeper.sleepQuietly(1000);
                     }
                     // Set the state of bootstrap as successful.
-                    this.state.setBootstrapStatus(true);
+                    this.state.setBootstrapStatus(boostrap);
+                    
                     logger.info("Set Dynomite to allow writes only!!!");
                     sendCommand("/state/writes_only");
                     

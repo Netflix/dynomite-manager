@@ -43,12 +43,11 @@ import com.netflix.dynomitemanager.IFloridaProcess;
 import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.StorageProcessManager;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.backup.RestoreTask;
 import com.netflix.dynomitemanager.sidecore.backup.SnapshotTask;
 import com.netflix.dynomitemanager.resources.DynomiteAdmin;
-import com.netflix.dynomitemanager.sidecore.scheduler.TaskScheduler;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 
 
 
@@ -60,11 +59,9 @@ public class DynomiteAdmin
     private static final String REST_HEADER_TOKEN = "token";
     private static final String REST_SUCCESS = "[\"ok\"]";
     private static final Logger logger = LoggerFactory.getLogger(DynomiteAdmin.class);
-    private IConfiguration config;
     private IFloridaProcess dynoProcess;
     private InstanceIdentity ii;
     private final InstanceState instanceState;
-    private final TaskScheduler scheduler;
     private SnapshotTask snapshotBackup;
     private RestoreTask restoreBackup;
     private IStorageProxy storage;
@@ -74,18 +71,16 @@ public class DynomiteAdmin
     private StorageProcessManager storageProcessMgr;
 
     @Inject
-    public DynomiteAdmin(IConfiguration config, IFloridaProcess dynoProcess,
+    public DynomiteAdmin(IFloridaProcess dynoProcess,
                          InstanceIdentity ii, InstanceState instanceState,
                          SnapshotTask snapshotBackup, RestoreTask restoreBackup,
-                         TaskScheduler scheduler, IStorageProxy storage)
+                         IStorageProxy storage)
     {
-        this.config = config;
         this.dynoProcess = dynoProcess;
         this.ii = ii;
         this.instanceState = instanceState;
         this.snapshotBackup = snapshotBackup;
         this.restoreBackup = restoreBackup;
-        this.scheduler = scheduler;
         this.storage = storage;
     }
 
@@ -284,12 +279,29 @@ public class DynomiteAdmin
     		    if (this.instanceState.isBootstrapping()) {
     		    	warmupJson.put("status", "pending");
     		    }
-    		    else if (!this.instanceState.isBootstrapping() && !this.instanceState.isBootstrapSuccessful()) {
-    		    	warmupJson.put("status", "unsuccessful");
-        		}
-    		    else if (!this.instanceState.isBootstrapping() && this.instanceState.isBootstrapSuccessful()) {
-    		    	warmupJson.put("status", "completed");
-        		}
+    		    else {
+    		    	 Bootstrap bootstrap = this.instanceState.isBootstrapStatus();
+    		    	 switch (bootstrap) {
+    		    	    case CANNOT_CONNECT_FAIL:
+    		    		    warmupJson.put("status", "failed: cannot connect");
+    		    		    break;
+    		    	    case WARMUP_ERROR_FAIL:
+    		    	    	warmupJson.put("status", "failed: error in warmup");
+    		    	    	break;
+    		    	    case RETRIES_FAIL:
+    		    	    	warmupJson.put("status", "failed: too fast to warmup - retries");
+    		    	    	break;
+    		    	    case EXPIRED_BOOTSTRAPTIME_FAIL:
+    		    	    	warmupJson.put("status", "failed: too fast to warmup - expired bootstrap time");
+    		    	    	break;
+    		    	    case IN_SYNC_SUCCESS:
+    		    	    	warmupJson.put("status", "success"); 
+    		    	    	break;
+    		    	    default:
+    		    	    	warmupJson.put("status", "unknown");
+    		    	    	break;
+    		    	 }
+    		    }
     		    warmupJson.put("time",this.instanceState.getBootstrapTime());
     		}
     		else{
@@ -349,6 +361,7 @@ public class DynomiteAdmin
     		
     		/* My token */
     		statusJson.put("tokens", this.ii.getTokens());
+    		
     		
     		logger.info("REST call: Florida Status");
             return Response.ok(statusJson, MediaType.APPLICATION_JSON).build();

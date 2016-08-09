@@ -20,7 +20,7 @@ public interface IStorageProxy {
     
     boolean isAlive();
     long getUptime();
-    boolean warmUpStorage(String[] peers);
+    Bootstrap warmUpStorage(String[] peers);
     boolean resetStorage();
     boolean takeSnapshot();
     boolean loadingData();
