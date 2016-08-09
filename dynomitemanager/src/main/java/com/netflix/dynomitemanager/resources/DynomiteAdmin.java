@@ -295,7 +295,7 @@ public class DynomiteAdmin
     		    	    	warmupJson.put("status", "failed: too fast to warmup - expired bootstrap time");
     		    	    	break;
     		    	    case IN_SYNC_SUCCESS:
-    		    	    	warmupJson.put("status", "success"); 
+    		    	    	warmupJson.put("status", "completed"); 
     		    	    	break;
     		    	    default:
     		    	    	warmupJson.put("status", "unknown");
