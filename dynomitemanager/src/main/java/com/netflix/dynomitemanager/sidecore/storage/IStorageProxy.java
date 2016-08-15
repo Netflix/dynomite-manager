@@ -15,16 +15,15 @@
  */
 package com.netflix.dynomitemanager.sidecore.storage;
 
-import com.netflix.dynomitemanager.IFloridaProcess;
-
-
 public interface IStorageProxy {
+    
     
     boolean isAlive();
     long getUptime();
-    boolean warmUpStorage(String[] peers, IFloridaProcess dynProcess);
+    Bootstrap warmUpStorage(String[] peers);
     boolean resetStorage();
     boolean takeSnapshot();
     boolean loadingData();
+	void stopPeerSync();
 
 }

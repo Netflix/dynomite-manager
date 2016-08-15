@@ -15,11 +15,10 @@
  */
 package com.netflix.dynomitemanager.supplier;
 
-import com.google.common.base.Supplier;
-import com.google.inject.ImplementedBy;
-import com.netflix.astyanax.connectionpool.Host;
-
 import java.util.List;
+
+import com.google.common.base.Supplier;
+import com.netflix.astyanax.connectionpool.Host;
 
 public interface HostSupplier {
     public Supplier<List<Host>> getSupplier(String clusterName);

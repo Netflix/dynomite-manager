@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.netflix.dynomitemanager.monitoring.test;
+package com.netflix.dynomitemanager.identity.test;
 
 import java.util.List;
 
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 
 /**
- * Blanck IConfiguration class used for tests.
+ * IConfiguration implementation for tests.
  * 
  * @author diegopacheco
  *
  */
-public class BlankConfiguration implements IConfiguration {
+public class SimpleTestConfiguration implements IConfiguration {
 
 	@Override
 	public boolean isWarmBootstrap() {
@@ -248,7 +248,7 @@ public class BlankConfiguration implements IConfiguration {
 
 	@Override
 	public String getCommaSeparatedCassandraHostNames() {
-		return null;
+		return "localhost";
 	}
 
 	@Override
@@ -263,12 +263,12 @@ public class BlankConfiguration implements IConfiguration {
 
 	@Override
 	public int getCassandraThriftPortForAstyanax() {
-		return 0;
+		return 9911;
 	}
 
 	@Override
 	public String getCassandraKeyspaceName() {
-		return null;
+		return "dyno_bootstrap";
 	}
 
 	@Override
@@ -278,7 +278,7 @@ public class BlankConfiguration implements IConfiguration {
 
 	@Override
 	public String getBootClusterName() {
-		return null;
+		return "DynomiteManagerClusterTest";
 	}
 
 	@Override
@@ -313,7 +313,7 @@ public class BlankConfiguration implements IConfiguration {
 
 	@Override
 	public String getAppName() {
-		return null;
+		return "DynomiteManagerTestApp";
 	}
 
 	@Override

@@ -34,6 +34,7 @@ import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.sidecore.utils.ProxyAndStorageResetTask;
 import com.netflix.dynomitemanager.sidecore.utils.TuneTask;
 import com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask;
+import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 import com.netflix.servo.DefaultMonitorRegistry;
 import com.netflix.servo.monitor.Monitors;
 
@@ -79,6 +80,8 @@ public class FloridaServer
         logger.info("Initializing Florida Server now ...");
 
         state.setSideCarProcessAlive(true);
+        state.setBootstrapStatus(Bootstrap.NOT_STARTED);
+
 
         if (config.isMultiRegionedCluster()) {
             scheduler.runTaskNow(UpdateSecuritySettings.class);
@@ -119,7 +122,7 @@ public class FloridaServer
     		}
     		else{
     			logger.info("Cold bootstraping, launching dynomite and storage process.");
-    			dynProcess.start(true);
+    			dynProcess.start();
     			sleeper.sleepQuietly(1000); //1s
     			scheduler.runTaskNow(ProxyAndStorageResetTask.class);
     		}

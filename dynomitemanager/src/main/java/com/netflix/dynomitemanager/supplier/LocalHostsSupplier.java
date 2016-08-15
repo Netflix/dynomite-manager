@@ -21,12 +21,7 @@ import java.util.List;
 import com.google.common.base.Supplier;
 import com.netflix.astyanax.connectionpool.Host;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class LocalHostsSupplier implements HostSupplier {
-    private static final Logger LOG = LoggerFactory.getLogger(LocalHostsSupplier.class);
-
      @Override
      public Supplier<List<Host>> getSupplier(String clusterName) {
        final List<Host> hosts = new ArrayList<Host>();

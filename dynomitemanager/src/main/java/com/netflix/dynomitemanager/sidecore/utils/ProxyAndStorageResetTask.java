@@ -81,7 +81,7 @@ public class ProxyAndStorageResetTask extends Task {
         				try{
                 			this.dynProcess.stop();
                 			sleeper.sleepQuietly(1000);
-                			this.dynProcess.start(true);
+                			this.dynProcess.start();
                     	} catch (IOException e) {
                     		logger.error("Dynomite cannot be restarted --> Requires manual restart" + e.getMessage());
                     	}
@@ -98,7 +98,7 @@ public class ProxyAndStorageResetTask extends Task {
         		try{
         			this.dynProcess.stop();
         			sleeper.sleepQuietly(1000);
-        			this.dynProcess.start(true);
+        			this.dynProcess.start();
             	} catch (IOException e1) {
             		logger.error("Dynomite cannot be restarted --> Requires manual restart" + e1.getMessage());
             	}

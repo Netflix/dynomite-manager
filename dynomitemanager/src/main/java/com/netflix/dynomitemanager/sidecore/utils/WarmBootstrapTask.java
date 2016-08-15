@@ -17,9 +17,11 @@ package com.netflix.dynomitemanager.sidecore.utils;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
 import com.netflix.dynomitemanager.IFloridaProcess;
 import com.netflix.dynomitemanager.InstanceState;
-import com.netflix.dynomitemanager.defaultimpl.JedisConfiguration;
 import com.netflix.dynomitemanager.identity.AppsInstance;
 import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
@@ -30,7 +32,13 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask;
+import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 import com.netflix.dynomitemanager.defaultimpl.StorageProcessManager;
+
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +47,6 @@ import org.joda.time.DateTime;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 @Singleton
@@ -78,8 +85,6 @@ public class WarmBootstrapTask extends Task
         this.state.setFirstBootstrap(false);
         this.state.setBootstrapTime(DateTime.now());
         
-
-        
         // Just to be sure testing again
         if (!state.isStorageAlive()) {
             // starting storage
@@ -98,10 +103,53 @@ public class WarmBootstrapTask extends Task
             //TODOs: if this peer is not good, try the next one until we can get the data
             if (peers != null && peers.length != 0) {
             	
-            	// if the warm up was successful set the corresponding state
-                if(this.storageProxy.warmUpStorage(peers, dynProcess) == true){
-                    this.state.setBootstrapStatus(true);
+            	/** 
+            	 * Check the warm up status. 
+            	 */
+            	Bootstrap boostrap = this.storageProxy.warmUpStorage(peers);
+                if(boostrap == Bootstrap.IN_SYNC_SUCCESS || boostrap == Bootstrap.EXPIRED_BOOTSTRAPTIME_FAIL ||
+                		boostrap == Bootstrap.RETRIES_FAIL) {
+                    // Since we are ready let us start Dynomite.
+                	try { 
+                		this.dynProcess.start();
+                	}
+                	catch (IOException ex) {
+                		logger.error("Dynomite failed to start");
+                	}
+                    // Wait for 1 second before we check dynomite status
+                    sleeper.sleepQuietly(1000);
+                    if(this.dynProcess.dynomiteCheck()){
+                    	logger.error("Trying to start Dynomite again");
+                    	try { 
+                    		this.dynProcess.start();
+                    	}
+                    	catch (IOException ex) {
+                    		logger.error("Dynomite failed to start");
+                    	}
+                        sleeper.sleepQuietly(1000);
+                    }
+                    // Set the state of bootstrap as successful.
+                    this.state.setBootstrapStatus(boostrap);
+                    
+                    logger.info("Set Dynomite to allow writes only!!!");
+                    sendCommand("/state/writes_only");
+                    
+                    logger.info("Stop Redis' Peer syncing!!!");
+                    this.storageProxy.stopPeerSync();
+                    
+                    logger.info("Set Dynomite to resuming state to allow writes and flush delayed writes");
+                    sendCommand("/state/resuming");
+                    
+                    //sleep 15s for the flushing to catch up
+                    sleeper.sleepQuietly(15000);
+                    logger.info("Set Dynomite to normal state");
+                    sendCommand("/state/normal");
                 }
+                else {
+                    logger.error("Warm up failed: Stop Redis' Peer syncing!!!");
+                    this.storageProxy.stopPeerSync();
+                }
+                
             } else {
                 logger.error("Unable to find any peer with the same token!");
             }
@@ -111,7 +159,9 @@ public class WarmBootstrapTask extends Task
              * This is important as there are cases that Dynomite reaches
              * the 1M messages limit and is unaccessible after bootstrap.
              */
-        	this.dynProcess.dynomiteCheck();
+        	if(this.dynProcess.dynomiteCheck()){
+        		logger.error("Dynomite is up since warm up succeeded");
+        	}
         	// finalizing bootstrap
             this.state.setBootstrapping(false);
         }
@@ -145,6 +195,41 @@ public class WarmBootstrapTask extends Task
         }
         logger.info("peers size: " + peers.size());
         return peers.toArray(new String[0]);
+    }
+    
+    private boolean sendCommand(String cmd) {
+    	DynamicStringProperty adminUrl = 
+                DynamicPropertyFactory.getInstance().getStringProperty("florida.metrics.url", "http://localhost:22222");
+    	
+        String url = adminUrl.get() + cmd;
+        HttpClient client = new HttpClient();
+        client.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, 
+                                        new DefaultHttpMethodRetryHandler());
+        
+        GetMethod get = new GetMethod(url);
+        try {
+            int statusCode = client.executeMethod(get);
+            if (!(statusCode == 200)) {
+                logger.error("Got non 200 status code from " + url);
+                return false;
+            }
+            
+            String response = get.getResponseBodyAsString();
+            //logger.info("Received response from " + url + "\n" + response);
+            
+            if (!response.isEmpty()) {
+                logger.info("Received response from " + url + "\n" + response);
+            } else {
+                logger.error("Cannot parse empty response from " + url);
+                return false;
+            }
+            
+        } catch (Exception e) {
+            logger.error("Failed to sendCommand and invoke url: " + url, e);
+            return false;
+        }
+        
+        return true;
     }
 
     

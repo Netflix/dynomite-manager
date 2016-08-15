@@ -15,24 +15,15 @@
  */
 package com.netflix.dynomitemanager.sidecore.storage;
 
-import java.io.IOException;
-
 import com.google.common.base.Splitter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
 import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.utils.JedisUtils;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
-import com.netflix.dynomitemanager.IFloridaProcess;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +41,7 @@ public class RedisStorageProxy implements IStorageProxy {
 	private static final Logger logger = LoggerFactory.getLogger(RedisStorageProxy.class);
 
   private Jedis localJedis;
-  private final DynamicStringProperty adminUrl = 
-          DynamicPropertyFactory.getInstance().getStringProperty("florida.metrics.url", "http://localhost:22222");
-  //private final HttpClient client = new HttpClient();
+
 
   @Inject
   private IConfiguration config; 
@@ -113,7 +102,8 @@ public class RedisStorageProxy implements IStorageProxy {
   
   //issue a 'slaveof no one' to local reids
   //set dynomite to accept writes but no reads
-  private void stopPeerSync() {
+  @Override
+  public void stopPeerSync() {
       boolean isDone = false;
       
       while (!isDone) {
@@ -251,7 +241,7 @@ public class RedisStorageProxy implements IStorageProxy {
   public boolean isAlive() {
       // Not using localJedis variable as it can be used by
       // ProcessMonitorTask as well.
-      return JedisUtils.isAliveWithRetry(LOCAL_ADDRESS, REDIS_PORT);
+      return JedisUtils.isAliveWithRetry(DynomitemanagerConfiguration.LOCAL_ADDRESS, REDIS_PORT);
   }
 
   @Override
@@ -262,7 +252,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
   @Override
   //probably use our Retries Util here
-  public boolean warmUpStorage(String[] peers, IFloridaProcess dynProcess) {
+  public Bootstrap warmUpStorage(String[] peers) {
       String alivePeer = null;
       Jedis peerJedis = null;
       
@@ -279,7 +269,7 @@ public class RedisStorageProxy implements IStorageProxy {
       // We check if the select peer is alive and we connect to it.
       if (alivePeer == null) {
       	logger.error("Cannot connect to peer node to bootstrap");
-      	return false;
+      	return Bootstrap.CANNOT_CONNECT_FAIL;
       }
       else {   
           logger.info("Issue slaveof command on peer[" + alivePeer + "] and port[" + REDIS_PORT + "]");
@@ -297,7 +287,7 @@ public class RedisStorageProxy implements IStorageProxy {
            * 1. number of Jedis errors are 5.
            * 2. number of consecutive increases of offset differences (caused when client produces high load).
            * 3. the difference between offsets is very small or zero (success).
-           * 4. warmp up takes more than 15 minutes.
+           * 4. warmp up takes more than FP defined minutes (default 20 min).
            * 5. Dynomite has started and is healthy.
            */
           
@@ -315,39 +305,36 @@ public class RedisStorageProxy implements IStorageProxy {
                * a. diff ==  0 --> we are either in sync or close to sync.
                * b. diff == -1 --> there was an error in sync process.
                * c. diff == -2 --> offset is still zero, peer syncing has not started.
+               * d. diff == -3 --> warm up lasted more than bootstrapTime
                */
               if (diff == 0) {
-                  // Since we are ready let us start dynProcess.
-              	try { 
-              		dynProcess.start(false);
-              	}
-              	catch (IOException ex) {
-              		logger.error("Dynomite failed to start");
-              	}
-                  // Wait for 1 second before we check dynomite status
-                  sleeper.sleepQuietly(1000);
-                  dynProcess.dynomiteCheck();
               	break;
               }
               else if (diff == -1) {
-              	logger.error("There was an error in the warm up process - do NOT start Dynomite");
-              	return false;
+              	logger.error("There was an error in the warm up process - do NOT start Dynomite");  
+                  peerJedis.disconnect();
+                  return Bootstrap.WARMUP_ERROR_FAIL;
               }                
               else if (diff == -2 ) {
               	startTime = System.currentTimeMillis();
+              }
+              else if (diff == -3 ) {
+                  peerJedis.disconnect();
+              	return Bootstrap.EXPIRED_BOOTSTRAPTIME_FAIL;
               }
            
               
               /*
                * Exit conditions:
-               * a. retry more than 5 time continuously and if the diff is larger than the previous diff.
+               * a. retry more than 5 times continuously and if the diff is larger than the previous diff.
                */
               if (previousDiff < diff) {
               	logger.info("Previous diff (" + previousDiff +") was smaller than current diff (" + diff  +") ---> Retry effort: " + retry);
               	retry++;
-              	if (retry == 5){
-                  	logger.info("Reached 5 consecutive retries, peer syncing cannot complete");
-                  	break;
+              	if (retry == 10){
+                  	logger.error("Reached 10 consecutive retries, peer syncing cannot complete");
+                      peerJedis.disconnect();
+                      return Bootstrap.RETRIES_FAIL;                   	
               	}
               }
               else{
@@ -355,31 +342,17 @@ public class RedisStorageProxy implements IStorageProxy {
               }
               previousDiff = diff;
           }
-
-          logger.info("Set Dynomite to allow writes only!!!");
-          sendCommand("/state/writes_only");
-          
-          logger.info("Stop Redis' Peer syncing!!!");
-          stopPeerSync();
-          
-          logger.info("Set Dynomite to resuming state to allow writes and flush delayed writes");
-          sendCommand("/state/resuming");
-          
-          //sleep 15s for the flushing to catch up
-          sleeper.sleepQuietly(15000);
-          logger.info("Set Dynomite to normal state");
-          sendCommand("/state/normal");
           
           peerJedis.disconnect();
 
           if (diff > 0) {
-              logger.error("Peer sync can't finish!  Something is wrong.");
-              return false;
+              logger.info("Stopping peer syncing with difference: " + diff);
           }
       }
 
-      return true;
+      return Bootstrap.IN_SYNC_SUCCESS;
   }
+  
   /**
    * Resets Redis to master if it was slave due to warm up failure.
    */
@@ -425,8 +398,8 @@ public class RedisStorageProxy implements IStorageProxy {
   private Long canPeerSyncStop(Jedis peerJedis, long startTime) throws RedisSyncException {
   	
   	if (System.currentTimeMillis() - startTime > config.getMaxTimeToBootstrap()) {
-         	logger.warn("Warm up takes more than 15 minutes --> moving on");
-         	return (long) -1;
+         	logger.warn("Warm up takes more than " + config.getMaxTimeToBootstrap()/60000 + " minutes --> moving on");
+         	return (long) -3;
       }
   	
       logger.info("Checking for peer syncing");
@@ -492,36 +465,5 @@ public class RedisStorageProxy implements IStorageProxy {
        }
   }
   
-  private boolean sendCommand(String cmd) {
-      String url = adminUrl.get() + cmd;
-      HttpClient client = new HttpClient();
-      client.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, 
-                                      new DefaultHttpMethodRetryHandler());
-      
-      GetMethod get = new GetMethod(url);
-      try {
-          int statusCode = client.executeMethod(get);
-          if (!(statusCode == 200)) {
-              logger.error("Got non 200 status code from " + url);
-              return false;
-          }
-          
-          String response = get.getResponseBodyAsString();
-          //logger.info("Received response from " + url + "\n" + response);
-          
-          if (!response.isEmpty()) {
-              logger.info("Received response from " + url + "\n" + response);
-          } else {
-              logger.error("Cannot parse empty response from " + url);
-              return false;
-          }
-          
-      } catch (Exception e) {
-          logger.error("Failed to sendCommand and invoke url: " + url, e);
-          return false;
-      }
-      
-      return true;
-  }
-
 }
+
