@@ -21,6 +21,8 @@ import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
+import com.netflix.dynomitemanager.IInstanceState;
+import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
 import com.netflix.dynomitemanager.defaultimpl.FloridaStandardTuner;
 
@@ -62,13 +64,16 @@ public class FloridaStandardTuner implements ProcessTuner
     
     protected final IConfiguration config;
     protected final InstanceIdentity ii;
+    protected final IInstanceState instanceState;
+    
     public static final Pattern MEMINFO_PATTERN = Pattern.compile("MemTotal:\\s*([0-9]*)");
 
     @Inject
-    public FloridaStandardTuner(IConfiguration config, InstanceIdentity ii)
+    public FloridaStandardTuner(IConfiguration config, InstanceIdentity ii, IInstanceState instanceState)
     {
         this.config = config;
         this.ii = ii;
+        this.instanceState = instanceState;
     }
 
     @SuppressWarnings("unchecked")
@@ -133,12 +138,19 @@ public class FloridaStandardTuner implements ProcessTuner
             servers.add("127.0.0.1:11211:1");
         }
 
-        logger.info(yaml.dump(map));
+        if(!this.instanceState.getYmlWritten()) {
+        	logger.info("YAML Dump: ");
+            logger.info(yaml.dump(map));
+            if (config.getClusterType() == DynomitemanagerConfiguration.DYNO_REDIS) {
+                updateRedisConfiguration();
+            }
+        }
+        else {
+        	logger.info("Updating dynomite.yml with latest information");
+        }
         yaml.dump(map, new FileWriter(yamlLocation));
 
-        if (config.getClusterType() == DynomitemanagerConfiguration.DYNO_REDIS) {
-            updateRedisConfiguration();
-        }
+        this.instanceState.setYmlWritten(true);   
     }
 
 

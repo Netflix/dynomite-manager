@@ -20,9 +20,10 @@ import java.util.List;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 
 /**
- * Blanck IConfiguration class used for tests.
+ * Blank IConfiguration class used for tests.
  * 
  * @author diegopacheco
+ * @author ipapapa
  *
  */
 public class BlankConfiguration implements IConfiguration {
@@ -353,6 +354,12 @@ public class BlankConfiguration implements IConfiguration {
 
 	@Override
 	public boolean isDualAccount() {
+		return false;
+	}
+
+	@Override
+	public boolean isForceWarm() {
+		// TODO Auto-generated method stub
 		return false;
 	}
 

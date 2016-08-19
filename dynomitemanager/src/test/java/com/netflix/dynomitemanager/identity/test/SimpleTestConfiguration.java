@@ -23,6 +23,7 @@ import com.netflix.dynomitemanager.sidecore.IConfiguration;
  * IConfiguration implementation for tests.
  * 
  * @author diegopacheco
+ * @author ipapapa
  *
  */
 public class SimpleTestConfiguration implements IConfiguration {
@@ -353,6 +354,11 @@ public class SimpleTestConfiguration implements IConfiguration {
 
 	@Override
 	public boolean isDualAccount() {
+		return false;
+	}
+
+	@Override
+	public boolean isForceWarm() {
 		return false;
 	}
 

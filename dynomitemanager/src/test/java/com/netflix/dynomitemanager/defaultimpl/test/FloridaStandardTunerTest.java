@@ -33,13 +33,15 @@ import com.netflix.dynomitemanager.monitoring.test.BlankConfiguration;
  * Unit Tests for FloridaStandardTuner
  * 
  * @author diegopacheco
+ * @author ipapapa
  *
  */
 public class FloridaStandardTunerTest {
 	
 	@Test
 	public void testWriteAllProperties() throws Exception{
-		FloridaStandardTuner tuner = new FloridaStandardTuner(new BlankConfiguration(), new FakeInstanceIdentity());
+		//TODO: we need to a FakeInstanceState in the future.
+		FloridaStandardTuner tuner = new FloridaStandardTuner(new BlankConfiguration(), new FakeInstanceIdentity(), new FakeInstanceState());
 		
 		String yamlPath         = System.getProperty("java.io.tmpdir") + "/yaml-tunner.yaml";
 		String templateYamlPath = new File(".").getCanonicalPath() + "/src/test/resources/sample-yaml.yaml";

@@ -167,6 +167,8 @@ public interface IConfiguration
 	
 	public boolean isWarmBootstrap();
 	
+	public boolean isForceWarm();
+	
 	public boolean isHealthCheckEnable();
 	
 	public int getAllowableBytesSyncDiff();

@@ -22,6 +22,7 @@ import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.utils.JedisUtils;
+import com.netflix.dynomitemanager.sidecore.utils.RedisInfoParser;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 
 import org.slf4j.Logger;
@@ -32,6 +33,11 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisDataException;
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.REDIS_PORT;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.util.Iterator;
+import java.util.Map;
 
 
 //TODOs: we should talk to admin port (22222) instead of 8102 for both local and peer
@@ -100,7 +106,7 @@ public class RedisStorageProxy implements IStorageProxy {
       }
   }
   
-  //issue a 'slaveof no one' to local reids
+  //issue a 'slaveof no one' to local redis
   //set dynomite to accept writes but no reads
   @Override
   public void stopPeerSync() {
@@ -244,35 +250,91 @@ public class RedisStorageProxy implements IStorageProxy {
       return JedisUtils.isAliveWithRetry(DynomitemanagerConfiguration.LOCAL_ADDRESS, REDIS_PORT);
   }
 
-  @Override
-  public long getUptime() {
-      
+  public long getUptime() {       
       return 0;
+  }    
+   
+  private class Alive {
+  	String selectedPeer;
+  	Jedis selectedJedis;
+  	Long upTime;
+  }
+
+  
+  private Alive peerNodeSelection(String peer, Jedis peerJedis){
+  	Alive currentAlivePeer = new Alive();
+  	currentAlivePeer.selectedPeer = peer;
+  	currentAlivePeer.selectedJedis = peerJedis;
+      String s = peerJedis.info();     // Parsing the info command on the peer node   
+		RedisInfoParser infoParser = new RedisInfoParser();
+		InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(s.getBytes()));
+		try {
+			Map<String, Long> allInfo = infoParser.parse(reader);
+			Iterator iter = allInfo.keySet().iterator();
+			String key = null;
+			boolean found = false;
+			while (iter.hasNext()) {
+				key = (String) iter.next();
+				if (key.equals("Redis_Server_uptime_in_seconds")) {
+					currentAlivePeer.upTime = allInfo.get(key);
+					found = true;
+					break;
+				}				
+			}
+			if(!found) {
+				logger.warn("uptime_in_seconds was not found in Redis info");
+				return null;
+			}
+      	logger.info("Alive Peer node [" + peer + "] is up for " + currentAlivePeer.upTime + " seconds");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return currentAlivePeer;
   }
 
   @Override
   //probably use our Retries Util here
   public Bootstrap warmUpStorage(String[] peers) {
-      String alivePeer = null;
+  	  Alive largestAlivePeer = new Alive();
       Jedis peerJedis = null;
       
-      // Identify if we can connect with the peer node
-      for(String peer : peers) {
+      for(String peer : peers) { //Looking into the peers with the same token
           logger.info("Peer node [" + peer + "] has the same token!" );
           peerJedis = JedisUtils.connect(peer, config.getListenerPort());
-          if (peerJedis != null && isAlive()) {
-              alivePeer = peer;
-              break;
+          if (peerJedis != null && isAlive()) {   // Checking if there are peers, and if so if they are alive 	
+            			
+  			Alive currentAlivePeer = peerNodeSelection(peer, peerJedis);
+  			
+          	/**
+          	 * Checking the one with the largest up time.
+          	 * Disconnect the one that is not the largest.
+          	 */
+  			if (currentAlivePeer.selectedJedis == null) {
+  				logger.error("Cannot find uptime_in_seconds in peer " + peer);
+  	        	return Bootstrap.CANNOT_CONNECT_FAIL;
+  			}
+  			else if (largestAlivePeer.selectedJedis == null) {
+          		largestAlivePeer = currentAlivePeer;
+          	}  
+          	else if (currentAlivePeer.upTime > largestAlivePeer.upTime) {
+      			largestAlivePeer.selectedJedis.disconnect();
+          		largestAlivePeer = currentAlivePeer;
+          	}
           } 
       }
       
       // We check if the select peer is alive and we connect to it.
-      if (alivePeer == null) {
+      if (largestAlivePeer.selectedJedis==null) {
       	logger.error("Cannot connect to peer node to bootstrap");
       	return Bootstrap.CANNOT_CONNECT_FAIL;
       }
       else {   
-          logger.info("Issue slaveof command on peer[" + alivePeer + "] and port[" + REDIS_PORT + "]");
+          String alivePeer = largestAlivePeer.selectedPeer;
+          peerJedis = largestAlivePeer.selectedJedis;    
+      	
+          logger.info("Issue slaveof command on peer [" + alivePeer + "] and port [" + REDIS_PORT + "]");
           startPeerSync(alivePeer, REDIS_PORT);
           
 
@@ -460,10 +522,11 @@ public class RedisStorageProxy implements IStorageProxy {
   }
   
   private class RedisSyncException extends Exception {
-       public RedisSyncException(String msg) {
-           super(msg);
-       }
-  }
+        /**
+		 * Exception during peer syncing
+		 */
+		private static final long serialVersionUID = -7736577871204223637L;
+ }
   
 }
 

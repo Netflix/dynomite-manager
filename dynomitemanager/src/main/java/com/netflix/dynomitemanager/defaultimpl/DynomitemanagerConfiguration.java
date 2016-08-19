@@ -111,6 +111,7 @@ public class DynomitemanagerConfiguration implements IConfiguration
     private static final String CONFIG_DYNO_WRITE_CONS                 = DYNOMITEMANAGER_PRE + ".dyno.write.consistency";
     
     // warm up
+    private static final String CONFIG_DYNO_WARM_FORCE				   = DYNOMITEMANAGER_PRE + ".dyno.warm.force";
     private static final String CONFIG_DYNO_WARM_BOOTSTRAP             = DYNOMITEMANAGER_PRE + ".dyno.warm.bootstrap";
     private static final String CONFIG_DYNO_ALLOWABLE_BYTES_SYNC_DIFF  = DYNOMITEMANAGER_PRE + ".dyno.warm.bytes.sync.diff";
     private static final String CONFIG_DYNO_MAX_TIME_BOOTSTRAP		   = DYNOMITEMANAGER_PRE + ".dyno.warm.msec.bootstraptime";
@@ -315,13 +316,11 @@ public class DynomitemanagerConfiguration implements IConfiguration
     {
         private static final int NUMBER_OF_RETRIES = 15;
         private static final long WAIT_TIME = 30000;
-        private final String region;
         private final String instanceId;
         private final AmazonEC2 client;
         
         public GetASGName(String region, String instanceId) {
             super(NUMBER_OF_RETRIES, WAIT_TIME);
-            this.region = region;
             this.instanceId = instanceId;
             client = new AmazonEC2Client(provider.getAwsCredentialProvider());
             client.setEndpoint("ec2." + region + ".amazonaws.com");
@@ -587,6 +586,10 @@ public class DynomitemanagerConfiguration implements IConfiguration
    
     public boolean isWarmBootstrap() {
         return configSource.get(CONFIG_DYNO_WARM_BOOTSTRAP, false);
+    }
+    
+    public boolean isForceWarm() {
+    	return configSource.get(CONFIG_DYNO_WARM_FORCE, false);
     }
     
 	public int getAllowableBytesSyncDiff() {
