@@ -359,7 +359,6 @@ public class BlankConfiguration implements IConfiguration {
 
 	@Override
 	public boolean isForceWarm() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
