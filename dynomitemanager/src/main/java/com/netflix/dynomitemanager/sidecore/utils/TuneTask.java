@@ -48,8 +48,9 @@ public class TuneTask extends Task
         return "Tune-Task";
     }
 
+    // update the YML every 60 seconds.
     public static TaskTimer getTimer()
     {
-        return new SimpleTimer(JOBNAME);
+        return new SimpleTimer(JOBNAME, 60L * 1000);
     }
 }

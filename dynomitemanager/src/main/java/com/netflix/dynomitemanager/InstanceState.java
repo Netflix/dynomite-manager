@@ -29,7 +29,7 @@ import org.joda.time.DateTime;
  *
  */
 @Singleton
-public class InstanceState {
+public class InstanceState implements IInstanceState {
     private final AtomicBoolean isSideCarProcessAlive = new AtomicBoolean(false);
     private final AtomicBoolean isBootstrapping = new AtomicBoolean(false);
     private final AtomicBoolean firstBootstrap = new AtomicBoolean(true);
@@ -48,6 +48,9 @@ public class InstanceState {
     private long bootstrapTime;
     private long backupTime;
     private long restoreTime;
+    
+    private final AtomicBoolean isYmlWritten = new AtomicBoolean(false);
+
     
     // This is true if storage proxy and storage are alive.
     private final AtomicBoolean isHealthy = new AtomicBoolean(false);
@@ -252,6 +255,14 @@ public class InstanceState {
     //@Monitor(name="processMonitoringSuspended", type=DataSourceType.GAUGE)
     public int metricIsProcessMonitoringSuspended() {
         return getIsProcessMonitoringSuspended() ? 1 : 0;
+    }
+    
+    public boolean getYmlWritten(){
+    	return this.isYmlWritten.get();
+    }
+    
+    public void setYmlWritten(boolean yml){
+    	this.isYmlWritten.set(yml);
     }
 
 }

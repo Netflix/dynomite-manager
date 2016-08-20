@@ -50,7 +50,6 @@ public class FloridaServer
     private final InstanceIdentity id;
     private final Sleeper sleeper;
     private final TuneTask tuneTask;
-    private final ProcessMonitorTask processMonitorTask;
     private final IFloridaProcess dynProcess;
     private final InstanceState state;
     private static final Logger logger = LoggerFactory.getLogger(FloridaServer.class);
@@ -58,14 +57,13 @@ public class FloridaServer
     @Inject
     public FloridaServer(IConfiguration config, TaskScheduler scheduler,
                          InstanceIdentity id, Sleeper sleeper, TuneTask tuneTask,
-                         ProcessMonitorTask processMonitorTask, InstanceState state, IFloridaProcess dynProcess)
+                         InstanceState state, IFloridaProcess dynProcess)
     {
         this.config = config;
         this.scheduler = scheduler;
         this.id = id;
         this.sleeper = sleeper;
         this.tuneTask = tuneTask;
-        this.processMonitorTask = processMonitorTask;
         this.state = state;
         this.dynProcess = dynProcess;
         
@@ -115,7 +113,10 @@ public class FloridaServer
     		logger.info("Restore is disabled.");
 
     		// Boostraping only if this is a new node.
-    		if (config.isWarmBootstrap() && id.isReplace()){
+    		if (config.isForceWarm() || (config.isWarmBootstrap() && id.isReplace())){
+    			if (config.isForceWarm()){
+    				logger.info("Enforcing warm up.");
+    			}
     			logger.info("Warm bootstraping node. Scheduling BootstrapTask now!");
     			dynProcess.stop();
     			scheduler.runTaskNow(WarmBootstrapTask.class);
