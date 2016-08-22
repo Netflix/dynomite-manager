@@ -35,6 +35,8 @@ import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 import com.netflix.dynomitemanager.FloridaServer;
 import com.netflix.dynomitemanager.IFloridaProcess;
+import com.netflix.dynomitemanager.IInstanceState;
+import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.identity.CassandraInstanceFactory;
 import com.netflix.dynomitemanager.identity.DefaultVpcInstanceEnvIdentity;
 import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
@@ -52,7 +54,6 @@ import com.netflix.dynomitemanager.sidecore.backup.Restore;
 import com.netflix.dynomitemanager.sidecore.backup.S3Backup;
 import com.netflix.dynomitemanager.sidecore.backup.S3Restore;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
-import com.netflix.dynomitemanager.sidecore.config.LocalInstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
@@ -140,6 +141,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
  //           binder().bind(GuiceJobFactory.class).asEagerSingleton();
             
             binder().bind(JedisFactory.class).to(SimpleJedisFactory.class);
+            binder().bind(IInstanceState.class).to(InstanceState.class);
             
             /* AWS binding */
             bind(IMembership.class).to(AWSMembership.class);
