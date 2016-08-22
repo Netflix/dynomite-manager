@@ -46,10 +46,15 @@ public class LocalHostsSupplier implements HostSupplier {
     	  
     	  if (bootCluster.equals(clusterName)){
               
-    		  List<String> cassHostnames = new ArrayList<String>(Arrays.asList(StringUtils.split(System.getProperty("DM_CASSANDRA_CLUSTER_SEEDS"), ",")));
+    		  String seeds = System.getenv("DM_CASSANDRA_CLUSTER_SEEDS");
+    		  
+    		  if (seeds == null || "".equals(seeds)) 
+    			  throw new RuntimeException("Cassandra Host Names can not be blank. At least one host is needed. Please use env var: DM_CASSANDRA_CLUSTER_SEEDS.");
+    		  
+    		  List<String> cassHostnames = new ArrayList<String>(Arrays.asList(StringUtils.split(seeds, ",")));
 
               if(cassHostnames.size() == 0)
-                  throw new RuntimeException("Cassandra Host Names can not be blank. At least one host is needed. Please use system property: DM_CASSANDRA_CLUSTER_SEEDS.");
+                  throw new RuntimeException("Cassandra Host Names can not be blank. At least one host is needed. Please use env var: DM_CASSANDRA_CLUSTER_SEEDS.");
 
               for(String cassHost : cassHostnames) {
                   hosts.add(new Host(cassHost, 9160));
