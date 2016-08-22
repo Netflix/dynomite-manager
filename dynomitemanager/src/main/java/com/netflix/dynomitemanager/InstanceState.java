@@ -51,6 +51,7 @@ public class InstanceState implements IInstanceState {
     
     private final AtomicBoolean isYmlWritten = new AtomicBoolean(false);
 
+    public InstanceState() {}
     
     // This is true if storage proxy and storage are alive.
     private final AtomicBoolean isHealthy = new AtomicBoolean(false);
