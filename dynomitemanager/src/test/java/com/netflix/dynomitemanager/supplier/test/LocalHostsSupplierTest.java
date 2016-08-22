@@ -21,6 +21,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.netflix.astyanax.connectionpool.Host;
+import com.netflix.dynomitemanager.monitoring.test.BlankConfiguration;
 import com.netflix.dynomitemanager.supplier.LocalHostsSupplier;
 
 /**
@@ -33,7 +34,7 @@ public class LocalHostsSupplierTest {
 
 	@Test
 	public void testSupplier(){
-		LocalHostsSupplier lhs = new LocalHostsSupplier();
+		LocalHostsSupplier lhs = new LocalHostsSupplier(new BlankConfiguration());
 		List<Host> hosts = lhs.getSupplier("DmClusterTest").get();
 		Assert.assertNotNull(hosts);
 		Assert.assertTrue(hosts.get(0) != null);
