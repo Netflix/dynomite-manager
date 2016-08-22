@@ -16,22 +16,55 @@
 package com.netflix.dynomitemanager.supplier;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Supplier;
+import com.google.inject.Inject;
 import com.netflix.astyanax.connectionpool.Host;
+import com.netflix.dynomitemanager.sidecore.IConfiguration;
 
 public class LocalHostsSupplier implements HostSupplier {
+	
+	private IConfiguration config;
+
+	@Inject
+	public LocalHostsSupplier(IConfiguration config) {
+		this.config = config;
+	}	
+	
      @Override
      public Supplier<List<Host>> getSupplier(String clusterName) {
-       final List<Host> hosts = new ArrayList<Host>();
-          hosts.add(new Host("127.0.0.1", 9160).setRack("localdc"));
-          return new Supplier<List<Host>>() {
-          
-          @Override
-          public List<Host> get() {
-             return hosts;
-          }
-       };
+    	  final List<Host> hosts = new ArrayList<Host>();
+    	  
+    	  String bootCluster = config.getBootClusterName();
+    	  
+    	  if(bootCluster == null)
+    		  bootCluster = "";
+    	  
+    	  if (bootCluster.equals(clusterName)){
+              
+    		  List<String> cassHostnames = new ArrayList<String>(Arrays.asList(StringUtils.split(System.getProperty("DM_CASSANDRA_CLUSTER_SEEDS"), ",")));
+
+              if(cassHostnames.size() == 0)
+                  throw new RuntimeException("Cassandra Host Names can not be blank. At least one host is needed. Please use system property: DM_CASSANDRA_CLUSTER_SEEDS.");
+
+              for(String cassHost : cassHostnames) {
+                  hosts.add(new Host(cassHost, 9160));
+              }
+              
+    	  }else{
+    		  hosts.add(new Host("127.0.0.1", 9160).setRack("localdc"));
+    	  }
+    	 
+     	return new Supplier<List<Host>>() {
+	         @Override
+	         public List<Host> get() {
+	            return hosts;
+	         }
+	    };
+	    
      }
 }
