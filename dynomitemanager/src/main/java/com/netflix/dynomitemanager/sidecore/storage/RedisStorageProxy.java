@@ -254,15 +254,15 @@ public class RedisStorageProxy implements IStorageProxy {
       return 0;
   }    
    
-  private class Alive {
+  private class AlivePeer {
   	String selectedPeer;
   	Jedis selectedJedis;
   	Long upTime;
   }
 
   
-  private Alive peerNodeSelection(String peer, Jedis peerJedis){
-  	Alive currentAlivePeer = new Alive();
+  private AlivePeer peerNodeSelection(String peer, Jedis peerJedis){
+	  AlivePeer currentAlivePeer = new AlivePeer();
   	currentAlivePeer.selectedPeer = peer;
   	currentAlivePeer.selectedJedis = peerJedis;
       String s = peerJedis.info();     // Parsing the info command on the peer node   
@@ -297,7 +297,7 @@ public class RedisStorageProxy implements IStorageProxy {
   @Override
   //probably use our Retries Util here
   public Bootstrap warmUpStorage(String[] peers) {
-  	  Alive largestAlivePeer = new Alive();
+	  AlivePeer longestAlivePeer = new AlivePeer();
       Jedis peerJedis = null;
       
       for(String peer : peers) { //Looking into the peers with the same token
@@ -305,34 +305,34 @@ public class RedisStorageProxy implements IStorageProxy {
           peerJedis = JedisUtils.connect(peer, config.getListenerPort());
           if (peerJedis != null && isAlive()) {   // Checking if there are peers, and if so if they are alive 	
             			
-  			Alive currentAlivePeer = peerNodeSelection(peer, peerJedis);
+        	  AlivePeer currentAlivePeer = peerNodeSelection(peer, peerJedis);
   			
           	/**
-          	 * Checking the one with the largest up time.
-          	 * Disconnect the one that is not the largest.
+          	 * Checking the one with the longest up time.
+          	 * Disconnect the one that is not the longest.
           	 */
   			if (currentAlivePeer.selectedJedis == null) {
   				logger.error("Cannot find uptime_in_seconds in peer " + peer);
   	        	return Bootstrap.CANNOT_CONNECT_FAIL;
   			}
-  			else if (largestAlivePeer.selectedJedis == null) {
-          		largestAlivePeer = currentAlivePeer;
+  			else if (longestAlivePeer.selectedJedis == null) {
+          		longestAlivePeer = currentAlivePeer;
           	}  
-          	else if (currentAlivePeer.upTime > largestAlivePeer.upTime) {
-      			largestAlivePeer.selectedJedis.disconnect();
-          		largestAlivePeer = currentAlivePeer;
+          	else if (currentAlivePeer.upTime > longestAlivePeer.upTime) {
+      			longestAlivePeer.selectedJedis.disconnect();
+          		longestAlivePeer = currentAlivePeer;
           	}
           } 
       }
       
       // We check if the select peer is alive and we connect to it.
-      if (largestAlivePeer.selectedJedis==null) {
+      if (longestAlivePeer.selectedJedis==null) {
       	logger.error("Cannot connect to peer node to bootstrap");
       	return Bootstrap.CANNOT_CONNECT_FAIL;
       }
       else {   
-          String alivePeer = largestAlivePeer.selectedPeer;
-          peerJedis = largestAlivePeer.selectedJedis;    
+          String alivePeer = longestAlivePeer.selectedPeer;
+          peerJedis = longestAlivePeer.selectedJedis;    
       	
           logger.info("Issue slaveof command on peer [" + alivePeer + "] and port [" + REDIS_PORT + "]");
           startPeerSync(alivePeer, REDIS_PORT);
