@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,57 +32,56 @@ public class AwsRoleAssumptionCredential implements ICredential {
 	private static final String AWS_ROLE_ASSUMPTION_SESSION_NAME = "AwsRoleAssumptionSession";
 	private ICredential cred;
 	private IConfiguration config;
-	private InstanceEnvIdentity insEnvIdentity;    
+	private InstanceEnvIdentity insEnvIdentity;
 	private AWSCredentialsProvider stsSessionCredentialsProvider;
 
 	@Inject
 	public AwsRoleAssumptionCredential(ICredential cred, IConfiguration config, InstanceEnvIdentity insEnvIdentity) {
 		this.cred = cred;
 		this.config = config;
-        this.insEnvIdentity = insEnvIdentity;
+		this.insEnvIdentity = insEnvIdentity;
 	}
-	
+
 	@Override
 	public AWSCredentialsProvider getAwsCredentialProvider() {
 		if (this.config.isDualAccount() || this.stsSessionCredentialsProvider == null) {
-			synchronized(this) {
+			synchronized (this) {
 				if (this.stsSessionCredentialsProvider == null) {
-					
+
 					String roleArn = null;
 					/**
 					 *  Create the assumed IAM role based on the environment.
-					 *  For example, if the current environment is VPC, 
+					 *  For example, if the current environment is VPC,
 					 *  then the assumed role is for EC2 classic, and vice versa.
 					 */
 					if (this.insEnvIdentity.isClassic()) {
-						roleArn = this.config.getVpcAWSRoleAssumptionArn();      // Env is EC2 classic --> IAM assumed role for VPC created 
-				    }
-					else {
-						roleArn = this.config.getClassicAWSRoleAssumptionArn();  // Env is VPC --> IAM assumed role for EC2 classic created 
+						roleArn = this.config.getVpcAWSRoleAssumptionArn();      // Env is EC2 classic --> IAM assumed role for VPC created
+					} else {
+						roleArn = this.config.getClassicAWSRoleAssumptionArn();  // Env is VPC --> IAM assumed role for EC2 classic created
 					}
-				
+
 					//
-					if (roleArn == null || roleArn.isEmpty()) 
+					if (roleArn == null || roleArn.isEmpty())
 						throw new NullPointerException("Role ARN is null or empty probably due to missing config entry");
-					
-					
+
+
 					/**
-					 *  Get handle to an implementation that uses AWS Security Token Service (STS) to create temporary, 
+					 *  Get handle to an implementation that uses AWS Security Token Service (STS) to create temporary,
 					 *  short-lived session with explicit refresh for session/token expiration.
 					 */
-					try {						
+					try {
 						this.stsSessionCredentialsProvider = new STSAssumeRoleSessionCredentialsProvider(this.cred.getAwsCredentialProvider(), roleArn, AWS_ROLE_ASSUMPTION_SESSION_NAME);
-						
+
 					} catch (Exception ex) {
 						throw new IllegalStateException("Exception in getting handle to AWS Security Token Service (STS).  Msg: " + ex.getLocalizedMessage(), ex);
-					}							
+					}
 
 				}
 
-		   }
-	   }
-	   
-	   return this.stsSessionCredentialsProvider;
+			}
+		}
+
+		return this.stsSessionCredentialsProvider;
 
 	}
 }

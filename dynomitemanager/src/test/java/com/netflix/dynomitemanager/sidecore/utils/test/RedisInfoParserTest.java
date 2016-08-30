@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,9 +27,9 @@ import org.junit.Test;
 import com.netflix.dynomitemanager.sidecore.utils.RedisInfoParser;
 
 /**
- * 
+ *
  * Unitests for RedisInfoParser
- * 
+ *
  * @author diegopacheco
  *
  */
@@ -56,25 +56,25 @@ public class RedisInfoParserTest {
 		Assert.assertEquals("0", metrics.get("Redis_Clients_client_biggest_input_buf").toString());
 		Assert.assertEquals("0", metrics.get("Redis_Clients_blocked_clients").toString());
 		Assert.assertEquals("2504768", metrics.get("Redis_Memory_used_memory").toString());
-		Assert.assertEquals("360",metrics.get("Redis_Memory_mem_fragmentation_ratio").toString());
-		Assert.assertEquals("1468428979",metrics.get("Redis_Persistence_rdb_last_save_time").toString());
-		Assert.assertEquals("0",metrics.get("Redis_Persistence_aof_enabled").toString());
-		Assert.assertEquals("0",metrics.get("Redis_Persistence_aof_rewrite_in_progress").toString());
-		Assert.assertEquals("1",metrics.get("Redis_Stats_total_connections_received").toString());
-		Assert.assertEquals("0",metrics.get("Redis_Stats_total_commands_processed").toString());
-		Assert.assertEquals("0",metrics.get("Redis_Stats_instantaneous_ops_per_sec").toString());
-		Assert.assertEquals("0",metrics.get("Redis_Stats_rejected_connections").toString());
-		Assert.assertEquals("0",metrics.get("Redis_Stats_expired_keys").toString());
-		Assert.assertEquals("0",metrics.get("Redis_Stats_evicted_keys").toString());
-		Assert.assertEquals("0",metrics.get("Redis_Stats_keyspace_hits").toString());
-		Assert.assertEquals("0",metrics.get("Redis_Stats_keyspace_misses").toString());
-		Assert.assertEquals("14",metrics.get("Redis_CPU_used_cpu_sys").toString());
-		Assert.assertEquals("5",metrics.get("Redis_CPU_used_cpu_user").toString());
-		Assert.assertEquals("16850",metrics.get("Redis_Keyspace_db0_keys").toString());
-		Assert.assertEquals("0",metrics.get("Redis_Keyspace_db0_expires").toString());
-		Assert.assertEquals("0",metrics.get("Redis_Keyspace_db0_avg_ttl").toString());
+		Assert.assertEquals("360", metrics.get("Redis_Memory_mem_fragmentation_ratio").toString());
+		Assert.assertEquals("1468428979", metrics.get("Redis_Persistence_rdb_last_save_time").toString());
+		Assert.assertEquals("0", metrics.get("Redis_Persistence_aof_enabled").toString());
+		Assert.assertEquals("0", metrics.get("Redis_Persistence_aof_rewrite_in_progress").toString());
+		Assert.assertEquals("1", metrics.get("Redis_Stats_total_connections_received").toString());
+		Assert.assertEquals("0", metrics.get("Redis_Stats_total_commands_processed").toString());
+		Assert.assertEquals("0", metrics.get("Redis_Stats_instantaneous_ops_per_sec").toString());
+		Assert.assertEquals("0", metrics.get("Redis_Stats_rejected_connections").toString());
+		Assert.assertEquals("0", metrics.get("Redis_Stats_expired_keys").toString());
+		Assert.assertEquals("0", metrics.get("Redis_Stats_evicted_keys").toString());
+		Assert.assertEquals("0", metrics.get("Redis_Stats_keyspace_hits").toString());
+		Assert.assertEquals("0", metrics.get("Redis_Stats_keyspace_misses").toString());
+		Assert.assertEquals("14", metrics.get("Redis_CPU_used_cpu_sys").toString());
+		Assert.assertEquals("5", metrics.get("Redis_CPU_used_cpu_user").toString());
+		Assert.assertEquals("16850", metrics.get("Redis_Keyspace_db0_keys").toString());
+		Assert.assertEquals("0", metrics.get("Redis_Keyspace_db0_expires").toString());
+		Assert.assertEquals("0", metrics.get("Redis_Keyspace_db0_avg_ttl").toString());
 	}
-	
+
 	@Test
 	public void testParserGetWrongKey() throws FileNotFoundException, Exception {
 		File file = new File(new File(".").getCanonicalPath() + "/src/test/resources/redis_info.txt");
@@ -82,7 +82,7 @@ public class RedisInfoParserTest {
 		RedisInfoParser parser = new RedisInfoParser();
 		Map<String, Long> metrics = parser.parse(new FileReader(file));
 
-		Assert.assertEquals(null,metrics.get("Redis_key_does_not_exists"));
+		Assert.assertEquals(null, metrics.get("Redis_key_does_not_exists"));
 	}
 
 }

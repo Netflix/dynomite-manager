@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Netflix, Inc.
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,154 +18,127 @@ package com.netflix.dynomitemanager.identity;
 import java.io.Serializable;
 import java.util.Map;
 
-public class AppsInstance implements Serializable
-{
-    private static final long serialVersionUID = 5606412386974488659L;
-    private String hostname;
-    private long updatetime;
-    private boolean outOfService;
+public class AppsInstance implements Serializable {
+	private static final long serialVersionUID = 5606412386974488659L;
+	private String hostname;
+	private long updatetime;
+	private boolean outOfService;
 
-    private String app;
-    private int Id;
-    private String instanceId;
-    private String availabilityZone;
-    private String rack;
-    private String publicip;
-    private String location;
-    private String token;
-    //Handles Storage objects
-    private Map<String, Object> volumes;
-    
-    public String getApp()
-    {
-        return app;
-    }
+	private String app;
+	private int Id;
+	private String instanceId;
+	private String availabilityZone;
+	private String rack;
+	private String publicip;
+	private String location;
+	private String token;
+	//Handles Storage objects
+	private Map<String, Object> volumes;
 
-    public void setApp(String app)
-    {
-        this.app = app;
-    }
+	public String getApp() {
+		return app;
+	}
 
-    public int getId()
-    {
-        return Id;
-    }
+	public void setApp(String app) {
+		this.app = app;
+	}
 
-    public void setId(int id)
-    {
-        Id = id;
-    }
+	public int getId() {
+		return Id;
+	}
 
-    public String getInstanceId()
-    {
-        return instanceId;
-    }
+	public void setId(int id) {
+		Id = id;
+	}
 
-    public void setInstanceId(String instanceId)
-    {
-        this.instanceId = instanceId;
-    }
+	public String getInstanceId() {
+		return instanceId;
+	}
 
-    public String getZone()
-    {
-        return availabilityZone;
-    }
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
+	}
 
-    public void setZone(String availabilityZone)
-    {
-        this.availabilityZone = availabilityZone;
-    }
+	public String getZone() {
+		return availabilityZone;
+	}
 
-    public String getHostName()
-    {
-        return hostname;
-    }
-    
-    public String getHostIP()
-    {
-        return publicip;
-    }
+	public void setZone(String availabilityZone) {
+		this.availabilityZone = availabilityZone;
+	}
 
-    public void setHost(String hostname, String publicip)
-    {
-        this.hostname = hostname;
-        this.publicip = publicip;
-    }
+	public String getHostName() {
+		return hostname;
+	}
 
-    public void setHost(String hostname)
-    {
-        this.hostname = hostname;
-    }
+	public String getHostIP() {
+		return publicip;
+	}
 
-    public void setHostIP(String publicip)
-    {
-        this.publicip = publicip;
-    }
+	public void setHost(String hostname, String publicip) {
+		this.hostname = hostname;
+		this.publicip = publicip;
+	}
 
-    public String getToken()
-    {
-        return token;
-    }
+	public void setHost(String hostname) {
+		this.hostname = hostname;
+	}
 
-    public void setToken(String token)
-    {
-        this.token = token;
-    }
+	public void setHostIP(String publicip) {
+		this.publicip = publicip;
+	}
 
-    public Map<String, Object> getVolumes()
-    {
-        return volumes;
-    }
+	public String getToken() {
+		return token;
+	}
 
-    public void setVolumes(Map<String, Object> volumes)
-    {
-        this.volumes = volumes;
-    }
+	public void setToken(String token) {
+		this.token = token;
+	}
 
-    @Override
-    public String toString()
-    {
-        return String.format("Hostname: %s, InstanceId: %s, APP_NAME: %s, RAC : %s Location %s, Id: %s: Token: %s", getHostName(), getInstanceId(), getApp(), getZone(), getDatacenter(), getId(),
-                getToken());
-    }
+	public Map<String, Object> getVolumes() {
+		return volumes;
+	}
 
-    public String getDatacenter()
-    {
-        return location;
-    }
-    
-    public void setDatacenter(String dc)
-    {
-        this.location = dc;
-    }
+	public void setVolumes(Map<String, Object> volumes) {
+		this.volumes = volumes;
+	}
 
-    public long getUpdatetime()
-    {
-        return updatetime;
-    }
+	@Override
+	public String toString() {
+		return String.format("Hostname: %s, InstanceId: %s, APP_NAME: %s, RAC : %s Location %s, Id: %s: Token: %s", getHostName(), getInstanceId(), getApp(), getZone(), getDatacenter(), getId(),
+				getToken());
+	}
 
-    public void setUpdatetime(long updatetime)
-    {
-        this.updatetime = updatetime;
-    }
+	public String getDatacenter() {
+		return location;
+	}
 
-    public boolean isOutOfService()
-    {
-        return outOfService;
-    }
+	public void setDatacenter(String dc) {
+		this.location = dc;
+	}
 
-    public void setOutOfService(boolean outOfService)
-    {
-        this.outOfService = outOfService;
-    }
+	public long getUpdatetime() {
+		return updatetime;
+	}
 
-    public String getRack() 
-    {
-    	return rack;
-    }
-    
-    public void setRack(String rack)
-    {
-        this.rack = rack;	
-    }
+	public void setUpdatetime(long updatetime) {
+		this.updatetime = updatetime;
+	}
+
+	public boolean isOutOfService() {
+		return outOfService;
+	}
+
+	public void setOutOfService(boolean outOfService) {
+		this.outOfService = outOfService;
+	}
+
+	public String getRack() {
+		return rack;
+	}
+
+	public void setRack(String rack) {
+		this.rack = rack;
+	}
 }

@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,26 +23,26 @@ import com.netflix.dynomitemanager.identity.InstanceIdentity;
 
 /**
  * Fake implementation of InstanceIdentity for mocking and unit testing.
- * 
+ *
  * @author diegopacheco
  *
  */
-public class FakeInstanceIdentity extends InstanceIdentity{
-	
+public class FakeInstanceIdentity extends InstanceIdentity {
+
 	public FakeInstanceIdentity() throws Exception {
 		super(null, null, null, null, null, null);
 	}
-	
+
 	@Override
 	public void init() throws Exception {
 		// overrides by-design so it forces not to init the InstanceIdentity.
 	}
-	
+
 	@Override
 	public String getTokens() {
 		return "101134286";
 	}
-	
+
 	@Override
 	public List<String> getSeeds() throws UnknownHostException {
 		List<String> seeds = new ArrayList<>();

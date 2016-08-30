@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,10 +45,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class InstanceDataDAOCassandra
-{
+public class InstanceDataDAOCassandra {
 	private static final Logger logger = LoggerFactory.getLogger(InstanceDataDAOCassandra.class);
-	
+
 	private String CN_ID = "Id";
 	private String CN_APPID = "appId";
 	private String CN_AZ = "availabilityZone";
@@ -62,15 +61,15 @@ public class InstanceDataDAOCassandra
 	private String CN_UPDATETIME = "updatetime";
 	private String CF_NAME_TOKENS = "tokens";
 	private String CF_NAME_LOCKS = "locks";
-	
 
-    private final Keyspace bootKeyspace;
-    private final IConfiguration config;
-    private final HostSupplier hostSupplier;
-    private final String BOOT_CLUSTER;
-    private final String KS_NAME;
-    private final int thriftPortForAstyanax;
-    private final AstyanaxContext<Keyspace> ctx;
+
+	private final Keyspace bootKeyspace;
+	private final IConfiguration config;
+	private final HostSupplier hostSupplier;
+	private final String BOOT_CLUSTER;
+	private final String KS_NAME;
+	private final int thriftPortForAstyanax;
+	private final AstyanaxContext<Keyspace> ctx;
 
 
 	/*
@@ -88,76 +87,73 @@ public class InstanceDataDAOCassandra
 	// Schema: create column family locks with comparator=UTF8Type;
 	public ColumnFamily<String, String> CF_LOCKS = new ColumnFamily<String, String>(CF_NAME_LOCKS, StringSerializer.get(), StringSerializer.get());
 
-    @Inject
-    public InstanceDataDAOCassandra(IConfiguration config,HostSupplier hostSupplier) throws ConnectionException
-    {
-        this.config = config;
+	@Inject
+	public InstanceDataDAOCassandra(IConfiguration config, HostSupplier hostSupplier) throws ConnectionException {
+		this.config = config;
 
-        BOOT_CLUSTER = config.getBootClusterName();
+		BOOT_CLUSTER = config.getBootClusterName();
 
-        if(BOOT_CLUSTER == null || BOOT_CLUSTER.isEmpty())
-            throw new RuntimeException("BootCluster can not be blank. Please use getBootClusterName() property.");
+		if (BOOT_CLUSTER == null || BOOT_CLUSTER.isEmpty())
+			throw new RuntimeException("BootCluster can not be blank. Please use getBootClusterName() property.");
 
-        KS_NAME = config.getCassandraKeyspaceName();
+		KS_NAME = config.getCassandraKeyspaceName();
 
-        if(KS_NAME == null || KS_NAME.isEmpty())
-            throw new RuntimeException("Cassandra Keyspace can not be blank. Please use getCassandraKeyspaceName() property.");
+		if (KS_NAME == null || KS_NAME.isEmpty())
+			throw new RuntimeException("Cassandra Keyspace can not be blank. Please use getCassandraKeyspaceName() property.");
 
-        thriftPortForAstyanax = config.getCassandraThriftPortForAstyanax();
-        if(thriftPortForAstyanax <= 0)
-            throw new RuntimeException("Thrift Port for Astyanax can not be blank. Please use getCassandraThriftPortForAstyanax() property.");
+		thriftPortForAstyanax = config.getCassandraThriftPortForAstyanax();
+		if (thriftPortForAstyanax <= 0)
+			throw new RuntimeException("Thrift Port for Astyanax can not be blank. Please use getCassandraThriftPortForAstyanax() property.");
 
-        this.hostSupplier = hostSupplier;
+		this.hostSupplier = hostSupplier;
 
-        if(config.isEurekaHostSupplierEnabled())
-            ctx = initWithThriftDriverWithEurekaHostsSupplier();
-        else
-            ctx = initWithThriftDriverWithExternalHostsSupplier();
+		if (config.isEurekaHostSupplierEnabled())
+			ctx = initWithThriftDriverWithEurekaHostsSupplier();
+		else
+			ctx = initWithThriftDriverWithExternalHostsSupplier();
 
-        ctx.start();
-        bootKeyspace = ctx.getClient();
-    }
-
+		ctx.start();
+		bootKeyspace = ctx.getClient();
+	}
 
 
-	public void createInstanceEntry(AppsInstance instance) throws Exception
-	{
-	    logger.info("*** Creating New Instance Entry ***");
-	    String key = getRowKey(instance);
-        // If the key exists throw exception
-        if (getInstance(instance.getApp(), instance.getRack(),
-                instance.getId()) != null) {
-            logger.info(String.format("Key already exists: %s", key));
-            return;
-        }
+	public void createInstanceEntry(AppsInstance instance) throws Exception {
+		logger.info("*** Creating New Instance Entry ***");
+		String key = getRowKey(instance);
+		// If the key exists throw exception
+		if (getInstance(instance.getApp(), instance.getRack(),
+				instance.getId()) != null) {
+			logger.info(String.format("Key already exists: %s", key));
+			return;
+		}
 
-	    getLock(instance);
+		getLock(instance);
 
-	    try {
-	        MutationBatch m = bootKeyspace.prepareMutationBatch();
-	        ColumnListMutation<String> clm = m.withRow(CF_TOKENS, key);
-	        clm.putColumn(CN_ID, Integer.toString(instance.getId()), null);
-	        clm.putColumn(CN_APPID, instance.getApp(), null);
-	        clm.putColumn(CN_AZ, instance.getZone(), null);
-	        clm.putColumn(CN_DC, config.getRack(), null);
-	        clm.putColumn(CN_INSTANCEID, instance.getInstanceId(), null);
-	        clm.putColumn(CN_HOSTNAME, instance.getHostName(), null);
-	        clm.putColumn(CN_EIP, instance.getHostIP(), null);
-	        clm.putColumn(CN_TOKEN, instance.getToken(), null);
-	        clm.putColumn(CN_LOCATION, instance.getDatacenter(), null);
-	        clm.putColumn(CN_UPDATETIME, TimeUUIDUtils.getUniqueTimeUUIDinMicros(), null);
-	        Map<String, Object> volumes = instance.getVolumes();
-	        if (volumes != null) {
-	            for (String path : volumes.keySet()) {
-	                clm.putColumn(CN_VOLUME_PREFIX + "_" + path, volumes.get(path).toString(), null);
-	            }
-	        }
-	        m.execute();
-	    } catch (Exception e) {
-	        logger.info(e.getMessage());
-	    } finally {
-            releaseLock(instance);
-	    }
+		try {
+			MutationBatch m = bootKeyspace.prepareMutationBatch();
+			ColumnListMutation<String> clm = m.withRow(CF_TOKENS, key);
+			clm.putColumn(CN_ID, Integer.toString(instance.getId()), null);
+			clm.putColumn(CN_APPID, instance.getApp(), null);
+			clm.putColumn(CN_AZ, instance.getZone(), null);
+			clm.putColumn(CN_DC, config.getRack(), null);
+			clm.putColumn(CN_INSTANCEID, instance.getInstanceId(), null);
+			clm.putColumn(CN_HOSTNAME, instance.getHostName(), null);
+			clm.putColumn(CN_EIP, instance.getHostIP(), null);
+			clm.putColumn(CN_TOKEN, instance.getToken(), null);
+			clm.putColumn(CN_LOCATION, instance.getDatacenter(), null);
+			clm.putColumn(CN_UPDATETIME, TimeUUIDUtils.getUniqueTimeUUIDinMicros(), null);
+			Map<String, Object> volumes = instance.getVolumes();
+			if (volumes != null) {
+				for (String path : volumes.keySet()) {
+					clm.putColumn(CN_VOLUME_PREFIX + "_" + path, volumes.get(path).toString(), null);
+				}
+			}
+			m.execute();
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+		} finally {
+			releaseLock(instance);
+		}
 	}
 
 	/*
@@ -166,8 +162,7 @@ public class InstanceDataDAOCassandra
 	 * out. - Once there are no contenders, grab the lock if it is not already
 	 * taken.
 	 */
-	private void getLock(AppsInstance instance) throws Exception
-	{
+	private void getLock(AppsInstance instance) throws Exception {
 
 		String choosingkey = getChoosingKey(instance);
 		MutationBatch m = bootKeyspace.prepareMutationBatch();
@@ -197,24 +192,21 @@ public class InstanceDataDAOCassandra
 		if (result.getResult().size() == 1 && result.getResult().getColumnByIndex(0).getName().equals(instance.getInstanceId())) {
 			logger.info("Got lock " + lockKey);
 			return;
-		}
-		else
+		} else
 			throw new Exception(String.format("Cannot insert lock %s", lockKey));
 
 	}
 
-	private void releaseLock(AppsInstance instance) throws Exception 
-	{
-	        String choosingkey = getChoosingKey(instance);
-	        MutationBatch m = bootKeyspace.prepareMutationBatch();
-	        ColumnListMutation<String> clm = m.withRow(CF_LOCKS, choosingkey);
+	private void releaseLock(AppsInstance instance) throws Exception {
+		String choosingkey = getChoosingKey(instance);
+		MutationBatch m = bootKeyspace.prepareMutationBatch();
+		ColumnListMutation<String> clm = m.withRow(CF_LOCKS, choosingkey);
 
-	        m.withRow(CF_LOCKS, choosingkey).deleteColumn(instance.getInstanceId());
-	        m.execute();
+		m.withRow(CF_LOCKS, choosingkey).deleteColumn(instance.getInstanceId());
+		m.execute();
 	}
-	
-	public void deleteInstanceEntry(AppsInstance instance) throws Exception
-	{
+
+	public void deleteInstanceEntry(AppsInstance instance) throws Exception {
 		// Acquire the lock first
 		getLock(instance);
 
@@ -242,8 +234,7 @@ public class InstanceDataDAOCassandra
 
 	}
 
-	public AppsInstance getInstance(String app, String rack, int id)
-	{
+	public AppsInstance getInstance(String app, String rack, int id) {
 		Set<AppsInstance> set = getAllInstances(app);
 		for (AppsInstance ins : set) {
 			if (ins.getId() == id && ins.getRack().equals(rack))
@@ -251,9 +242,8 @@ public class InstanceDataDAOCassandra
 		}
 		return null;
 	}
-	
-	public Set<AppsInstance> getLocalDCInstances(String app, String region)
-	{
+
+	public Set<AppsInstance> getLocalDCInstances(String app, String region) {
 		Set<AppsInstance> set = getAllInstances(app);
 		Set<AppsInstance> returnSet = new HashSet<AppsInstance>();
 
@@ -264,8 +254,7 @@ public class InstanceDataDAOCassandra
 		return returnSet;
 	}
 
-	public Set<AppsInstance> getAllInstances(String app)
-	{
+	public Set<AppsInstance> getAllInstances(String app) {
 		Set<AppsInstance> set = new HashSet<AppsInstance>();
 		try {
 
@@ -273,55 +262,51 @@ public class InstanceDataDAOCassandra
 			logger.debug(selectClause);
 
 			final ColumnFamily<String, String> CF_TOKENS_NEW = ColumnFamily.newColumnFamily(KS_NAME,
-					                                                                    StringSerializer.get(), 
-					                                                                    StringSerializer.get());
+					StringSerializer.get(),
+					StringSerializer.get());
 
 			OperationResult<CqlResult<String, String>> result = bootKeyspace.prepareQuery(CF_TOKENS_NEW)
-					                                                        .withCql(selectClause).execute();
+					.withCql(selectClause).execute();
 
 			for (Row<String, String> row : result.getResult().getRows())
 				set.add(transform(row.getColumns()));
-		}
-		catch (Exception e) {
-            logger.warn("Caught an Unknown Exception during reading msgs ... -> " + e.getMessage());
-            throw new RuntimeException(e);
+		} catch (Exception e) {
+			logger.warn("Caught an Unknown Exception during reading msgs ... -> " + e.getMessage());
+			throw new RuntimeException(e);
 		}
 		return set;
 	}
-	
 
-	public String findKey(String app, String id, String location, String datacenter)
-	{
+
+	public String findKey(String app, String id, String location, String datacenter) {
 		try {
 			final String selectClause = String.format(
 					"SELECT * FROM %s USING CONSISTENCY LOCAL_QUORUM WHERE %s = '%s' and %s = '%s' and %s = '%s' and %s = '%s' ", "tokens", CN_APPID, app, CN_ID, id, CN_LOCATION, location, CN_DC, datacenter);
 			logger.info(selectClause);
-			
+
 			final ColumnFamily<String, String> CF_INSTANCES_NEW = ColumnFamily.newColumnFamily(KS_NAME,
-                    StringSerializer.get(), StringSerializer.get());
+					StringSerializer.get(), StringSerializer.get());
 
-            OperationResult<CqlResult<String, String>> result = bootKeyspace.prepareQuery(CF_INSTANCES_NEW)
-                    .withCql(selectClause).execute();
+			OperationResult<CqlResult<String, String>> result = bootKeyspace.prepareQuery(CF_INSTANCES_NEW)
+					.withCql(selectClause).execute();
 
-            if (result == null || result.getResult().getRows().size() == 0)
-                return null;
+			if (result == null || result.getResult().getRows().size() == 0)
+				return null;
 
-            Row<String, String> row = result.getResult().getRows().getRowByIndex(0);
-            return row.getKey();
+			Row<String, String> row = result.getResult().getRows().getRowByIndex(0);
+			return row.getKey();
 
-        }
-        catch (Exception e) {
-            logger.warn("Caught an Unknown Exception during find a row matching cluster[" + app +
-                    "], id[" + id + "], and region[" + datacenter + "]  ... -> "
-                    + e.getMessage());
-            throw new RuntimeException(e);
-        }
+		} catch (Exception e) {
+			logger.warn("Caught an Unknown Exception during find a row matching cluster[" + app +
+					"], id[" + id + "], and region[" + datacenter + "]  ... -> "
+					+ e.getMessage());
+			throw new RuntimeException(e);
+		}
 
 	}
 
 
-	private AppsInstance transform(ColumnList<String> columns)
-	{
+	private AppsInstance transform(ColumnList<String> columns) {
 		AppsInstance ins = new AppsInstance();
 		Map<String, String> cmap = new HashMap<String, String>();
 		for (Column<String> column : columns) {
@@ -343,87 +328,83 @@ public class InstanceDataDAOCassandra
 		return ins;
 	}
 
-	private String getChoosingKey(AppsInstance instance)
-	{
+	private String getChoosingKey(AppsInstance instance) {
 		return instance.getApp() + "_" + instance.getRack() + "_" + instance.getId() + "-choosing";
 	}
 
-	private String getLockingKey(AppsInstance instance)
-	{
+	private String getLockingKey(AppsInstance instance) {
 		return instance.getApp() + "_" + instance.getRack() + "_" + instance.getId() + "-lock";
 	}
 
-	private String getRowKey(AppsInstance instance)
-	{
+	private String getRowKey(AppsInstance instance) {
 		return instance.getApp() + "_" + instance.getRack() + "_" + instance.getId();
 	}
 
-    private AstyanaxContext<Keyspace> initWithThriftDriverWithEurekaHostsSupplier() {
+	private AstyanaxContext<Keyspace> initWithThriftDriverWithEurekaHostsSupplier() {
 
-        logger.info("BOOT_CLUSTER = {}, KS_NAME = {}",BOOT_CLUSTER,KS_NAME);
-        return new AstyanaxContext.Builder()
-                .forCluster(BOOT_CLUSTER)
-                .forKeyspace(KS_NAME)
-                .withAstyanaxConfiguration(
-                        new AstyanaxConfigurationImpl()
-                                .setDiscoveryType(
-                                        NodeDiscoveryType.DISCOVERY_SERVICE) )
-                .withConnectionPoolConfiguration(
-                        new ConnectionPoolConfigurationImpl(
-                                "MyConnectionPool")
-                                .setMaxConnsPerHost(3)
-                                .setPort(thriftPortForAstyanax))
-                .withHostSupplier(hostSupplier.getSupplier(BOOT_CLUSTER))
-                .withConnectionPoolMonitor(new CountingConnectionPoolMonitor())
-                .buildKeyspace(ThriftFamilyFactory.getInstance());
+		logger.info("BOOT_CLUSTER = {}, KS_NAME = {}", BOOT_CLUSTER, KS_NAME);
+		return new AstyanaxContext.Builder()
+				.forCluster(BOOT_CLUSTER)
+				.forKeyspace(KS_NAME)
+				.withAstyanaxConfiguration(
+						new AstyanaxConfigurationImpl()
+								.setDiscoveryType(
+										NodeDiscoveryType.DISCOVERY_SERVICE))
+				.withConnectionPoolConfiguration(
+						new ConnectionPoolConfigurationImpl(
+								"MyConnectionPool")
+								.setMaxConnsPerHost(3)
+								.setPort(thriftPortForAstyanax))
+				.withHostSupplier(hostSupplier.getSupplier(BOOT_CLUSTER))
+				.withConnectionPoolMonitor(new CountingConnectionPoolMonitor())
+				.buildKeyspace(ThriftFamilyFactory.getInstance());
 
-    }
+	}
 
-    private AstyanaxContext<Keyspace> initWithThriftDriverWithExternalHostsSupplier() {
+	private AstyanaxContext<Keyspace> initWithThriftDriverWithExternalHostsSupplier() {
 
-        logger.info("BOOT_CLUSTER = {}, KS_NAME = {}",BOOT_CLUSTER,KS_NAME);
-        return new AstyanaxContext.Builder()
-                .forCluster(BOOT_CLUSTER)
-                .forKeyspace(KS_NAME)
-                .withAstyanaxConfiguration(
-                        new AstyanaxConfigurationImpl()
-                                .setDiscoveryType(
-                                        NodeDiscoveryType.DISCOVERY_SERVICE)
-                                .setConnectionPoolType(
-                                        ConnectionPoolType.ROUND_ROBIN))
-                .withConnectionPoolConfiguration(
-                        new ConnectionPoolConfigurationImpl(
-                                "MyConnectionPool")
-                                .setMaxConnsPerHost(3)
-                                .setPort(thriftPortForAstyanax))
-                .withHostSupplier(getSupplier())
-                .withConnectionPoolMonitor(new CountingConnectionPoolMonitor())
-                .buildKeyspace(ThriftFamilyFactory.getInstance());
+		logger.info("BOOT_CLUSTER = {}, KS_NAME = {}", BOOT_CLUSTER, KS_NAME);
+		return new AstyanaxContext.Builder()
+				.forCluster(BOOT_CLUSTER)
+				.forKeyspace(KS_NAME)
+				.withAstyanaxConfiguration(
+						new AstyanaxConfigurationImpl()
+								.setDiscoveryType(
+										NodeDiscoveryType.DISCOVERY_SERVICE)
+								.setConnectionPoolType(
+										ConnectionPoolType.ROUND_ROBIN))
+				.withConnectionPoolConfiguration(
+						new ConnectionPoolConfigurationImpl(
+								"MyConnectionPool")
+								.setMaxConnsPerHost(3)
+								.setPort(thriftPortForAstyanax))
+				.withHostSupplier(getSupplier())
+				.withConnectionPoolMonitor(new CountingConnectionPoolMonitor())
+				.buildKeyspace(ThriftFamilyFactory.getInstance());
 
-    }
+	}
 
-    private Supplier<List<Host>> getSupplier() {
+	private Supplier<List<Host>> getSupplier() {
 
-        return new Supplier<List<Host>>() {
+		return new Supplier<List<Host>>() {
 
-            @Override
-            public List<Host> get() {
+			@Override
+			public List<Host> get() {
 
-                List<Host> hosts = new ArrayList<Host>();
+				List<Host> hosts = new ArrayList<Host>();
 
-                List<String> cassHostnames = new ArrayList<String>(Arrays.asList(StringUtils.split(config.getCommaSeparatedCassandraHostNames(), ",")));
+				List<String> cassHostnames = new ArrayList<String>(Arrays.asList(StringUtils.split(config.getCommaSeparatedCassandraHostNames(), ",")));
 
-                if(cassHostnames.size() == 0)
-                    throw new RuntimeException("Cassandra Host Names can not be blank. At least one host is needed. Please use getCommaSeparatedCassandraHostNames() property.");
+				if (cassHostnames.size() == 0)
+					throw new RuntimeException("Cassandra Host Names can not be blank. At least one host is needed. Please use getCommaSeparatedCassandraHostNames() property.");
 
-                for(String cassHost : cassHostnames)
-                {
-                    logger.info("Adding Cassandra Host = {}",cassHost);
-                    hosts.add(new Host(cassHost, thriftPortForAstyanax));
-                }
+				for (String cassHost : cassHostnames) {
+					logger.info("Adding Cassandra Host = {}", cassHost);
+					hosts.add(new Host(cassHost, thriftPortForAstyanax));
+				}
 
-                return hosts;
-            }
-        };
-    }
+				return hosts;
+			}
+		};
+	}
 }
