@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -70,78 +70,75 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
  */
 public class InjectedWebListener extends GuiceServletContextListener {
 
-	protected static final Logger logger = LoggerFactory.getLogger(InjectedWebListener.class);
+		protected static final Logger logger = LoggerFactory.getLogger(InjectedWebListener.class);
 
-	@Override
-	protected Injector getInjector() {
-		List<Module> moduleList = Lists.newArrayList();
-		moduleList.add(new JaxServletModule());
-		moduleList.add(new DynomiteGuiceModule());
-		Injector injector = Guice.createInjector(moduleList);
-		// Initialize DynomiteManager configuration
-		try {
-			injector.getInstance(IConfiguration.class).initialize();
-		} catch (Exception e) {
-			logger.error("IConfiguration: " + e.getMessage(), e);
-			throw new RuntimeException(e.getMessage(), e);
+		@Override protected Injector getInjector() {
+				List<Module> moduleList = Lists.newArrayList();
+				moduleList.add(new JaxServletModule());
+				moduleList.add(new DynomiteGuiceModule());
+				Injector injector = Guice.createInjector(moduleList);
+				// Initialize DynomiteManager configuration
+				try {
+						injector.getInstance(IConfiguration.class).initialize();
+				} catch (Exception e) {
+						logger.error("IConfiguration: " + e.getMessage(), e);
+						throw new RuntimeException(e.getMessage(), e);
+				}
+
+				// Initialize Florida Server
+				try {
+						injector.getInstance(FloridaServer.class).initialize();
+				} catch (Exception e) {
+						logger.error("Florida Server: " + e.getMessage(), e);
+						throw new RuntimeException(e.getMessage(), e);
+				}
+				return injector;
 		}
 
-		// Initialize Florida Server
-		try {
-			injector.getInstance(FloridaServer.class).initialize();
-		} catch (Exception e) {
-			logger.error("Florida Server: " + e.getMessage(), e);
-			throw new RuntimeException(e.getMessage(), e);
+		public static class JaxServletModule extends ServletModule {
+				@Override protected void configureServlets() {
+
+						Map<String, String> params = new HashMap<String, String>();
+						params.put(PackagesResourceConfig.PROPERTY_PACKAGES, "unbound");
+						params.put("com.sun.jersey.config.property.packages", "com.netflix.dynomitemanager.resources");
+						serve("/REST/*").with(GuiceContainer.class, params);
+				}
 		}
-		return injector;
-	}
 
-	public static class JaxServletModule extends ServletModule {
-		@Override
-		protected void configureServlets() {
+		public static class DynomiteGuiceModule extends AbstractModule {
+				@Override protected void configure() {
+						logger.info("**Binding OSS Config classes.");
+						binder().bind(IConfiguration.class).to(DynomitemanagerConfiguration.class);
+						binder().bind(ProcessTuner.class).to(FloridaStandardTuner.class);
+						binder().bind(IAppsInstanceFactory.class).to(CassandraInstanceFactory.class);
+						binder().bind(SchedulerFactory.class).to(StdSchedulerFactory.class).asEagerSingleton();
+						binder().bind(IFloridaProcess.class).to(FloridaProcessManager.class);
+						binder().bind(IStorageProxy.class).to(RedisStorageProxy.class);
+						binder().bind(InstanceDataRetriever.class).to(VpcInstanceDataRetriever.class);
+						//binder().bind(InstanceDataRetriever.class).to(LocalInstanceDataRetriever.class);
+						//binder().bind(HostSupplier.class).to(EurekaHostsSupplier.class);
+						binder().bind(HostSupplier.class).to(LocalHostsSupplier.class);
 
-			Map<String, String> params = new HashMap<String, String>();
-			params.put(PackagesResourceConfig.PROPERTY_PACKAGES, "unbound");
-			params.put("com.sun.jersey.config.property.packages", "com.netflix.dynomitemanager.resources");
-			serve("/REST/*").with(GuiceContainer.class, params);
-		}
-	}
+						//binder().bind(InstanceEnvIdentity.class).to(LocalInstanceEnvIdentity.class);
+						binder().bind(HealthCheckHandler.class).to(FloridaHealthCheckHandler.class).asEagerSingleton();
 
+						//           binder().bind(GuiceContainer.class).asEagerSingleton();
+						//           binder().bind(GuiceJobFactory.class).asEagerSingleton();
 
-	public static class DynomiteGuiceModule extends AbstractModule {
-		@Override
-		protected void configure() {
-			logger.info("**Binding OSS Config classes.");
-			binder().bind(IConfiguration.class).to(DynomitemanagerConfiguration.class);
-			binder().bind(ProcessTuner.class).to(FloridaStandardTuner.class);
-			binder().bind(IAppsInstanceFactory.class).to(CassandraInstanceFactory.class);
-			binder().bind(SchedulerFactory.class).to(StdSchedulerFactory.class).asEagerSingleton();
-			binder().bind(IFloridaProcess.class).to(FloridaProcessManager.class);
-			binder().bind(IStorageProxy.class).to(RedisStorageProxy.class);
-			binder().bind(InstanceDataRetriever.class).to(VpcInstanceDataRetriever.class);
-			//binder().bind(InstanceDataRetriever.class).to(LocalInstanceDataRetriever.class);
-			//binder().bind(HostSupplier.class).to(EurekaHostsSupplier.class);
-			binder().bind(HostSupplier.class).to(LocalHostsSupplier.class);
-
-
-			//binder().bind(InstanceEnvIdentity.class).to(LocalInstanceEnvIdentity.class);
-			binder().bind(HealthCheckHandler.class).to(FloridaHealthCheckHandler.class).asEagerSingleton();
-
-			//           binder().bind(GuiceContainer.class).asEagerSingleton();
-			//           binder().bind(GuiceJobFactory.class).asEagerSingleton();
-
-			binder().bind(JedisFactory.class).to(SimpleJedisFactory.class);
-			binder().bind(IInstanceState.class).to(InstanceState.class);
+						binder().bind(JedisFactory.class).to(SimpleJedisFactory.class);
+						binder().bind(IInstanceState.class).to(InstanceState.class);
 
             /* AWS binding */
-			bind(IMembership.class).to(AWSMembership.class);
-			bind(ICredential.class).to(IAMCredential.class);
-			bind(ICredential.class).annotatedWith(Names.named("awsroleassumption")).to(AwsRoleAssumptionCredential.class);
-			binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class).asEagerSingleton();
-			bind(Backup.class).to(S3Backup.class);
-			bind(Restore.class).to(S3Restore.class);
+						bind(IMembership.class).to(AWSMembership.class);
+						bind(ICredential.class).to(IAMCredential.class);
+						bind(ICredential.class).annotatedWith(Names.named("awsroleassumption"))
+								.to(AwsRoleAssumptionCredential.class);
+						binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class)
+								.asEagerSingleton();
+						bind(Backup.class).to(S3Backup.class);
+						bind(Restore.class).to(S3Restore.class);
 
+				}
 		}
-	}
 
 }

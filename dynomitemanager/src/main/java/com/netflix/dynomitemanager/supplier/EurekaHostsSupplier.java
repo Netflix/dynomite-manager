@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,83 +43,83 @@ import com.netflix.discovery.shared.Application;
  * Note that the class needs the eureka application name to discover all instances for that application.
  *
  */
-@Singleton
-public class EurekaHostsSupplier implements HostSupplier {
+@Singleton public class EurekaHostsSupplier implements HostSupplier {
 
-	private static final Logger LOG = LoggerFactory.getLogger(EurekaHostsSupplier.class);
+		private static final Logger LOG = LoggerFactory.getLogger(EurekaHostsSupplier.class);
 
-	private final DiscoveryClient discoveryClient;
+		private final DiscoveryClient discoveryClient;
 
-	@Inject
-	public EurekaHostsSupplier(DiscoveryClient discoveryClient) {
-		this.discoveryClient = discoveryClient;
-	}
+		@Inject public EurekaHostsSupplier(DiscoveryClient discoveryClient) {
+				this.discoveryClient = discoveryClient;
+		}
 
-	@Override
-	public Supplier<List<Host>> getSupplier(final String clusterName) {
-		return new Supplier<List<Host>>() {
+		@Override public Supplier<List<Host>> getSupplier(final String clusterName) {
+				return new Supplier<List<Host>>() {
 
-			@Override
-			public List<Host> get() {
+						@Override public List<Host> get() {
 
-				if (discoveryClient == null) {
-					LOG.error("Discovery client cannot be null");
-					throw new RuntimeException("EurekaHostsSupplier needs a non-null DiscoveryClient");
-				}
-
-				LOG.debug("Dynomite-manager fetching instance list for app: " + clusterName);
-
-				Application app = discoveryClient.getApplication(clusterName.toUpperCase());
-				List<Host> hosts = new ArrayList<Host>();
-
-				if (app == null) {
-					LOG.warn("Cluster '{}' not found in eureka", clusterName);
-					return hosts;
-				}
-
-				List<InstanceInfo> ins = app.getInstances();
-
-				if (ins == null || ins.isEmpty()) {
-					LOG.warn("Cluster '{}' found in eureka but has no instances", clusterName);
-					return hosts;
-				}
-
-				hosts = Lists.newArrayList(Collections2.transform(
-						Collections2.filter(ins, new Predicate<InstanceInfo>() {
-							@Override
-							public boolean apply(InstanceInfo input) {
-								return input.getStatus() == InstanceInfo.InstanceStatus.UP;
-							}
-						}), new Function<InstanceInfo, Host>() {
-							@Override
-							public Host apply(InstanceInfo info) {
-								String[] parts = StringUtils.split(
-										StringUtils.split(info.getHostName(), ".")[0], '-');
-
-								Host host = new Host(info.getHostName(), info.getPort())
-										.addAlternateIpAddress(
-												StringUtils.join(new String[]{parts[1], parts[2], parts[3],
-														parts[4]}, "."))
-										.addAlternateIpAddress(info.getIPAddr())
-										.setId(info.getId());
-
-								try {
-									if (info.getDataCenterInfo() instanceof AmazonInfo) {
-										AmazonInfo amazonInfo = (AmazonInfo) info.getDataCenterInfo();
-										host.setRack(amazonInfo.get(MetaDataKey.availabilityZone));
-									}
-								} catch (Throwable t) {
-									LOG.error("Error getting rack for host " + host.getName(), t);
+								if (discoveryClient == null) {
+										LOG.error("Discovery client cannot be null");
+										throw new RuntimeException(
+												"EurekaHostsSupplier needs a non-null DiscoveryClient");
 								}
 
-								return host;
-							}
-						}));
+								LOG.debug("Dynomite-manager fetching instance list for app: " + clusterName);
 
-				LOG.debug("Dynomitemanager found hosts from eureka - num hosts: " + hosts.size());
+								Application app = discoveryClient.getApplication(clusterName.toUpperCase());
+								List<Host> hosts = new ArrayList<Host>();
 
-				return hosts;
-			}
-		};
-	}
+								if (app == null) {
+										LOG.warn("Cluster '{}' not found in eureka", clusterName);
+										return hosts;
+								}
+
+								List<InstanceInfo> ins = app.getInstances();
+
+								if (ins == null || ins.isEmpty()) {
+										LOG.warn("Cluster '{}' found in eureka but has no instances", clusterName);
+										return hosts;
+								}
+
+								hosts = Lists.newArrayList(
+										Collections2.transform(Collections2.filter(ins, new Predicate<InstanceInfo>() {
+												@Override public boolean apply(InstanceInfo input) {
+														return input.getStatus() == InstanceInfo.InstanceStatus.UP;
+												}
+										}), new Function<InstanceInfo, Host>() {
+												@Override public Host apply(InstanceInfo info) {
+														String[] parts = StringUtils
+																.split(StringUtils.split(info.getHostName(), ".")[0],
+																		'-');
+
+														Host host = new Host(info.getHostName(), info.getPort())
+																.addAlternateIpAddress(StringUtils
+																		.join(new String[] { parts[1], parts[2],
+																				parts[3], parts[4] }, "."))
+																.addAlternateIpAddress(info.getIPAddr())
+																.setId(info.getId());
+
+														try {
+																if (info.getDataCenterInfo() instanceof AmazonInfo) {
+																		AmazonInfo amazonInfo = (AmazonInfo) info
+																				.getDataCenterInfo();
+																		host.setRack(amazonInfo
+																				.get(MetaDataKey.availabilityZone));
+																}
+														} catch (Throwable t) {
+																LOG.error(
+																		"Error getting rack for host " + host.getName(),
+																		t);
+														}
+
+														return host;
+												}
+										}));
+
+								LOG.debug("Dynomitemanager found hosts from eureka - num hosts: " + hosts.size());
+
+								return hosts;
+						}
+				};
+		}
 }

@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,115 +42,111 @@ import com.netflix.servo.monitor.Monitors;
  * Start all tasks here - Property update task - Backup task - Restore task -
  * Incremental backup
  */
-@Singleton
-public class FloridaServer {
-	private final TaskScheduler scheduler;
-	private final IConfiguration config;
-	private final InstanceIdentity id;
-	private final Sleeper sleeper;
-	private final TuneTask tuneTask;
-	private final IFloridaProcess dynProcess;
-	private final InstanceState state;
-	private static final Logger logger = LoggerFactory.getLogger(FloridaServer.class);
+@Singleton public class FloridaServer {
+		private final TaskScheduler scheduler;
+		private final IConfiguration config;
+		private final InstanceIdentity id;
+		private final Sleeper sleeper;
+		private final TuneTask tuneTask;
+		private final IFloridaProcess dynProcess;
+		private final InstanceState state;
+		private static final Logger logger = LoggerFactory.getLogger(FloridaServer.class);
 
-	@Inject
-	public FloridaServer(IConfiguration config, TaskScheduler scheduler,
-						 InstanceIdentity id, Sleeper sleeper, TuneTask tuneTask,
-						 InstanceState state, IFloridaProcess dynProcess) {
-		this.config = config;
-		this.scheduler = scheduler;
-		this.id = id;
-		this.sleeper = sleeper;
-		this.tuneTask = tuneTask;
-		this.state = state;
-		this.dynProcess = dynProcess;
+		@Inject public FloridaServer(IConfiguration config, TaskScheduler scheduler, InstanceIdentity id,
+				Sleeper sleeper, TuneTask tuneTask, InstanceState state, IFloridaProcess dynProcess) {
+				this.config = config;
+				this.scheduler = scheduler;
+				this.id = id;
+				this.sleeper = sleeper;
+				this.tuneTask = tuneTask;
+				this.state = state;
+				this.dynProcess = dynProcess;
 
-		DefaultMonitorRegistry.getInstance().register(Monitors.newObjectMonitor(state));
-	}
-
-	public void initialize() throws Exception {
-		if (id.getInstance().isOutOfService())
-			return;
-
-		logger.info("Initializing Florida Server now ...");
-
-		state.setSideCarProcessAlive(true);
-		state.setBootstrapStatus(Bootstrap.NOT_STARTED);
-
-
-		if (config.isMultiRegionedCluster()) {
-			scheduler.runTaskNow(UpdateSecuritySettings.class);
-			// sleep for 130 sec if this is a new node with new IP for SG to be updated by other seed nodes
-			if (id.isReplace() || id.isTokenPregenerated()) {
-				logger.info("Sleeping 130 seconds -> a node is replaced or token is pregenerated.");
-				sleeper.sleep(130 * 1000);
-			} else if (UpdateSecuritySettings.firstTimeUpdated) {
-				logger.info("Sleeping 60 seconds -> first time security settings are updated");
-				sleeper.sleep(60 * 1000);
-			}
-
-			scheduler.addTask(UpdateSecuritySettings.JOBNAME, UpdateSecuritySettings.class, UpdateSecuritySettings.getTimer(id));
+				DefaultMonitorRegistry.getInstance().register(Monitors.newObjectMonitor(state));
 		}
 
+		public void initialize() throws Exception {
+				if (id.getInstance().isOutOfService())
+						return;
 
-//    	scheduler.runTaskNow(TuneTask.class);
-		// Invoking the task directly as any errors in this task
-		// should not let Florida continue. However, we don't want to kill
-		// the Florida process, but, want it to be stuck.
-		logger.info("Running TuneTask and updating configuration.");
-		tuneTask.execute();
+				logger.info("Initializing Florida Server now ...");
 
-		// Determine if we need to restore from backup else start Dynomite.
-		if (config.isRestoreEnabled()) {
-			logger.info("Restore is enabled.");
-			scheduler.runTaskNow(RestoreTask.class); //restore from the AWS
-			logger.info("Scheduled task " + RestoreTask.TaskName);
-		} else { //no restores needed
-			logger.info("Restore is disabled.");
+				state.setSideCarProcessAlive(true);
+				state.setBootstrapStatus(Bootstrap.NOT_STARTED);
 
-			// Boostraping only if this is a new node.
-			if (config.isForceWarm() || (config.isWarmBootstrap() && id.isReplace())) {
-				if (config.isForceWarm()) {
-					logger.info("Enforcing warm up.");
+				if (config.isMultiRegionedCluster()) {
+						scheduler.runTaskNow(UpdateSecuritySettings.class);
+						// sleep for 130 sec if this is a new node with new IP for SG to be updated by other seed nodes
+						if (id.isReplace() || id.isTokenPregenerated()) {
+								logger.info("Sleeping 130 seconds -> a node is replaced or token is pregenerated.");
+								sleeper.sleep(130 * 1000);
+						} else if (UpdateSecuritySettings.firstTimeUpdated) {
+								logger.info("Sleeping 60 seconds -> first time security settings are updated");
+								sleeper.sleep(60 * 1000);
+						}
+
+						scheduler.addTask(UpdateSecuritySettings.JOBNAME, UpdateSecuritySettings.class,
+								UpdateSecuritySettings.getTimer(id));
 				}
-				logger.info("Warm bootstraping node. Scheduling BootstrapTask now!");
-				dynProcess.stop();
-				scheduler.runTaskNow(WarmBootstrapTask.class);
-			} else {
-				logger.info("Cold bootstraping, launching dynomite and storage process.");
-				dynProcess.start();
-				sleeper.sleepQuietly(1000); //1s
-				scheduler.runTaskNow(ProxyAndStorageResetTask.class);
-			}
+
+				//    	scheduler.runTaskNow(TuneTask.class);
+				// Invoking the task directly as any errors in this task
+				// should not let Florida continue. However, we don't want to kill
+				// the Florida process, but, want it to be stuck.
+				logger.info("Running TuneTask and updating configuration.");
+				tuneTask.execute();
+
+				// Determine if we need to restore from backup else start Dynomite.
+				if (config.isRestoreEnabled()) {
+						logger.info("Restore is enabled.");
+						scheduler.runTaskNow(RestoreTask.class); //restore from the AWS
+						logger.info("Scheduled task " + RestoreTask.TaskName);
+				} else { //no restores needed
+						logger.info("Restore is disabled.");
+
+						// Boostraping only if this is a new node.
+						if (config.isForceWarm() || (config.isWarmBootstrap() && id.isReplace())) {
+								if (config.isForceWarm()) {
+										logger.info("Enforcing warm up.");
+								}
+								logger.info("Warm bootstraping node. Scheduling BootstrapTask now!");
+								dynProcess.stop();
+								scheduler.runTaskNow(WarmBootstrapTask.class);
+						} else {
+								logger.info("Cold bootstraping, launching dynomite and storage process.");
+								dynProcess.start();
+								sleeper.sleepQuietly(1000); //1s
+								scheduler.runTaskNow(ProxyAndStorageResetTask.class);
+						}
+				}
+
+				// Backup
+				if (config.isBackupEnabled() && config.getBackupHour() >= 0) {
+						scheduler.addTask(SnapshotTask.TaskName, SnapshotTask.class, SnapshotTask.getTimer(config));
+				}
+
+				// Metrics
+				scheduler.addTask(ServoMetricsTask.TaskName, ServoMetricsTask.class, ServoMetricsTask.getTimer());
+				scheduler.addTask(RedisInfoMetricsTask.TaskName, RedisInfoMetricsTask.class,
+						RedisInfoMetricsTask.getTimer());
+
+				// Routine monitoring and restarting dynomite or storage processes as needed.
+				scheduler.addTask(ProcessMonitorTask.JOBNAME, ProcessMonitorTask.class, ProcessMonitorTask.getTimer());
+
+				logger.info("Starting task scheduler");
+				scheduler.start();
 		}
 
-
-		// Backup
-		if (config.isBackupEnabled() && config.getBackupHour() >= 0) {
-			scheduler.addTask(SnapshotTask.TaskName, SnapshotTask.class, SnapshotTask.getTimer(config));
+		public InstanceIdentity getId() {
+				return id;
 		}
 
-		// Metrics
-		scheduler.addTask(ServoMetricsTask.TaskName, ServoMetricsTask.class, ServoMetricsTask.getTimer());
-		scheduler.addTask(RedisInfoMetricsTask.TaskName, RedisInfoMetricsTask.class, RedisInfoMetricsTask.getTimer());
+		public TaskScheduler getScheduler() {
+				return scheduler;
+		}
 
-		// Routine monitoring and restarting dynomite or storage processes as needed.
-		scheduler.addTask(ProcessMonitorTask.JOBNAME, ProcessMonitorTask.class, ProcessMonitorTask.getTimer());
-
-		logger.info("Starting task scheduler");
-		scheduler.start();
-	}
-
-	public InstanceIdentity getId() {
-		return id;
-	}
-
-	public TaskScheduler getScheduler() {
-		return scheduler;
-	}
-
-	public IConfiguration getConfiguration() {
-		return config;
-	}
+		public IConfiguration getConfiguration() {
+				return config;
+		}
 
 }

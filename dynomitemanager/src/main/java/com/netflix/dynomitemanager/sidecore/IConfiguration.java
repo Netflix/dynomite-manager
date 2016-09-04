@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Netflix, Inc.
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,223 +19,213 @@ import java.util.List;
 
 public interface IConfiguration {
 
-	public void initialize();
+		public void initialize();
+
+		/**
+		 * @return Path to the home dir of target application
+		 */
+		public String getAppHome();
+
+		/**
+		 * @return Path to target application startup script
+		 */
+		public String getAppStartupScript();
 
-	/**
-	 * @return Path to the home dir of target application
-	 */
-	public String getAppHome();
+		/**
+		 * @return Path to target application stop script
+		 */
+		public String getAppStopScript();
 
+		/**
+		 * @return Script that starts the storage layer
+		 */
+		public String getStorageStartupScript();
 
-	/**
-	 * @return Path to target application startup script
-	 */
-	public String getAppStartupScript();
+		/*
+		 *
+		 */
+		public String getStorageStopScript();
 
+		/**
+		 * @return Cluster name
+		 */
+		public String getAppName();
 
-	/**
-	 * @return Path to target application stop script
-	 */
-	public String getAppStopScript();
+		/**
+		 * @return Zone (or zone for AWS)
+		 */
+		public String getZone();
 
-	/**
-	 * @return Script that starts the storage layer
-	 */
-	public String getStorageStartupScript();
+		/**
+		 * @return List of all RAC used for the cluster
+		 */
+		public List<String> getZones();
 
+		/**
+		 * @return Local hostmame
+		 */
+		public String getHostname();
 
-	/*
-	 *
-	 */
-	public String getStorageStopScript();
+		/**
+		 * @return Get instance name (for AWS)
+		 */
+		public String getInstanceName();
 
+		/**
+		 * @return Get the Region name
+		 */
+		public String getRegion();
 
-	/**
-	 * @return Cluster name
-	 */
-	public String getAppName();
+		//public void setRegion(String region);
 
-	/**
-	 * @return Zone (or zone for AWS)
-	 */
-	public String getZone();
+		/**
+		 * @return Get the Data Center name (or region for AWS)
+		 */
+		public String getRack();
 
-	/**
-	 * @return List of all RAC used for the cluster
-	 */
-	public List<String> getZones();
+		public List<String> getRacks();
 
-	/**
-	 * @return Local hostmame
-	 */
-	public String getHostname();
+		/**
+		 * Amazon specific setting to query ASG Membership
+		 */
+		public String getASGName();
 
-	/**
-	 * @return Get instance name (for AWS)
-	 */
-	public String getInstanceName();
+		/**
+		 * Get the security group associated with nodes in this cluster
+		 */
+		public String getACLGroupName();
 
-	/**
-	 * @return Get the Region name
-	 */
-	public String getRegion();
+		/**
+		 * @return Get host IP
+		 */
+		public String getHostIP();
 
-	//public void setRegion(String region);
+		/**
+		 * @return Bootstrap cluster name (depends on another cass cluster)
+		 */
+		public String getBootClusterName();
 
-	/**
-	 * @return Get the Data Center name (or region for AWS)
-	 */
-	public String getRack();
+		/**
+		 * @return Get the name of seed provider
+		 */
+		public String getSeedProviderName();
 
-	public List<String> getRacks();
+		/**
+		 * @return Process Name
+		 */
+		public String getProcessName();
 
+		public String getReadConsistency();
 
-	/**
-	 * Amazon specific setting to query ASG Membership
-	 */
-	public String getASGName();
+		public String getWriteConsistency();
 
-	/**
-	 * Get the security group associated with nodes in this cluster
-	 */
-	public String getACLGroupName();
+		public int getPeerListenerPort();
 
+		public int getSecuredPeerListenerPort();
 
-	/**
-	 * @return Get host IP
-	 */
-	public String getHostIP();
+		public int getListenerPort();
 
+		public String getYamlLocation();
 
-	/**
-	 * @return Bootstrap cluster name (depends on another cass cluster)
-	 */
-	public String getBootClusterName();
+		public boolean getAutoEjectHosts();
 
-	/**
-	 * @return Get the name of seed provider
-	 */
-	public String getSeedProviderName();
+		public String getDistribution();
 
-	/**
-	 * @return Process Name
-	 */
-	public String getProcessName();
+		public String getDynListenPort();
 
-	public String getReadConsistency();
+		public int getGossipInterval();
 
-	public String getWriteConsistency();
+		public String getHash();
 
-	public int getPeerListenerPort();
+		public String getClientListenPort();
 
-	public int getSecuredPeerListenerPort();
+		public boolean getPreconnect();
 
-	public int getListenerPort();
+		public int getServerRetryTimeout();
 
-	public String getYamlLocation();
+		public int getTimeout();
 
+		public String getTokens();
 
-	public boolean getAutoEjectHosts();
+		public String getMetadataKeyspace();
 
-	public String getDistribution();
+		public int getClusterType();
 
-	public String getDynListenPort();
+		public boolean isMultiRegionedCluster();
 
-	public int getGossipInterval();
+		public String getSecuredOption();
 
-	public String getHash();
+		public boolean isWarmBootstrap();
 
-	public String getClientListenPort();
+		public boolean isForceWarm();
 
-	public boolean getPreconnect();
+		public boolean isHealthCheckEnable();
 
-	public int getServerRetryTimeout();
+		public int getAllowableBytesSyncDiff();
 
-	public int getTimeout();
+		public int getMaxTimeToBootstrap();
 
-	public String getTokens();
+		/** The max percentage of system memory to be allocated to the Dynomite fronted data store. */
+		public int getStorageMemPercent();
 
-	public String getMetadataKeyspace();
+		public int getMbufSize();
 
-	public int getClusterType();
+		public int getAllocatedMessages();
 
-	public boolean isMultiRegionedCluster();
+		// VPC
+		public boolean isVpc();
 
-	public String getSecuredOption();
+		/**
+		 * @return the VPC id of the running instance.
+		 */
+		public String getVpcId();
 
-	public boolean isWarmBootstrap();
+		/*
+		 * @return the Amazon Resource Name (ARN) for EC2 classic.
+		 */
+		public String getClassicAWSRoleAssumptionArn();
 
-	public boolean isForceWarm();
+		/*
+		 * @return the Amazon Resource Name (ARN) for VPC.
+		 */
+		public String getVpcAWSRoleAssumptionArn();
 
-	public boolean isHealthCheckEnable();
+		/*
+		 * @return cross-account deployments
+		 */
+		public boolean isDualAccount();
 
-	public int getAllowableBytesSyncDiff();
+		// Backup and Restore
 
-	public int getMaxTimeToBootstrap();
+		public String getBucketName();
 
-	/** The max percentage of system memory to be allocated to the Dynomite fronted data store. */
-	public int getStorageMemPercent();
+		public String getBackupLocation();
 
-	public int getMbufSize();
+		public boolean isBackupEnabled();
 
-	public int getAllocatedMessages();
+		public boolean isRestoreEnabled();
 
+		public String getBackupSchedule();
 
-	// VPC
-	public boolean isVpc();
+		public int getBackupHour();
 
-	/**
-	 * @return the VPC id of the running instance.
-	 */
-	public String getVpcId();
+		public String getRestoreDate();
 
-	/*
-	 * @return the Amazon Resource Name (ARN) for EC2 classic.
-	 */
-	public String getClassicAWSRoleAssumptionArn();
+		// Persistence
 
-	/*
-	 * @return the Amazon Resource Name (ARN) for VPC.
-	 */
-	public String getVpcAWSRoleAssumptionArn();
+		public String getPersistenceLocation();
 
-	/*
-	 * @return cross-account deployments
-	 */
-	public boolean isDualAccount();
+		public boolean isPersistenceEnabled();
 
+		public boolean isAof();
 
-	// Backup and Restore
+		// Cassandra
+		public String getCassandraKeyspaceName();
 
-	public String getBucketName();
+		public int getCassandraThriftPortForAstyanax();
 
-	public String getBackupLocation();
+		public String getCommaSeparatedCassandraHostNames();
 
-	public boolean isBackupEnabled();
-
-	public boolean isRestoreEnabled();
-
-	public String getBackupSchedule();
-
-	public int getBackupHour();
-
-	public String getRestoreDate();
-
-	// Persistence
-
-	public String getPersistenceLocation();
-
-	public boolean isPersistenceEnabled();
-
-	public boolean isAof();
-
-	// Cassandra
-	public String getCassandraKeyspaceName();
-
-	public int getCassandraThriftPortForAstyanax();
-
-	public String getCommaSeparatedCassandraHostNames();
-
-	public boolean isEurekaHostSupplierEnabled();
+		public boolean isEurekaHostSupplierEnabled();
 
 }
