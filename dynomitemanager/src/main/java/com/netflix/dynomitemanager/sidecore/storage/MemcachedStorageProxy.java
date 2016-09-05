@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,39 +17,32 @@ package com.netflix.dynomitemanager.sidecore.storage;
 
 public class MemcachedStorageProxy implements IStorageProxy {
 
-    @Override
-    public boolean isAlive() {
-        return false;
-    }
+		@Override public boolean isAlive() {
+				return false;
+		}
 
-    @Override
-    public long getUptime() {
-        return 0;
-    }
+		@Override public long getUptime() {
+				return 0;
+		}
 
-    @Override
-    public Bootstrap warmUpStorage(String[] peers) {
-        return Bootstrap.IN_SYNC_SUCCESS;
-    }
-      
-    @Override
-    public boolean resetStorage() {
-    	return true;
-    }
-    
-    @Override
-    public boolean takeSnapshot() {
-    	return false;
-    }
-    
-    @Override
-    public boolean loadingData() {
-    	return false;
-    }
+		@Override public Bootstrap warmUpStorage(String[] peers) {
+				return Bootstrap.IN_SYNC_SUCCESS;
+		}
 
-	@Override
-	public void stopPeerSync() {
-		
-	}
-    
+		@Override public boolean resetStorage() {
+				return true;
+		}
+
+		@Override public boolean takeSnapshot() {
+				return false;
+		}
+
+		@Override public boolean loadingData() {
+				return false;
+		}
+
+		@Override public void stopPeerSync() {
+
+		}
+
 }
