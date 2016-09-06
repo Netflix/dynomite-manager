@@ -29,7 +29,7 @@ import javax.inject.Inject;
 public class DefaultConfigSource extends CompositeConfigSource {
 
 	@Inject
-	public DefaultConfigSource(final PropertiesConfigSource simpleDBConfigSource,
+	public DefaultConfigSource(final SimpleDBConfigSource simpleDBConfigSource,
 			final PropertiesConfigSource propertiesConfigSource,
 			final SystemPropertiesConfigSource systemPropertiesConfigSource) {
 		super(simpleDBConfigSource, propertiesConfigSource, systemPropertiesConfigSource);
