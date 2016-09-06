@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,12 +29,12 @@ import java.lang.management.ManagementFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Task class that should be implemented by all cron tasks. Jobconf will contain
- * any instance specific data
+ * Task class that should be implemented by all cron tasks. Jobconf will contain any instance specific data.
  *
- * NOTE: Constructor must not throw any exception. This will cause Quartz to set the job to failure
+ * NOTE: Constructor must not throw any exception. This will cause Quartz to set the job to failure.
  */
 public abstract class Task implements Job, TaskMBean {
+
 		public STATE status = STATE.DONE;
 
 		public static enum STATE {
@@ -64,7 +64,7 @@ public abstract class Task implements Job, TaskMBean {
 		}
 
 		/**
-		 * This method has to be implemented and cannot thow any exception.
+		 * This method has to be implemented and cannot throw any exception.
 		 */
 		public void initialize() throws ExecutionException {
 				// nothing to initialize
@@ -85,11 +85,11 @@ public abstract class Task implements Job, TaskMBean {
 
 				} catch (Exception e) {
 						status = STATE.ERROR;
-						logger.error("Couldnt execute the task because of " + e.getMessage(), e);
+						logger.error("Could not execute the task because of " + e.getMessage(), e);
 						errors.incrementAndGet();
 				} catch (Throwable e) {
 						status = STATE.ERROR;
-						logger.error("Couldnt execute the task because of " + e.getMessage(), e);
+						logger.error("Could not execute the task because of " + e.getMessage(), e);
 						errors.incrementAndGet();
 				}
 				if (status != STATE.ERROR)

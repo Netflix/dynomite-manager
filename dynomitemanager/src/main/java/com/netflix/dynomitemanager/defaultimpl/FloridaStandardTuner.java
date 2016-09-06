@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,12 @@ import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 
-@Singleton public class FloridaStandardTuner implements ProcessTuner {
+/**
+ * Write the dynomite.yaml configuration file.
+ */
+@Singleton
+public class FloridaStandardTuner implements ProcessTuner {
+
 		private static final Logger logger = LoggerFactory.getLogger(FloridaStandardTuner.class);
 		private static final String ROOT_NAME = "dyn_o_mite";
 		private static final String PROC_MEMINFO_PATH = "/proc/meminfo";
@@ -65,14 +70,23 @@ import static java.nio.file.StandardOpenOption.WRITE;
 
 		public static final Pattern MEMINFO_PATTERN = Pattern.compile("MemTotal:\\s*([0-9]*)");
 
-		@Inject public FloridaStandardTuner(IConfiguration config, InstanceIdentity ii, IInstanceState instanceState) {
+		@Inject
+		public FloridaStandardTuner(IConfiguration config, InstanceIdentity ii, IInstanceState instanceState) {
 				this.config = config;
 				this.ii = ii;
 				this.instanceState = instanceState;
 		}
 
-		@SuppressWarnings("unchecked") public void writeAllProperties(String yamlLocation, String hostname,
-				String seedProvider) throws IOException {
+		/**
+		 * Generate dynomite.yaml.
+		 *
+		 * @param yamlLocation Path to the dynomite.yaml file.
+		 * @param hostname UNUSED ARGUMENT
+		 * @param seedProvider UNUSED ARGUMENT
+		 * @throws IOException
+		 */
+		@SuppressWarnings("unchecked")
+		public void writeAllProperties(String yamlLocation, String hostname, String seedProvider) throws IOException {
 				DumperOptions options = new DumperOptions();
 				options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 				Yaml yaml = new Yaml(options);
@@ -146,13 +160,14 @@ import static java.nio.file.StandardOpenOption.WRITE;
 				this.instanceState.setYmlWritten(true);
 		}
 
-		@SuppressWarnings("unchecked") public void updateAutoBootstrap(String yamlFile, boolean autobootstrap)
-				throws IOException {
+		@SuppressWarnings("unchecked")
+		public void updateAutoBootstrap(String yamlFile, boolean autobootstrap) throws IOException {
 				DumperOptions options = new DumperOptions();
 				options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 				Yaml yaml = new Yaml(options);
-				@SuppressWarnings("rawtypes") Map map = (Map) yaml.load(new FileInputStream(yamlFile));
-				//Dont bootstrap in restore mode
+				@SuppressWarnings("rawtypes")
+				Map map = (Map) yaml.load(new FileInputStream(yamlFile));
+				// Do not bootstrap in restore mode
 				map.put("auto_bootstrap", autobootstrap);
 				logger.info("Updating yaml" + yaml.dump(map));
 				yaml.dump(map, new FileWriter(yamlFile));
@@ -272,4 +287,5 @@ import static java.nio.file.StandardOpenOption.WRITE;
 				logger.error(errMsg);
 				throw new RuntimeException(errMsg);
 		}
+
 }

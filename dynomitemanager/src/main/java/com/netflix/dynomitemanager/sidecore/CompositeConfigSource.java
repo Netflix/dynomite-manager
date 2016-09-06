@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,7 +37,7 @@ public class CompositeConfigSource extends AbstractConfigSource {
 
 		public CompositeConfigSource(final ImmutableCollection<? extends IConfigSource> sources) {
 				Preconditions.checkArgument(!sources.isEmpty(),
-						"Can not create a composite config source without config sources!");
+						"Cannot create a composite config source without config sources!");
 				this.sources = sources;
 		}
 
@@ -53,14 +53,22 @@ public class CompositeConfigSource extends AbstractConfigSource {
 				this(ImmutableList.copyOf(sources));
 		}
 
-		@Override public void initialize(final String asgName, final String region) {
+		/**
+		 * Initialize each of the Dynomite Manager configuration sources passed in by {@link DefaultConfigSource}.
+		 *
+		 * @param asgName Auto Scaling Group (ASG) name
+		 * @param region Region (aka DC or data center)
+		 */
+		@Override
+		public void initialize(final String asgName, final String region) {
 				for (final IConfigSource source : sources) {
 						//TODO should this catch any potential exceptions?
 						source.initialize(asgName, region);
 				}
 		}
 
-		@Override public int size() {
+		@Override
+		public int size() {
 				int size = 0;
 				for (final IConfigSource c : sources) {
 						size += c.size();
@@ -68,15 +76,18 @@ public class CompositeConfigSource extends AbstractConfigSource {
 				return size;
 		}
 
-		@Override public boolean isEmpty() {
+		@Override
+		public boolean isEmpty() {
 				return size() == 0;
 		}
 
-		@Override public boolean contains(final String key) {
+		@Override
+		public boolean contains(final String key) {
 				return get(key) != null;
 		}
 
-		@Override public String get(final String key) {
+		@Override
+		public String get(final String key) {
 				Preconditions.checkNotNull(key);
 				for (final IConfigSource c : sources) {
 						final String value = c.get(key);
@@ -87,12 +98,14 @@ public class CompositeConfigSource extends AbstractConfigSource {
 				return null;
 		}
 
-		@Override public void set(final String key, final String value) {
-				Preconditions.checkNotNull(value, "Value can not be null for configurations.");
+		@Override
+		public void set(final String key, final String value) {
+				Preconditions.checkNotNull(value, "Value cannot be null for configurations.");
 				final IConfigSource firstSource = Iterables.getFirst(sources, null);
 				// firstSource shouldn't be null because the collection is immutable, and the collection is non empty.
 				Preconditions
 						.checkState(firstSource != null, "There was no IConfigSource found at the first location?");
 				firstSource.set(key, value);
 		}
+
 }

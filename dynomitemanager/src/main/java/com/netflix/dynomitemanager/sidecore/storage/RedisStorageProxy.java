@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,17 +41,21 @@ import java.util.Iterator;
 import java.util.Map;
 
 //TODOs: we should talk to admin port (22222) instead of 8102 for both local and peer
-@Singleton public class RedisStorageProxy implements IStorageProxy {
+@Singleton
+public class RedisStorageProxy implements IStorageProxy {
 
 		private static final Logger logger = LoggerFactory.getLogger(RedisStorageProxy.class);
 
 		private Jedis localJedis;
 
-		@Inject private IConfiguration config;
+		@Inject
+		private IConfiguration config;
 
-		@Inject private Sleeper sleeper;
+		@Inject
+		private Sleeper sleeper;
 
-		@Inject private InstanceState instanceState;
+		@Inject
+		private InstanceState instanceState;
 
 		public RedisStorageProxy() {
 				//connect();
@@ -102,19 +106,21 @@ import java.util.Map;
 				}
 		}
 
-		//issue a 'slaveof no one' to local redis
-		//set dynomite to accept writes but no reads
-		@Override public void stopPeerSync() {
+		/**
+		 * Turn off Redis' slave replication and switch from slave to master.
+		 */
+		@Override
+		public void stopPeerSync() {
 				boolean isDone = false;
 
 				while (!isDone) {
-						logger.info("calling slaveof no one");
+						logger.info("calling SLAVEOF NO ONE");
 						try {
 								isDone = (localJedis.slaveofNoOne() != null);
 								sleeper.sleepQuietly(1000);
 
 						} catch (JedisConnectionException e) {
-								logger.error("JedisConnection Exception in Slave of None: " + e.getMessage());
+								logger.error("JedisConnection Exception in SLAVEOF NO ONE: " + e.getMessage());
 								connect();
 						} catch (Exception e) {
 								logger.error("Error: " + e.getMessage());
@@ -123,7 +129,8 @@ import java.util.Map;
 				}
 		}
 
-		@Override public boolean takeSnapshot() {
+		@Override
+		public boolean takeSnapshot() {
 				connect();
 				try {
 						if (config.isAof()) {
@@ -134,12 +141,11 @@ import java.util.Map;
 								localJedis.bgsave();
 
 						}
-	  	/* We want to check if a bgrewriteaof was already scheduled
-      	 * or it has started. If a bgrewriteaof was already scheduled
-      	 * then we should get an error from Redis but should continue.
-      	 * If a bgrewriteaof has started, we should also continue.
-      	 * Otherwise we may be having old data in the disk.
-      	 */
+				/* We want to check if a bgrewriteaof was already scheduled or it has started. If a bgrewriteaof was
+				 * already scheduled then we should get an error from Redis but should continue.
+				 * If a bgrewriteaof has started, we should also continue.
+				 * Otherwise we may be having old data in the disk.
+				 */
 				} catch (JedisDataException e) {
 						String scheduled = null;
 						if (!config.isAof()) {
@@ -189,12 +195,13 @@ import java.util.Map;
 						logger.error("Cannot connect to Redis to perform BGREWRITEAOF/BGSAVE");
 				}
 
-				logger.error("Redis BGREWRITEAOF/BGSAVE was not succesful.");
+				logger.error("Redis BGREWRITEAOF/BGSAVE was not successful.");
 				return false;
 
 		}
 
-		@Override public boolean loadingData() {
+		@Override
+		public boolean loadingData() {
 				connect();
 				logger.info("loading AOF from the drive");
 				String peerRedisInfo = null;
@@ -231,7 +238,8 @@ import java.util.Map;
 
 		}
 
-		@Override public boolean isAlive() {
+		@Override
+		public boolean isAlive() {
 				// Not using localJedis variable as it can be used by
 				// ProcessMonitorTask as well.
 				return JedisUtils.isAliveWithRetry(DynomitemanagerConfiguration.LOCAL_ADDRESS, REDIS_PORT);
@@ -280,8 +288,8 @@ import java.util.Map;
 				return currentAlivePeer;
 		}
 
-		@Override
 		//probably use our Retries Util here
+		@Override
 		public Bootstrap warmUpStorage(String[] peers) {
 				AlivePeer longestAlivePeer = new AlivePeer();
 				Jedis peerJedis = null;
@@ -294,10 +302,7 @@ import java.util.Map;
 
 								AlivePeer currentAlivePeer = peerNodeSelection(peer, peerJedis);
 
-								/**
-								 * Checking the one with the longest up time.
-								 * Disconnect the one that is not the longest.
-								 */
+								// Checking the one with the longest up time. Disconnect the one that is not the longest.
 								if (currentAlivePeer.selectedJedis == null) {
 										logger.error("Cannot find uptime_in_seconds in peer " + peer);
 										return Bootstrap.CANNOT_CONNECT_FAIL;
@@ -399,10 +404,11 @@ import java.util.Map;
 		}
 
 		/**
-		 * Resets Redis to master if it was slave due to warm up failure.
+		 * Resets Redis to master if it was a slave due to warm up failure.
 		 */
-		@Override public boolean resetStorage() {
-				logger.info("Checking if Redis needs to be resetted to master");
+		@Override
+		public boolean resetStorage() {
+				logger.info("Checking if Redis needs to be reset to master");
 				connect();
 				String peerRedisInfo = null;
 				try {
@@ -427,7 +433,7 @@ import java.util.Map;
 								//   logger.info(items[0] + ": " + items[1]);
 								role = items[1].trim();
 								if (role.equals("slave")) {
-										logger.info("Redis: slave ----> master");
+										logger.info("Redis: Stop replication. Switch from slave to master");
 										stopPeerSync();
 								}
 								return true;

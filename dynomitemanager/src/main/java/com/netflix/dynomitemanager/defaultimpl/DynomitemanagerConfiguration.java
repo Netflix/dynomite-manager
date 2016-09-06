@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,12 @@ import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.utils.RetryableCallable;
 import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 
-@Singleton public class DynomitemanagerConfiguration implements IConfiguration {
+/**
+ * Define the list of available Dynomite Manager configuration options, then set options based on the environment and
+ * an external configuration.
+ */
+@Singleton
+public class DynomitemanagerConfiguration implements IConfiguration {
 		public static final String DYNOMITEMANAGER_PRE = "florida";
 
 		public static final int DYNO_MEMCACHED = 0;
@@ -261,16 +266,29 @@ import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 
 		}
 
+		/**
+		 * Set Dynomite Manager's configuration options.
+		 */
 		public void initialize() {
 				setupEnvVars();
 				this.configSource.initialize(ASG_NAME, REGION);
 				setDefaultRACList(REGION);
 		}
 
+		/**
+		 * Set configuration options provided by environment variables or Java properties. Java properties are only used
+		 * if the equivalent environment variable is not set.
+		 *
+		 * Environment variables and Java properties are applied in the following order:
+		 * <ol>
+		 * <li>Environment variable: Preferred value
+		 * <li>Java property: If environment variable is not set, then Java property is used.
+		 * </ol>
+		 */
 		private void setupEnvVars() {
 				// Search in java opt properties
 				try {
-						logger.info("Setting up Environmental Variables");
+						logger.info("Setting up environmental variables and Java properties.");
 						REGION = StringUtils.isBlank(REGION) ? System.getProperty("EC2_REGION") : REGION;
 						// Infer from zone
 						if (StringUtils.isBlank(REGION))
@@ -285,8 +303,7 @@ import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 		}
 
 		/**
-		 * Query amazon to get ASG name. Currently not available as part of instance
-		 * info api.
+		 * Query Amazon to get ASG name. Currently not available as part of instance info api.
 		 */
 		private String populateASGName(String region, String instanceId) {
 				GetASGName getASGName = new GetASGName(region, instanceId);

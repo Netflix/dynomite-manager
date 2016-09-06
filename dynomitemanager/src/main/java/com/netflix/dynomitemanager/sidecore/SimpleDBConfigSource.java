@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,19 +33,23 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Loads config data from SimpleDB.  {@link #intialize(String, String)} will query the SimpleDB domain "DynomitemanagerProperties"
- * for any potential configurations.  The domain is set up to support multiple different clusters; this is done by using
- * amazon's auto scaling groups (ASG).
+ * Load Dynomite Manager configuration from SimpleDB.
  *
- * Schema <ul>
- *   <li>"appId" // ASG up to first instance of '-'.  So ASG name dynomitemanager-test will create appId florida, ASG florida_test
- *   will create appId florida_test.</li>
- *   <li>"property" // key to use for configs.</li>
- *   <li>"value" // value to set for the given property/key.</li>
- *   <li>"region" // region the config belongs to.  If left empty, then applies to all regions.</li>
- * </ul> }
+ * {@link #initialize(String, String)} queries the SimpleDB domain "DynomitemanagerProperties" for any potential
+ * configuration options.  The domain is set up to support multiple different clusters; this is done by using
+ * Amazon's auto scaling groups (ASG).
+ *
+ * Schema
+ * <ul>
+ * <li>"appId": ASG up to first instance of '-'.  So ASG name dynomitemanager-test will create appId dynomitemanager,
+ * ASG florida_test will create appId florida_test.
+ * <li>"property": key to use for configs.
+ * <li>"value": value to set for the given property/key.
+ * <li>"region": region the config belongs to.  If left empty, then applies to all regions.
+ * </ul>
  */
 public final class SimpleDBConfigSource extends AbstractConfigSource {
+
 		private static final Logger logger = LoggerFactory.getLogger(SimpleDBConfigSource.class.getName());
 
 		private static final String DOMAIN = "DynomitemanagerProperties";
@@ -54,11 +58,13 @@ public final class SimpleDBConfigSource extends AbstractConfigSource {
 		private final Map<String, String> data = Maps.newConcurrentMap();
 		private final ICredential provider;
 
-		@Inject public SimpleDBConfigSource(final ICredential provider) {
+		@Inject
+		public SimpleDBConfigSource(final ICredential provider) {
 				this.provider = provider;
 		}
 
-		@Override public void initialize(final String asgName, final String region) {
+		@Override
+		public void initialize(final String asgName, final String region) {
 				super.initialize(asgName, region);
 
 				// End point is us-east-1
@@ -109,16 +115,20 @@ public final class SimpleDBConfigSource extends AbstractConfigSource {
 				data.put(prop, value);
 		}
 
-		@Override public int size() {
+		@Override
+		public int size() {
 				return data.size();
 		}
 
-		@Override public String get(final String key) {
+		@Override
+		public String get(final String key) {
 				return data.get(key);
 		}
 
-		@Override public void set(final String key, final String value) {
+		@Override
+		public void set(final String key, final String value) {
 				Preconditions.checkNotNull(value, "Value can not be null for configurations.");
 				data.put(key, value);
 		}
+
 }

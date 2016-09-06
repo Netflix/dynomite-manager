@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,9 @@ package com.netflix.dynomitemanager.sidecore;
 
 import java.util.List;
 
+/**
+ * Dynomite Manager configuration.
+ */
 public interface IConfiguration {
 
 		public void initialize();
@@ -62,7 +65,7 @@ public interface IConfiguration {
 		public List<String> getZones();
 
 		/**
-		 * @return Local hostmame
+		 * @return Local hostname
 		 */
 		public String getHostname();
 
@@ -101,7 +104,7 @@ public interface IConfiguration {
 		public String getHostIP();
 
 		/**
-		 * @return Bootstrap cluster name (depends on another cass cluster)
+		 * @return Bootstrap cluster name (depends on another Cassandra cluster)
 		 */
 		public String getBootClusterName();
 

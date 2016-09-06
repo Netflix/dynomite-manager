@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,11 +23,12 @@ import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 import org.joda.time.DateTime;
 
 /**
- * Contains the state of the health of processed managed by Florida, and
- * maintains the isHealthy flag used for reporting discovery health check.
- *
+ * Contains the state of the health of processed managed by Dynomite Manager, and maintains the isHealthy flag used for
+ * reporting discovery health check.
  */
-@Singleton public class InstanceState implements IInstanceState {
+@Singleton
+public class InstanceState implements IInstanceState {
+
 		private final AtomicBoolean isSideCarProcessAlive = new AtomicBoolean(false);
 		private final AtomicBoolean isBootstrapping = new AtomicBoolean(false);
 		private final AtomicBoolean firstBootstrap = new AtomicBoolean(true);

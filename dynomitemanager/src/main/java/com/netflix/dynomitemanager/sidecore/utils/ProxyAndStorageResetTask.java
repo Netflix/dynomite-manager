@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,12 @@ import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 
-@Singleton public class ProxyAndStorageResetTask extends Task {
+/**
+ * Stop Redis replication, change Redis from slave to master, and restart dynomite (if necessary).
+ */
+@Singleton
+public class ProxyAndStorageResetTask extends Task {
+
 		public static final String JOBNAME = "ProxyResetTask-Task";
 		private static final Logger logger = LoggerFactory.getLogger(ProxyAndStorageResetTask.class);
 
@@ -40,7 +45,8 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 		private final IStorageProxy storageProxy;
 		private final Sleeper sleeper;
 
-		@Inject public ProxyAndStorageResetTask(IConfiguration config, IFloridaProcess dynProcess,
+		@Inject
+		public ProxyAndStorageResetTask(IConfiguration config, IFloridaProcess dynProcess,
 				IStorageProxy storageProxy, Sleeper sleeper) {
 				super(config);
 				this.storageProxy = storageProxy;
@@ -53,14 +59,15 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 				dynomiteCheck();
 		}
 
-		@Override public String getName() {
+		@Override
+		public String getName() {
 				return JOBNAME;
 		}
 
 		private void dynomiteCheck() {
 				if (config.getClusterType()
 						== JedisConfiguration.DYNO_MEMCACHED) {    // TODO: we need to implement this once we use memcached
-						logger.error("Memcache Dynomite check is not functional");
+						logger.error("Memcached Dynomite check is not functional");
 				} else if (config.getClusterType() == JedisConfiguration.DYNO_REDIS) {  //use Redis API
 						Jedis dynomiteJedis = new Jedis(JedisConfiguration.REDIS_ADDRESS, JedisConfiguration.DYNO_PORT,
 								5000);
@@ -99,4 +106,5 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 						}
 				}
 		}
+
 }

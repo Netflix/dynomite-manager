@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,9 +20,9 @@ import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 
 /**
  * Calls AWS ec2 metadata to get info on the location of the running instance.
- *
  */
 public class AwsInstanceDataRetriever implements InstanceDataRetriever {
+
 		public String getRac() {
 				return SystemUtils
 						.getDataFromUrl("http://169.254.169.254/latest/meta-data/placement/availability-zone");
@@ -44,19 +44,22 @@ public class AwsInstanceDataRetriever implements InstanceDataRetriever {
 				return SystemUtils.getDataFromUrl("http://169.254.169.254/latest/meta-data/instance-type");
 		}
 
+		/**
+		 * Get the network interface for this instance.
+		 */
 		@Override
-	/*
-	 * @return id of the network interface for running instance
-	 */ public String getMac() {
+		public String getMac() {
 				return SystemUtils.getDataFromUrl("http://169.254.169.254/latest/meta-data/network/interfaces/macs/")
 						.trim();
 		}
 
-		@Override public String getVpcId() {
+		@Override
+		public String getVpcId() {
 				throw new UnsupportedOperationException("Not applicable as running instance is in classic environment");
 		}
 
-		@Override public String getSecurityGroupName() {
+		@Override
+		public String getSecurityGroupName() {
 				throw new UnsupportedOperationException("Not applicable as running instance is in classic environment");
 		}
 

@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,10 +56,10 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
  * Case 2:
  *        a. Dynomite dies or
  *        b. Dynomite process has hung
- * Case 3: Florida dies (with or without one of the other two processes being dead)
- * Case 4: Florida and dynomite dies
+ * Case 3: Dynomite Manager (DM) dies (with or without one of the other two processes being dead)
+ * Case 4: DM and dynomite dies
  * Case 5: Redis + Dynomite dies
- * Case 6: Redis + Dynomite + Florida dies
+ * Case 6: Redis + Dynomite + DM dies
  *
  * Currently the storage (Redis specifically) is launched by the dynomite launch script.
  * TODO: The Redis could be directly launched from Dynomite.
@@ -67,7 +67,8 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
  * @author Monal Daxini
  * @author Minh Do
  */
-@Singleton public class ProcessMonitorTask extends Task implements StatefulJob {
+@Singleton
+public class ProcessMonitorTask extends Task implements StatefulJob {
 
 		public static final String JOBNAME = "DYNOMITE_PROCESS_MONITOR_THREAD";
 		private static final Logger logger = LoggerFactory.getLogger(ProcessMonitorTask.class);
@@ -77,7 +78,8 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
 		private final TaskScheduler scheduler;
 		private final IFloridaProcess dynProcess;
 
-		@Inject protected ProcessMonitorTask(IConfiguration config, InstanceState instanceState,
+		@Inject
+		protected ProcessMonitorTask(IConfiguration config, InstanceState instanceState,
 				IStorageProxy iStorageProxy, TaskScheduler scheduler, IFloridaProcess dynProcess) {
 				super(config);
 				this.config = config;
@@ -87,7 +89,8 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
 				this.dynProcess = dynProcess;
 		}
 
-		@Override public void execute() throws Exception {
+		@Override
+		public void execute() throws Exception {
 				Stopwatch stopwatch = Stopwatch.createStarted();
 				if (instanceState.getIsProcessMonitoringSuspended()) {
 						return;
@@ -182,7 +185,8 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
 				return new SimpleTimer(JOBNAME, 15L * 1000);
 		}
 
-		@Override public String getName() {
+		@Override
+		public String getName() {
 				return JOBNAME;
 		}
 

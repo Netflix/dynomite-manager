@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Singleton public class WarmBootstrapTask extends Task {
+/**
+ * Warm up the node's storage (i.e. Redis) by syncing data from a peer.
+ */
+@Singleton
+public class WarmBootstrapTask extends Task {
+
 		private static final Logger logger = LoggerFactory.getLogger(WarmBootstrapTask.class);
 
 		public static final String JOBNAME = "Bootstrap-Task";
@@ -59,9 +64,11 @@ import java.util.List;
 		private final InstanceState state;
 		private final Sleeper sleeper;
 
-		@Inject private StorageProcessManager storageProcessMgr;
+		@Inject
+		private StorageProcessManager storageProcessMgr;
 
-		@Inject public WarmBootstrapTask(IConfiguration config, IAppsInstanceFactory appsInstanceFactory,
+		@Inject
+		public WarmBootstrapTask(IConfiguration config, IAppsInstanceFactory appsInstanceFactory,
 				InstanceIdentity id, IFloridaProcess dynProcess, IStorageProxy storageProxy, InstanceState ss,
 				Sleeper sleeper) {
 				super(config);
@@ -84,25 +91,25 @@ import java.util.List;
 						this.storageProcessMgr.start();
 						logger.info("Redis is up ---> Starting warm bootstrap.");
 
-						// setting the status to bootsraping
+						// setting the status to bootstrapping
 						this.state.setBootstrapping(true);
 
-						//sleep to make sure Storage process is up.
+						// sleep to make sure storage process is up
 						this.sleeper.sleepQuietly(5000);
 
 						String[] peers = getLocalPeersWithSameTokensRange();
 
-						//try one node only for now
-						//TODOs: if this peer is not good, try the next one until we can get the data
+						// try one node only for now
+						// TODOs: if this peer is not good, try the next one until we can get the data
 						if (peers != null && peers.length != 0) {
 
 								/**
 								 * Check the warm up status.
 								 */
-								Bootstrap boostrap = this.storageProxy.warmUpStorage(peers);
-								if (boostrap == Bootstrap.IN_SYNC_SUCCESS
-										|| boostrap == Bootstrap.EXPIRED_BOOTSTRAPTIME_FAIL ||
-										boostrap == Bootstrap.RETRIES_FAIL) {
+								Bootstrap bootstrap = this.storageProxy.warmUpStorage(peers);
+								if (bootstrap == Bootstrap.IN_SYNC_SUCCESS
+										|| bootstrap == Bootstrap.EXPIRED_BOOTSTRAPTIME_FAIL
+										|| bootstrap == Bootstrap.RETRIES_FAIL) {
 										// Since we are ready let us start Dynomite.
 										try {
 												this.dynProcess.start();
@@ -121,7 +128,7 @@ import java.util.List;
 												sleeper.sleepQuietly(1000);
 										}
 										// Set the state of bootstrap as successful.
-										this.state.setBootstrapStatus(boostrap);
+										this.state.setBootstrapStatus(bootstrap);
 
 										logger.info("Set Dynomite to allow writes only!!!");
 										sendCommand("/state/writes_only");
@@ -149,7 +156,7 @@ import java.util.List;
             /*
 			 * Performing a check of Dynomite after bootstrap is complete.
              * This is important as there are cases that Dynomite reaches
-             * the 1M messages limit and is unaccessible after bootstrap.
+             * the 1M messages limit and is inaccessible after bootstrap.
              */
 						if (this.dynProcess.dynomiteCheck()) {
 								logger.error("Dynomite is up since warm up succeeded");
@@ -159,7 +166,8 @@ import java.util.List;
 				}
 		}
 
-		@Override public String getName() {
+		@Override
+		public String getName() {
 				return JOBNAME;
 		}
 

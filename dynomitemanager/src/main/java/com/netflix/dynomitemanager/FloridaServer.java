@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,8 +39,26 @@ import com.netflix.servo.DefaultMonitorRegistry;
 import com.netflix.servo.monitor.Monitors;
 
 /**
- * Start all tasks here - Property update task - Backup task - Restore task -
- * Incremental backup
+ * Start the Dynomite Manager (DM) server, set DM's status and start the following tasks:
+ *
+ * <ul>
+ * <li>{@link com.netflix.dynomitemanager.sidecore.aws.UpdateSecuritySettings}: In a multi-DC deployment, update the AWS
+ * security group (SG) inbound traffic filters.
+ * <li>{@link com.netflix.dynomitemanager.sidecore.utils.TuneTask}: Write the dynomite.yaml configuration file.
+ * <li>{@link com.netflix.dynomitemanager.sidecore.backup.RestoreTask}: If restore mode, then restore data from an
+ * object store (i.e. S3).
+ * <li>{@link com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask}: If warm bootstrap mode, then warm the
+ * storage backend by syncing data from a peer.
+ * <li>{@link com.netflix.dynomitemanager.sidecore.utils.ProxyAndStorageResetTask}: If cold bootstrap mode, then stop
+ * any in progress sync, reset storage backend to master, and restart dynomite proxy (if necessary).
+ * <li>{@link com.netflix.dynomitemanager.sidecore.backup.SnapshotTask}: If backups are enabled, then add the backup
+ * snapshot task.
+ * <li>{@link com.netflix.dynomitemanager.monitoring.ServoMetricsTask}: Publish metrics via Servo.
+ * <li>{@link com.netflix.dynomitemanager.monitoring.RedisInfoMetricsTask}: Update metrics obtained via Redis INFO
+ * command.
+ * <li>{@link com.netflix.dynomitemanager.sidecore.utils.ProcessMonitorTask}: Monitor the dynomite and redis-server
+ * processes, and restart as necessary.
+ * </ul>
  */
 @Singleton public class FloridaServer {
 		private final TaskScheduler scheduler;
@@ -54,6 +72,7 @@ import com.netflix.servo.monitor.Monitors;
 
 		@Inject public FloridaServer(IConfiguration config, TaskScheduler scheduler, InstanceIdentity id,
 				Sleeper sleeper, TuneTask tuneTask, InstanceState state, IFloridaProcess dynProcess) {
+
 				this.config = config;
 				this.scheduler = scheduler;
 				this.id = id;
@@ -63,13 +82,18 @@ import com.netflix.servo.monitor.Monitors;
 				this.dynProcess = dynProcess;
 
 				DefaultMonitorRegistry.getInstance().register(Monitors.newObjectMonitor(state));
+
 		}
 
+		/**
+		 * Start Dynomite Manager.
+		 * @throws Exception
+		 */
 		public void initialize() throws Exception {
 				if (id.getInstance().isOutOfService())
 						return;
 
-				logger.info("Initializing Florida Server now ...");
+				logger.info("Initializing Dynomite Manager now ...");
 
 				state.setSideCarProcessAlive(true);
 				state.setBootstrapStatus(Bootstrap.NOT_STARTED);
@@ -104,16 +128,16 @@ import com.netflix.servo.monitor.Monitors;
 				} else { //no restores needed
 						logger.info("Restore is disabled.");
 
-						// Boostraping only if this is a new node.
+						// Bootstrapping only if this is a new node.
 						if (config.isForceWarm() || (config.isWarmBootstrap() && id.isReplace())) {
 								if (config.isForceWarm()) {
 										logger.info("Enforcing warm up.");
 								}
-								logger.info("Warm bootstraping node. Scheduling BootstrapTask now!");
+								logger.info("Warm bootstrapping node. Scheduling BootstrapTask now!");
 								dynProcess.stop();
 								scheduler.runTaskNow(WarmBootstrapTask.class);
 						} else {
-								logger.info("Cold bootstraping, launching dynomite and storage process.");
+								logger.info("Cold bootstrapping, launching dynomite and storage process.");
 								dynProcess.start();
 								sleeper.sleepQuietly(1000); //1s
 								scheduler.runTaskNow(ProxyAndStorageResetTask.class);

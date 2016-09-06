@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -66,18 +66,19 @@ import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
 /**
- *
+ * Inject dependencies, parse the configuration, and initialize the Dynomite Manager server.
  */
 public class InjectedWebListener extends GuiceServletContextListener {
 
 		protected static final Logger logger = LoggerFactory.getLogger(InjectedWebListener.class);
 
-		@Override protected Injector getInjector() {
+		@Override
+		protected Injector getInjector() {
 				List<Module> moduleList = Lists.newArrayList();
 				moduleList.add(new JaxServletModule());
 				moduleList.add(new DynomiteGuiceModule());
 				Injector injector = Guice.createInjector(moduleList);
-				// Initialize DynomiteManager configuration
+				// Initialize the Dynomite Manager configuration
 				try {
 						injector.getInstance(IConfiguration.class).initialize();
 				} catch (Exception e) {
@@ -85,19 +86,19 @@ public class InjectedWebListener extends GuiceServletContextListener {
 						throw new RuntimeException(e.getMessage(), e);
 				}
 
-				// Initialize Florida Server
+				// Initialize the Dynomite Manager  Server
 				try {
 						injector.getInstance(FloridaServer.class).initialize();
 				} catch (Exception e) {
-						logger.error("Florida Server: " + e.getMessage(), e);
+						logger.error("Dynomite Manager Server: " + e.getMessage(), e);
 						throw new RuntimeException(e.getMessage(), e);
 				}
 				return injector;
 		}
 
 		public static class JaxServletModule extends ServletModule {
-				@Override protected void configureServlets() {
-
+				@Override
+				protected void configureServlets() {
 						Map<String, String> params = new HashMap<String, String>();
 						params.put(PackagesResourceConfig.PROPERTY_PACKAGES, "unbound");
 						params.put("com.sun.jersey.config.property.packages", "com.netflix.dynomitemanager.resources");
@@ -106,7 +107,8 @@ public class InjectedWebListener extends GuiceServletContextListener {
 		}
 
 		public static class DynomiteGuiceModule extends AbstractModule {
-				@Override protected void configure() {
+				@Override
+				protected void configure() {
 						logger.info("**Binding OSS Config classes.");
 						binder().bind(IConfiguration.class).to(DynomitemanagerConfiguration.class);
 						binder().bind(ProcessTuner.class).to(FloridaStandardTuner.class);
@@ -128,7 +130,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
 						binder().bind(JedisFactory.class).to(SimpleJedisFactory.class);
 						binder().bind(IInstanceState.class).to(InstanceState.class);
 
-            /* AWS binding */
+						/* AWS binding */
 						bind(IMembership.class).to(AWSMembership.class);
 						bind(ICredential.class).to(IAMCredential.class);
 						bind(ICredential.class).annotatedWith(Names.named("awsroleassumption"))

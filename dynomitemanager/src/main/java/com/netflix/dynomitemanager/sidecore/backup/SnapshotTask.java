@@ -1,12 +1,12 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,9 +50,11 @@ import com.netflix.dynomitemanager.sidecore.scheduler.CronTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.CronTimer.DayOfWeek;
 
 /**
- * Task for taking snapshots
+ * Task for creating backup snapshots.
  */
-@Singleton public class SnapshotTask extends Task {
+@Singleton
+public class SnapshotTask extends Task {
+
 		public static final String TaskName = "SnapshotTask";
 		private static final Logger logger = LoggerFactory.getLogger(SnapshotTask.class);
 		private final ThreadSleeper sleeper = new ThreadSleeper();
@@ -64,7 +66,8 @@ import com.netflix.dynomitemanager.sidecore.scheduler.CronTimer.DayOfWeek;
 
 		private final int storageRetries = 5;
 
-		@Inject public SnapshotTask(IConfiguration config, InstanceIdentity id, ICredential cred, InstanceState state,
+		@Inject
+		public SnapshotTask(IConfiguration config, InstanceIdentity id, ICredential cred, InstanceState state,
 				IStorageProxy storageProxy, Backup backup) {
 				super(config);
 				this.cred = cred;

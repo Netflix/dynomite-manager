@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,11 +19,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *  Interface for managing Dynomite instance data. Provides functionality
- *  to register, update, delete or list instances from the registry
+ *  Interface for managing Dynomite instance data. Provides functionality to register, update, delete or list instances
+ *  from the registry.
  */
-
 public interface IAppsInstanceFactory {
+
 		/**
 		 * Return a list of all Dynomite server nodes registered.
 		 * @param appName the cluster name

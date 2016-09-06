@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,17 +52,24 @@ import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever;
 
 /**
- * Class to query amazon ASG for its members to provide - Number of valid nodes
- * in the ASG - Number of zones - Methods for adding ACLs for the nodes
+ * Query Amazon auto scale group (ASG) for its members to provide:
+ *
+ * <ul>
+ * <li>Number of valid instances in the ASG
+ * <li>Number of availability zones (AZs)
+ * <li>Methods for adding ACLs for the instances
+ * </ul>
  */
 public class AWSMembership implements IMembership {
+
 		private static final Logger logger = LoggerFactory.getLogger(AWSMembership.class);
 		private final IConfiguration config;
 		private final ICredential provider;
 		private final ICredential crossAccountProvider;
 		private final InstanceEnvIdentity insEnvIdentity;
 
-		@Inject public AWSMembership(IConfiguration config, ICredential provider,
+		@Inject
+		public AWSMembership(IConfiguration config, ICredential provider,
 				@Named("awsroleassumption") ICredential crossAccountProvider, InstanceEnvIdentity insEnvIdentity) {
 				this.config = config;
 				this.provider = provider;
@@ -71,7 +78,8 @@ public class AWSMembership implements IMembership {
 
 		}
 
-		@Override public List<String> getRacMembership() {
+		@Override
+		public List<String> getRacMembership() {
 				AmazonAutoScaling client = null;
 				try {
 						client = getAutoScalingClient();
@@ -96,7 +104,8 @@ public class AWSMembership implements IMembership {
 				}
 		}
 
-		@Override public List<String> getCrossAccountRacMembership() {
+		@Override
+		public List<String> getCrossAccountRacMembership() {
 				AmazonAutoScaling client = null;
 				try {
 						client = getCrossAccountAutoScalingClient();
@@ -125,7 +134,8 @@ public class AWSMembership implements IMembership {
 		/**
 		 * Actual membership AWS source of truth...
 		 */
-		@Override public int getRacMembershipSize() {
+		@Override
+		public int getRacMembershipSize() {
 				AmazonAutoScaling client = null;
 				try {
 						client = getAutoScalingClient();
@@ -144,7 +154,8 @@ public class AWSMembership implements IMembership {
 				}
 		}
 
-		@Override public int getRacCount() {
+		@Override
+		public int getRacCount() {
 				return config.getRacks().size();
 		}
 
@@ -293,7 +304,8 @@ public class AWSMembership implements IMembership {
 				}
 		}
 
-		@Override public void expandRacMembership(int count) {
+		@Override
+		public void expandRacMembership(int count) {
 				AmazonAutoScaling client = null;
 				try {
 						client = getAutoScalingClient();
@@ -336,4 +348,5 @@ public class AWSMembership implements IMembership {
 				client.setEndpoint("ec2." + config.getRegion() + ".amazonaws.com");
 				return client;
 		}
+
 }

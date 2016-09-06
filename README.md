@@ -43,7 +43,7 @@ The first step before building dynomite-manager is to configure the interfaces r
 5. Deploy `dynomite-manager.war` in your container
 
 ## Run
-Dynomite-manager changes the configuration files for Dynomite and data store (Redis) and starts/stops the services. Hence the web containermust have execute rights on the script to modify the dynomite.yml and data store conf file (redis.conf).
+Dynomite-manager changes the configuration files for Dynomite and data store (Redis) and starts/stops the services. Hence the web container must have execute rights on the script to modify the dynomite.yml and data store conf file (redis.conf).
 
 ## Configuration
 

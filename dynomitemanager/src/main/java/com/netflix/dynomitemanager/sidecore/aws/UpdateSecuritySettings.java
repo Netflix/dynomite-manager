@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Netflix, Inc.
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,12 @@ import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
 
-@Singleton public class UpdateSecuritySettings extends Task {
+/**
+ * Update the security access control list, such as the inbound connections list in an AWS Security Group.
+ */
+@Singleton
+public class UpdateSecuritySettings extends Task {
+
 		public static final String JOBNAME = "Update_SG";
 		public static boolean firstTimeUpdated = false;
 
@@ -38,15 +43,17 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
 		private final IMembership membership;
 		private final IAppsInstanceFactory factory;
 
-		@Inject public UpdateSecuritySettings(IConfiguration config, IMembership membership,
+		@Inject
+		public UpdateSecuritySettings(IConfiguration config, IMembership membership,
 				IAppsInstanceFactory factory) {
 				super(config);
 				this.membership = membership;
 				this.factory = factory;
 		}
 
-		@Override public void execute() {
-				// if seed dont execute.
+		@Override
+		public void execute() {
+				// if seed does not execute.
 				int port = config.getPeerListenerPort();
 				List<String> acls = membership.listACL(port, port);
 				List<AppsInstance> instances = factory.getAllIds(config.getAppName());
@@ -90,7 +97,9 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
 				return return_;
 		}
 
-		@Override public String getName() {
+		@Override
+		public String getName() {
 				return JOBNAME;
 		}
+
 }
