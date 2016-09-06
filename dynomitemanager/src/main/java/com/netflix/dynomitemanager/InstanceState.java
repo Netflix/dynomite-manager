@@ -1,17 +1,14 @@
 /**
  * Copyright 2016 Netflix, Inc.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 package com.netflix.dynomitemanager;
 
@@ -23,245 +20,247 @@ import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 import org.joda.time.DateTime;
 
 /**
- * Contains the state of the health of processed managed by Florida, and
- * maintains the isHealthy flag used for reporting discovery health check.
- *
+ * Contains the state of the health of processed managed by Dynomite Manager, and maintains the isHealthy flag used for
+ * reporting discovery health check.
  */
-@Singleton public class InstanceState implements IInstanceState {
-		private final AtomicBoolean isSideCarProcessAlive = new AtomicBoolean(false);
-		private final AtomicBoolean isBootstrapping = new AtomicBoolean(false);
-		private final AtomicBoolean firstBootstrap = new AtomicBoolean(true);
-		private final AtomicBoolean isBackup = new AtomicBoolean(false);
-		private final AtomicBoolean isBackupSuccessful = new AtomicBoolean(false);
-		private final AtomicBoolean firstBackup = new AtomicBoolean(true);
-		private final AtomicBoolean isRestore = new AtomicBoolean(false);
-		private final AtomicBoolean isRestoreSuccessful = new AtomicBoolean(false);
-		private final AtomicBoolean firstRestore = new AtomicBoolean(true);
-		private final AtomicBoolean isStorageProxyAlive = new AtomicBoolean(false);
-		private final AtomicBoolean isStorageProxyProcessAlive = new AtomicBoolean(false);
-		private final AtomicBoolean isStorageAlive = new AtomicBoolean(false);
+@Singleton
+public class InstanceState implements IInstanceState {
 
-		private Bootstrap bootstrapStatus;
+	private final AtomicBoolean isSideCarProcessAlive = new AtomicBoolean(false);
+	private final AtomicBoolean isBootstrapping = new AtomicBoolean(false);
+	private final AtomicBoolean firstBootstrap = new AtomicBoolean(true);
+	private final AtomicBoolean isBackup = new AtomicBoolean(false);
+	private final AtomicBoolean isBackupSuccessful = new AtomicBoolean(false);
+	private final AtomicBoolean firstBackup = new AtomicBoolean(true);
+	private final AtomicBoolean isRestore = new AtomicBoolean(false);
+	private final AtomicBoolean isRestoreSuccessful = new AtomicBoolean(false);
+	private final AtomicBoolean firstRestore = new AtomicBoolean(true);
+	private final AtomicBoolean isStorageProxyAlive = new AtomicBoolean(false);
+	private final AtomicBoolean isStorageProxyProcessAlive = new AtomicBoolean(false);
+	private final AtomicBoolean isStorageAlive = new AtomicBoolean(false);
 
-		private long bootstrapTime;
-		private long backupTime;
-		private long restoreTime;
+	private Bootstrap bootstrapStatus;
 
-		private final AtomicBoolean isYmlWritten = new AtomicBoolean(false);
+	private long bootstrapTime;
+	private long backupTime;
+	private long restoreTime;
 
-		public InstanceState() {
-		}
+	private final AtomicBoolean isYmlWritten = new AtomicBoolean(false);
 
-		// This is true if storage proxy and storage are alive.
-		private final AtomicBoolean isHealthy = new AtomicBoolean(false);
-		// State of whether the rest endpoints /admin/stop or /admin/start are invoked
-		// If its true then ProcessMonitorTask will suspend its process monitoring tasks.
-		private final AtomicBoolean isProcessMonitoringSuspended = new AtomicBoolean(false);
+	public InstanceState() {
+	}
 
-		@Override public String toString() {
-				return "InstanceState{" +
-						"isSideCarProcessAlive=" + isSideCarProcessAlive +
-						", isBootstrapping=" + isBootstrapping +
-						", isBackingup=" + isBackup +
-						", isRestoring=" + isRestore +
-						", isStorageProxyAlive=" + isStorageProxyAlive +
-						", isStorageProxyProcessAlive=" + isStorageProxyProcessAlive +
-						", isStorageAlive=" + isStorageAlive +
-						", isHealthy=" + isHealthy +
-						", isProcessMonitoringSuspended=" + isProcessMonitoringSuspended +
-						'}';
-		}
+	// This is true if storage proxy and storage are alive.
+	private final AtomicBoolean isHealthy = new AtomicBoolean(false);
+	// State of whether the rest endpoints /admin/stop or /admin/start are invoked
+	// If its true then ProcessMonitorTask will suspend its process monitoring tasks.
+	private final AtomicBoolean isProcessMonitoringSuspended = new AtomicBoolean(false);
 
-		public boolean isSideCarProcessAlive() {
-				return isSideCarProcessAlive.get();
-		}
+	@Override
+	public String toString() {
+		return "InstanceState{" +
+				"isSideCarProcessAlive=" + isSideCarProcessAlive +
+				", isBootstrapping=" + isBootstrapping +
+				", isBackingup=" + isBackup +
+				", isRestoring=" + isRestore +
+				", isStorageProxyAlive=" + isStorageProxyAlive +
+				", isStorageProxyProcessAlive=" + isStorageProxyProcessAlive +
+				", isStorageAlive=" + isStorageAlive +
+				", isHealthy=" + isHealthy +
+				", isProcessMonitoringSuspended=" + isProcessMonitoringSuspended +
+				'}';
+	}
 
-		public void setSideCarProcessAlive(boolean isSideCarProcessAlive) {
-				this.isSideCarProcessAlive.set(isSideCarProcessAlive);
-		}
+	public boolean isSideCarProcessAlive() {
+		return isSideCarProcessAlive.get();
+	}
 
-		//@Monitor(name="sideCarProcessAlive", type=DataSourceType.GAUGE)
-		public int metricIsSideCarProcessAlive() {
-				return isSideCarProcessAlive() ? 1 : 0;
-		}
+	public void setSideCarProcessAlive(boolean isSideCarProcessAlive) {
+		this.isSideCarProcessAlive.set(isSideCarProcessAlive);
+	}
 
-		/* Boostrap */
-		public boolean isBootstrapping() {
-				return isBootstrapping.get();
-		}
+	//@Monitor(name="sideCarProcessAlive", type=DataSourceType.GAUGE)
+	public int metricIsSideCarProcessAlive() {
+		return isSideCarProcessAlive() ? 1 : 0;
+	}
 
-		public Bootstrap isBootstrapStatus() {
-				return bootstrapStatus;
-		}
+	/* Boostrap */
+	public boolean isBootstrapping() {
+		return isBootstrapping.get();
+	}
 
-		public boolean firstBootstrap() {
-				return firstBootstrap.get();
-		}
+	public Bootstrap isBootstrapStatus() {
+		return bootstrapStatus;
+	}
 
-		public long getBootstrapTime() {
-				return bootstrapTime;
-		}
+	public boolean firstBootstrap() {
+		return firstBootstrap.get();
+	}
 
-		public void setBootstrapping(boolean isBootstrapping) {
-				this.isBootstrapping.set(isBootstrapping);
-		}
+	public long getBootstrapTime() {
+		return bootstrapTime;
+	}
 
-		public void setBootstrapStatus(Bootstrap bootstrapStatus) {
-				this.bootstrapStatus = bootstrapStatus;
-		}
+	public void setBootstrapping(boolean isBootstrapping) {
+		this.isBootstrapping.set(isBootstrapping);
+	}
 
-		public void setFirstBootstrap(boolean firstBootstrap) {
-				this.firstBootstrap.set(firstBootstrap);
-		}
+	public void setBootstrapStatus(Bootstrap bootstrapStatus) {
+		this.bootstrapStatus = bootstrapStatus;
+	}
 
-		public void setBootstrapTime(DateTime bootstrapTime) {
-				this.bootstrapTime = bootstrapTime.getMillis();
-		}
+	public void setFirstBootstrap(boolean firstBootstrap) {
+		this.firstBootstrap.set(firstBootstrap);
+	}
 
-		/* Backup */
-		public boolean isBackingup() {
-				return isBackup.get();
-		}
+	public void setBootstrapTime(DateTime bootstrapTime) {
+		this.bootstrapTime = bootstrapTime.getMillis();
+	}
 
-		public boolean isBackupSuccessful() {
-				return isBackupSuccessful.get();
-		}
+	/* Backup */
+	public boolean isBackingup() {
+		return isBackup.get();
+	}
 
-		public boolean firstBackup() {
-				return firstBackup.get();
-		}
+	public boolean isBackupSuccessful() {
+		return isBackupSuccessful.get();
+	}
 
-		public long getBackupTime() {
-				return backupTime;
-		}
+	public boolean firstBackup() {
+		return firstBackup.get();
+	}
 
-		public void setBackingup(boolean isBackup) {
-				this.isBackup.set(isBackup);
-		}
+	public long getBackupTime() {
+		return backupTime;
+	}
 
-		public void setBackUpStatus(boolean isBackupSuccessful) {
-				this.isBackupSuccessful.set(isBackupSuccessful);
-		}
+	public void setBackingup(boolean isBackup) {
+		this.isBackup.set(isBackup);
+	}
 
-		public void setFirstBackup(boolean firstBackup) {
-				this.firstBackup.set(firstBackup);
-		}
+	public void setBackUpStatus(boolean isBackupSuccessful) {
+		this.isBackupSuccessful.set(isBackupSuccessful);
+	}
 
-		public void setBackupTime(DateTime backupTime) {
-				this.backupTime = backupTime.getMillis();
-		}
+	public void setFirstBackup(boolean firstBackup) {
+		this.firstBackup.set(firstBackup);
+	}
 
-		/* Restore */
-		public boolean isRestoring() {
-				return isRestore.get();
-		}
+	public void setBackupTime(DateTime backupTime) {
+		this.backupTime = backupTime.getMillis();
+	}
 
-		public boolean isRestoreSuccessful() {
-				return isRestoreSuccessful.get();
-		}
+	/* Restore */
+	public boolean isRestoring() {
+		return isRestore.get();
+	}
 
-		public boolean firstRestore() {
-				return firstRestore.get();
-		}
+	public boolean isRestoreSuccessful() {
+		return isRestoreSuccessful.get();
+	}
 
-		public long getRestoreTime() {
-				return restoreTime;
-		}
+	public boolean firstRestore() {
+		return firstRestore.get();
+	}
 
-		public void setRestoring(boolean isRestoring) {
-				this.isRestore.set(isRestoring);
-		}
+	public long getRestoreTime() {
+		return restoreTime;
+	}
 
-		public void setRestoreStatus(boolean isRestoreSuccessful) {
-				this.isRestoreSuccessful.set(isRestoreSuccessful);
-		}
+	public void setRestoring(boolean isRestoring) {
+		this.isRestore.set(isRestoring);
+	}
 
-		public void setFirstRestore(boolean firstRestore) {
-				this.firstRestore.set(firstRestore);
-		}
+	public void setRestoreStatus(boolean isRestoreSuccessful) {
+		this.isRestoreSuccessful.set(isRestoreSuccessful);
+	}
 
-		public void setRestoreTime(DateTime restoreTime) {
-				this.restoreTime = restoreTime.getMillis();
-		}
+	public void setFirstRestore(boolean firstRestore) {
+		this.firstRestore.set(firstRestore);
+	}
 
-		//@Monitor(name="bootstrapping", type=DataSourceType.GAUGE)
-		public int metricIsBootstrapping() {
-				return isBootstrapping() ? 1 : 0;
-		}
+	public void setRestoreTime(DateTime restoreTime) {
+		this.restoreTime = restoreTime.getMillis();
+	}
 
-		public boolean isStorageProxyAlive() {
-				return isStorageProxyAlive.get();
-		}
+	//@Monitor(name="bootstrapping", type=DataSourceType.GAUGE)
+	public int metricIsBootstrapping() {
+		return isBootstrapping() ? 1 : 0;
+	}
 
-		public void setStorageProxyAlive(boolean isStorageProxyAlive) {
-				this.isStorageProxyAlive.set(isStorageProxyAlive);
-				setHealthy();
-		}
+	public boolean isStorageProxyAlive() {
+		return isStorageProxyAlive.get();
+	}
 
-		//@Monitor(name="storageProxyAlive", type=DataSourceType.GAUGE)
-		public int metricIsStorageProxyAlive() {
-				return isStorageProxyAlive() ? 1 : 0;
-		}
+	public void setStorageProxyAlive(boolean isStorageProxyAlive) {
+		this.isStorageProxyAlive.set(isStorageProxyAlive);
+		setHealthy();
+	}
 
-		public boolean isStorageProxyProcessAlive() {
-				return isStorageProxyProcessAlive.get();
-		}
+	//@Monitor(name="storageProxyAlive", type=DataSourceType.GAUGE)
+	public int metricIsStorageProxyAlive() {
+		return isStorageProxyAlive() ? 1 : 0;
+	}
 
-		public void setStorageProxyProcessAlive(boolean isStorageProxyProcessAlive) {
-				this.isStorageProxyProcessAlive.set(isStorageProxyProcessAlive);
-		}
+	public boolean isStorageProxyProcessAlive() {
+		return isStorageProxyProcessAlive.get();
+	}
 
-		//@Monitor(name="storageProxyProcessAlive", type=DataSourceType.GAUGE)
-		public int metricIsStorageProxyProcessAlive() {
-				return isStorageProxyProcessAlive() ? 1 : 0;
-		}
+	public void setStorageProxyProcessAlive(boolean isStorageProxyProcessAlive) {
+		this.isStorageProxyProcessAlive.set(isStorageProxyProcessAlive);
+	}
 
-		public boolean isStorageAlive() {
-				return isStorageAlive.get();
-		}
+	//@Monitor(name="storageProxyProcessAlive", type=DataSourceType.GAUGE)
+	public int metricIsStorageProxyProcessAlive() {
+		return isStorageProxyProcessAlive() ? 1 : 0;
+	}
 
-		public void setStorageAlive(boolean isStorageAlive) {
-				this.isStorageAlive.set(isStorageAlive);
-				setHealthy();
-		}
+	public boolean isStorageAlive() {
+		return isStorageAlive.get();
+	}
 
-		//@Monitor(name="storageAlive", type=DataSourceType.GAUGE)
-		public int metricIsStorageAlive() {
-				return isStorageAlive() ? 1 : 0;
-		}
+	public void setStorageAlive(boolean isStorageAlive) {
+		this.isStorageAlive.set(isStorageAlive);
+		setHealthy();
+	}
 
-		public boolean isHealthy() {
-				return isHealthy.get();
-		}
+	//@Monitor(name="storageAlive", type=DataSourceType.GAUGE)
+	public int metricIsStorageAlive() {
+		return isStorageAlive() ? 1 : 0;
+	}
 
-		private void setHealthy() {
-				this.isHealthy.set(isStorageProxyAlive() && isStorageAlive());
-		}
+	public boolean isHealthy() {
+		return isHealthy.get();
+	}
 
-		//@Monitor(name="healthy", type=DataSourceType.GAUGE)
-		public int metricIsHealthy() {
-				return isHealthy() ? 1 : 0;
-		}
+	private void setHealthy() {
+		this.isHealthy.set(isStorageProxyAlive() && isStorageAlive());
+	}
 
-		public boolean getIsProcessMonitoringSuspended() {
-				return isProcessMonitoringSuspended.get();
-		}
+	//@Monitor(name="healthy", type=DataSourceType.GAUGE)
+	public int metricIsHealthy() {
+		return isHealthy() ? 1 : 0;
+	}
 
-		public void setIsProcessMonitoringSuspended(boolean ipms) {
-				this.isProcessMonitoringSuspended.set(ipms);
-		}
+	public boolean getIsProcessMonitoringSuspended() {
+		return isProcessMonitoringSuspended.get();
+	}
 
-		//@Monitor(name="processMonitoringSuspended", type=DataSourceType.GAUGE)
-		public int metricIsProcessMonitoringSuspended() {
-				return getIsProcessMonitoringSuspended() ? 1 : 0;
-		}
+	public void setIsProcessMonitoringSuspended(boolean ipms) {
+		this.isProcessMonitoringSuspended.set(ipms);
+	}
 
-		public boolean getYmlWritten() {
-				return this.isYmlWritten.get();
-		}
+	//@Monitor(name="processMonitoringSuspended", type=DataSourceType.GAUGE)
+	public int metricIsProcessMonitoringSuspended() {
+		return getIsProcessMonitoringSuspended() ? 1 : 0;
+	}
 
-		public void setYmlWritten(boolean yml) {
-				this.isYmlWritten.set(yml);
-		}
+	public boolean getYmlWritten() {
+		return this.isYmlWritten.get();
+	}
+
+	public void setYmlWritten(boolean yml) {
+		this.isYmlWritten.set(yml);
+	}
 
 }

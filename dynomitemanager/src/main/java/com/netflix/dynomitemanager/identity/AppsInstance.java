@@ -1,17 +1,14 @@
 /**
  * Copyright 2013 Netflix, Inc.
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 package com.netflix.dynomitemanager.identity;
 
@@ -19,127 +16,128 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class AppsInstance implements Serializable {
-		private static final long serialVersionUID = 5606412386974488659L;
-		private String hostname;
-		private long updatetime;
-		private boolean outOfService;
+	private static final long serialVersionUID = 5606412386974488659L;
+	private String hostname;
+	private long updatetime;
+	private boolean outOfService;
 
-		private String app;
-		private int Id;
-		private String instanceId;
-		private String availabilityZone;
-		private String rack;
-		private String publicip;
-		private String location;
-		private String token;
-		//Handles Storage objects
-		private Map<String, Object> volumes;
+	private String app;
+	private int Id;
+	private String instanceId;
+	private String availabilityZone;
+	private String rack;
+	private String publicip;
+	private String location;
+	private String token;
+	//Handles Storage objects
+	private Map<String, Object> volumes;
 
-		public String getApp() {
-				return app;
-		}
+	public String getApp() {
+		return app;
+	}
 
-		public void setApp(String app) {
-				this.app = app;
-		}
+	public void setApp(String app) {
+		this.app = app;
+	}
 
-		public int getId() {
-				return Id;
-		}
+	public int getId() {
+		return Id;
+	}
 
-		public void setId(int id) {
-				Id = id;
-		}
+	public void setId(int id) {
+		Id = id;
+	}
 
-		public String getInstanceId() {
-				return instanceId;
-		}
+	public String getInstanceId() {
+		return instanceId;
+	}
 
-		public void setInstanceId(String instanceId) {
-				this.instanceId = instanceId;
-		}
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
+	}
 
-		public String getZone() {
-				return availabilityZone;
-		}
+	public String getZone() {
+		return availabilityZone;
+	}
 
-		public void setZone(String availabilityZone) {
-				this.availabilityZone = availabilityZone;
-		}
+	public void setZone(String availabilityZone) {
+		this.availabilityZone = availabilityZone;
+	}
 
-		public String getHostName() {
-				return hostname;
-		}
+	public String getHostName() {
+		return hostname;
+	}
 
-		public String getHostIP() {
-				return publicip;
-		}
+	public String getHostIP() {
+		return publicip;
+	}
 
-		public void setHost(String hostname, String publicip) {
-				this.hostname = hostname;
-				this.publicip = publicip;
-		}
+	public void setHost(String hostname, String publicip) {
+		this.hostname = hostname;
+		this.publicip = publicip;
+	}
 
-		public void setHost(String hostname) {
-				this.hostname = hostname;
-		}
+	public void setHost(String hostname) {
+		this.hostname = hostname;
+	}
 
-		public void setHostIP(String publicip) {
-				this.publicip = publicip;
-		}
+	public void setHostIP(String publicip) {
+		this.publicip = publicip;
+	}
 
-		public String getToken() {
-				return token;
-		}
+	public String getToken() {
+		return token;
+	}
 
-		public void setToken(String token) {
-				this.token = token;
-		}
+	public void setToken(String token) {
+		this.token = token;
+	}
 
-		public Map<String, Object> getVolumes() {
-				return volumes;
-		}
+	public Map<String, Object> getVolumes() {
+		return volumes;
+	}
 
-		public void setVolumes(Map<String, Object> volumes) {
-				this.volumes = volumes;
-		}
+	public void setVolumes(Map<String, Object> volumes) {
+		this.volumes = volumes;
+	}
 
-		@Override public String toString() {
-				return String
-						.format("Hostname: %s, InstanceId: %s, APP_NAME: %s, RAC : %s Location %s, Id: %s: Token: %s",
-								getHostName(), getInstanceId(), getApp(), getZone(), getDatacenter(), getId(),
-								getToken());
-		}
+	@Override
+	public String toString() {
+		return String.format(
+				"Hostname: %s, InstanceId: %s, APP_NAME: %s, RAC : %s Location %s, Id: %s: Token: %s",
+				getHostName(), getInstanceId(), getApp(), getZone(), getDatacenter(), getId(),
+				getToken());
+	}
 
-		public String getDatacenter() {
-				return location;
-		}
+	public String getDatacenter() {
+		return location;
+	}
 
-		public void setDatacenter(String dc) {
-				this.location = dc;
-		}
+	public void setDatacenter(String dc) {
+		this.location = dc;
+	}
 
-		public long getUpdatetime() {
-				return updatetime;
-		}
+	public long getUpdatetime() {
+		return updatetime;
+	}
 
-		public void setUpdatetime(long updatetime) {
-				this.updatetime = updatetime;
-		}
+	public void setUpdatetime(long updatetime) {
+		this.updatetime = updatetime;
+	}
 
-		public boolean isOutOfService() {
-				return outOfService;
-		}
+	public boolean isOutOfService() {
+		return outOfService;
+	}
 
-		public void setOutOfService(boolean outOfService) {
-				this.outOfService = outOfService;
-		}
+	public void setOutOfService(boolean outOfService) {
+		this.outOfService = outOfService;
+	}
 
-		public String getRack() {
-				return rack;
-		}
+	public String getRack() {
+		return rack;
+	}
 
-		public void setRack(String rack) {
-				this.rack = rack;
-		}
+	public void setRack(String rack) {
+		this.rack = rack;
+	}
 }
