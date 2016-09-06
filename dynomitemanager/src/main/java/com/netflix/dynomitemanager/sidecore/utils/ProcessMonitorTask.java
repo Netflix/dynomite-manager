@@ -1,17 +1,14 @@
 /**
  * Copyright 2016 Netflix, Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 package com.netflix.dynomitemanager.sidecore.utils;
 
@@ -70,39 +67,39 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
 @Singleton
 public class ProcessMonitorTask extends Task implements StatefulJob {
 
-		public static final String JOBNAME = "DYNOMITE_PROCESS_MONITOR_THREAD";
-		private static final Logger logger = LoggerFactory.getLogger(ProcessMonitorTask.class);
-		private final IConfiguration config;
-		private final InstanceState instanceState;
-		private final IStorageProxy iStorageProxy;
-		private final TaskScheduler scheduler;
-		private final IFloridaProcess dynProcess;
+	public static final String JOBNAME = "DYNOMITE_PROCESS_MONITOR_THREAD";
+	private static final Logger logger = LoggerFactory.getLogger(ProcessMonitorTask.class);
+	private final IConfiguration config;
+	private final InstanceState instanceState;
+	private final IStorageProxy iStorageProxy;
+	private final TaskScheduler scheduler;
+	private final IFloridaProcess dynProcess;
 
-		@Inject
-		protected ProcessMonitorTask(IConfiguration config, InstanceState instanceState,
-				IStorageProxy iStorageProxy, TaskScheduler scheduler, IFloridaProcess dynProcess) {
-				super(config);
-				this.config = config;
-				this.instanceState = instanceState;
-				this.iStorageProxy = iStorageProxy;
-				this.scheduler = scheduler;
-				this.dynProcess = dynProcess;
+	@Inject
+	protected ProcessMonitorTask(IConfiguration config, InstanceState instanceState, IStorageProxy iStorageProxy,
+			TaskScheduler scheduler, IFloridaProcess dynProcess) {
+		super(config);
+		this.config = config;
+		this.instanceState = instanceState;
+		this.iStorageProxy = iStorageProxy;
+		this.scheduler = scheduler;
+		this.dynProcess = dynProcess;
+	}
+
+	@Override
+	public void execute() throws Exception {
+		Stopwatch stopwatch = Stopwatch.createStarted();
+		if (instanceState.getIsProcessMonitoringSuspended()) {
+			return;
 		}
 
-		@Override
-		public void execute() throws Exception {
-				Stopwatch stopwatch = Stopwatch.createStarted();
-				if (instanceState.getIsProcessMonitoringSuspended()) {
-						return;
-				}
-
-				instanceState.setStorageProxyProcessAlive(checkProxyProcess());
-				instanceState.setStorageProxyAlive(
-						JedisUtils.isAliveWithRetry(JedisConfiguration.REDIS_ADDRESS, JedisConfiguration.DYNO_PORT));
-				instanceState.setStorageAlive(iStorageProxy.isAlive());
-				logger.info(
-						String.format("ProcessMonitor state: %s, time elapsted to check (micros): %s", instanceState,
-								stopwatch.elapsed(MICROSECONDS)));
+		instanceState.setStorageProxyProcessAlive(checkProxyProcess());
+		instanceState.setStorageProxyAlive(JedisUtils.isAliveWithRetry(JedisConfiguration.REDIS_ADDRESS,
+				JedisConfiguration.DYNO_PORT));
+		instanceState.setStorageAlive(iStorageProxy.isAlive());
+		logger.info(String
+				.format("ProcessMonitor state: %s, time elapsted to check (micros): %s", instanceState,
+						stopwatch.elapsed(MICROSECONDS)));
 
 
         /*
@@ -118,7 +115,7 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
         */
 
         /*
-        if (instanceState.isBootstrapping()) {
+	if (instanceState.isBootstrapping()) {
             logger.info("Instance is bootstrapping. Skipping further process checks.");
             return;
         }
@@ -152,42 +149,42 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
         }
         */
 
-				stopwatch.stop();
+		stopwatch.stop();
 
-				if (logger.isDebugEnabled()) {
-						logger.debug(
-								String.format("Time to run the check (micros): %s", stopwatch.elapsed(MICROSECONDS)));
-				}
+		if (logger.isDebugEnabled()) {
+			logger.debug(String
+					.format("Time to run the check (micros): %s", stopwatch.elapsed(MICROSECONDS)));
 		}
+	}
 
-		private boolean checkProxyProcess() {
-				try {
-						String cmd = String.format("ps -ef | grep  '[/]apps/%1$s/bin/%1$s'", config.getProcessName());
-						String[] cmdArray = { "/bin/sh", "-c", cmd };
-						logger.info("Running checkProxyProcess command: " + cmd);
+	private boolean checkProxyProcess() {
+		try {
+			String cmd = String.format("ps -ef | grep  '[/]apps/%1$s/bin/%1$s'", config.getProcessName());
+			String[] cmdArray = { "/bin/sh", "-c", cmd };
+			logger.info("Running checkProxyProcess command: " + cmd);
 
-						// This returns pid for the Dynomite process
-						Process p = Runtime.getRuntime().exec(cmdArray);
-						BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-						String line = input.readLine();
-						if (logger.isDebugEnabled()) {
-								logger.debug("Output from checkProxyProcess command: " + line);
-						}
-						return line != null;
-				} catch (Exception e) {
-						logger.warn("Exception thrown while checking if the process is running or not ", e);
-						return false;
-				}
+			// This returns pid for the Dynomite process
+			Process p = Runtime.getRuntime().exec(cmdArray);
+			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String line = input.readLine();
+			if (logger.isDebugEnabled()) {
+				logger.debug("Output from checkProxyProcess command: " + line);
+			}
+			return line != null;
+		} catch (Exception e) {
+			logger.warn("Exception thrown while checking if the process is running or not ", e);
+			return false;
 		}
+	}
 
-		// Start every 15 seconds.
-		public static TaskTimer getTimer() {
-				return new SimpleTimer(JOBNAME, 15L * 1000);
-		}
+	// Start every 15 seconds.
+	public static TaskTimer getTimer() {
+		return new SimpleTimer(JOBNAME, 15L * 1000);
+	}
 
-		@Override
-		public String getName() {
-				return JOBNAME;
-		}
+	@Override
+	public String getName() {
+		return JOBNAME;
+	}
 
 }
