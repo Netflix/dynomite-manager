@@ -52,11 +52,11 @@ public class AwsRoleAssumptionCredential implements ICredential {
 					 *  then the assumed role is for EC2 classic, and vice versa.
 					 */
 					if (this.insEnvIdentity.isClassic()) {
-						roleArn = this.config
-								.getVpcAWSRoleAssumptionArn();      // Env is EC2 classic --> IAM assumed role for VPC created
+						// Env is EC2 classic --> IAM assumed role for VPC created
+						roleArn = this.config.getVpcAWSRoleAssumptionArn();
 					} else {
-						roleArn = this.config
-								.getClassicAWSRoleAssumptionArn();  // Env is VPC --> IAM assumed role for EC2 classic created
+						// Env is VPC --> IAM assumed role for EC2 classic created
+						roleArn = this.config.getClassicAWSRoleAssumptionArn();
 					}
 
 					//

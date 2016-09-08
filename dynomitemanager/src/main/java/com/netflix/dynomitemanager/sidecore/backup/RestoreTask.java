@@ -86,13 +86,13 @@ public class RestoreTask extends Task {
 		 */
 		this.state.setRestoreStatus(false);
 
-    	/* stop dynomite process */
+    		// stop dynomite process
 		this.dynProcess.stop();
 
-    	/* stop storage process */
+    		// stop storage process
 		this.storageProcessMgr.stop();
 
-    	/* restore from Object Storage */
+    		// restore from Object Storage
 		if (restore.restoreData(config.getRestoreDate())) {
 			/* start storage process and load data */
 			logger.info("Restored successful: Starting storage process with loading data.");
@@ -107,7 +107,7 @@ public class RestoreTask extends Task {
 			logger.info("Dynomite started");
 			this.state.setRestoreStatus(true);
 		} else {
-		/* start storage process without loading data */
+			// start storage process without loading data
 			logger.error("Restore not successful: Starting storage process without loading data.");
 		}
 		this.state.setRestoring(false);

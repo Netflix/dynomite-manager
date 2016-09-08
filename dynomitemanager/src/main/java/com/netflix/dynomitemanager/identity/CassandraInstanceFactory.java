@@ -30,7 +30,6 @@ import com.netflix.dynomitemanager.sidecore.IConfiguration;
 /**
  * Factory to use Cassandra for managing instance data
  */
-
 @Singleton
 public class CassandraInstanceFactory implements IAppsInstanceFactory {
 	private static final Logger logger = LoggerFactory.getLogger(CassandraInstanceFactory.class);

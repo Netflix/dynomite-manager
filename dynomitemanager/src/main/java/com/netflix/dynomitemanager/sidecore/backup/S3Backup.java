@@ -67,9 +67,7 @@ public class S3Backup implements Backup {
 	public boolean upload(File file, DateTime todayStart) {
 		logger.info("Snapshot backup: sending " + file.length() + " bytes to S3");
 
-        /* Key name is comprised of the
-		* backupDir + DC + Rack + token + Date
-        */
+        	// Key name is comprised of the backupDir + DC + Rack + token + Date
 		String keyName = config.getBackupLocation() + "/" +
 				iid.getInstance().getDatacenter() + "/" +
 				iid.getInstance().getRack() + "/" +
@@ -84,7 +82,6 @@ public class S3Backup implements Backup {
 
 		try {
 			// Checking if the S3 bucket exists, and if does not, then we create it
-
 			if (!(s3Client.doesBucketExist(config.getBucketName()))) {
 				logger.error("Bucket with name: " + config.getBucketName() + " does not exist");
 				return false;
