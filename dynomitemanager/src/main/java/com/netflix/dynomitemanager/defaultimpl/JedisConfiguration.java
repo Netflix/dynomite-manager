@@ -12,6 +12,9 @@
  */
 package com.netflix.dynomitemanager.defaultimpl;
 
+/**
+ * Configure the Jedis client for Redis.
+ */
 public class JedisConfiguration {
 	public static final int DYNO_MEMCACHED = 0;
 	public static final int DYNO_REDIS = 1;

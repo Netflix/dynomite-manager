@@ -74,7 +74,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	private static final String CONFIG_DYNO_CLUSTER_TYPE = DYNOMITEMANAGER_PRE + ".dyno.cluster.type";
 	private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
 	private static final String CONFIG_DYNO_HEALTHCHECK_ENABLE = DYNOMITEMANAGER_PRE + ".dyno.healthcheck.enable";
-	/** The max percentage of system memory to be allocated to the Dynomite fronted data store. */
+	// The max percentage of system memory to be allocated to the Dynomite fronted data store.
 	private static final String CONFIG_DYNO_STORAGE_MEM_PCT_INT = DYNOMITEMANAGER_PRE + ".dyno.storage.mem.pct.int";
 
 	private static final String CONFIG_DYNO_MBUF_SIZE = DYNOMITEMANAGER_PRE + ".dyno.mbuf.size";

@@ -69,6 +69,10 @@ public class InjectedWebListener extends GuiceServletContextListener {
 
 	protected static final Logger logger = LoggerFactory.getLogger(InjectedWebListener.class);
 
+	/**
+	 * Define dependencies and initialize Dynomite Manager.
+	 * @return an object graph
+	 */
 	@Override
 	protected Injector getInjector() {
 		List<Module> moduleList = Lists.newArrayList();
@@ -93,6 +97,9 @@ public class InjectedWebListener extends GuiceServletContextListener {
 		return injector;
 	}
 
+	/**
+	 * Configure the servlet.
+	 */
 	public static class JaxServletModule extends ServletModule {
 		@Override
 		protected void configureServlets() {
@@ -103,6 +110,9 @@ public class InjectedWebListener extends GuiceServletContextListener {
 		}
 	}
 
+	/**
+	 * Bind a class to each interface via Google Guice.
+	 */
 	public static class DynomiteGuiceModule extends AbstractModule {
 		@Override
 		protected void configure() {

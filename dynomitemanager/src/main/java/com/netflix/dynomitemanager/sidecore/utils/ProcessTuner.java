@@ -15,10 +15,17 @@ package com.netflix.dynomitemanager.sidecore.utils;
 import java.io.IOException;
 
 /**
- * ProcessTuner allows a Yaml file to be written.
+ * ProcessTuner writes a yaml file to disk.
  */
 public interface ProcessTuner {
 
+	/**
+	 * Generate and write a yaml file
+	 * @param yamlLocation
+	 * @param hostname
+	 * @param seedProvider
+	 * @throws IOException
+	 */
 	void writeAllProperties(String yamlLocation, String hostname, String seedProvider) throws IOException;
 
 }

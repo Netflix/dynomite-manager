@@ -114,13 +114,9 @@ public class WarmBootstrapTask extends Task {
 					// Wait for 1 second before we check dynomite status
 					sleeper.sleepQuietly(1000);
 					if (this.dynProcess.dynomiteCheck()) {
-						logger.error("Trying to start Dynomite again");
-						try {
-							this.dynProcess.start();
-						} catch (IOException ex) {
-							logger.error("Dynomite failed to start");
-						}
-						sleeper.sleepQuietly(1000);
+						logger.info("Dynomite health check passed");
+					} else {
+						logger.error("Dynomite health check failed");
 					}
 					// Set the state of bootstrap as successful.
 					this.state.setBootstrapStatus(bootstrap);
@@ -147,11 +143,8 @@ public class WarmBootstrapTask extends Task {
 				logger.error("Unable to find any peer with the same token!");
 			}
 
-            /*
-			 * Performing a check of Dynomite after bootstrap is complete.
-             * This is important as there are cases that Dynomite reaches
-             * the 1M messages limit and is inaccessible after bootstrap.
-             */
+			// Performing a check of Dynomite after bootstrap is complete. This is important as there are
+			// cases that Dynomite reaches the 1M messages limit and is inaccessible after bootstrap.
 			if (this.dynProcess.dynomiteCheck()) {
 				logger.error("Dynomite is up since warm up succeeded");
 			}

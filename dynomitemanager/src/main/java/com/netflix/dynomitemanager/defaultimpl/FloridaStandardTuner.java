@@ -45,7 +45,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 
 /**
- * Write the dynomite.yaml configuration file.
+ * Generate and write the dynomite.yaml and redis.conf configuration files to disk.
  */
 @Singleton
 public class FloridaStandardTuner implements ProcessTuner {
@@ -77,7 +77,7 @@ public class FloridaStandardTuner implements ProcessTuner {
 	/**
 	 * Generate dynomite.yaml.
 	 *
-	 * @param yamlLocation Path to the dynomite.yaml file.
+	 * @param yamlLocation path to the dynomite.yaml file
 	 * @param hostname UNUSED ARGUMENT
 	 * @param seedProvider UNUSED ARGUMENT
 	 * @throws IOException
@@ -157,6 +157,13 @@ public class FloridaStandardTuner implements ProcessTuner {
 		this.instanceState.setYmlWritten(true);
 	}
 
+	/**
+	 * UNUSED METHOD
+	 *
+	 * @param yamlFile
+	 * @param autobootstrap
+	 * @throws IOException
+	 */
 	@SuppressWarnings("unchecked")
 	public void updateAutoBootstrap(String yamlFile, boolean autobootstrap) throws IOException {
 		DumperOptions options = new DumperOptions();
@@ -169,6 +176,10 @@ public class FloridaStandardTuner implements ProcessTuner {
 		yaml.dump(map, new FileWriter(yamlFile));
 	}
 
+	/**
+	 * Generate redis.conf.
+	 * @throws IOException
+	 */
 	private void updateRedisConfiguration() throws IOException {
 		long storeMaxMem = getStoreMaxMem();
 
@@ -223,7 +234,6 @@ public class FloridaStandardTuner implements ProcessTuner {
 					lines.set(i, saveSchedule);
 				}
 			} else if (config.isPersistenceEnabled() && !config.isAof()) {
-
 				if (line.matches(REDIS_CONF_STOP_WRITES_BGSAVE_ERROR)) {
 					String bgsaveerror = "stop-writes-on-bgsave-error no";
 					logger.info("Updating Redis property: " + bgsaveerror);
@@ -245,6 +255,10 @@ public class FloridaStandardTuner implements ProcessTuner {
 		Files.write(confPath, lines, Charsets.UTF_8, WRITE, TRUNCATE_EXISTING);
 	}
 
+	/**
+	 * Get the maximum amount of memory available for Redis or Memcached.
+	 * @return the maximum amount of storage available for Redis or Memcached in KB
+	 */
 	private long getStoreMaxMem() {
 		int memPct = config.getStorageMemPercent();
 		// Long is big enough for the amount of ram is all practical systems that we deal with.
@@ -257,7 +271,10 @@ public class FloridaStandardTuner implements ProcessTuner {
 		return storeMaxMem;
 	}
 
-	// Returns the number of kb.
+	/**
+	 * Get the amount of memory available on this instance.
+	 * @return total available memory (RAM) on instance in KB
+	 */
 	public long getTotalAvailableSystemMemory() {
 		String memInfo;
 		try {

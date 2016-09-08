@@ -41,8 +41,9 @@ public interface IConfiguration {
 	 */
 	public String getStorageStartupScript();
 
-	/*
-	 *
+	/**
+	 * Get the full path to the storage engine's stop script.
+	 * @return full path to the stop script for the Redis or Memcached storage engine
 	 */
 	public String getStorageStopScript();
 

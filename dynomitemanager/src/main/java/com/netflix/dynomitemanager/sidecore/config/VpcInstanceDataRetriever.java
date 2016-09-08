@@ -55,18 +55,22 @@ public class VpcInstanceDataRetriever implements InstanceDataRetriever {
 						+ "/security-groups").trim();
 	}
 
-	@Override
-	/*
+	/**
+	 * Get the MAC id of this instance.
 	 * @return id of the network interface for running instance
-	 */ public String getMac() {
+	 */
+	@Override
+	public String getMac() {
 		return SystemUtils.getDataFromUrl("http://169.254.169.254/latest/meta-data/network/interfaces/macs/")
 				.trim();
 	}
 
+	/**
+	 * Get the VPC id of the VPC that contains this instance.
+	 * @return the id of the vpc account for running instance, null if does not exist
+	 */
 	@Override
-	/*
-	 * @return the id of the vpc account for running instance, null if does not exist.
-	 */ public String getVpcId() {
+	public String getVpcId() {
 		String nacId = getMac();
 		if (nacId == null || nacId.isEmpty())
 			return null;

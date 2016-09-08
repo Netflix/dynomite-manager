@@ -164,8 +164,8 @@ public class FloridaProcessManager implements IFloridaProcess {
 	}
 
 	/**
-	 * Ping Dynomite.
-	 * @param dynomiteJedis the Jedis client with a connection to Dynomite
+	 * Ping Dynomite to perform a basic health check.
+	 * @param dynomiteJedis the Jedis client with a connection to Dynomite.
 	 * @return true if Dynomite replies to PING with PONG, else false.
 	 */
 	private boolean dynomiteRedisPing(Jedis dynomiteJedis) {
@@ -177,7 +177,10 @@ public class FloridaProcessManager implements IFloridaProcess {
 		return true;
 	}
 
-	/* Dynomite Healthcheck with Redis */
+	/**
+	 * Basic health check for Dynomite.
+	 * @return true if health check passes, or false if health check fails.
+	 */
 	private boolean dynomiteRedisCheck() {
 		Jedis dynomiteJedis = new Jedis(LOCAL_ADDRESS, DYNO_PORT, 5000);
 		try {
@@ -196,7 +199,12 @@ public class FloridaProcessManager implements IFloridaProcess {
 		return true;
 	}
 
-	/* Dynomite health check and Auto Restart */
+	/**
+	 * Dynomite health check performed via Redis PING command. If health check fails, then we stop Dynomite to
+	 * prevent a zombie Dynomite process (i.e. a situation where Dynomite is running but Redis is stopped).
+	 *
+	 * @return true if health check passes and false if it fails.
+	 */
 	public boolean dynomiteCheck() {
 		if (config.getClusterType()
 				== DYNO_MEMCACHED) {    // TODO: we need to implement this once we use memcached

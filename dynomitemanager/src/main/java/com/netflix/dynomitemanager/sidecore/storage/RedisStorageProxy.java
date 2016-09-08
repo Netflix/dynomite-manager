@@ -325,15 +325,12 @@ public class RedisStorageProxy implements IStorageProxy {
 			short numErrors = 0;
 			long startTime = System.currentTimeMillis();
 
-          /*
-	   * Conditions under which warmp up will end
-           * 1. number of Jedis errors are 5.
-           * 2. number of consecutive increases of offset differences (caused when client produces high load).
-           * 3. the difference between offsets is very small or zero (success).
-           * 4. warmp up takes more than FP defined minutes (default 20 min).
-           * 5. Dynomite has started and is healthy.
-           */
-
+			// Conditions under which warmp up will end
+			// 1. number of Jedis errors are 5.
+			// 2. number of consecutive increases of offset differences (caused when client produces high load).
+			// 3. the difference between offsets is very small or zero (success).
+			// 4. warmp up takes more than FP defined minutes (default 20 min).
+			// 5. Dynomite has started and is healthy.
 			while (numErrors < 5) {
 				// sleep 10 seconds in between checks
 				sleeper.sleepQuietly(10000);
@@ -343,13 +340,11 @@ public class RedisStorageProxy implements IStorageProxy {
 					numErrors++;
 				}
 
-              /*
-               * Diff meaning:
-               * a. diff ==  0 --> we are either in sync or close to sync.
-               * b. diff == -1 --> there was an error in sync process.
-               * c. diff == -2 --> offset is still zero, peer syncing has not started.
-               * d. diff == -3 --> warm up lasted more than bootstrapTime
-               */
+				// Diff meaning:
+				// a. diff ==  0 --> we are either in sync or close to sync.
+				// b. diff == -1 --> there was an error in sync process.
+				// c. diff == -2 --> offset is still zero, peer syncing has not started.
+				// d. diff == -3 --> warm up lasted more than bootstrapTime
 				if (diff == 0) {
 					break;
 				} else if (diff == -1) {
@@ -363,11 +358,8 @@ public class RedisStorageProxy implements IStorageProxy {
 					return Bootstrap.EXPIRED_BOOTSTRAPTIME_FAIL;
 				}
 
-
-              /*
-               * Exit conditions:
-               * a. retry more than 5 times continuously and if the diff is larger than the previous diff.
-               */
+				// Exit conditions:
+				// a. retry more than 5 times continuously and if the diff is larger than the previous diff.
 				if (previousDiff < diff) {
 					logger.info("Previous diff (" + previousDiff
 							+ ") was smaller than current diff (" + diff
@@ -485,10 +477,9 @@ public class RedisStorageProxy implements IStorageProxy {
 		logger.info("masterOffset: " + masterOffset + " slaveOffset: " + slaveOffset +
 				" current Diff: " + diff +
 				" allowable diff: " + config.getAllowableBytesSyncDiff());
-      /*
-       * Allowable bytes sync diff can be configured by a Fast Property.
-       * If the difference is very small, then we return zero.
-       */
+
+		// Allowable bytes sync diff can be configured by a Fast Property.
+		// If the difference is very small, then we return zero.
 		if (diff < config.getAllowableBytesSyncDiff()) {
 			logger.info("master and slave are in sync!");
 			return (long) 0;

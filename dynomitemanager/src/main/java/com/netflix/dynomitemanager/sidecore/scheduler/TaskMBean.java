@@ -14,7 +14,6 @@ package com.netflix.dynomitemanager.sidecore.scheduler;
 
 /**
  * MBean to monitor Task executions.
- *
  */
 public interface TaskMBean {
 	public int getErrorCount();

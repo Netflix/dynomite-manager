@@ -69,7 +69,6 @@ public class RedisInfoMetricsTask extends Task {
 
 	@Override
 	public void execute() throws Exception {
-
 		Jedis jedis = jedisFactory.newInstance();
 		try {
 			jedis.connect();
@@ -89,7 +88,6 @@ public class RedisInfoMetricsTask extends Task {
 	}
 
 	private void processMetrics(Map<String, Long> metrics) {
-
 		for (String key : metrics.keySet()) {
 
 			Long value = metrics.get(key);

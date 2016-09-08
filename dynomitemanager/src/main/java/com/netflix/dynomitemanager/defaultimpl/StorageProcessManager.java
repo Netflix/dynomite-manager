@@ -30,6 +30,9 @@ import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 
+/**
+ * Start or stop the storage engine, such as Redis or Memcached.
+ */
 @Singleton
 public class StorageProcessManager {
 	private static final Logger logger = LoggerFactory.getLogger(StorageProcessManager.class);
@@ -46,6 +49,10 @@ public class StorageProcessManager {
 		this.instanceState = instanceState;
 	}
 
+	/**
+	 * Start the storage engine (Redis, Memcached).
+	 * @throws IOException
+	 */
 	public void start() throws IOException {
 		logger.info(String.format("Starting Storage process"));
 
@@ -108,8 +115,12 @@ public class StorageProcessManager {
 		return baos.toString();
 	}
 
+	/**
+	 * Stop the storage engine (Redis, Memcached).
+	 * @throws IOException
+	 */
 	public void stop() throws IOException {
-		logger.info("Stopping Storage process ....");
+		logger.info("Stopping storage process...");
 		List<String> command = Lists.newArrayList();
 		if (!"root".equals(System.getProperty("user.name"))) {
 			command.add(SUDO_STRING);
@@ -120,10 +131,11 @@ public class StorageProcessManager {
 			if (StringUtils.isNotBlank(param))
 				command.add(param);
 		}
-		ProcessBuilder stopCass = new ProcessBuilder(command);
-		stopCass.directory(new File("/"));
-		stopCass.redirectErrorStream(true);
-		Process stopper = stopCass.start();
+		ProcessBuilder stopStorage = new ProcessBuilder(command);
+		stopStorage.directory(new File("/"));
+		stopStorage.redirectErrorStream(true);
+		// Run the storage engine's stop command
+		Process stopper = stopStorage.start();
 
 		sleeper.sleepQuietly(SCRIPT_EXECUTE_WAIT_TIME_MS);
 		try {
@@ -136,7 +148,7 @@ public class StorageProcessManager {
 				logProcessOutput(stopper);
 			}
 		} catch (Exception e) {
-			logger.warn("couldn't shut down Storage process correctly", e);
+			logger.warn("Could not shut down storage process correctly: ", e);
 		}
 	}
 }
