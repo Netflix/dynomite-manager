@@ -15,9 +15,6 @@ package com.netflix.dynomitemanager.sidecore.utils;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
-import com.netflix.dynomitemanager.IFloridaProcess;
 import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.identity.AppsInstance;
 import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
@@ -29,13 +26,11 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask;
+import com.netflix.dynomitemanager.dynomite.DynomiteRest;
 import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 import com.netflix.dynomitemanager.defaultimpl.StorageProcessManager;
+import com.netflix.dynomitemanager.dynomite.IFloridaProcess;
 
-import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,18 +117,18 @@ public class WarmBootstrapTask extends Task {
 					this.state.setBootstrapStatus(bootstrap);
 
 					logger.info("Set Dynomite to allow writes only!!!");
-					sendCommand("/state/writes_only");
+					DynomiteRest.sendCommand("/state/writes_only");
 
 					logger.info("Stop Redis' Peer syncing!!!");
 					this.storageProxy.stopPeerSync();
 
 					logger.info("Set Dynomite to resuming state to allow writes and flush delayed writes");
-					sendCommand("/state/resuming");
+					DynomiteRest.sendCommand("/state/resuming");
 
 					//sleep 15s for the flushing to catch up
 					sleeper.sleepQuietly(15000);
 					logger.info("Set Dynomite to normal state");
-					sendCommand("/state/normal");
+					DynomiteRest.sendCommand("/state/normal");
 				} else {
 					logger.error("Warm up failed: Stop Redis' Peer syncing!!!");
 					this.storageProxy.stopPeerSync();
@@ -179,40 +174,6 @@ public class WarmBootstrapTask extends Task {
 		}
 		logger.info("peers size: " + peers.size());
 		return peers.toArray(new String[0]);
-	}
-
-	private boolean sendCommand(String cmd) {
-		DynamicStringProperty adminUrl = DynamicPropertyFactory.getInstance()
-				.getStringProperty("florida.metrics.url", "http://localhost:22222");
-
-		String url = adminUrl.get() + cmd;
-		HttpClient client = new HttpClient();
-		client.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
-
-		GetMethod get = new GetMethod(url);
-		try {
-			int statusCode = client.executeMethod(get);
-			if (!(statusCode == 200)) {
-				logger.error("Got non 200 status code from " + url);
-				return false;
-			}
-
-			String response = get.getResponseBodyAsString();
-			//logger.info("Received response from " + url + "\n" + response);
-
-			if (!response.isEmpty()) {
-				logger.info("Received response from " + url + "\n" + response);
-			} else {
-				logger.error("Cannot parse empty response from " + url);
-				return false;
-			}
-
-		} catch (Exception e) {
-			logger.error("Failed to sendCommand and invoke url: " + url, e);
-			return false;
-		}
-
-		return true;
 	}
 
 }

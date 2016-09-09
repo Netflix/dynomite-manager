@@ -10,12 +10,11 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.netflix.dynomitemanager;
+package com.netflix.dynomitemanager.dynomite;
 
 import java.io.IOException;
 
 import com.google.inject.ImplementedBy;
-import com.netflix.dynomitemanager.defaultimpl.FloridaProcessManager;
 
 /**
  * Interface to aid in starting and stopping Dynomite.

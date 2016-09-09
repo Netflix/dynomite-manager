@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.netflix.dynomitemanager.dynomite.IFloridaProcess;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.monitoring.RedisInfoMetricsTask;
 import com.netflix.dynomitemanager.monitoring.ServoMetricsTask;
