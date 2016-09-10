@@ -110,25 +110,26 @@ public class WarmBootstrapTask extends Task {
 		    sleeper.sleepQuietly(1000);
 		    if (this.dynProcess.dynomiteCheck()) {
 			logger.info("Dynomite health check passed");
+
+			// Set the state of bootstrap as successful.
+			this.state.setBootstrapStatus(bootstrap);
+
+			logger.info("Set Dynomite to allow writes only!!!");
+			DynomiteRest.sendCommand("/state/writes_only");
+
+			logger.info("Stop Redis' Peer syncing!!!");
+			this.storageProxy.stopPeerSync();
+
+			logger.info("Set Dynomite to resuming state to allow writes and flush delayed writes");
+			DynomiteRest.sendCommand("/state/resuming");
+
+			// sleep 15s for the flushing to catch up
+			sleeper.sleepQuietly(15000);
+			logger.info("Set Dynomite to normal state");
+			DynomiteRest.sendCommand("/state/normal");
 		    } else {
-			logger.error("Dynomite health check failed");
+			logger.error("Dynomite health check and restart attempts failed");
 		    }
-		    // Set the state of bootstrap as successful.
-		    this.state.setBootstrapStatus(bootstrap);
-
-		    logger.info("Set Dynomite to allow writes only!!!");
-		    DynomiteRest.sendCommand("/state/writes_only");
-
-		    logger.info("Stop Redis' Peer syncing!!!");
-		    this.storageProxy.stopPeerSync();
-
-		    logger.info("Set Dynomite to resuming state to allow writes and flush delayed writes");
-		    DynomiteRest.sendCommand("/state/resuming");
-
-		    // sleep 15s for the flushing to catch up
-		    sleeper.sleepQuietly(15000);
-		    logger.info("Set Dynomite to normal state");
-		    DynomiteRest.sendCommand("/state/normal");
 		} else {
 		    logger.error("Warm up failed: Stop Redis' Peer syncing!!!");
 		    this.storageProxy.stopPeerSync();
