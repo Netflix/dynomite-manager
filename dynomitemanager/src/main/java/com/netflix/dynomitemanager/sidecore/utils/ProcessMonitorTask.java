@@ -15,9 +15,9 @@ package com.netflix.dynomitemanager.sidecore.utils;
 import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.netflix.dynomitemanager.IFloridaProcess;
 import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.JedisConfiguration;
+import com.netflix.dynomitemanager.dynomite.IFloridaProcess;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
@@ -45,7 +45,7 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
  * process failure scenarios.
  *
  * This class in cooperates with {@link com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask},
- * {@link com.netflix.dynomitemanager.sidecore.storage.IStorageProxy}, {@link com.netflix.dynomitemanager.IFloridaProcess},
+ * {@link com.netflix.dynomitemanager.sidecore.storage.IStorageProxy}, {@link com.netflix.dynomitemanager.dynomite.IFloridaProcess},
  * and {@link com.netflix.dynomitemanager.InstanceState}.
  * to handle the following cases.
  *
