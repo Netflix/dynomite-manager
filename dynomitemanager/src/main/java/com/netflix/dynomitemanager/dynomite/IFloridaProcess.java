@@ -21,10 +21,10 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(FloridaProcessManager.class)
 public interface IFloridaProcess {
-	void start() throws IOException;
+    void start() throws IOException;
 
-	void stop() throws IOException;
+    void stop() throws IOException;
 
-	boolean dynomiteCheck();
+    boolean dynomiteCheck();
 
 }
