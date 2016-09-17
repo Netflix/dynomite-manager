@@ -39,19 +39,19 @@ import java.util.List;
 import java.util.Map;
 
 @Singleton
-public class FloridaProcessManager implements IFloridaProcess {
+public class DynomiteProcessManager implements IDynomiteProcess {
 
-    private static final Logger logger = LoggerFactory.getLogger(FloridaProcessManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(DynomiteProcessManager.class);
     private static final String SUDO_STRING = "/usr/bin/sudo";
     private static final int SCRIPT_EXECUTE_WAIT_TIME_MS = 5000;
     private final IConfiguration config;
     private final Sleeper sleeper;
     private final InstanceState instanceState;
-    private final IFloridaProcess dynProcess;
+    private final IDynomiteProcess dynProcess;
 
     @Inject
-    public FloridaProcessManager(IConfiguration config, Sleeper sleeper, InstanceState instanceState,
-	    IFloridaProcess dynProcess) {
+    public DynomiteProcessManager(IConfiguration config, Sleeper sleeper, InstanceState instanceState,
+	    IDynomiteProcess dynProcess) {
 	this.config = config;
 	this.sleeper = sleeper;
 	this.instanceState = instanceState;

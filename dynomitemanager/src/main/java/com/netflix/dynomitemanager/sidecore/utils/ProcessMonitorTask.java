@@ -17,7 +17,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.JedisConfiguration;
-import com.netflix.dynomitemanager.dynomite.IFloridaProcess;
+import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
@@ -44,8 +44,8 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
  * Monitors Dynomite and Storage process and handles different
  * process failure scenarios.
  *
- * This class in cooperates with {@link com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask},
- * {@link com.netflix.dynomitemanager.sidecore.storage.IStorageProxy}, {@link com.netflix.dynomitemanager.dynomite.IFloridaProcess},
+ * This class in cooperates with {@link com.netflix.dynomitemanager.sidecore.storage.WarmBootstrapTask},
+ * {@link com.netflix.dynomitemanager.sidecore.storage.IStorageProxy}, {@link com.netflix.dynomitemanager.dynomite.IDynomiteProcess},
  * and {@link com.netflix.dynomitemanager.InstanceState}.
  * to handle the following cases.
  *
@@ -73,11 +73,11 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
 	private final InstanceState instanceState;
 	private final IStorageProxy iStorageProxy;
 	private final TaskScheduler scheduler;
-	private final IFloridaProcess dynProcess;
+	private final IDynomiteProcess dynProcess;
 
 	@Inject
 	protected ProcessMonitorTask(IConfiguration config, InstanceState instanceState, IStorageProxy iStorageProxy,
-			TaskScheduler scheduler, IFloridaProcess dynProcess) {
+			TaskScheduler scheduler, IDynomiteProcess dynProcess) {
 		super(config);
 		this.config = config;
 		this.instanceState = instanceState;

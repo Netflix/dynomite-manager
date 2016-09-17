@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.StorageProcessManager;
-import com.netflix.dynomitemanager.dynomite.IFloridaProcess;
+import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.backup.RestoreTask;
 import com.netflix.dynomitemanager.sidecore.backup.SnapshotTask;
@@ -54,7 +54,7 @@ public class DynomiteAdmin {
     private static final String REST_HEADER_TOKEN = "token";
     private static final String REST_SUCCESS = "[\"ok\"]";
     private static final Logger logger = LoggerFactory.getLogger(DynomiteAdmin.class);
-    private IFloridaProcess dynoProcess;
+    private IDynomiteProcess dynoProcess;
     private InstanceIdentity ii;
     private final InstanceState instanceState;
     private SnapshotTask snapshotBackup;
@@ -65,7 +65,7 @@ public class DynomiteAdmin {
     private StorageProcessManager storageProcessMgr;
 
     @Inject
-    public DynomiteAdmin(IFloridaProcess dynoProcess, InstanceIdentity ii, InstanceState instanceState,
+    public DynomiteAdmin(IDynomiteProcess dynoProcess, InstanceIdentity ii, InstanceState instanceState,
 	    SnapshotTask snapshotBackup, RestoreTask restoreBackup, IStorageProxy storage) {
 	this.dynoProcess = dynoProcess;
 	this.ii = ii;

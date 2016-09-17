@@ -12,38 +12,21 @@
  */
 package com.netflix.dynomitemanager.sidecore.backup;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
 import com.netflix.dynomitemanager.InstanceState;
-import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
 import com.netflix.dynomitemanager.defaultimpl.StorageProcessManager;
-import com.netflix.dynomitemanager.dynomite.IFloridaProcess;
+import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
-import com.netflix.dynomitemanager.sidecore.utils.JedisUtils;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 
 /**
@@ -58,7 +41,7 @@ public class RestoreTask extends Task {
 	private final InstanceIdentity iid;
 	private final InstanceState state;
 	private final IStorageProxy storageProxy;
-	private final IFloridaProcess dynProcess;
+	private final IDynomiteProcess dynProcess;
 	private final Sleeper sleeper;
 	private final Restore restore;
 
@@ -66,7 +49,7 @@ public class RestoreTask extends Task {
 
 	@Inject
 	public RestoreTask(IConfiguration config, InstanceIdentity id, ICredential cred, InstanceState state,
-			IStorageProxy storageProxy, IFloridaProcess dynProcess, Sleeper sleeper, Restore restore) {
+			IStorageProxy storageProxy, IDynomiteProcess dynProcess, Sleeper sleeper, Restore restore) {
 		super(config);
 		this.cred = cred;
 		this.iid = id;

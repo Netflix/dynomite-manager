@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.netflix.dynomitemanager.sidecore.utils;
+package com.netflix.dynomitemanager.sidecore.storage;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -23,13 +23,11 @@ import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
-import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+import com.netflix.dynomitemanager.sidecore.storage.WarmBootstrapTask;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
-import com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask;
 import com.netflix.dynomitemanager.dynomite.DynomiteRest;
-import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 import com.netflix.dynomitemanager.defaultimpl.StorageProcessManager;
-import com.netflix.dynomitemanager.dynomite.IFloridaProcess;
+import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +46,7 @@ public class WarmBootstrapTask extends Task {
     private static final Logger logger = LoggerFactory.getLogger(WarmBootstrapTask.class);
 
     public static final String JOBNAME = "Bootstrap-Task";
-    private final IFloridaProcess dynProcess;
+    private final IDynomiteProcess dynProcess;
     private final IStorageProxy storageProxy;
     private final IAppsInstanceFactory appsInstanceFactory;
     private final InstanceIdentity ii;
@@ -60,7 +58,7 @@ public class WarmBootstrapTask extends Task {
 
     @Inject
     public WarmBootstrapTask(IConfiguration config, IAppsInstanceFactory appsInstanceFactory, InstanceIdentity id,
-	    IFloridaProcess dynProcess, IStorageProxy storageProxy, InstanceState ss, Sleeper sleeper) {
+	    IDynomiteProcess dynProcess, IStorageProxy storageProxy, InstanceState ss, Sleeper sleeper) {
 	super(config);
 	this.dynProcess = dynProcess;
 	this.storageProxy = storageProxy;

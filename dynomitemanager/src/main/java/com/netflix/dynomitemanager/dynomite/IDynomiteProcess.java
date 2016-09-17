@@ -19,8 +19,8 @@ import com.google.inject.ImplementedBy;
 /**
  * Interface to aid in starting and stopping Dynomite.
  */
-@ImplementedBy(FloridaProcessManager.class)
-public interface IFloridaProcess {
+@ImplementedBy(DynomiteProcessManager.class)
+public interface IDynomiteProcess {
     void start() throws IOException;
 
     void stop() throws IOException;
