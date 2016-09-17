@@ -355,4 +355,10 @@ public class SimpleTestConfiguration implements IConfiguration {
 		return false;
 	}
 
+	@Override
+	public String getCrossAccountRack() {
+	    // TODO Auto-generated method stub
+	    return null;
+	}
+
 }

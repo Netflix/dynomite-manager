@@ -167,7 +167,7 @@ public class WarmBootstrapTask extends Task {
 	List<String> peers = new ArrayList<String>();
 
 	for (AppsInstance ins : instances) {
-	    logger.info("Instance's token(s); " + ins.getToken());
+            logger.info("Instance's token(s): " + ins.getToken() + " id: " + ins.getInstanceId());
 	    if (!ins.getRack().equals(ii.getInstance().getRack()) && ins.getToken().equals(tokens)) {
 		peers.add(ins.getHostName());
 	    }

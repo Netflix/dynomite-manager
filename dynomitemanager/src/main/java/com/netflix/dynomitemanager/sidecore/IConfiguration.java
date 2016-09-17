@@ -83,6 +83,11 @@ public interface IConfiguration {
 	 * @return Get the Data Center name (or region for AWS)
 	 */
 	public String getRack();
+	
+	/**
+	 * @return Get the cross account rack if in dual account mode
+	 */
+	public String getCrossAccountRack();
 
 	public List<String> getRacks();
 
@@ -228,5 +233,6 @@ public interface IConfiguration {
 	public String getCommaSeparatedCassandraHostNames();
 
 	public boolean isEurekaHostSupplierEnabled();
+
 
 }

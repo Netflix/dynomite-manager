@@ -355,4 +355,9 @@ public class BlankConfiguration implements IConfiguration {
 		return false;
 	}
 
+	@Override
+	public String getCrossAccountRack() {
+	    return null;
+	}
+
 }
