@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.netflix.dynomitemanager.dynomite.IFloridaProcess;
+import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.monitoring.RedisInfoMetricsTask;
 import com.netflix.dynomitemanager.monitoring.ServoMetricsTask;
@@ -30,8 +30,8 @@ import com.netflix.dynomitemanager.sidecore.utils.ProcessMonitorTask;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.sidecore.utils.ProxyAndStorageResetTask;
 import com.netflix.dynomitemanager.sidecore.utils.TuneTask;
-import com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask;
 import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
+import com.netflix.dynomitemanager.sidecore.storage.WarmBootstrapTask;
 import com.netflix.servo.DefaultMonitorRegistry;
 import com.netflix.servo.monitor.Monitors;
 
@@ -47,7 +47,7 @@ import com.netflix.servo.monitor.Monitors;
  * dynomite.yaml configuration file.
  * <li>{@link com.netflix.dynomitemanager.sidecore.backup.RestoreTask}: If
  * restore mode, then restore data from an object store (i.e. S3).
- * <li>{@link com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask}: If
+ * <li>{@link com.netflix.dynomitemanager.sidecore.storage.WarmBootstrapTask}: If
  * warm bootstrap mode, then warm the storage backend by syncing data from a
  * peer.
  * <li>{@link com.netflix.dynomitemanager.sidecore.utils.ProxyAndStorageResetTask}:
@@ -70,13 +70,13 @@ public class FloridaServer {
     private final InstanceIdentity id;
     private final Sleeper sleeper;
     private final TuneTask tuneTask;
-    private final IFloridaProcess dynProcess;
+    private final IDynomiteProcess dynProcess;
     private final InstanceState state;
     private static final Logger logger = LoggerFactory.getLogger(FloridaServer.class);
 
     @Inject
     public FloridaServer(IConfiguration config, TaskScheduler scheduler, InstanceIdentity id, Sleeper sleeper,
-	    TuneTask tuneTask, InstanceState state, IFloridaProcess dynProcess) {
+	    TuneTask tuneTask, InstanceState state, IDynomiteProcess dynProcess) {
 
 	this.config = config;
 	this.scheduler = scheduler;

@@ -11,7 +11,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.netflix.dynomitemanager.defaultimpl;
+package com.netflix.dynomitemanager;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +30,10 @@ import com.google.inject.Module;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import com.netflix.dynomitemanager.FloridaServer;
-import com.netflix.dynomitemanager.IInstanceState;
-import com.netflix.dynomitemanager.InstanceState;
-import com.netflix.dynomitemanager.dynomite.FloridaProcessManager;
-import com.netflix.dynomitemanager.dynomite.IFloridaProcess;
+import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.FloridaStandardTuner;
+import com.netflix.dynomitemanager.dynomite.DynomiteProcessManager;
+import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.identity.CassandraInstanceFactory;
 import com.netflix.dynomitemanager.identity.DefaultVpcInstanceEnvIdentity;
 import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
@@ -124,7 +123,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
 	    binder().bind(ProcessTuner.class).to(FloridaStandardTuner.class);
 	    binder().bind(IAppsInstanceFactory.class).to(CassandraInstanceFactory.class);
 	    binder().bind(SchedulerFactory.class).to(StdSchedulerFactory.class).asEagerSingleton();
-	    binder().bind(IFloridaProcess.class).to(FloridaProcessManager.class);
+	    binder().bind(IDynomiteProcess.class).to(DynomiteProcessManager.class);
 	    binder().bind(IStorageProxy.class).to(RedisStorageProxy.class);
 	    binder().bind(InstanceDataRetriever.class).to(VpcInstanceDataRetriever.class);
 	    // binder().bind(InstanceDataRetriever.class).to(LocalInstanceDataRetriever.class);

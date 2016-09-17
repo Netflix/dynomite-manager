@@ -12,7 +12,7 @@
  */
 package com.netflix.dynomitemanager.sidecore.utils;
 
-import com.netflix.dynomitemanager.dynomite.IFloridaProcess;
+import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_MEMCACHED;
@@ -43,12 +43,12 @@ public class ProxyAndStorageResetTask extends Task {
     public static final String JOBNAME = "ProxyResetTask-Task";
     private static final Logger logger = LoggerFactory.getLogger(ProxyAndStorageResetTask.class);
 
-    private final IFloridaProcess dynProcess;
+    private final IDynomiteProcess dynProcess;
     private final IStorageProxy storageProxy;
     private final Sleeper sleeper;
 
     @Inject
-    public ProxyAndStorageResetTask(IConfiguration config, IFloridaProcess dynProcess, IStorageProxy storageProxy,
+    public ProxyAndStorageResetTask(IConfiguration config, IDynomiteProcess dynProcess, IStorageProxy storageProxy,
 	    Sleeper sleeper) {
 	super(config);
 	this.storageProxy = storageProxy;
