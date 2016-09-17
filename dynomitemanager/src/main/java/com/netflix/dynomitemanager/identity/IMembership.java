@@ -41,6 +41,12 @@ public interface IMembership {
 	public int getRacMembershipSize();
 
 	/**
+	 * @return Size of the cross account RAC
+	 */
+	public int getCrossAccountRacMembershipSize();
+
+	
+	/**
 	 * Number of RACs
 	 */
 	public int getRacCount();
@@ -74,5 +80,6 @@ public interface IMembership {
 	 * @param count
 	 */
 	public void expandRacMembership(int count);
+
 
 }
