@@ -14,18 +14,18 @@ package com.netflix.dynomitemanager.sidecore.storage;
 
 public interface IStorageProxy {
 
-	boolean isAlive();
+    boolean isAlive();
 
-	long getUptime();
+    long getUptime();
 
-	Bootstrap warmUpStorage(String[] peers);
+    Bootstrap warmUpStorage(String[] peers);
 
-	boolean resetStorage();
+    boolean resetStorage();
 
-	boolean takeSnapshot();
+    boolean takeSnapshot();
 
-	boolean loadingData();
+    boolean loadingData();
 
-	void stopPeerSync();
+    void stopPeerSync();
 
 }
