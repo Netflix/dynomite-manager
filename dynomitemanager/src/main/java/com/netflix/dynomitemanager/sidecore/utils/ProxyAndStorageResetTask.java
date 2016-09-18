@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 
 import redis.clients.jedis.Jedis;
 
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.dynomite.DynomiteRest;
 
 /**

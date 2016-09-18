@@ -33,7 +33,7 @@ import com.netflix.astyanax.model.*;
 import com.netflix.astyanax.serializers.StringSerializer;
 import com.netflix.astyanax.thrift.ThriftFamilyFactory;
 import com.netflix.astyanax.util.TimeUUIDUtils;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.supplier.EurekaHostsSupplier;
 import com.netflix.dynomitemanager.supplier.HostSupplier;
 

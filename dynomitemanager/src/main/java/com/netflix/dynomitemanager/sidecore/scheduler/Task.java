@@ -13,7 +13,8 @@
 package com.netflix.dynomitemanager.sidecore.scheduler;
 
 import com.google.common.base.Throwables;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
+
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

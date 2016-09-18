@@ -16,9 +16,8 @@ import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.InstanceState;
-import com.netflix.dynomitemanager.defaultimpl.JedisConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskScheduler;
@@ -94,8 +93,8 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
 		}
 
 		instanceState.setStorageProxyProcessAlive(checkProxyProcess());
-		instanceState.setStorageProxyAlive(JedisUtils.isAliveWithRetry(JedisConfiguration.REDIS_ADDRESS,
-				JedisConfiguration.DYNO_PORT));
+		instanceState.setStorageProxyAlive(JedisUtils.isAliveWithRetry(RedisConfiguration.REDIS_ADDRESS,
+				RedisConfiguration.DYNO_PORT));
 		instanceState.setStorageAlive(iStorageProxy.isAlive());
 		logger.info(String
 				.format("ProcessMonitor state: %s, time elapsted to check (micros): %s", instanceState,

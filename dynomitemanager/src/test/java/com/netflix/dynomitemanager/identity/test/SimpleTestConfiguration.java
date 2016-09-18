@@ -10,7 +10,7 @@ package com.netflix.dynomitemanager.identity.test;
 
 import java.util.List;
 
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 
 /**
  * IConfiguration implementation for tests.
@@ -296,12 +296,12 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getAppStopScript() {
+	public String getDynomiteStopScript() {
 		return null;
 	}
 
 	@Override
-	public String getAppStartupScript() {
+	public String getDynomiteStartupScript() {
 		return null;
 	}
 

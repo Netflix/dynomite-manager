@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 
 /**
  * Factory to use Cassandra for managing instance data

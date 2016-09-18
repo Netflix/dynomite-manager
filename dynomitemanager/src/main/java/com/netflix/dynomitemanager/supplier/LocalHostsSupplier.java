@@ -21,7 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 import com.netflix.astyanax.connectionpool.Host;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 
 /**
  * Use the {@code DM_CASSANDRA_CLUSTER_SEEDS} environment variable to provide a list of Cassandra hosts that contain the

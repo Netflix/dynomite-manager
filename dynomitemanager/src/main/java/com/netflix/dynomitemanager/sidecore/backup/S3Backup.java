@@ -40,9 +40,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
-
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 
 @Singleton

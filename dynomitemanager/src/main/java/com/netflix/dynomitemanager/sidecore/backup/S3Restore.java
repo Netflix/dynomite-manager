@@ -25,8 +25,8 @@ import org.joda.time.format.DateTimeFormatter;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;

@@ -12,16 +12,15 @@
  */
 package com.netflix.dynomitemanager.dynomite;
 
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_MEMCACHED;
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_PORT;
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_REDIS;
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.InstanceState;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
+import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 
 import redis.clients.jedis.Jedis;
@@ -48,14 +47,16 @@ public class DynomiteProcessManager implements IDynomiteProcess {
     private final Sleeper sleeper;
     private final InstanceState instanceState;
     private final IDynomiteProcess dynProcess;
+    private final IStorageProxy storageProxy;
 
     @Inject
     public DynomiteProcessManager(IConfiguration config, Sleeper sleeper, InstanceState instanceState,
-	    IDynomiteProcess dynProcess) {
+	    IDynomiteProcess dynProcess, IStorageProxy storageProxy) {
 	this.config = config;
 	this.sleeper = sleeper;
 	this.instanceState = instanceState;
 	this.dynProcess = dynProcess;
+	this.storageProxy = storageProxy;
     }
 
     protected void setEnv(Map<String, String> env) {
@@ -102,7 +103,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 
     protected List<String> getStartCommand() {
 	List<String> startCmd = new LinkedList<String>();
-	for (String param : config.getAppStartupScript().split(" ")) {
+	for (String param : config.getDynomiteStartupScript().split(" ")) {
 	    if (StringUtils.isNotBlank(param))
 		startCmd.add(param);
 	}
@@ -137,7 +138,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 	    command.add("-n");
 	    command.add("-E");
 	}
-	for (String param : config.getAppStopScript().split(" ")) {
+	for (String param : config.getDynomiteStopScript().split(" ")) {
 	    if (StringUtils.isNotBlank(param))
 		command.add(param);
 	}
