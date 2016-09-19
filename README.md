@@ -34,7 +34,7 @@ Dynomite-manager provides several default implementations (AWS, Configuration, c
 
 ## Howto
 
-The first step before building dynomite-manager is to configure the interfaces related to your environment in the [InjectedWebListener](https://github.com/Netflix/dynomite-manager/blob/dev/dynomitemanager/src/main/java/com/netflix/dynomitemanager/defaultimpl/InjectedWebListener.java). Checkout the [Wiki](https://github.com/Netflix/dynomite-manager/wiki/Configuration) for further explanation on what interfaces to bind based on your environment. 
+The first step before building dynomite-manager is to configure the interfaces related to your environment in the [InjectedWebListener](https://github.com/Netflix/dynomite-manager/blob/dev/dynomitemanager/src/main/java/com/netflix/dynomitemanager/InjectedWebListener.java). Checkout the [Wiki](https://github.com/Netflix/dynomite-manager/wiki/Configuration) for further explanation on what interfaces to bind based on your environment. 
 
 1. Build the dynomite-manager
 2. Set up Auto-Scale Group (ASG) and spin up instances
