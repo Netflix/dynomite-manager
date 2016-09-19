@@ -15,8 +15,6 @@ package com.netflix.dynomitemanager.sidecore.utils;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_MEMCACHED;
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_REDIS;
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_PORT;
 
 import java.io.IOException;
@@ -29,14 +27,16 @@ import org.slf4j.LoggerFactory;
 
 import redis.clients.jedis.Jedis;
 
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.dynomite.DynomiteRest;
 
 /**
  * Stop Redis replication, change Redis from slave to master, and restart
  * dynomite (if necessary).
+ * 
+ * @author ipapapa
  */
 @Singleton
 public class ProxyAndStorageResetTask extends Task {
@@ -77,42 +77,37 @@ public class ProxyAndStorageResetTask extends Task {
     }
 
     private void dynomiteCheck() {
-	if (config.getClusterType() == DYNO_MEMCACHED) { // TODO: we need to
-							 // implement this once
-							 // we use memcached
-	    logger.error("Memcache Dynomite check is not functional");
-	} else if (config.getClusterType() == DYNO_REDIS) { // use Redis API
-	    Jedis dynomiteJedis = new Jedis(LOCAL_ADDRESS, DYNO_PORT, 5000);
-	    logger.info("Checking Dynomite's status");
-	    try {
-		dynomiteJedis.connect();
+	Jedis dynomiteJedis = new Jedis(LOCAL_ADDRESS, DYNO_PORT, 5000);
+	logger.info("Checking Dynomite's status");
+	try {
+	    dynomiteJedis.connect();
+	    if (dynomiteJedis.ping().equals("PONG") == false) {
+		logger.warn("Pinging Dynomite failed ---> trying again after 1 sec");
+		sleeper.sleepQuietly(1000);
 		if (dynomiteJedis.ping().equals("PONG") == false) {
-		    logger.warn("Pinging Dynomite failed ---> trying again after 1 sec");
-		    sleeper.sleepQuietly(1000);
-		    if (dynomiteJedis.ping().equals("PONG") == false) {
-			try {
-			    this.dynProcess.stop();
-			    sleeper.sleepQuietly(1000);
-			    this.dynProcess.start();
-			} catch (IOException e) {
-			    logger.error("Dynomite cannot be restarted --> Requires manual restart" + e.getMessage());
-			}
-		    } else {
-			logger.info("Dynomite is up and running");
+		    try {
+			this.dynProcess.stop();
+			sleeper.sleepQuietly(1000);
+			this.dynProcess.start();
+		    } catch (IOException e) {
+			logger.error("Dynomite cannot be restarted --> Requires manual restart" + e.getMessage());
 		    }
 		} else {
 		    logger.info("Dynomite is up and running");
 		}
-	    } catch (Exception e) {
-		logger.warn("Unable to connect to Dynomite --> restarting: " + e.getMessage());
-		try {
-		    this.dynProcess.stop();
-		    sleeper.sleepQuietly(1000);
-		    this.dynProcess.start();
-		} catch (IOException e1) {
-		    logger.error("Dynomite cannot be restarted --> Requires manual restart" + e1.getMessage());
-		}
+	    } else {
+		logger.info("Dynomite is up and running");
+	    }
+	} catch (Exception e) {
+	    logger.warn("Unable to connect to Dynomite --> restarting: " + e.getMessage());
+	    try {
+		this.dynProcess.stop();
+		sleeper.sleepQuietly(1000);
+		this.dynProcess.start();
+	    } catch (IOException e1) {
+		logger.error("Dynomite cannot be restarted --> Requires manual restart" + e1.getMessage());
 	    }
 	}
+
     }
 }

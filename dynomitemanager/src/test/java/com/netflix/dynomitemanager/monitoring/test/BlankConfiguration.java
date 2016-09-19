@@ -10,7 +10,7 @@ package com.netflix.dynomitemanager.monitoring.test;
 
 import java.util.List;
 
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 
 /**
  * Blank IConfiguration class used for tests.
@@ -103,16 +103,6 @@ public class BlankConfiguration implements IConfiguration {
 	@Override
 	public int getTimeout() {
 		return 0;
-	}
-
-	@Override
-	public String getStorageStopScript() {
-		return null;
-	}
-
-	@Override
-	public String getStorageStartupScript() {
-		return null;
 	}
 
 	@Override
@@ -246,11 +236,6 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getClusterType() {
-		return 0; //DynomitemanagerConfiguration.DYNO_REDIS;
-	}
-
-	@Override
 	public String getClientListenPort() {
 		return null;
 	}
@@ -296,12 +281,12 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getAppStopScript() {
+	public String getDynomiteStopScript() {
 		return null;
 	}
 
 	@Override
-	public String getAppStartupScript() {
+	public String getDynomiteStartupScript() {
 		return null;
 	}
 

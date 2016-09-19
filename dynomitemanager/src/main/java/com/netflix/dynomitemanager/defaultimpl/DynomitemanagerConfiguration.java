@@ -31,11 +31,11 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.sidecore.IConfigSource;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.utils.RetryableCallable;
 import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
+import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 
 /**
  * Define the list of available Dynomite Manager configuration options, then set
@@ -45,12 +45,8 @@ import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 public class DynomitemanagerConfiguration implements IConfiguration {
     public static final String DYNOMITEMANAGER_PRE = "florida";
 
-    public static final int DYNO_MEMCACHED = 0;
-    public static final int DYNO_REDIS = 1;
-    public static final String DYNO_REDIS_CONF_PATH = "/apps/nfredis/conf/redis.conf";
     public static final int DYNO_PORT = 8102;
-    public static final int REDIS_PORT = 22122;
-    public final static String LOCAL_ADDRESS = "127.0.0.1";
+    public static final String LOCAL_ADDRESS = "127.0.0.1";
 
     private static final String CONFIG_DYN_HOME_DIR = DYNOMITEMANAGER_PRE + ".dyno.home";
     private static final String CONFIG_DYN_START_SCRIPT = DYNOMITEMANAGER_PRE + ".dyno.startscript";
@@ -144,15 +140,9 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // Defaults
     private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
     private final String DEFAULT_SEED_PROVIDER = "dynomitemanager_provider";
-    private final String DEFAULT_DYN_HOME_DIR = "/apps/dynomite";
-    private final String DEFAULT_DYN_START_SCRIPT = "/apps/dynomite/bin/launch_dynomite.sh";
-    private final String DEFAULT_DYN_STOP_SCRIPT = "/apps/dynomite/bin/kill_dynomite.sh";
-
-    private final String DEFAULT_MEMCACHED_START_SCRIPT = "/apps/memcached/bin/memcached";
-    private final String DEFAULT_MEMCACHED_STOP_SCRIPT = "/usr/bin/pkill memcached";
-
-    private final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
-    private final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
+    private final String DEFAULT_DYNOMITE_HOME_DIR = "/apps/dynomite";
+    private final String DEFAULT_DYNOMITE_START_SCRIPT = "/apps/dynomite/bin/launch_dynomite.sh";
+    private final String DEFAULT_DYNOMITE_STOP_SCRIPT = "/apps/dynomite/bin/kill_dynomite.sh";
 
     private List<String> DEFAULT_AVAILABILITY_ZONES = ImmutableList.of();
     private List<String> DEFAULT_AVAILABILITY_RACKS = ImmutableList.of();
@@ -161,13 +151,11 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private final int DEFAULT_DYN_LISTENER_PORT = 8102;
     private final int DEFAULT_DYN_SECURED_PEER_PORT = 8101;
     private final int DEFAULT_DYN_PEER_PORT = 8101;
-    private final int DEFAULT_DYN_MEMCACHED_PORT = 11211;
     private final String DEFAULT_DYN_RACK = "RAC1";
     private final String DEFAULT_TOKENS_DISTRIBUTION = "vnode";
     private final int DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC = 5000;
     private final int DEFAULT_DYNO_GOSSIP_INTERVAL = 10000;
     private final String DEFAULT_DYNO_TOKENS_HASH = "murmur";
-    private final int DEFAULT_DYNO_CLUSTER_TYPE = JedisConfiguration.DYNO_REDIS; // redis
 
     private final String DEFAULT_METADATA_KEYSPACE = "dyno_bootstrap";
     private final String DEFAULT_SECURED_OPTION = "datacenter";
@@ -212,6 +200,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private final ICredential provider;
     private final IConfigSource configSource;
     private final InstanceEnvIdentity insEnvIdentity;
+    private final IStorageProxy storageProxy;
 
     // Cassandra default configuration
     private static final String DEFAULT_BOOTCLUSTER_NAME = "cass_dyno";
@@ -230,11 +219,13 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     @Inject
     public DynomitemanagerConfiguration(ICredential provider, IConfigSource configSource,
-	    InstanceDataRetriever retriever, InstanceEnvIdentity insEnvIdentity) {
+	    InstanceDataRetriever retriever, InstanceEnvIdentity insEnvIdentity,
+	    IStorageProxy storageProxy) {
 	this.retriever = retriever;
 	this.provider = provider;
 	this.configSource = configSource;
 	this.insEnvIdentity = insEnvIdentity;
+	this.storageProxy = storageProxy;
 
 	RAC = retriever.getRac();
 	ZONE = RAC;
@@ -358,14 +349,12 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_USE_ASG_FOR_RACK_NAME, true);
     }
 
-    @Override
-    public String getAppStartupScript() {
-	return configSource.get(CONFIG_DYN_START_SCRIPT, DEFAULT_DYN_START_SCRIPT);
+    public String getDynomiteStartupScript() {
+	return configSource.get(CONFIG_DYN_START_SCRIPT, DEFAULT_DYNOMITE_START_SCRIPT);
     }
 
-    @Override
-    public String getAppStopScript() {
-	return configSource.get(CONFIG_DYN_STOP_SCRIPT, DEFAULT_DYN_STOP_SCRIPT);
+    public String getDynomiteStopScript() {
+	return configSource.get(CONFIG_DYN_STOP_SCRIPT, DEFAULT_DYNOMITE_STOP_SCRIPT);
     }
 
     @Override
@@ -380,7 +369,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     @Override
     public String getAppHome() {
-	return configSource.get(CONFIG_DYN_HOME_DIR, DEFAULT_DYN_HOME_DIR);
+	return configSource.get(CONFIG_DYN_HOME_DIR, DEFAULT_DYNOMITE_HOME_DIR);
     }
 
     @Override
@@ -544,13 +533,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return null;
     }
 
-    /*
-     * 0 - memcached 1 - redis
-     */
-    public int getClusterType() {
-	return configSource.get(CONFIG_DYNO_CLUSTER_TYPE, DEFAULT_DYNO_CLUSTER_TYPE);
-    }
-
     public boolean isMultiRegionedCluster() {
 	return configSource.get(CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER, true);
     }
@@ -595,22 +577,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     @Override
     public int getStorageMemPercent() {
 	return configSource.get(CONFIG_DYNO_STORAGE_MEM_PCT_INT, 85);
-    }
-
-    @Override
-    public String getStorageStartupScript() {
-	if (getClusterType() == 0)
-	    return DEFAULT_MEMCACHED_START_SCRIPT;
-
-	return DEFAULT_REDIS_START_SCRIPT;
-    }
-
-    @Override
-    public String getStorageStopScript() {
-	if (getClusterType() == 0)
-	    return DEFAULT_MEMCACHED_STOP_SCRIPT;
-
-	return DEFAULT_REDIS_STOP_SCRIPT;
     }
 
     public int getMbufSize() {

@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.netflix.dynomitemanager.sidecore;
+package com.netflix.dynomitemanager.defaultimpl;
 
 import java.util.List;
 
@@ -29,23 +29,13 @@ public interface IConfiguration {
 	/**
 	 * @return Path to target application startup script
 	 */
-	public String getAppStartupScript();
+	public String getDynomiteStartupScript();
 
 	/**
 	 * @return Path to target application stop script
 	 */
-	public String getAppStopScript();
+	public String getDynomiteStopScript();
 
-	/**
-	 * @return Script that starts the storage layer
-	 */
-	public String getStorageStartupScript();
-
-	/**
-	 * Get the full path to the storage engine's stop script.
-	 * @return full path to the stop script for the Redis or Memcached storage engine
-	 */
-	public String getStorageStopScript();
 
 	/**
 	 * @return Cluster name
@@ -154,8 +144,6 @@ public interface IConfiguration {
 	public String getTokens();
 
 	public String getMetadataKeyspace();
-
-	public int getClusterType();
 
 	public boolean isMultiRegionedCluster();
 

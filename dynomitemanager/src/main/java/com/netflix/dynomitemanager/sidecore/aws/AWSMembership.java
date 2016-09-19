@@ -40,9 +40,9 @@ import com.amazonaws.services.ec2.model.SecurityGroup;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.identity.IMembership;
 import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.ICredential;
 
 /**

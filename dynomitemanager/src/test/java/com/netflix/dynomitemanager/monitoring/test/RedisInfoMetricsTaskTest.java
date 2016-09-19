@@ -16,9 +16,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.monitoring.JedisFactory;
 import com.netflix.dynomitemanager.monitoring.RedisInfoMetricsTask;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.servo.DefaultMonitorRegistry;
 
 import mockit.Expectations;

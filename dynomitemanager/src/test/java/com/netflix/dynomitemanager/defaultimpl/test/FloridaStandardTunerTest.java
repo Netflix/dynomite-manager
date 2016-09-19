@@ -35,7 +35,7 @@ public class FloridaStandardTunerTest {
 	public void testWriteAllProperties() throws Exception {
 		//TODO: we need to a FakeInstanceState in the future.
 		FloridaStandardTuner tuner = new FloridaStandardTuner(new BlankConfiguration(),
-				new FakeInstanceIdentity(), new FakeInstanceState());
+				new FakeInstanceIdentity(), new FakeInstanceState(), new FakeStorageProxy());
 
 		String yamlPath = System.getProperty("java.io.tmpdir") + "/yaml-tunner.yaml";
 		String templateYamlPath = new File(".").getCanonicalPath() + "/src/test/resources/sample-yaml.yaml";

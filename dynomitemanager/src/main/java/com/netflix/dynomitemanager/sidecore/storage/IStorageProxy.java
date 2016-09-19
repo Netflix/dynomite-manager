@@ -12,6 +12,8 @@
  */
 package com.netflix.dynomitemanager.sidecore.storage;
 
+import java.io.IOException;
+
 public interface IStorageProxy {
 
     boolean isAlive();
@@ -27,5 +29,23 @@ public interface IStorageProxy {
     boolean loadingData();
 
     void stopPeerSync();
+    
+    String getEngine();
+    
+    int getEngineNumber();
+    
+    void updateConfiguration() throws IOException;
+    
+    String getStartupScript();
+    
+    String getStopScript();
+    
+    public String getIpAddress();
+    
+    public int getPort();
+    
+    public long getStoreMaxMem();
+    
+    public long getTotalAvailableSystemMemory();
 
 }

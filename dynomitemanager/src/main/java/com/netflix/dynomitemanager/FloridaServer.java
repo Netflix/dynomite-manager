@@ -17,11 +17,11 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.monitoring.RedisInfoMetricsTask;
 import com.netflix.dynomitemanager.monitoring.ServoMetricsTask;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.aws.UpdateSecuritySettings;
 import com.netflix.dynomitemanager.sidecore.backup.SnapshotTask;
 import com.netflix.dynomitemanager.sidecore.backup.RestoreTask;

@@ -41,6 +41,7 @@ public class DynomiteRest {
 	HttpClient client = new HttpClient();
 	client.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 
+	logger.info("Dynomite REST with url: " + url);
 	GetMethod get = new GetMethod(url);
 	try {
 	    int statusCode = client.executeMethod(get);

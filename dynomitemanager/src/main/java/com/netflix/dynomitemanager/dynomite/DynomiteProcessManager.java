@@ -12,16 +12,15 @@
  */
 package com.netflix.dynomitemanager.dynomite;
 
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_MEMCACHED;
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_PORT;
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_REDIS;
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.InstanceState;
-import com.netflix.dynomitemanager.sidecore.IConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
+import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 
 import redis.clients.jedis.Jedis;
@@ -102,7 +101,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 
     protected List<String> getStartCommand() {
 	List<String> startCmd = new LinkedList<String>();
-	for (String param : config.getAppStartupScript().split(" ")) {
+	for (String param : config.getDynomiteStartupScript().split(" ")) {
 	    if (StringUtils.isNotBlank(param))
 		startCmd.add(param);
 	}
@@ -137,7 +136,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 	    command.add("-n");
 	    command.add("-E");
 	}
-	for (String param : config.getAppStopScript().split(" ")) {
+	for (String param : config.getDynomiteStopScript().split(" ")) {
 	    if (StringUtils.isNotBlank(param))
 		command.add(param);
 	}
@@ -208,21 +207,15 @@ public class DynomiteProcessManager implements IDynomiteProcess {
      * @return true if health check passes and false if it fails.
      */
     public boolean dynomiteCheck() {
-	if (config.getClusterType() == DYNO_MEMCACHED) { // TODO: we need to
-							 // implement this once
-							 // we use memcached
-	    logger.error("Dynomite check with Memcached ping is not functional");
-	} else if (config.getClusterType() == DYNO_REDIS) { // use Redis API
-	    logger.info("Dynomite check with Redis Ping");
-	    if (!dynomiteRedisCheck()) {
-		try {
-		    logger.error("Dynomite was down");
-		    this.dynProcess.stop();
-		    sleeper.sleepQuietly(1000);
-		    return false;
-		} catch (IOException e) {
-		    logger.error("Dynomite cannot be restarted --> Requires manual restart" + e.getMessage());
-		}
+	logger.info("Dynomite check with Redis Ping");
+	if (!dynomiteRedisCheck()) {
+	    try {
+		logger.error("Dynomite was down");
+		this.dynProcess.stop();
+		sleeper.sleepQuietly(1000);
+		return false;
+	    } catch (IOException e) {
+		logger.error("Dynomite cannot be restarted --> Requires manual restart" + e.getMessage());
 	    }
 	}
 
