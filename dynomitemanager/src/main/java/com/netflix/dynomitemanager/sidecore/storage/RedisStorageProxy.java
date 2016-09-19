@@ -47,15 +47,18 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /**
  * @author ipapapa
  */
 
-//TODOs: we should talk to admin port (22222) instead of 8102 for both local and peer
+// TODOs: we should talk to admin port (22222) instead of 8102 for both local
+// and peer
 @Singleton
 public class RedisStorageProxy implements IStorageProxy {
-    
+
     private static final String DYNO_REDIS = "redis";
+    private static final String DYNO_ARDB_ROCKSDB = "ardb-rocksdb";
     private static final String DYNO_REDIS_CONF_PATH = "/apps/nfredis/conf/redis.conf";
     private static final String REDIS_ADDRESS = "127.0.0.1";
     private static final int REDIS_PORT = 22122;
@@ -63,17 +66,15 @@ public class RedisStorageProxy implements IStorageProxy {
     private static final String PROC_MEMINFO_PATH = "/proc/meminfo";
     private static final Pattern MEMINFO_PATTERN = Pattern.compile("MemTotal:\\s*([0-9]*)");
 
-    
     private final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
     private final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
-    
+
     private static final String REDIS_CONF_MAXMEMORY_PATTERN = "^maxmemory\\s*[0-9][0-9]*[a-zA-Z]*";
     private static final String REDIS_CONF_APPENDONLY = "^appendonly\\s*[a-zA-Z]*";
     private static final String REDIS_CONF_APPENDFSYNC = "^ appendfsync\\s*[a-zA-Z]*";
     private static final String REDIS_CONF_AUTOAOFREWRITEPERCENTAGE = "^auto-aof-rewrite-percentage\\s*[0-9][0-9]*[a-zA-Z]*";
     private static final String REDIS_CONF_STOP_WRITES_BGSAVE_ERROR = "^stop-writes-on-bgsave-error\\s*[a-zA-Z]*";
     private static final String REDIS_CONF_SAVE_SCHEDULE = "^#\\ssave\\s[0-9]*\\s[0-9]*";
-    
 
     private static final Logger logger = LoggerFactory.getLogger(RedisStorageProxy.class);
 
@@ -125,12 +126,12 @@ public class RedisStorageProxy implements IStorageProxy {
 	    }
 	}
     }
-    
+
     @Override
     public String getEngine() {
 	return DYNO_REDIS;
-    }    
-    
+    }
+
     @Override
     public int getEngineNumber() {
 	return 0;
@@ -538,96 +539,108 @@ public class RedisStorageProxy implements IStorageProxy {
 	 */
 	private static final long serialVersionUID = -7736577871204223637L;
     }
-    
-   
+
     /**
      * Generate redis.conf.
      * 
      * @throws IOException
      */
     public void updateConfiguration() throws IOException {
+
 	long storeMaxMem = getStoreMaxMem();
 
-	// Updating the file.
-	logger.info("Updating Redis conf: " + DYNO_REDIS_CONF_PATH);
-	Path confPath = Paths.get(DYNO_REDIS_CONF_PATH);
-	Path backupPath = Paths.get(DYNO_REDIS_CONF_PATH + ".bkp");
+	if (config.getRedisCompatibleEngine().equals(DYNO_ARDB_ROCKSDB)) {
+	    ArdbRocksDbRedisCompatible.updateConfiguration();
+	} else {
 
-	// backup the original baked in conf only and not subsequent updates
-	if (!Files.exists(backupPath)) {
-	    logger.info("Backing up baked in Redis config at: " + backupPath);
-	    Files.copy(confPath, backupPath, COPY_ATTRIBUTES);
-	}
+	    // Updating the file.
+	    logger.info("Updating Redis conf: " + DYNO_REDIS_CONF_PATH);
+	    Path confPath = Paths.get(DYNO_REDIS_CONF_PATH);
+	    Path backupPath = Paths.get(DYNO_REDIS_CONF_PATH + ".bkp");
 
-	if (config.isPersistenceEnabled() && config.isAof()) {
-	    logger.info("Persistence with AOF is enabled");
-	} else if (config.isPersistenceEnabled() && !config.isAof()) {
-	    logger.info("Persistence with RDB is enabled");
-	}
-
-	// Not using Properties file to load as we want to retain all comments,
-	// and for easy diffing with the ami baked version of the conf file.
-	List<String> lines = Files.readAllLines(confPath, Charsets.UTF_8);
-	boolean saveReplaced = false;
-	for (int i = 0; i < lines.size(); i++) {
-	    String line = lines.get(i);
-	    if (line.startsWith("#") && !line.matches(REDIS_CONF_SAVE_SCHEDULE)) {
-		continue;
+	    // backup the original baked in conf only and not subsequent updates
+	    if (!Files.exists(backupPath)) {
+		logger.info("Backing up baked in Redis config at: " + backupPath);
+		Files.copy(confPath, backupPath, COPY_ATTRIBUTES);
 	    }
-	    if (line.matches(REDIS_CONF_MAXMEMORY_PATTERN)) {
-		String maxMemConf = "maxmemory " + storeMaxMem + "kb";
-		logger.info("Updating Redis property: " + maxMemConf);
-		lines.set(i, maxMemConf);
-	    }
-	    // Persistence configuration
+
 	    if (config.isPersistenceEnabled() && config.isAof()) {
-		if (line.matches(REDIS_CONF_APPENDONLY)) {
-		    String appendOnly = "appendonly yes";
-		    logger.info("Updating Redis property: " + appendOnly);
-		    lines.set(i, appendOnly);
-		} else if (line.matches(REDIS_CONF_APPENDFSYNC)) {
-		    String appendfsync = "appendfsync no";
-		    logger.info("Updating Redis property: " + appendfsync);
-		    lines.set(i, appendfsync);
-		} else if (line.matches(REDIS_CONF_AUTOAOFREWRITEPERCENTAGE)) {
-		    String autoAofRewritePercentage = "auto-aof-rewrite-percentage 100";
-		    logger.info("Updating Redis property: " + autoAofRewritePercentage);
-		    lines.set(i, autoAofRewritePercentage);
-		} else if (line.matches(REDIS_CONF_SAVE_SCHEDULE)) {
-		    String saveSchedule = "# save 60 10000"; // if we select
-							     // AOF, it is
-							     // better to stop
-							     // RDB
-		    logger.info("Updating Redis property: " + saveSchedule);
-		    lines.set(i, saveSchedule);
-		}
+		logger.info("Persistence with AOF is enabled");
 	    } else if (config.isPersistenceEnabled() && !config.isAof()) {
-		if (line.matches(REDIS_CONF_STOP_WRITES_BGSAVE_ERROR)) {
-		    String bgsaveerror = "stop-writes-on-bgsave-error no";
-		    logger.info("Updating Redis property: " + bgsaveerror);
-		    lines.set(i, bgsaveerror);
-		} else if (line.matches(REDIS_CONF_SAVE_SCHEDULE) && !saveReplaced) {
-		    saveReplaced = true;
-		    String saveSchedule = "save 60 10000"; // after 60 sec if at
-							   // least 10000 keys
-							   // changed
-		    logger.info("Updating Redis property: " + saveSchedule);
-		    lines.set(i, saveSchedule);
-		} else if (line.matches(REDIS_CONF_APPENDONLY)) { // if we
-								  // select RDB,
-								  // it is
-								  // better to
-								  // stop AOF
-		    String appendOnly = "appendonly no";
-		    logger.info("Updating Redis property: " + appendOnly);
-		    lines.set(i, appendOnly);
+		logger.info("Persistence with RDB is enabled");
+	    }
+
+	    // Not using Properties file to load as we want to retain all
+	    // comments,
+	    // and for easy diffing with the ami baked version of the conf file.
+	    List<String> lines = Files.readAllLines(confPath, Charsets.UTF_8);
+	    boolean saveReplaced = false;
+	    for (int i = 0; i < lines.size(); i++) {
+		String line = lines.get(i);
+		if (line.startsWith("#") && !line.matches(REDIS_CONF_SAVE_SCHEDULE)) {
+		    continue;
+		}
+		if (line.matches(REDIS_CONF_MAXMEMORY_PATTERN)) {
+		    String maxMemConf = "maxmemory " + storeMaxMem + "kb";
+		    logger.info("Updating Redis property: " + maxMemConf);
+		    lines.set(i, maxMemConf);
+		}
+		// Persistence configuration
+		if (config.isPersistenceEnabled() && config.isAof()) {
+		    if (line.matches(REDIS_CONF_APPENDONLY)) {
+			String appendOnly = "appendonly yes";
+			logger.info("Updating Redis property: " + appendOnly);
+			lines.set(i, appendOnly);
+		    } else if (line.matches(REDIS_CONF_APPENDFSYNC)) {
+			String appendfsync = "appendfsync no";
+			logger.info("Updating Redis property: " + appendfsync);
+			lines.set(i, appendfsync);
+		    } else if (line.matches(REDIS_CONF_AUTOAOFREWRITEPERCENTAGE)) {
+			String autoAofRewritePercentage = "auto-aof-rewrite-percentage 100";
+			logger.info("Updating Redis property: " + autoAofRewritePercentage);
+			lines.set(i, autoAofRewritePercentage);
+		    } else if (line.matches(REDIS_CONF_SAVE_SCHEDULE)) {
+			String saveSchedule = "# save 60 10000"; // if we select
+								 // AOF, it is
+								 // better to
+								 // stop
+								 // RDB
+			logger.info("Updating Redis property: " + saveSchedule);
+			lines.set(i, saveSchedule);
+		    }
+		} else if (config.isPersistenceEnabled() && !config.isAof()) {
+		    if (line.matches(REDIS_CONF_STOP_WRITES_BGSAVE_ERROR)) {
+			String bgsaveerror = "stop-writes-on-bgsave-error no";
+			logger.info("Updating Redis property: " + bgsaveerror);
+			lines.set(i, bgsaveerror);
+		    } else if (line.matches(REDIS_CONF_SAVE_SCHEDULE) && !saveReplaced) {
+			saveReplaced = true;
+			String saveSchedule = "save 60 10000"; // after 60 sec
+							       // if at
+							       // least 10000
+							       // keys
+							       // changed
+			logger.info("Updating Redis property: " + saveSchedule);
+			lines.set(i, saveSchedule);
+		    } else if (line.matches(REDIS_CONF_APPENDONLY)) { // if we
+								      // select
+								      // RDB,
+								      // it is
+								      // better
+								      // to
+								      // stop
+								      // AOF
+			String appendOnly = "appendonly no";
+			logger.info("Updating Redis property: " + appendOnly);
+			lines.set(i, appendOnly);
+		    }
 		}
 	    }
-	}
 
-	Files.write(confPath, lines, Charsets.UTF_8, WRITE, TRUNCATE_EXISTING);
+	    Files.write(confPath, lines, Charsets.UTF_8, WRITE, TRUNCATE_EXISTING);
+	}
     }
-    
+
     /**
      * Get the maximum amount of memory available for Redis or Memcached.
      * 
@@ -642,11 +655,9 @@ public class RedisStorageProxy implements IStorageProxy {
 	long storeMaxMem = (totalMem * memPct) / 100;
 	storeMaxMem = ((totalMem - storeMaxMem) > GB_2_IN_KB) ? storeMaxMem : (totalMem - GB_2_IN_KB);
 
-	logger.info(String.format("totalMem:%s Setting %s storage max mem to %s", totalMem,
-		"Redis", storeMaxMem));
+	logger.info(String.format("totalMem:%s Setting %s storage max mem to %s", totalMem, "Redis", storeMaxMem));
 	return storeMaxMem;
     }
-    
 
     /**
      * Get the amount of memory available on this instance.
@@ -678,14 +689,19 @@ public class RedisStorageProxy implements IStorageProxy {
 	throw new RuntimeException(errMsg);
     }
 
-
     @Override
     public String getStartupScript() {
+	if (config.getRedisCompatibleEngine().equals(DYNO_ARDB_ROCKSDB)) {
+	    return ArdbRocksDbRedisCompatible.ARDB_ROCKSDB_START_SCRIPT;
+	}
 	return DEFAULT_REDIS_START_SCRIPT;
     }
 
     @Override
     public String getStopScript() {
+	if (config.getRedisCompatibleEngine().equals(DYNO_ARDB_ROCKSDB)) {
+	    return ArdbRocksDbRedisCompatible.ARDB_ROCKSDB_STOP_SCRIPT;
+	}
 	return DEFAULT_REDIS_STOP_SCRIPT;
     }
 

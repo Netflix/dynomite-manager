@@ -345,4 +345,10 @@ public class BlankConfiguration implements IConfiguration {
 	    return null;
 	}
 
+	@Override
+	public String getRedisCompatibleEngine() {
+	    // TODO Auto-generated method stub
+	    return null;
+	}
+
 }

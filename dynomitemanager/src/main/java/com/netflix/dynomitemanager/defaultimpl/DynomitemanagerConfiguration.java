@@ -67,7 +67,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNO_TOKENS_HASH_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.hash";
     private static final String CONFIG_DYNO_CONNECTIONS_PRECONNECT = DYNOMITEMANAGER_PRE
 	    + ".dyno.connections.preconnect";
-    private static final String CONFIG_DYNO_CLUSTER_TYPE = DYNOMITEMANAGER_PRE + ".dyno.cluster.type";
+    private static final String CONFIG_DYNO_REDIS_COMPATIBLE_ENGINE = DYNOMITEMANAGER_PRE + ".dyno.redis.compatible.engine";
     private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
     private static final String CONFIG_DYNO_HEALTHCHECK_ENABLE = DYNOMITEMANAGER_PRE + ".dyno.healthcheck.enable";
     // The max percentage of system memory to be allocated to the Dynomite
@@ -182,6 +182,9 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final boolean DEFAULT_PERSISTENCE_ENABLED = false;
     private static final String DEFAULT_PERSISTENCE_TYPE = "aof";
     private static final String DEFAULT_PERSISTENCE_DIR = "/mnt/data/nfredis";
+    
+    // Redis compatible
+    private static final String DEFAULT_REDIS_COMPATIBLE_ENGINE = "redis";
 
     // AWS Dual Account
     private static final boolean DEFAULT_DUAL_ACCOUNT = false;
@@ -701,5 +704,11 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     public boolean isEurekaHostSupplierEnabled() {
 	return configSource.get(CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED, DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED);
     }
-
+    
+    // Redis compatibility
+    @Override
+    public String getRedisCompatibleEngine() {
+	return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_ENGINE, DEFAULT_REDIS_COMPATIBLE_ENGINE);
+    }
+    
 }
