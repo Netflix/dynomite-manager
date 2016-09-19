@@ -96,4 +96,14 @@ public class MemcachedStorageProxy implements IStorageProxy {
 	return MEMCACHE_PORT;	
     }
 
+    @Override
+    public long getStoreMaxMem() {
+	return 0;
+    }
+
+    @Override
+    public long getTotalAvailableSystemMemory() {
+	return 0;
+    }
+
 }

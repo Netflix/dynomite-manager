@@ -16,7 +16,6 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.utils.JedisUtils;
@@ -35,6 +34,8 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -43,6 +44,12 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+/**
+ * @author ipapapa
+ */
 
 //TODOs: we should talk to admin port (22222) instead of 8102 for both local and peer
 @Singleton
@@ -52,6 +59,10 @@ public class RedisStorageProxy implements IStorageProxy {
     private static final String DYNO_REDIS_CONF_PATH = "/apps/nfredis/conf/redis.conf";
     private static final String REDIS_ADDRESS = "127.0.0.1";
     private static final int REDIS_PORT = 22122;
+    private static final long GB_2_IN_KB = 2L * 1024L * 1024L;
+    private static final String PROC_MEMINFO_PATH = "/proc/meminfo";
+    private static final Pattern MEMINFO_PATTERN = Pattern.compile("MemTotal:\\s*([0-9]*)");
+
     
     private final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
     private final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
@@ -73,9 +84,6 @@ public class RedisStorageProxy implements IStorageProxy {
 
     @Inject
     private Sleeper sleeper;
-
-    @Inject
-    private InstanceState instanceState;
 
     public RedisStorageProxy() {
 	// connect();
@@ -626,7 +634,7 @@ public class RedisStorageProxy implements IStorageProxy {
      * @return the maximum amount of storage available for Redis or Memcached in
      *         KB
      */
-    private long getStoreMaxMem() {
+    public long getStoreMaxMem() {
 	int memPct = config.getStorageMemPercent();
 	// Long is big enough for the amount of ram is all practical systems
 	// that we deal with.
@@ -635,9 +643,41 @@ public class RedisStorageProxy implements IStorageProxy {
 	storeMaxMem = ((totalMem - storeMaxMem) > GB_2_IN_KB) ? storeMaxMem : (totalMem - GB_2_IN_KB);
 
 	logger.info(String.format("totalMem:%s Setting %s storage max mem to %s", totalMem,
-		config.getClusterType() == 1 ? "Redis" : "Memcache", storeMaxMem));
+		"Redis", storeMaxMem));
 	return storeMaxMem;
     }
+    
+
+    /**
+     * Get the amount of memory available on this instance.
+     * 
+     * @return total available memory (RAM) on instance in KB
+     */
+    public long getTotalAvailableSystemMemory() {
+	String memInfo;
+	try {
+	    memInfo = new Scanner(new File(PROC_MEMINFO_PATH)).useDelimiter("\\Z").next();
+	} catch (FileNotFoundException e) {
+	    String errMsg = String.format("Unable to find %s file for retrieving memory info.", PROC_MEMINFO_PATH);
+	    logger.error(errMsg);
+	    throw new RuntimeException(errMsg);
+	}
+
+	Matcher matcher = MEMINFO_PATTERN.matcher(memInfo);
+	if (matcher.find()) {
+	    try {
+		return Long.parseLong(matcher.group(1));
+	    } catch (NumberFormatException e) {
+		logger.info("Failed to parse long", e);
+	    }
+	}
+
+	String errMsg = String.format("Could not extract total mem using pattern %s from:\n%s ", MEMINFO_PATTERN,
+		memInfo);
+	logger.error(errMsg);
+	throw new RuntimeException(errMsg);
+    }
+
 
     @Override
     public String getStartupScript() {
@@ -655,7 +695,7 @@ public class RedisStorageProxy implements IStorageProxy {
     }
 
     @Override
-    public int storagePort() {
+    public int getPort() {
 	return REDIS_PORT;
     }
 

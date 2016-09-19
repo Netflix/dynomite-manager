@@ -106,16 +106,6 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getStorageStopScript() {
-		return null;
-	}
-
-	@Override
-	public String getStorageStartupScript() {
-		return null;
-	}
-
-	@Override
 	public int getStorageMemPercent() {
 		return 0;
 	}
@@ -243,11 +233,6 @@ public class BlankConfiguration implements IConfiguration {
 	@Override
 	public String getCommaSeparatedCassandraHostNames() {
 		return null;
-	}
-
-	@Override
-	public int getClusterType() {
-		return 0; //DynomitemanagerConfiguration.DYNO_REDIS;
 	}
 
 	@Override

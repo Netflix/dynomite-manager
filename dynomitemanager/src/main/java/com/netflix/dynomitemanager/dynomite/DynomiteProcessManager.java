@@ -47,16 +47,14 @@ public class DynomiteProcessManager implements IDynomiteProcess {
     private final Sleeper sleeper;
     private final InstanceState instanceState;
     private final IDynomiteProcess dynProcess;
-    private final IStorageProxy storageProxy;
 
     @Inject
     public DynomiteProcessManager(IConfiguration config, Sleeper sleeper, InstanceState instanceState,
-	    IDynomiteProcess dynProcess, IStorageProxy storageProxy) {
+	    IDynomiteProcess dynProcess) {
 	this.config = config;
 	this.sleeper = sleeper;
 	this.instanceState = instanceState;
 	this.dynProcess = dynProcess;
-	this.storageProxy = storageProxy;
     }
 
     protected void setEnv(Map<String, String> env) {
@@ -209,21 +207,15 @@ public class DynomiteProcessManager implements IDynomiteProcess {
      * @return true if health check passes and false if it fails.
      */
     public boolean dynomiteCheck() {
-	if (config.getClusterType() == DYNO_MEMCACHED) { // TODO: we need to
-							 // implement this once
-							 // we use memcached
-	    logger.error("Dynomite check with Memcached ping is not functional");
-	} else if (config.getClusterType() == DYNO_REDIS) { // use Redis API
-	    logger.info("Dynomite check with Redis Ping");
-	    if (!dynomiteRedisCheck()) {
-		try {
-		    logger.error("Dynomite was down");
-		    this.dynProcess.stop();
-		    sleeper.sleepQuietly(1000);
-		    return false;
-		} catch (IOException e) {
-		    logger.error("Dynomite cannot be restarted --> Requires manual restart" + e.getMessage());
-		}
+	logger.info("Dynomite check with Redis Ping");
+	if (!dynomiteRedisCheck()) {
+	    try {
+		logger.error("Dynomite was down");
+		this.dynProcess.stop();
+		sleeper.sleepQuietly(1000);
+		return false;
+	    } catch (IOException e) {
+		logger.error("Dynomite cannot be restarted --> Requires manual restart" + e.getMessage());
 	    }
 	}
 

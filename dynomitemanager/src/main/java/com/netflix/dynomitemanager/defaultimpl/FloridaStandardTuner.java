@@ -12,15 +12,12 @@
  */
 package com.netflix.dynomitemanager.defaultimpl;
 
-import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
 import com.netflix.dynomitemanager.IInstanceState;
-import com.netflix.dynomitemanager.InstanceState;
-import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
 import com.netflix.dynomitemanager.defaultimpl.FloridaStandardTuner;
 
 import org.slf4j.Logger;
@@ -29,19 +26,11 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
 
 /**
  * Generate and write the dynomite.yaml and redis.conf configuration files to
@@ -52,16 +41,11 @@ public class FloridaStandardTuner implements ProcessTuner {
 
     private static final Logger logger = LoggerFactory.getLogger(FloridaStandardTuner.class);
     private static final String ROOT_NAME = "dyn_o_mite";
-    private static final String PROC_MEMINFO_PATH = "/proc/meminfo";
-    public static final long GB_2_IN_KB = 2L * 1024L * 1024L;
-
 
     protected final IConfiguration config;
     protected final InstanceIdentity ii;
     protected final IInstanceState instanceState;
     protected final IStorageProxy storageProxy;
-
-    public static final Pattern MEMINFO_PATTERN = Pattern.compile("MemTotal:\\s*([0-9]*)");
 
     @Inject
     public FloridaStandardTuner(IConfiguration config, InstanceIdentity ii, IInstanceState instanceState,
@@ -170,36 +154,6 @@ public class FloridaStandardTuner implements ProcessTuner {
 	map.put("auto_bootstrap", autobootstrap);
 	logger.info("Updating yaml" + yaml.dump(map));
 	yaml.dump(map, new FileWriter(yamlFile));
-    }
-
-    /**
-     * Get the amount of memory available on this instance.
-     * 
-     * @return total available memory (RAM) on instance in KB
-     */
-    public long getTotalAvailableSystemMemory() {
-	String memInfo;
-	try {
-	    memInfo = new Scanner(new File(PROC_MEMINFO_PATH)).useDelimiter("\\Z").next();
-	} catch (FileNotFoundException e) {
-	    String errMsg = String.format("Unable to find %s file for retrieving memory info.", PROC_MEMINFO_PATH);
-	    logger.error(errMsg);
-	    throw new RuntimeException(errMsg);
-	}
-
-	Matcher matcher = MEMINFO_PATTERN.matcher(memInfo);
-	if (matcher.find()) {
-	    try {
-		return Long.parseLong(matcher.group(1));
-	    } catch (NumberFormatException e) {
-		logger.info("Failed to parse long", e);
-	    }
-	}
-
-	String errMsg = String.format("Could not extract total mem using pattern %s from:\n%s ", MEMINFO_PATTERN,
-		memInfo);
-	logger.error(errMsg);
-	throw new RuntimeException(errMsg);
     }
 
 }

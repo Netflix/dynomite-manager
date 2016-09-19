@@ -131,8 +131,21 @@ public class ArdbStorageProxy implements IStorageProxy {
     }
 
     @Override
-    public int storagePort() {
+    public int getPort() {
 	return ARDB_PORT;
     }
+
+    @Override
+    public long getStoreMaxMem() {
+	// TODO Auto-generated method stub
+	return 0;
+    }
+
+    @Override
+    public long getTotalAvailableSystemMemory() {
+	// TODO Auto-generated method stub
+	return 0;
+    }
+
 
 }

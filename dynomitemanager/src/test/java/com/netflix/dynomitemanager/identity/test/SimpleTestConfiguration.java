@@ -105,15 +105,6 @@ public class SimpleTestConfiguration implements IConfiguration {
 		return 0;
 	}
 
-	@Override
-	public String getStorageStopScript() {
-		return null;
-	}
-
-	@Override
-	public String getStorageStartupScript() {
-		return null;
-	}
 
 	@Override
 	public int getStorageMemPercent() {
@@ -243,11 +234,6 @@ public class SimpleTestConfiguration implements IConfiguration {
 	@Override
 	public String getCommaSeparatedCassandraHostNames() {
 		return "localhost";
-	}
-
-	@Override
-	public int getClusterType() {
-		return 0; //DynomitemanagerConfiguration.DYNO_REDIS;
 	}
 
 	@Override

@@ -44,6 +44,8 @@ public interface IStorageProxy {
     
     public int getPort();
     
+    public long getStoreMaxMem();
     
+    public long getTotalAvailableSystemMemory();
 
 }
