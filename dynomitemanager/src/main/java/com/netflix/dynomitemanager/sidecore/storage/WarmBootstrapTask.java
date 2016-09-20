@@ -52,13 +52,12 @@ public class WarmBootstrapTask extends Task {
     private final InstanceIdentity ii;
     private final InstanceState state;
     private final Sleeper sleeper;
-
-    @Inject
-    private StorageProcessManager storageProcessMgr;
+    private final StorageProcessManager storageProcessMgr;
 
     @Inject
     public WarmBootstrapTask(IConfiguration config, IAppsInstanceFactory appsInstanceFactory, InstanceIdentity id,
-	    IDynomiteProcess dynProcess, IStorageProxy storageProxy, InstanceState ss, Sleeper sleeper) {
+	    IDynomiteProcess dynProcess, IStorageProxy storageProxy, InstanceState ss, Sleeper sleeper,
+	    StorageProcessManager storageProcessMgr) {
 	super(config);
 	this.dynProcess = dynProcess;
 	this.storageProxy = storageProxy;
@@ -66,6 +65,7 @@ public class WarmBootstrapTask extends Task {
 	this.ii = id;
 	this.state = ss;
 	this.sleeper = sleeper;
+	this.storageProcessMgr = storageProcessMgr;
     }
 
     public void execute() throws IOException {

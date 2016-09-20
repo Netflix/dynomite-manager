@@ -60,19 +60,20 @@ public class DynomiteAdmin {
     private SnapshotTask snapshotBackup;
     private RestoreTask restoreBackup;
     private IStorageProxy storage;
-
-    @Inject
     private StorageProcessManager storageProcessMgr;
+
 
     @Inject
     public DynomiteAdmin(IDynomiteProcess dynoProcess, InstanceIdentity ii, InstanceState instanceState,
-	    SnapshotTask snapshotBackup, RestoreTask restoreBackup, IStorageProxy storage) {
+	    SnapshotTask snapshotBackup, RestoreTask restoreBackup, IStorageProxy storage,
+	    StorageProcessManager storageProcessMgr) {
 	this.dynoProcess = dynoProcess;
 	this.ii = ii;
 	this.instanceState = instanceState;
 	this.snapshotBackup = snapshotBackup;
 	this.restoreBackup = restoreBackup;
 	this.storage = storage;
+	this.storageProcessMgr = storageProcessMgr;
     }
 
     @GET
