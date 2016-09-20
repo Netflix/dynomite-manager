@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.StorageProcessManager;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.monitoring.RedisInfoMetricsTask;
@@ -47,8 +48,8 @@ import com.netflix.servo.monitor.Monitors;
  * dynomite.yaml configuration file.
  * <li>{@link com.netflix.dynomitemanager.sidecore.backup.RestoreTask}: If
  * restore mode, then restore data from an object store (i.e. S3).
- * <li>{@link com.netflix.dynomitemanager.sidecore.storage.WarmBootstrapTask}: If
- * warm bootstrap mode, then warm the storage backend by syncing data from a
+ * <li>{@link com.netflix.dynomitemanager.sidecore.storage.WarmBootstrapTask}:
+ * If warm bootstrap mode, then warm the storage backend by syncing data from a
  * peer.
  * <li>{@link com.netflix.dynomitemanager.sidecore.utils.ProxyAndStorageResetTask}:
  * If cold bootstrap mode, then stop any in progress sync, reset storage backend
@@ -71,12 +72,13 @@ public class FloridaServer {
     private final Sleeper sleeper;
     private final TuneTask tuneTask;
     private final IDynomiteProcess dynProcess;
+    private final StorageProcessManager storageProcess;
     private final InstanceState state;
     private static final Logger logger = LoggerFactory.getLogger(FloridaServer.class);
 
     @Inject
     public FloridaServer(IConfiguration config, TaskScheduler scheduler, InstanceIdentity id, Sleeper sleeper,
-	    TuneTask tuneTask, InstanceState state, IDynomiteProcess dynProcess) {
+	    TuneTask tuneTask, InstanceState state, IDynomiteProcess dynProcess, StorageProcessManager storageProcess) {
 
 	this.config = config;
 	this.scheduler = scheduler;
@@ -85,6 +87,8 @@ public class FloridaServer {
 	this.tuneTask = tuneTask;
 	this.state = state;
 	this.dynProcess = dynProcess;
+	this.storageProcess = storageProcess;
+
 
 	DefaultMonitorRegistry.getInstance().register(Monitors.newObjectMonitor(state));
 
@@ -144,7 +148,10 @@ public class FloridaServer {
 		dynProcess.stop();
 		scheduler.runTaskNow(WarmBootstrapTask.class);
 	    } else {
-		logger.info("Cold bootstrapping, launching dynomite and storage process.");
+		logger.info("Cold bootstraping, launching storage process.");
+		storageProcess.start();
+		sleeper.sleepQuietly(1000); // 1s
+		logger.info("Launching dynomite process.");
 		dynProcess.start();
 		sleeper.sleepQuietly(1000); // 1s
 		scheduler.runTaskNow(ProxyAndStorageResetTask.class);

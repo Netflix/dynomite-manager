@@ -20,7 +20,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
-import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 
 import redis.clients.jedis.Jedis;
