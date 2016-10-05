@@ -18,8 +18,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
-import com.netflix.dynomitemanager.sidecore.utils.JedisUtils;
-import com.netflix.dynomitemanager.sidecore.utils.RedisInfoParser;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 
 import org.slf4j.Logger;

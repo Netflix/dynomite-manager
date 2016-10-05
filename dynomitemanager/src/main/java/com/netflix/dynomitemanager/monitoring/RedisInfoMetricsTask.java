@@ -30,7 +30,7 @@ import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
-import com.netflix.dynomitemanager.sidecore.utils.RedisInfoParser;
+import com.netflix.dynomitemanager.sidecore.storage.RedisInfoParser;
 import com.netflix.servo.DefaultMonitorRegistry;
 import com.netflix.servo.monitor.Counter;
 import com.netflix.servo.monitor.LongGauge;

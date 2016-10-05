@@ -17,7 +17,7 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.netflix.dynomitemanager.sidecore.utils.RedisInfoParser;
+import com.netflix.dynomitemanager.sidecore.storage.RedisInfoParser;
 
 /**
  *
