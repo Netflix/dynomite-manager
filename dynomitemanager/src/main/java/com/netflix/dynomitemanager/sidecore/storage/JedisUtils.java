@@ -79,7 +79,7 @@ public class JedisUtils {
 		 * key, instead of deleting it.
 		 */
 		String status = jedis.setex("dyno", 1, "dynomite");
-		if (!status.equals("OK")) {
+		if (!status.equalsIgnoreCase("OK")) {
 		    jedis.disconnect();
 		    return false;
 		}
