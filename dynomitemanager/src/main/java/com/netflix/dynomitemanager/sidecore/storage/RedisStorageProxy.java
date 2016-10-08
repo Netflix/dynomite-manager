@@ -16,7 +16,6 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 
@@ -88,39 +87,61 @@ public class RedisStorageProxy implements IStorageProxy {
 	// connect();
     }
 
-    private void connect() {
-	try {
-	    if (localJedis == null)
-		localJedis = new Jedis(REDIS_ADDRESS, REDIS_PORT, 5000);
-	    else
-		localJedis.disconnect();
-
-	    localJedis.connect();
-	} catch (Exception e) {
-	    logger.info("Unable to connect: " + e.getMessage());
+    /**
+     * A wrapper function around JedisUtils to connect to Redis
+     */
+    private void localRedisConnect() {
+	if (this.localJedis == null) {
+	    logger.info("Connecting to Redis.");
+	    this.localJedis = JedisUtils.connect(REDIS_ADDRESS, REDIS_PORT);
 	}
     }
 
-    /*
-     * private boolean isAlive(Jedis jedis) { try { jedis.ping(); } catch
-     * (JedisConnectionException e) { connect(); return false; } catch
-     * (Exception e) { connect(); return false; } return true; }
+    /**
+     * Connect to the peer with the same token, in order to start the warm up
+     * process
+     * 
+     * @param peer
+     *            address
+     * @param peer
+     *            port
      */
-
-    // issue a 'slaveof peer port to local redis
     private void startPeerSync(String peer, int port) {
 	boolean isDone = false;
-	connect();
+	Jedis peerJedis = JedisUtils.connect(peer, port);
 
 	while (!isDone) {
 	    try {
 		// only sync from one peer for now
-		isDone = (localJedis.slaveof(peer, port) != null);
+		isDone = (peerJedis.slaveof(peer, port) != null);
 		sleeper.sleepQuietly(1000);
 	    } catch (JedisConnectionException e) {
-		connect();
+		peerJedis = JedisUtils.connect(peer, port);
 	    } catch (Exception e) {
-		connect();
+		peerJedis = JedisUtils.connect(peer, port);
+	    }
+	}
+    }
+
+    /**
+     * Turn off Redis' slave replication and switch from slave to master.
+     */
+    @Override
+    public void stopPeerSync() {
+	boolean isDone = false;
+
+	// Iterate until we succeed the SLAVE NO ONE command
+	while (!isDone) {
+	    logger.info("calling SLAVEOF NO ONE");
+	    try {
+		isDone = (this.localJedis.slaveofNoOne() != null);
+		sleeper.sleepQuietly(1000);
+	    } catch (JedisConnectionException e) {
+		logger.error("JedisConnection Exception in SLAVEOF NO ONE: " + e.getMessage());
+		localRedisConnect();
+	    } catch (Exception e) {
+		logger.error("Error: " + e.getMessage());
+		localRedisConnect();
 	    }
 	}
     }
@@ -135,39 +156,16 @@ public class RedisStorageProxy implements IStorageProxy {
 	return 0;
     }
 
-    /**
-     * Turn off Redis' slave replication and switch from slave to master.
-     */
-    @Override
-    public void stopPeerSync() {
-	boolean isDone = false;
-
-	while (!isDone) {
-	    logger.info("calling SLAVEOF NO ONE");
-	    try {
-		isDone = (localJedis.slaveofNoOne() != null);
-		sleeper.sleepQuietly(1000);
-
-	    } catch (JedisConnectionException e) {
-		logger.error("JedisConnection Exception in SLAVEOF NO ONE: " + e.getMessage());
-		connect();
-	    } catch (Exception e) {
-		logger.error("Error: " + e.getMessage());
-		connect();
-	    }
-	}
-    }
-
     @Override
     public boolean takeSnapshot() {
-	connect();
+	localRedisConnect();
 	try {
 	    if (config.isAof()) {
 		logger.info("starting Redis BGREWRITEAOF");
-		localJedis.bgrewriteaof();
+		this.localJedis.bgrewriteaof();
 	    } else {
 		logger.info("starting Redis BGSAVE");
-		localJedis.bgsave();
+		this.localJedis.bgsave();
 
 	    }
 	    /*
@@ -196,7 +194,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
 	try {
 	    while (true) {
-		peerRedisInfo = localJedis.info();
+		peerRedisInfo = this.localJedis.info();
 		Iterable<String> result = Splitter.on('\n').split(peerRedisInfo);
 		String pendingPersistence = null;
 
@@ -232,7 +230,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
     @Override
     public boolean loadingData() {
-	connect();
+	localRedisConnect();
 	logger.info("loading AOF from the drive");
 	String peerRedisInfo = null;
 	int retry = 0;
@@ -272,7 +270,7 @@ public class RedisStorageProxy implements IStorageProxy {
     public boolean isAlive() {
 	// Not using localJedis variable as it can be used by
 	// ProcessMonitorTask as well.
-	return JedisUtils.isAliveWithRetry(DynomitemanagerConfiguration.LOCAL_ADDRESS, REDIS_PORT);
+	return JedisUtils.isAliveWithRetry(REDIS_ADDRESS, REDIS_PORT);
     }
 
     public long getUptime() {
@@ -328,7 +326,7 @@ public class RedisStorageProxy implements IStorageProxy {
 	for (String peer : peers) { // Looking into the peers with the same
 				    // token
 	    logger.info("Peer node [" + peer + "] has the same token!");
-	    peerJedis = JedisUtils.connect(peer, config.getListenerPort());
+	    peerJedis = JedisUtils.connect(peer, REDIS_PORT);
 	    if (peerJedis != null && isAlive()) { // Checking if there are
 						  // peers, and if so if they
 						  // are alive
@@ -431,26 +429,26 @@ public class RedisStorageProxy implements IStorageProxy {
     }
 
     /**
-     * Resets Redis to master if it was a slave due to warm up failure.
+     * Resets Storage to master if it was a slave due to warm up failure.
      */
     @Override
     public boolean resetStorage() {
-	logger.info("Checking if Redis needs to be reset to master");
-	connect();
-	String peerRedisInfo = null;
+	logger.info("Checking if Storage needs to be reset to master");
+	localRedisConnect();
+	String localRedisInfo = null;
 	try {
-	    peerRedisInfo = localJedis.info();
+	    localRedisInfo = localJedis.info();
 	} catch (JedisConnectionException e) {
 	    // Try to reconnect
 	    try {
-		connect();
-		peerRedisInfo = localJedis.info();
+		localRedisConnect();
+		localRedisInfo = localJedis.info();
 	    } catch (JedisConnectionException ex) {
 		logger.error("Cannot connect to Redis");
 		return false;
 	    }
 	}
-	Iterable<String> result = Splitter.on('\n').split(peerRedisInfo);
+	Iterable<String> result = Splitter.on('\n').split(localRedisInfo);
 
 	String role = null;
 
@@ -471,6 +469,15 @@ public class RedisStorageProxy implements IStorageProxy {
 
     }
 
+    /**
+     * Determining if the warm up process can stop
+     * 
+     * @param peerJedis
+     *            Jedis connection with the peer node
+     * @param startTime
+     * @return Long status code
+     * @throws RedisSyncException
+     */
     private Long canPeerSyncStop(Jedis peerJedis, long startTime) throws RedisSyncException {
 
 	if (System.currentTimeMillis() - startTime > config.getMaxTimeToBootstrap()) {
@@ -548,7 +555,7 @@ public class RedisStorageProxy implements IStorageProxy {
 	long storeMaxMem = getStoreMaxMem();
 
 	if (config.getRedisCompatibleEngine().equals(DYNO_ARDB_ROCKSDB)) {
-	    ArdbRocksDbRedisCompatible.updateConfiguration();
+	    ArdbRocksDbRedisCompatible.updateConfiguration(storeMaxMem);
 	} else {
 
 	    // Updating the file.
@@ -653,7 +660,7 @@ public class RedisStorageProxy implements IStorageProxy {
 	long storeMaxMem = (totalMem * memPct) / 100;
 	storeMaxMem = ((totalMem - storeMaxMem) > GB_2_IN_KB) ? storeMaxMem : (totalMem - GB_2_IN_KB);
 
-	logger.info(String.format("totalMem:%s Setting %s storage max mem to %s", totalMem, "Redis", storeMaxMem));
+	logger.info(String.format("totalMem: %s setting storage max mem to %s", totalMem, storeMaxMem));
 	return storeMaxMem;
     }
 
