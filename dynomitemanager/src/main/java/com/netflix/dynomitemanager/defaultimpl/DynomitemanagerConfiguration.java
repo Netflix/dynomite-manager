@@ -54,6 +54,9 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 public class DynomitemanagerConfiguration implements IConfiguration {
     public static final String DYNOMITEMANAGER_PRE = "florida";
 
+	// Dynomite
+	// ========
+
     public static final int DYNO_PORT = 8102;
     public static final String LOCAL_ADDRESS = "127.0.0.1";
 
@@ -725,11 +728,14 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     /**
     * Get the full path to the redis.conf configuration file.
+    * Netflix:    /apps/nfredis/conf/redis.conf
+    * DynomiteDB: /etc/dynomitedb/redis.conf
     * @return the {@link String} full path to the redis.conf configuration file
     */
     @Override
     public String getRedisConf() {
-        return configSource.get(DYNOMITEMANAGER_PRE + RedisStorageProxy.CONFIG_REDIS_CONF_POST,
-		RedisStorageProxy.DEFAULT_REDIS_CONF);
+        final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
+        final String CONFIG_REDIS_CONF = DYNOMITEMANAGER_PRE + ".redis.conf";
+        return configSource.get(CONFIG_REDIS_CONF, DEFAULT_REDIS_CONF);
     }
 }
