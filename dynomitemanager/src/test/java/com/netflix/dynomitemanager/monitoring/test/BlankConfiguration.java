@@ -355,4 +355,14 @@ public class BlankConfiguration implements IConfiguration {
 	public String getRedisConf() {
 		return null;
 	}
+
+	@Override
+	public String getRedisInitStart() {
+		return null;
+	}
+
+	@Override
+	public String getRedisInitStop() {
+		return null;
+	}
 }

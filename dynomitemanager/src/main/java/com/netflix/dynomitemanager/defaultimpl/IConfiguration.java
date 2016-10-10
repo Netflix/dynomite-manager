@@ -229,5 +229,23 @@ public interface IConfiguration {
 	// Redis
 	// =====
 
+	/**
+	 * Get the full path to the redis.conf configuration file.
+	 * Netflix:    /apps/nfredis/conf/redis.conf
+	 * DynomiteDB: /etc/dynomitedb/redis.conf
+	 * @return the {@link String} full path to the redis.conf configuration file
+	 */
 	public String getRedisConf();
+
+	/**
+	 * Get the full path to the Redis init start script, including any arguments.
+	 * @return the full path of the Redis init start script
+     */
+	public String getRedisInitStart();
+
+	/**
+	 * Get the full path to the Redis init stop script, including any arguments.
+	 * @return the full path of the Redis init stop script
+     */
+	public String getRedisInitStop();
 }

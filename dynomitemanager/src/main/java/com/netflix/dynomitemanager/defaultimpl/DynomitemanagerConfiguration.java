@@ -726,16 +726,24 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // Redis
     // =====
 
-    /**
-    * Get the full path to the redis.conf configuration file.
-    * Netflix:    /apps/nfredis/conf/redis.conf
-    * DynomiteDB: /etc/dynomitedb/redis.conf
-    * @return the {@link String} full path to the redis.conf configuration file
-    */
     @Override
     public String getRedisConf() {
         final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
         final String CONFIG_REDIS_CONF = DYNOMITEMANAGER_PRE + ".redis.conf";
         return configSource.get(CONFIG_REDIS_CONF, DEFAULT_REDIS_CONF);
+    }
+
+    @Override
+    public String getRedisInitStart() {
+        final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
+        final String CONFIG_REDIS_START_SCRIPT = DYNOMITEMANAGER_PRE + ".redis.init.start";
+        return configSource.get(CONFIG_REDIS_START_SCRIPT, DEFAULT_REDIS_START_SCRIPT);
+    }
+
+    @Override
+    public String getRedisInitStop() {
+        final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
+        final String CONFIG_REDIS_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".redis.init.stop";
+        return configSource.get(CONFIG_REDIS_STOP_SCRIPT, DEFAULT_REDIS_STOP_SCRIPT);
     }
 }
