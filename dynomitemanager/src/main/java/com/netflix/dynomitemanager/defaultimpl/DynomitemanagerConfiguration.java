@@ -729,6 +729,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     */
     @Override
     public String getRedisConf() {
-        return configSource.get(RedisStorageProxy.CONFIG_REDIS_CONF, RedisStorageProxy.DEFAULT_REDIS_CONF);
+        return configSource.get(DYNOMITEMANAGER_PRE + RedisStorageProxy.CONFIG_REDIS_CONF_POST,
+		RedisStorageProxy.DEFAULT_REDIS_CONF);
     }
 }
