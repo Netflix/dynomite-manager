@@ -63,8 +63,7 @@ import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
 /**
- * Inject dependencies, parse the configuration, and initialize the Dynomite
- * Manager server.
+ * Inject dependencies, parse the configuration, and initialize the Dynomite Manager server.
  */
 public class InjectedWebListener extends GuiceServletContextListener {
 
@@ -72,7 +71,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
 
     /**
      * Define dependencies and initialize Dynomite Manager.
-     * 
+     *
      * @return an object graph
      */
     @Override

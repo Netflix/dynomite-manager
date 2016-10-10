@@ -17,7 +17,7 @@ import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
  *
  * @author diegopacheco
  * @author ipapapa
- *
+ * @author akbarahmed
  */
 public class SimpleTestConfiguration implements IConfiguration {
 
@@ -104,7 +104,6 @@ public class SimpleTestConfiguration implements IConfiguration {
 	public int getTimeout() {
 		return 0;
 	}
-
 
 	@Override
 	public int getStorageMemPercent() {
@@ -343,14 +342,18 @@ public class SimpleTestConfiguration implements IConfiguration {
 
 	@Override
 	public String getCrossAccountRack() {
-	    // TODO Auto-generated method stub
-	    return null;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public String getRedisCompatibleEngine() {
-	    // TODO Auto-generated method stub
-	    return null;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	@Override
+	public String getRedisConf() {
+		return null;
+	}
 }

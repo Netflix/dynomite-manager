@@ -17,7 +17,7 @@ import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
  *
  * @author diegopacheco
  * @author ipapapa
- *
+ * @author akbarahmed
  */
 public class BlankConfiguration implements IConfiguration {
 
@@ -342,13 +342,17 @@ public class BlankConfiguration implements IConfiguration {
 
 	@Override
 	public String getCrossAccountRack() {
-	    return null;
+		return null;
 	}
 
 	@Override
 	public String getRedisCompatibleEngine() {
-	    // TODO Auto-generated method stub
-	    return null;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
+	@Override
+	public String getRedisConf() {
+		return null;
+	}
 }

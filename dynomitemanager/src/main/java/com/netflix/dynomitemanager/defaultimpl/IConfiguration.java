@@ -36,7 +36,6 @@ public interface IConfiguration {
 	 */
 	public String getDynomiteStopScript();
 
-
 	/**
 	 * @return Cluster name
 	 */
@@ -73,7 +72,7 @@ public interface IConfiguration {
 	 * @return Get the Data Center name (or region for AWS)
 	 */
 	public String getRack();
-	
+
 	/**
 	 * @return Get the cross account rack if in dual account mode
 	 */
@@ -159,7 +158,9 @@ public interface IConfiguration {
 
 	public int getMaxTimeToBootstrap();
 
-	/** The max percentage of system memory to be allocated to the Dynomite fronted data store. */
+	/**
+	 * @return the max percentage of system memory to be allocated to the Dynomite fronted data store.
+	 */
 	public int getStorageMemPercent();
 
 	public int getMbufSize();
@@ -225,5 +226,8 @@ public interface IConfiguration {
 	// Redis compatible
 	public String getRedisCompatibleEngine();
 
+	// Redis
+	// =====
 
+	public String getRedisConf();
 }

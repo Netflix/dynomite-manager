@@ -14,6 +14,7 @@ package com.netflix.dynomitemanager.defaultimpl;
 
 import java.util.List;
 
+import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +39,23 @@ import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 
 /**
- * Define the list of available Dynomite Manager configuration options, then set
- * options based on the environment and an external configuration.
+ * Define the list of available Dynomite Manager configuration options, then set options based on the environment and an
+ * external configuration.
+ *
+ * Dynomite Manager properties may be provided via the following mechanisms:
+ * <ul>
+ * <li>Archaius: Excellent option for enterprise deployments as it provides dynamic properties (i.e. configuration
+ * management)
+ * <li>Environment variables: Localized configuration passed in via environment variables
+ * <li>Java properties: Localized configuration passed in via the command line in an init scrip
+ * </ul>
  */
 @Singleton
 public class DynomitemanagerConfiguration implements IConfiguration {
     public static final String DYNOMITEMANAGER_PRE = "florida";
+
+	// Dynomite
+	// ========
 
     public static final int DYNO_PORT = 8102;
     public static final String LOCAL_ADDRESS = "127.0.0.1";
@@ -108,7 +120,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_VPC_ROLE_ASSUMPTION_ARN = DYNOMITEMANAGER_PRE + ".vpc.roleassumption.arn";
     private static final String CONFIG_DUAL_ACCOUNT = DYNOMITEMANAGER_PRE + ".roleassumption.dualaccount";
     private static final String CONFIG_DUAL_ACCOUNT_AZ = DYNOMITEMANAGER_PRE + ".roleassumption.az";
-    
+
     // Dynomite Consistency
     private static final String CONFIG_DYNO_READ_CONS = DYNOMITEMANAGER_PRE + ".dyno.read.consistency";
     private static final String CONFIG_DYNO_WRITE_CONS = DYNOMITEMANAGER_PRE + ".dyno.write.consistency";
@@ -182,7 +194,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final boolean DEFAULT_PERSISTENCE_ENABLED = false;
     private static final String DEFAULT_PERSISTENCE_TYPE = "aof";
     private static final String DEFAULT_PERSISTENCE_DIR = "/mnt/data/nfredis";
-    
+
     // Redis compatible
     private static final String DEFAULT_REDIS_COMPATIBLE_ENGINE = "redis";
 
@@ -704,11 +716,26 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     public boolean isEurekaHostSupplierEnabled() {
 	return configSource.get(CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED, DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED);
     }
-    
+
     // Redis compatibility
     @Override
     public String getRedisCompatibleEngine() {
 	return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_ENGINE, DEFAULT_REDIS_COMPATIBLE_ENGINE);
     }
-    
+
+    // Redis
+    // =====
+
+    /**
+    * Get the full path to the redis.conf configuration file.
+    * Netflix:    /apps/nfredis/conf/redis.conf
+    * DynomiteDB: /etc/dynomitedb/redis.conf
+    * @return the {@link String} full path to the redis.conf configuration file
+    */
+    @Override
+    public String getRedisConf() {
+        final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
+        final String CONFIG_REDIS_CONF = DYNOMITEMANAGER_PRE + ".redis.conf";
+        return configSource.get(CONFIG_REDIS_CONF, DEFAULT_REDIS_CONF);
+    }
 }

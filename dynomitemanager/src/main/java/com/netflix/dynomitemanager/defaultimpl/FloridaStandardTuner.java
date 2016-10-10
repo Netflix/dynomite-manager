@@ -33,8 +33,7 @@ import java.util.Map;
 
 
 /**
- * Generate and write the dynomite.yaml and redis.conf configuration files to
- * disk.
+ * Generate and write the dynomite.yaml and redis.conf configuration files to disk.
  */
 @Singleton
 public class FloridaStandardTuner implements ProcessTuner {
@@ -119,10 +118,10 @@ public class FloridaStandardTuner implements ProcessTuner {
 	} else {
 	    servers.clear();
 	}
-	
+
 	entries.put("data_store", storageProxy.getEngineNumber());
 	servers.add(storageProxy.getIpAddress() + ":" + storageProxy.getPort()  +":" + 1);
-	
+
 
 	if (!this.instanceState.getYmlWritten()) {
 	    logger.info("YAML Dump: ");
