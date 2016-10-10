@@ -16,6 +16,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Splitter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 
@@ -56,6 +57,13 @@ public class RedisStorageProxy implements IStorageProxy {
 
     private static final String DYNO_REDIS = "redis";
     private static final String DYNO_ARDB_ROCKSDB = "ardb-rocksdb";
+
+    // Full path to redis.conf.
+    // Netflix:    /apps/nfredis/conf/redis.conf
+    // DynomiteDB: /etc/dynomitedb/redis.conf
+    public static final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
+    public static final String CONFIG_REDIS_CONF = DynomitemanagerConfiguration.DYNOMITEMANAGER_PRE + ".redis.conf";
+
     private static final String REDIS_ADDRESS = "127.0.0.1";
     private static final int REDIS_PORT = 22122;
     private static final long GB_2_IN_KB = 2L * 1024L * 1024L;

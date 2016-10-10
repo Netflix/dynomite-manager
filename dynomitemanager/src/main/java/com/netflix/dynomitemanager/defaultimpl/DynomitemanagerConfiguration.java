@@ -14,6 +14,7 @@ package com.netflix.dynomitemanager.defaultimpl;
 
 import java.util.List;
 
+import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,8 +54,6 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 public class DynomitemanagerConfiguration implements IConfiguration {
     public static final String DYNOMITEMANAGER_PRE = "florida";
 
-    // Dynomite
-    // ========
     public static final int DYNO_PORT = 8102;
     public static final String LOCAL_ADDRESS = "127.0.0.1";
 
@@ -229,15 +228,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     // == vpc specific
     private String NETWORK_VPC; // Fetch the vpc id of running instance
-
-    // Redis
-    // =====
-
-    // Full path to redis.conf.
-    // Netflix:    /apps/nfredis/conf/redis.conf
-    // DynomiteDB: /etc/dynomitedb/redis.conf
-    private static final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
-    private static final String CONFIG_REDIS_CONF = DYNOMITEMANAGER_PRE + ".redis.conf";
 
     @Inject
     public DynomitemanagerConfiguration(ICredential provider, IConfigSource configSource,
@@ -739,6 +729,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     */
     @Override
     public String getRedisConf() {
-        return configSource.get(CONFIG_REDIS_CONF, DEFAULT_REDIS_CONF);
+        return configSource.get(RedisStorageProxy.CONFIG_REDIS_CONF, RedisStorageProxy.DEFAULT_REDIS_CONF);
     }
 }
