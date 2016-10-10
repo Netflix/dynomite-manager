@@ -56,7 +56,6 @@ public class RedisStorageProxy implements IStorageProxy {
 
     private static final String DYNO_REDIS = "redis";
     private static final String DYNO_ARDB_ROCKSDB = "ardb-rocksdb";
-    private static final String DYNO_REDIS_CONF_PATH = "/apps/nfredis/conf/redis.conf";
     private static final String REDIS_ADDRESS = "127.0.0.1";
     private static final int REDIS_PORT = 22122;
     private static final long GB_2_IN_KB = 2L * 1024L * 1024L;
@@ -100,7 +99,7 @@ public class RedisStorageProxy implements IStorageProxy {
     /**
      * Connect to the peer with the same token, in order to start the warm up
      * process
-     * 
+     *
      * @param peer
      *            address
      * @param peer
@@ -471,7 +470,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
     /**
      * Determining if the warm up process can stop
-     * 
+     *
      * @param peerJedis
      *            Jedis connection with the peer node
      * @param startTime
@@ -547,7 +546,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
     /**
      * Generate redis.conf.
-     * 
+     *
      * @throws IOException
      */
     public void updateConfiguration() throws IOException {
@@ -557,15 +556,14 @@ public class RedisStorageProxy implements IStorageProxy {
 	if (config.getRedisCompatibleEngine().equals(DYNO_ARDB_ROCKSDB)) {
 	    ArdbRocksDbRedisCompatible.updateConfiguration(storeMaxMem);
 	} else {
-
 	    // Updating the file.
-	    logger.info("Updating Redis conf: " + DYNO_REDIS_CONF_PATH);
-	    Path confPath = Paths.get(DYNO_REDIS_CONF_PATH);
-	    Path backupPath = Paths.get(DYNO_REDIS_CONF_PATH + ".bkp");
+	    logger.info("Updating redis.conf: " + config.getRedisConf());
+	    Path confPath = Paths.get(config.getRedisConf());
+	    Path backupPath = Paths.get(config.getRedisConf() + ".bkp");
 
 	    // backup the original baked in conf only and not subsequent updates
 	    if (!Files.exists(backupPath)) {
-		logger.info("Backing up baked in Redis config at: " + backupPath);
+		logger.info("Backing up original redis.conf at: " + backupPath);
 		Files.copy(confPath, backupPath, COPY_ATTRIBUTES);
 	    }
 
@@ -648,9 +646,8 @@ public class RedisStorageProxy implements IStorageProxy {
 
     /**
      * Get the maximum amount of memory available for Redis or Memcached.
-     * 
-     * @return the maximum amount of storage available for Redis or Memcached in
-     *         KB
+     *
+     * @return the maximum amount of storage available for Redis or Memcached in KB.
      */
     public long getStoreMaxMem() {
 	int memPct = config.getStorageMemPercent();
@@ -666,7 +663,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
     /**
      * Get the amount of memory available on this instance.
-     * 
+     *
      * @return total available memory (RAM) on instance in KB
      */
     public long getTotalAvailableSystemMemory() {
