@@ -99,10 +99,10 @@ public class SnapshotTask extends Task {
 					// the storage proxy takes a snapshot or compacts data
 					boolean snapshot = this.storageProxy.takeSnapshot();
 					File file = null;
-					if (config.isAof()) {
-						file = new File(config.getPersistenceLocation() + "/appendonly.aof");
+					if (config.isRedisAofEnabled()) {
+						file = new File(config.getRedisDataDir() + "/appendonly.aof");
 					} else {
-						file = new File(config.getPersistenceLocation() + "/nfredis.rdb");
+						file = new File(config.getRedisDataDir() + "/nfredis.rdb");
 					}
 					// upload the data to S3
 					if (file.length() > 0 && snapshot == true) {

@@ -79,7 +79,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNO_TOKENS_HASH_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.hash";
     private static final String CONFIG_DYNO_CONNECTIONS_PRECONNECT = DYNOMITEMANAGER_PRE
 	    + ".dyno.connections.preconnect";
-    private static final String CONFIG_DYNO_REDIS_COMPATIBLE_ENGINE = DYNOMITEMANAGER_PRE + ".dyno.redis.compatible.engine";
     private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
     private static final String CONFIG_DYNO_HEALTHCHECK_ENABLE = DYNOMITEMANAGER_PRE + ".dyno.healthcheck.enable";
     // The max percentage of system memory to be allocated to the Dynomite
@@ -141,11 +140,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_RESTORE_ENABLED = DYNOMITEMANAGER_PRE + ".dyno.backup.restore.enabled";
     private static final String CONFIG_RESTORE_TIME = DYNOMITEMANAGER_PRE + ".dyno.backup.restore.date";
 
-    // persistence
-    private static final String CONFIG_PERSISTENCE_ENABLED = DYNOMITEMANAGER_PRE + ".dyno.persistence.enabled";
-    private static final String CONFIG_PERSISTENCE_TYPE = DYNOMITEMANAGER_PRE + ".dyno.persistence.type";
-    private static final String CONFIG_PERSISTENCE_DIR = DYNOMITEMANAGER_PRE + ".dyno.persistence.directory";
-
     // VPC
     private static final String CONFIG_INSTANCE_DATA_RETRIEVER = DYNOMITEMANAGER_PRE + ".instanceDataRetriever";
 
@@ -189,14 +183,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String DEFAULT_RESTORE_TIME = "20101010";
     private static final String DEFAULT_BACKUP_SCHEDULE = "day";
     private static final int DEFAULT_BACKUP_HOUR = 12;
-
-    // Persistence
-    private static final boolean DEFAULT_PERSISTENCE_ENABLED = false;
-    private static final String DEFAULT_PERSISTENCE_TYPE = "aof";
-    private static final String DEFAULT_PERSISTENCE_DIR = "/mnt/data/nfredis";
-
-    // Redis compatible
-    private static final String DEFAULT_REDIS_COMPATIBLE_ENGINE = "redis";
 
     // AWS Dual Account
     private static final boolean DEFAULT_DUAL_ACCOUNT = false;
@@ -609,11 +595,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // Backup & Restore Implementations
 
     @Override
-    public String getPersistenceLocation() {
-	return configSource.get(CONFIG_PERSISTENCE_DIR, DEFAULT_PERSISTENCE_DIR);
-    }
-
-    @Override
     public String getBucketName() {
 	return configSource.get(CONFIG_BUCKET_NAME, DEFAULT_BUCKET_NAME);
     }
@@ -653,26 +634,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     @Override
     public String getRestoreDate() {
 	return configSource.get(CONFIG_RESTORE_TIME, DEFAULT_RESTORE_TIME);
-    }
-
-    @Override
-    public boolean isPersistenceEnabled() {
-	return configSource.get(CONFIG_PERSISTENCE_ENABLED, DEFAULT_PERSISTENCE_ENABLED);
-    }
-
-    @Override
-    public boolean isAof() {
-
-	if (configSource.get(CONFIG_PERSISTENCE_TYPE, DEFAULT_PERSISTENCE_TYPE).equals("rdb")) {
-	    return false;
-	} else if (configSource.get(CONFIG_PERSISTENCE_TYPE, DEFAULT_PERSISTENCE_TYPE).equals("aof")) {
-	    return true;
-	} else {
-	    logger.error("The persistence type FP is wrong: aof or rdb");
-	    logger.error("Defaulting to rdb");
-	    return false;
-	}
-
     }
 
     // VPC
@@ -717,25 +678,88 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED, DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED);
     }
 
-    // Redis compatibility
-    @Override
-    public String getRedisCompatibleEngine() {
-	return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_ENGINE, DEFAULT_REDIS_COMPATIBLE_ENGINE);
-    }
-
     // Redis
     // =====
 
-    /**
-    * Get the full path to the redis.conf configuration file.
-    * Netflix:    /apps/nfredis/conf/redis.conf
-    * DynomiteDB: /etc/dynomitedb/redis.conf
-    * @return the {@link String} full path to the redis.conf configuration file
-    */
     @Override
     public String getRedisConf() {
         final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
         final String CONFIG_REDIS_CONF = DYNOMITEMANAGER_PRE + ".redis.conf";
         return configSource.get(CONFIG_REDIS_CONF, DEFAULT_REDIS_CONF);
+    }
+
+    @Override
+    public String getRedisInitStart() {
+        final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
+        final String CONFIG_REDIS_START_SCRIPT = DYNOMITEMANAGER_PRE + ".redis.init.start";
+        return configSource.get(CONFIG_REDIS_START_SCRIPT, DEFAULT_REDIS_START_SCRIPT);
+    }
+
+    @Override
+    public String getRedisInitStop() {
+        final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
+        final String CONFIG_REDIS_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".redis.init.stop";
+        return configSource.get(CONFIG_REDIS_STOP_SCRIPT, DEFAULT_REDIS_STOP_SCRIPT);
+    }
+
+    @Override
+    public boolean isRedisPersistenceEnabled() {
+        final boolean DEFAULT_REDIS_PERSISTENCE_ENABLED = false;
+        final String CONFIG_REDIS_PERSISTENCE_ENABLED = DYNOMITEMANAGER_PRE + ".dyno.persistence.enabled";
+        return configSource.get(CONFIG_REDIS_PERSISTENCE_ENABLED, DEFAULT_REDIS_PERSISTENCE_ENABLED);
+    }
+
+    @Override
+    public String getRedisDataDir() {
+        final String DEFAULT_REDIS_DATA_DIR = "/mnt/data/nfredis";
+        final String CONFIG_REDIS_DATA_DIR = DYNOMITEMANAGER_PRE + ".dyno.persistence.directory";
+        return configSource.get(CONFIG_REDIS_DATA_DIR, DEFAULT_REDIS_DATA_DIR);
+    }
+
+    @Override
+    public boolean isRedisAofEnabled() {
+        final String CONFIG_REDIS_PERSISTENCE_TYPE = DYNOMITEMANAGER_PRE + ".dyno.persistence.type";
+        final String DEFAULT_REDIS_PERSISTENCE_TYPE = "aof";
+
+        if (configSource.get(CONFIG_REDIS_PERSISTENCE_TYPE, DEFAULT_REDIS_PERSISTENCE_TYPE).equals("rdb")) {
+            return false;
+        } else if (configSource.get(CONFIG_REDIS_PERSISTENCE_TYPE, DEFAULT_REDIS_PERSISTENCE_TYPE).equals("aof")) {
+            return true;
+        } else {
+            logger.error("The persistence type FP is wrong: aof or rdb");
+            logger.error("Defaulting to rdb");
+            return false;
+        }
+    }
+
+    @Override
+    public String getRedisCompatibleServer() {
+        final String DEFAULT_REDIS_COMPATIBLE_SERVER = "redis";
+        final String CONFIG_DYNO_REDIS_COMPATIBLE_SERVER = DYNOMITEMANAGER_PRE + ".dyno.redis.compatible.engine";
+        return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_SERVER, DEFAULT_REDIS_COMPATIBLE_SERVER);
+    }
+
+    // ARDB RocksDB
+    // ============
+
+    @Override
+    public String getArdbRocksDBConf() {
+        String DEFAULT_ARDB_ROCKSDB_CONF = "/apps/ardb/conf/rocksdb.conf";
+        final String CONFIG_ARDB_ROCKSDB_CONF = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.conf";
+        return configSource.get(CONFIG_ARDB_ROCKSDB_CONF, DEFAULT_ARDB_ROCKSDB_CONF);
+    }
+
+    @Override
+    public String getArdbRocksDBInitStart() {
+        final String DEFAULT_ARDB_ROCKSDB_START_SCRIPT = "/apps/ardb/bin/launch_ardb.sh";
+        final String CONFIG_ARDB_ROCKSDB_START_SCRIPT = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.init.start";
+        return configSource.get(CONFIG_ARDB_ROCKSDB_START_SCRIPT, DEFAULT_ARDB_ROCKSDB_START_SCRIPT);
+    }
+
+    @Override
+    public String getArdbRocksDBInitStop() {
+        final String DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT = "/apps/ardb/bin/kill_ardb.sh";
+        final String CONFIG_ARDB_ROCKSDB_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.init.stop";
+        return configSource.get(CONFIG_ARDB_ROCKSDB_STOP_SCRIPT, DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT);
     }
 }

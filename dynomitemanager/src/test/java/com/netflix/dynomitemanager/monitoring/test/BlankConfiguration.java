@@ -37,7 +37,7 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public boolean isPersistenceEnabled() {
+	public boolean isRedisPersistenceEnabled() {
 		return false;
 	}
 
@@ -62,7 +62,7 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public boolean isAof() {
+	public boolean isRedisAofEnabled() {
 		return false;
 	}
 
@@ -166,7 +166,7 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getPersistenceLocation() {
+	public String getRedisDataDir() {
 		return null;
 	}
 
@@ -346,7 +346,7 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getRedisCompatibleEngine() {
+	public String getRedisCompatibleServer() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -355,4 +355,33 @@ public class BlankConfiguration implements IConfiguration {
 	public String getRedisConf() {
 		return null;
 	}
+
+	@Override
+	public String getRedisInitStart() {
+		return null;
+	}
+
+	@Override
+	public String getRedisInitStop() {
+		return null;
+	}
+
+    // ARDB RocksDB
+    // ============
+
+    @Override
+    public String getArdbRocksDBConf() {
+        return null;
+    }
+
+    @Override
+    public String getArdbRocksDBInitStart() {
+        return null;
+    }
+
+    @Override
+    public String getArdbRocksDBInitStop() {
+        return null;
+    }
+
 }

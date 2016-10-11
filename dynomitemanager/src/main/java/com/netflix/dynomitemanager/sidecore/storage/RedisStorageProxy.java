@@ -62,9 +62,6 @@ public class RedisStorageProxy implements IStorageProxy {
     private static final String PROC_MEMINFO_PATH = "/proc/meminfo";
     private static final Pattern MEMINFO_PATTERN = Pattern.compile("MemTotal:\\s*([0-9]*)");
 
-    private final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
-    private final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
-
     private static final String REDIS_CONF_MAXMEMORY_PATTERN = "^maxmemory\\s*[0-9][0-9]*[a-zA-Z]*";
     private static final String REDIS_CONF_APPENDONLY = "^appendonly\\s*[a-zA-Z]*";
     private static final String REDIS_CONF_APPENDFSYNC = "^ appendfsync\\s*[a-zA-Z]*";
@@ -159,7 +156,7 @@ public class RedisStorageProxy implements IStorageProxy {
     public boolean takeSnapshot() {
 	localRedisConnect();
 	try {
-	    if (config.isAof()) {
+	    if (config.isRedisAofEnabled()) {
 		logger.info("starting Redis BGREWRITEAOF");
 		this.localJedis.bgrewriteaof();
 	    } else {
@@ -176,7 +173,7 @@ public class RedisStorageProxy implements IStorageProxy {
 	     */
 	} catch (JedisDataException e) {
 	    String scheduled = null;
-	    if (!config.isAof()) {
+	    if (!config.isRedisAofEnabled()) {
 		scheduled = "ERR Background save already in progress";
 	    } else {
 		scheduled = "ERR Background append only file rewriting already in progress";
@@ -198,8 +195,8 @@ public class RedisStorageProxy implements IStorageProxy {
 		String pendingPersistence = null;
 
 		for (String line : result) {
-		    if ((line.startsWith("aof_rewrite_in_progress") && config.isAof())
-			    || (line.startsWith("rdb_bgsave_in_progress") && !config.isAof())) {
+		    if ((line.startsWith("aof_rewrite_in_progress") && config.isRedisAofEnabled())
+			    || (line.startsWith("rdb_bgsave_in_progress") && !config.isRedisAofEnabled())) {
 			String[] items = line.split(":");
 			pendingPersistence = items[1].trim();
 			if (pendingPersistence.equals("0")) {
@@ -553,7 +550,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
 	long storeMaxMem = getStoreMaxMem();
 
-	if (config.getRedisCompatibleEngine().equals(DYNO_ARDB_ROCKSDB)) {
+	if (config.getRedisCompatibleServer().equals(DYNO_ARDB_ROCKSDB)) {
 	    ArdbRocksDbRedisCompatible.updateConfiguration(storeMaxMem);
 	} else {
 	    // Updating the file.
@@ -567,9 +564,9 @@ public class RedisStorageProxy implements IStorageProxy {
 		Files.copy(confPath, backupPath, COPY_ATTRIBUTES);
 	    }
 
-	    if (config.isPersistenceEnabled() && config.isAof()) {
+	    if (config.isRedisPersistenceEnabled() && config.isRedisAofEnabled()) {
 		logger.info("Persistence with AOF is enabled");
-	    } else if (config.isPersistenceEnabled() && !config.isAof()) {
+	    } else if (config.isRedisPersistenceEnabled() && !config.isRedisAofEnabled()) {
 		logger.info("Persistence with RDB is enabled");
 	    }
 
@@ -589,7 +586,7 @@ public class RedisStorageProxy implements IStorageProxy {
 		    lines.set(i, maxMemConf);
 		}
 		// Persistence configuration
-		if (config.isPersistenceEnabled() && config.isAof()) {
+		if (config.isRedisPersistenceEnabled() && config.isRedisAofEnabled()) {
 		    if (line.matches(REDIS_CONF_APPENDONLY)) {
 			String appendOnly = "appendonly yes";
 			logger.info("Updating Redis property: " + appendOnly);
@@ -611,7 +608,7 @@ public class RedisStorageProxy implements IStorageProxy {
 			logger.info("Updating Redis property: " + saveSchedule);
 			lines.set(i, saveSchedule);
 		    }
-		} else if (config.isPersistenceEnabled() && !config.isAof()) {
+		} else if (config.isRedisPersistenceEnabled() && !config.isRedisAofEnabled()) {
 		    if (line.matches(REDIS_CONF_STOP_WRITES_BGSAVE_ERROR)) {
 			String bgsaveerror = "stop-writes-on-bgsave-error no";
 			logger.info("Updating Redis property: " + bgsaveerror);
@@ -693,18 +690,18 @@ public class RedisStorageProxy implements IStorageProxy {
 
     @Override
     public String getStartupScript() {
-	if (config.getRedisCompatibleEngine().equals(DYNO_ARDB_ROCKSDB)) {
-	    return ArdbRocksDbRedisCompatible.ARDB_ROCKSDB_START_SCRIPT;
-	}
-	return DEFAULT_REDIS_START_SCRIPT;
+        if (config.getRedisCompatibleServer().equals(DYNO_ARDB_ROCKSDB)) {
+            return config.getArdbRocksDBInitStart();
+        }
+		return config.getRedisInitStart();
     }
 
     @Override
     public String getStopScript() {
-	if (config.getRedisCompatibleEngine().equals(DYNO_ARDB_ROCKSDB)) {
-	    return ArdbRocksDbRedisCompatible.ARDB_ROCKSDB_STOP_SCRIPT;
-	}
-	return DEFAULT_REDIS_STOP_SCRIPT;
+        if (config.getRedisCompatibleServer().equals(DYNO_ARDB_ROCKSDB)) {
+            return config.getArdbRocksDBInitStop();
+        }
+        return config.getRedisInitStop();
     }
 
     @Override
