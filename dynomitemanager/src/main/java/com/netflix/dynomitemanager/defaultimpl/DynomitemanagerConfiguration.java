@@ -151,7 +151,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     // Defaults
     private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
-    private final String DEFAULT_SEED_PROVIDER = "dynomitemanager_provider";
+    private final String DEFAULT_SEED_PROVIDER = "florida_provider";
     private final String DEFAULT_DYNOMITE_HOME_DIR = "/apps/dynomite";
     private final String DEFAULT_DYNOMITE_START_SCRIPT = "/apps/dynomite/bin/launch_dynomite.sh";
     private final String DEFAULT_DYNOMITE_STOP_SCRIPT = "/apps/dynomite/bin/kill_dynomite.sh";
