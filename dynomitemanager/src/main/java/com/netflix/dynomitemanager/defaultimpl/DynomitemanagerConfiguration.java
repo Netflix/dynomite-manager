@@ -79,7 +79,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNO_TOKENS_HASH_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.hash";
     private static final String CONFIG_DYNO_CONNECTIONS_PRECONNECT = DYNOMITEMANAGER_PRE
 	    + ".dyno.connections.preconnect";
-    private static final String CONFIG_DYNO_REDIS_COMPATIBLE_ENGINE = DYNOMITEMANAGER_PRE + ".dyno.redis.compatible.engine";
     private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
     private static final String CONFIG_DYNO_HEALTHCHECK_ENABLE = DYNOMITEMANAGER_PRE + ".dyno.healthcheck.enable";
     // The max percentage of system memory to be allocated to the Dynomite
@@ -184,9 +183,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String DEFAULT_RESTORE_TIME = "20101010";
     private static final String DEFAULT_BACKUP_SCHEDULE = "day";
     private static final int DEFAULT_BACKUP_HOUR = 12;
-
-    // Redis compatible
-    private static final String DEFAULT_REDIS_COMPATIBLE_ENGINE = "redis";
 
     // AWS Dual Account
     private static final boolean DEFAULT_DUAL_ACCOUNT = false;
@@ -682,12 +678,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED, DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED);
     }
 
-    // Redis compatibility
-    @Override
-    public String getRedisCompatibleEngine() {
-	return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_ENGINE, DEFAULT_REDIS_COMPATIBLE_ENGINE);
-    }
-
     // Redis
     // =====
 
@@ -740,6 +730,13 @@ public class DynomitemanagerConfiguration implements IConfiguration {
             logger.error("Defaulting to rdb");
             return false;
         }
+    }
+
+    @Override
+    public String getRedisCompatibleServer() {
+        final String DEFAULT_REDIS_COMPATIBLE_SERVER = "redis";
+        final String CONFIG_DYNO_REDIS_COMPATIBLE_SERVER = DYNOMITEMANAGER_PRE + ".dyno.redis.compatible.engine";
+        return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_SERVER, DEFAULT_REDIS_COMPATIBLE_SERVER);
     }
 
 }

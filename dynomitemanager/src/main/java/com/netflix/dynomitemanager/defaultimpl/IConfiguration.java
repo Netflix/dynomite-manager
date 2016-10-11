@@ -215,9 +215,6 @@ public interface IConfiguration {
 
 	public boolean isEurekaHostSupplierEnabled();
 
-	// Redis compatible
-	public String getRedisCompatibleEngine();
-
 	// Redis
 	// =====
 
@@ -258,4 +255,14 @@ public interface IConfiguration {
 	 * @return true to indicate that AOF persistence is enabled or false to indicate that RDB persistence is enabled
 	 */
 	public boolean isRedisAofEnabled();
+
+	/**
+	 * Get the type of Redis compatible (RESP) backend server.
+	 * @return RESP backend server (redis, ardb-rocksdb)
+     */
+	public String getRedisCompatibleServer();
+	// isBackendServer(REDIS)
+	// isBackendServer(ARDB_ROCKSDB)
+	// getBackendServer()
+	// isBackendServer(REDIS) { return getBackendServer().equals(REDIS) }
 }
