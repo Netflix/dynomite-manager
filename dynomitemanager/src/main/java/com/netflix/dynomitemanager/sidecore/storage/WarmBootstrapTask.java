@@ -26,7 +26,6 @@ import com.netflix.dynomitemanager.sidecore.storage.WarmBootstrapTask;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.dynomite.DynomiteRest;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
-import com.netflix.dynomitemanager.defaultimpl.StorageProcessManager;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 
 import org.slf4j.Logger;
