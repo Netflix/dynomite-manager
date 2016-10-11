@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Charsets;
 
 public class ArdbRocksDbRedisCompatible {
+    final static String DYNO_ARDB_ROCKSDB = "ardb-rocksdb";
     final static String DYNO_ARDB_CONF_PATH = "/apps/ardb/conf/rocksdb.conf";
     final static String ARDB_ROCKSDB_START_SCRIPT = "/apps/ardb/bin/launch_ardb.sh";
     final static String ARDB_ROCKSDB_STOP_SCRIPT = "/apps/ardb/bin/kill_ardb.sh";

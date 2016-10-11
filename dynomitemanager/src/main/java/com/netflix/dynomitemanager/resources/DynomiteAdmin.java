@@ -35,13 +35,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.netflix.dynomitemanager.InstanceState;
-import com.netflix.dynomitemanager.defaultimpl.StorageProcessManager;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.backup.RestoreTask;
 import com.netflix.dynomitemanager.sidecore.backup.SnapshotTask;
 import com.netflix.dynomitemanager.resources.DynomiteAdmin;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+import com.netflix.dynomitemanager.sidecore.storage.StorageProcessManager;
 import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 
 /**

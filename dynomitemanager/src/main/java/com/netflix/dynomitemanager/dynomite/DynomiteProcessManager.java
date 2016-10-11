@@ -56,7 +56,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 	this.dynProcess = dynProcess;
     }
 
-    protected void setEnv(Map<String, String> env) {
+    protected void setDynomiteEnv(Map<String, String> env) {
 	env.put("MBUF_SIZE", String.valueOf(config.getMbufSize()));
 	if (config.getAllocatedMessages() > 0) {
 	    env.put("ALLOC_MSGS", String.valueOf(config.getAllocatedMessages()));
@@ -75,8 +75,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 	command.addAll(getStartCommand());
 
 	ProcessBuilder startDynomite = new ProcessBuilder(command);
-	Map<String, String> env = startDynomite.environment();
-	setEnv(env);
+	setDynomiteEnv(startDynomite.environment());
 
 	startDynomite.directory(new File("/"));
 	startDynomite.redirectErrorStream(true);

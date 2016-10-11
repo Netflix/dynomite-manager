@@ -191,7 +191,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(DynomitemanagerConfiguration.class);
 
-    private final String CLUSTER_NAME = System.getenv("NETFLIX_APP");
     private final String AUTO_SCALE_GROUP_NAME = System.getenv("AUTO_SCALE_GROUP");
     private static final String DEFAULT_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.AwsInstanceDataRetriever";
     private static final String VPC_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever";

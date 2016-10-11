@@ -55,7 +55,6 @@ import java.util.regex.Pattern;
 public class RedisStorageProxy implements IStorageProxy {
 
     private static final String DYNO_REDIS = "redis";
-    private static final String DYNO_ARDB_ROCKSDB = "ardb-rocksdb";
     private static final String DYNO_REDIS_CONF_PATH = "/apps/nfredis/conf/redis.conf";
     private static final String REDIS_ADDRESS = "127.0.0.1";
     private static final int REDIS_PORT = 22122;
@@ -63,8 +62,8 @@ public class RedisStorageProxy implements IStorageProxy {
     private static final String PROC_MEMINFO_PATH = "/proc/meminfo";
     private static final Pattern MEMINFO_PATTERN = Pattern.compile("MemTotal:\\s*([0-9]*)");
 
-    private final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
-    private final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
+    private static final String REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
+    private static final String REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
 
     private static final String REDIS_CONF_MAXMEMORY_PATTERN = "^maxmemory\\s*[0-9][0-9]*[a-zA-Z]*";
     private static final String REDIS_CONF_APPENDONLY = "^appendonly\\s*[a-zA-Z]*";
@@ -554,7 +553,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
 	long storeMaxMem = getStoreMaxMem();
 
-	if (config.getRedisCompatibleEngine().equals(DYNO_ARDB_ROCKSDB)) {
+	if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB_ROCKSDB)) {
 	    ArdbRocksDbRedisCompatible.updateConfiguration(storeMaxMem);
 	} else {
 
@@ -696,18 +695,18 @@ public class RedisStorageProxy implements IStorageProxy {
 
     @Override
     public String getStartupScript() {
-	if (config.getRedisCompatibleEngine().equals(DYNO_ARDB_ROCKSDB)) {
+	if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB_ROCKSDB)) {
 	    return ArdbRocksDbRedisCompatible.ARDB_ROCKSDB_START_SCRIPT;
 	}
-	return DEFAULT_REDIS_START_SCRIPT;
+	return REDIS_START_SCRIPT;
     }
 
     @Override
     public String getStopScript() {
-	if (config.getRedisCompatibleEngine().equals(DYNO_ARDB_ROCKSDB)) {
+	if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB_ROCKSDB)) {
 	    return ArdbRocksDbRedisCompatible.ARDB_ROCKSDB_STOP_SCRIPT;
 	}
-	return DEFAULT_REDIS_STOP_SCRIPT;
+	return REDIS_STOP_SCRIPT;
     }
 
     @Override
