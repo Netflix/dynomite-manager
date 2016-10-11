@@ -156,7 +156,7 @@ public class RedisStorageProxy implements IStorageProxy {
     public boolean takeSnapshot() {
 	localRedisConnect();
 	try {
-	    if (config.isAof()) {
+	    if (config.isRedisAofEnabled()) {
 		logger.info("starting Redis BGREWRITEAOF");
 		this.localJedis.bgrewriteaof();
 	    } else {
@@ -173,7 +173,7 @@ public class RedisStorageProxy implements IStorageProxy {
 	     */
 	} catch (JedisDataException e) {
 	    String scheduled = null;
-	    if (!config.isAof()) {
+	    if (!config.isRedisAofEnabled()) {
 		scheduled = "ERR Background save already in progress";
 	    } else {
 		scheduled = "ERR Background append only file rewriting already in progress";
@@ -195,8 +195,8 @@ public class RedisStorageProxy implements IStorageProxy {
 		String pendingPersistence = null;
 
 		for (String line : result) {
-		    if ((line.startsWith("aof_rewrite_in_progress") && config.isAof())
-			    || (line.startsWith("rdb_bgsave_in_progress") && !config.isAof())) {
+		    if ((line.startsWith("aof_rewrite_in_progress") && config.isRedisAofEnabled())
+			    || (line.startsWith("rdb_bgsave_in_progress") && !config.isRedisAofEnabled())) {
 			String[] items = line.split(":");
 			pendingPersistence = items[1].trim();
 			if (pendingPersistence.equals("0")) {
@@ -564,9 +564,9 @@ public class RedisStorageProxy implements IStorageProxy {
 		Files.copy(confPath, backupPath, COPY_ATTRIBUTES);
 	    }
 
-	    if (config.isPersistenceEnabled() && config.isAof()) {
+	    if (config.isRedisPersistenceEnabled() && config.isRedisAofEnabled()) {
 		logger.info("Persistence with AOF is enabled");
-	    } else if (config.isPersistenceEnabled() && !config.isAof()) {
+	    } else if (config.isRedisPersistenceEnabled() && !config.isRedisAofEnabled()) {
 		logger.info("Persistence with RDB is enabled");
 	    }
 
@@ -586,7 +586,7 @@ public class RedisStorageProxy implements IStorageProxy {
 		    lines.set(i, maxMemConf);
 		}
 		// Persistence configuration
-		if (config.isPersistenceEnabled() && config.isAof()) {
+		if (config.isRedisPersistenceEnabled() && config.isRedisAofEnabled()) {
 		    if (line.matches(REDIS_CONF_APPENDONLY)) {
 			String appendOnly = "appendonly yes";
 			logger.info("Updating Redis property: " + appendOnly);
@@ -608,7 +608,7 @@ public class RedisStorageProxy implements IStorageProxy {
 			logger.info("Updating Redis property: " + saveSchedule);
 			lines.set(i, saveSchedule);
 		    }
-		} else if (config.isPersistenceEnabled() && !config.isAof()) {
+		} else if (config.isRedisPersistenceEnabled() && !config.isRedisAofEnabled()) {
 		    if (line.matches(REDIS_CONF_STOP_WRITES_BGSAVE_ERROR)) {
 			String bgsaveerror = "stop-writes-on-bgsave-error no";
 			logger.info("Updating Redis property: " + bgsaveerror);

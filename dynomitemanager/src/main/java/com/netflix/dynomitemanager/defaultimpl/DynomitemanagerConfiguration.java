@@ -141,11 +141,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_RESTORE_ENABLED = DYNOMITEMANAGER_PRE + ".dyno.backup.restore.enabled";
     private static final String CONFIG_RESTORE_TIME = DYNOMITEMANAGER_PRE + ".dyno.backup.restore.date";
 
-    // persistence
-    private static final String CONFIG_PERSISTENCE_ENABLED = DYNOMITEMANAGER_PRE + ".dyno.persistence.enabled";
-    private static final String CONFIG_PERSISTENCE_TYPE = DYNOMITEMANAGER_PRE + ".dyno.persistence.type";
-    private static final String CONFIG_PERSISTENCE_DIR = DYNOMITEMANAGER_PRE + ".dyno.persistence.directory";
-
     // VPC
     private static final String CONFIG_INSTANCE_DATA_RETRIEVER = DYNOMITEMANAGER_PRE + ".instanceDataRetriever";
 
@@ -189,11 +184,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String DEFAULT_RESTORE_TIME = "20101010";
     private static final String DEFAULT_BACKUP_SCHEDULE = "day";
     private static final int DEFAULT_BACKUP_HOUR = 12;
-
-    // Persistence
-    private static final boolean DEFAULT_PERSISTENCE_ENABLED = false;
-    private static final String DEFAULT_PERSISTENCE_TYPE = "aof";
-    private static final String DEFAULT_PERSISTENCE_DIR = "/mnt/data/nfredis";
 
     // Redis compatible
     private static final String DEFAULT_REDIS_COMPATIBLE_ENGINE = "redis";
@@ -609,11 +599,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // Backup & Restore Implementations
 
     @Override
-    public String getPersistenceLocation() {
-	return configSource.get(CONFIG_PERSISTENCE_DIR, DEFAULT_PERSISTENCE_DIR);
-    }
-
-    @Override
     public String getBucketName() {
 	return configSource.get(CONFIG_BUCKET_NAME, DEFAULT_BUCKET_NAME);
     }
@@ -653,26 +638,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     @Override
     public String getRestoreDate() {
 	return configSource.get(CONFIG_RESTORE_TIME, DEFAULT_RESTORE_TIME);
-    }
-
-    @Override
-    public boolean isPersistenceEnabled() {
-	return configSource.get(CONFIG_PERSISTENCE_ENABLED, DEFAULT_PERSISTENCE_ENABLED);
-    }
-
-    @Override
-    public boolean isAof() {
-
-	if (configSource.get(CONFIG_PERSISTENCE_TYPE, DEFAULT_PERSISTENCE_TYPE).equals("rdb")) {
-	    return false;
-	} else if (configSource.get(CONFIG_PERSISTENCE_TYPE, DEFAULT_PERSISTENCE_TYPE).equals("aof")) {
-	    return true;
-	} else {
-	    logger.error("The persistence type FP is wrong: aof or rdb");
-	    logger.error("Defaulting to rdb");
-	    return false;
-	}
-
     }
 
     // VPC
@@ -746,4 +711,35 @@ public class DynomitemanagerConfiguration implements IConfiguration {
         final String CONFIG_REDIS_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".redis.init.stop";
         return configSource.get(CONFIG_REDIS_STOP_SCRIPT, DEFAULT_REDIS_STOP_SCRIPT);
     }
+
+    @Override
+    public boolean isRedisPersistenceEnabled() {
+        final boolean DEFAULT_REDIS_PERSISTENCE_ENABLED = false;
+        final String CONFIG_REDIS_PERSISTENCE_ENABLED = DYNOMITEMANAGER_PRE + ".dyno.persistence.enabled";
+        return configSource.get(CONFIG_REDIS_PERSISTENCE_ENABLED, DEFAULT_REDIS_PERSISTENCE_ENABLED);
+    }
+
+    @Override
+    public String getRedisDataDir() {
+        final String DEFAULT_REDIS_DATA_DIR = "/mnt/data/nfredis";
+        final String CONFIG_REDIS_DATA_DIR = DYNOMITEMANAGER_PRE + ".dyno.persistence.directory";
+        return configSource.get(CONFIG_REDIS_DATA_DIR, DEFAULT_REDIS_DATA_DIR);
+    }
+
+    @Override
+    public boolean isRedisAofEnabled() {
+        final String CONFIG_REDIS_PERSISTENCE_TYPE = DYNOMITEMANAGER_PRE + ".dyno.persistence.type";
+        final String DEFAULT_REDIS_PERSISTENCE_TYPE = "aof";
+
+        if (configSource.get(CONFIG_REDIS_PERSISTENCE_TYPE, DEFAULT_REDIS_PERSISTENCE_TYPE).equals("rdb")) {
+            return false;
+        } else if (configSource.get(CONFIG_REDIS_PERSISTENCE_TYPE, DEFAULT_REDIS_PERSISTENCE_TYPE).equals("aof")) {
+            return true;
+        } else {
+            logger.error("The persistence type FP is wrong: aof or rdb");
+            logger.error("Defaulting to rdb");
+            return false;
+        }
+    }
+
 }

@@ -37,7 +37,7 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public boolean isPersistenceEnabled() {
+	public boolean isRedisPersistenceEnabled() {
 		return false;
 	}
 
@@ -62,7 +62,7 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public boolean isAof() {
+	public boolean isRedisAofEnabled() {
 		return false;
 	}
 
@@ -166,7 +166,7 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getPersistenceLocation() {
+	public String getRedisDataDir() {
 		return null;
 	}
 

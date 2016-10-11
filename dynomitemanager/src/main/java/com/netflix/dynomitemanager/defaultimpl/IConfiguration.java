@@ -206,14 +206,6 @@ public interface IConfiguration {
 
 	public String getRestoreDate();
 
-	// Persistence
-
-	public String getPersistenceLocation();
-
-	public boolean isPersistenceEnabled();
-
-	public boolean isAof();
-
 	// Cassandra
 	public String getCassandraKeyspaceName();
 
@@ -237,15 +229,33 @@ public interface IConfiguration {
 	 */
 	public String getRedisConf();
 
-	/**
+    /**
 	 * Get the full path to the Redis init start script, including any arguments.
 	 * @return the full path of the Redis init start script
      */
-	public String getRedisInitStart();
+    public String getRedisInitStart();
 
 	/**
 	 * Get the full path to the Redis init stop script, including any arguments.
 	 * @return the full path of the Redis init stop script
+	 */
+    public String getRedisInitStop();
+
+	/**
+	 * Determines whether or not Redis will save data to disk.
+	 * @return true if Redis should persist in-memory data to disk or false if Redis should only store data in-memory
+	 */
+	public boolean isRedisPersistenceEnabled();
+
+	/**
+     * Get the full path to the directory where Redis stores its AOF or RDB data files.
+     * @return the full path to the directory where Redis stores its data files
      */
-	public String getRedisInitStop();
+    public String getRedisDataDir();
+
+	/**
+	 * Checks if Redis append-only file (AOF) persistence is enabled.
+	 * @return true to indicate that AOF persistence is enabled or false to indicate that RDB persistence is enabled
+	 */
+	public boolean isRedisAofEnabled();
 }
