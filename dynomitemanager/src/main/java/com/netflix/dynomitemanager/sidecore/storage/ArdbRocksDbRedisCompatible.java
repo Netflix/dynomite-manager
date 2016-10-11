@@ -35,64 +35,61 @@ public class ArdbRocksDbRedisCompatible {
 
     private static final Logger logger = LoggerFactory.getLogger(ArdbRocksDbRedisCompatible.class);
 
-//    @Inject
-//    private IConfiguration config;
+    //    @Inject
+    //    private IConfiguration config;
 
     public static void updateConfiguration(long storeMaxMem) throws IOException {
 
-	/**
-	 * write_buffer_size = 512MB;
+        /*
+         * write_buffer_size = 512MB;
          * max_write_buffer_number = 5;
          *
          * We check if the memory is above 10GB and then allocate more max_write_buffer_number.
          * This approach is naive and should be optimized
          *
-	 */
-	int max_write_buffer_number = 5;
-	if (storeMaxMem > 10*1024*1024*1024) { // max storage memory
-	    max_write_buffer_number = 20;
-	}
+         */
+        int max_write_buffer_number = 5;
+        if (storeMaxMem > 10 * 1024 * 1024 * 1024) { // max storage memory
+            max_write_buffer_number = 20;
+        }
 
-
-  	String ardbRedisCompatibleMode = "^redis-compatible-mode \\s*[a-zA-Z]*";
-  	String maxWriteBufferNumber = ".max_write_buffer_number \\s*[a-zA-Z]*";
+        String ardbRedisCompatibleMode = "^redis-compatible-mode \\s*[a-zA-Z]*";
+        String maxWriteBufferNumber = ".max_write_buffer_number \\s*[a-zA-Z]*";
 
         // TODO: Change to non-static
-//        logger.info("Updating ARDB/RocksDB conf: " + config.getArdbRocksDBConf());
-//        Path confPath = Paths.get(config.getArdbRocksDBConf());
-//        Path backupPath = Paths.get(config.getArdbRocksDBConf() + ".bkp");
-  	logger.info("Updating ARDB/RocksDB conf: " + DYNO_ARDB_CONF_PATH);
-  	Path confPath = Paths.get(DYNO_ARDB_CONF_PATH);
-  	Path backupPath = Paths.get(DYNO_ARDB_CONF_PATH + ".bkp");
-  	// backup the original baked in conf only and not subsequent updates
-  	if (!Files.exists(backupPath)) {
-  	    logger.info("Backing up baked in ARDB/RocksDB config at: " + backupPath);
-  	    Files.copy(confPath, backupPath, COPY_ATTRIBUTES);
-  	}
+        //        logger.info("Updating ARDB/RocksDB conf: " + config.getArdbRocksDBConf());
+        //        Path confPath = Paths.get(config.getArdbRocksDBConf());
+        //        Path backupPath = Paths.get(config.getArdbRocksDBConf() + ".bkp");
+        logger.info("Updating ARDB/RocksDB conf: " + DYNO_ARDB_CONF_PATH);
+        Path confPath = Paths.get(DYNO_ARDB_CONF_PATH);
+        Path backupPath = Paths.get(DYNO_ARDB_CONF_PATH + ".bkp");
+        // backup the original baked in conf only and not subsequent updates
+        if (!Files.exists(backupPath)) {
+            logger.info("Backing up baked in ARDB/RocksDB config at: " + backupPath);
+            Files.copy(confPath, backupPath, COPY_ATTRIBUTES);
+        }
 
-  	// Not using Properties file to load as we want to retain all comments,
-  	// and for easy diffing with the ami baked version of the conf file.
-  	List<String> lines = Files.readAllLines(confPath, Charsets.UTF_8);
-  	for (int i = 0; i < lines.size(); i++) {
-  	    String line = lines.get(i);
-  	    if (line.startsWith("#")) {
-  		continue;
-  	    }
-  	    if (line.matches(ardbRedisCompatibleMode)) {
-  		String compatibable = "redis-compatible-mode yes";
-  		logger.info("Updating ARDB property: " + compatibable);
-  		lines.set(i, compatibable);
-  	    }
-  	    else if(line.matches(maxWriteBufferNumber)) {
-  		String writeBufferNumber = "max_write_buffer_number=" + max_write_buffer_number + ";\\";
-  		String padded = String.format("%-20s", writeBufferNumber);
-  		logger.info("updatng options to: " + writeBufferNumber);
-  		lines.set(i, padded);
-  	    }
-  	}
+        // Not using Properties file to load as we want to retain all comments,
+        // and for easy diffing with the ami baked version of the conf file.
+        List<String> lines = Files.readAllLines(confPath, Charsets.UTF_8);
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            if (line.startsWith("#")) {
+                continue;
+            }
+            if (line.matches(ardbRedisCompatibleMode)) {
+                String compatibable = "redis-compatible-mode yes";
+                logger.info("Updating ARDB property: " + compatibable);
+                lines.set(i, compatibable);
+            } else if (line.matches(maxWriteBufferNumber)) {
+                String writeBufferNumber = "max_write_buffer_number=" + max_write_buffer_number + ";\\";
+                String padded = String.format("%-20s", writeBufferNumber);
+                logger.info("updatng options to: " + writeBufferNumber);
+                lines.set(i, padded);
+            }
+        }
 
-  	Files.write(confPath, lines, Charsets.UTF_8, WRITE, TRUNCATE_EXISTING);
-      }
-
+        Files.write(confPath, lines, Charsets.UTF_8, WRITE, TRUNCATE_EXISTING);
+    }
 
 }
