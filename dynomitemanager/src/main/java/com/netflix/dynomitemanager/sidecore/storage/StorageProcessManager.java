@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.netflix.dynomitemanager.defaultimpl;
+package com.netflix.dynomitemanager.sidecore.storage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -27,7 +28,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.InstanceState;
-import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 
 /**
@@ -49,6 +49,10 @@ public class StorageProcessManager {
 	this.storageProxy = storageProxy;
     }
 
+    protected void setStorageEnv(Map<String, String> env) {
+	env.put("FLORIDA_STORAGE", String.valueOf(this.storageProxy.getEngine()));
+    }
+
     /**
      * Start the storage engine (Redis, Memcached).
      * 
@@ -56,20 +60,9 @@ public class StorageProcessManager {
      */
     public void start() throws IOException {
 	logger.info(String.format("Starting Storage process"));
-
-	List<String> command = Lists.newArrayList();
-	if (!"root".equals(System.getProperty("user.name"))) {
-	    command.add(SUDO_STRING);
-	    command.add("-n");
-	    command.add("-E");
-	}
-	command.addAll(getStartCommand());
-
-	ProcessBuilder startStorage = new ProcessBuilder(command);
-
-	startStorage.directory(new File("/"));
-	startStorage.redirectErrorStream(true);
-	Process starter = startStorage.start();
+	ProcessBuilder startBuilder = process(getStartCommand());
+	setStorageEnv(startBuilder.environment());
+	Process starter = startBuilder.start();
 
 	try {
 	    sleeper.sleepQuietly(SCRIPT_EXECUTE_WAIT_TIME_MS);
@@ -87,7 +80,34 @@ public class StorageProcessManager {
 	}
     }
 
-    protected List<String> getStartCommand() {
+    /**
+     * A common class to initialize a ProcessBuilder
+     * 
+     * @param executeCommand
+     * @return the process to start
+     * @throws IOException
+     */
+    private ProcessBuilder process(List<String> executeCommand) throws IOException {
+	List<String> command = Lists.newArrayList();
+	if (!"root".equals(System.getProperty("user.name"))) {
+	    command.add(SUDO_STRING);
+	    command.add("-n");
+	    command.add("-E");
+	}
+	command.addAll(executeCommand);
+	ProcessBuilder actionStorage = new ProcessBuilder(command);
+	actionStorage.directory(new File("/"));
+	actionStorage.redirectErrorStream(true);
+
+	return actionStorage;
+    }
+
+    /**
+     * Getting the start command
+     * 
+     * @return
+     */
+    private List<String> getStartCommand() {
 	List<String> startCmd = new LinkedList<String>();
 	for (String param : storageProxy.getStartupScript().split(" ")) {
 	    if (StringUtils.isNotBlank(param))
@@ -96,7 +116,21 @@ public class StorageProcessManager {
 	return startCmd;
     }
 
-    void logProcessOutput(Process p) {
+    /**
+     * Getting the stop command
+     * 
+     * @return
+     */
+    private List<String> getStopCommand() {
+	List<String> stopCmd = new LinkedList<String>();
+	for (String param : storageProxy.getStartupScript().split(" ")) {
+	    if (StringUtils.isNotBlank(param))
+		stopCmd.add(param);
+	}
+	return stopCmd;
+    }
+
+    private void logProcessOutput(Process p) {
 	try {
 	    final String stdOut = readProcessStream(p.getInputStream());
 	    final String stdErr = readProcessStream(p.getErrorStream());
@@ -123,21 +157,8 @@ public class StorageProcessManager {
      */
     public void stop() throws IOException {
 	logger.info("Stopping storage process...");
-	List<String> command = Lists.newArrayList();
-	if (!"root".equals(System.getProperty("user.name"))) {
-	    command.add(SUDO_STRING);
-	    command.add("-n");
-	    command.add("-E");
-	}
-	for (String param : storageProxy.getStopScript().split(" ")) {
-	    if (StringUtils.isNotBlank(param))
-		command.add(param);
-	}
-	ProcessBuilder stopStorage = new ProcessBuilder(command);
-	stopStorage.directory(new File("/"));
-	stopStorage.redirectErrorStream(true);
-	// Run the storage engine's stop command
-	Process stopper = stopStorage.start();
+	ProcessBuilder stopBuilder = process(getStopCommand());
+	Process stopper = stopBuilder.start();
 
 	sleeper.sleepQuietly(SCRIPT_EXECUTE_WAIT_TIME_MS);
 	try {
