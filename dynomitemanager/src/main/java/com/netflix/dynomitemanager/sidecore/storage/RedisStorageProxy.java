@@ -691,7 +691,7 @@ public class RedisStorageProxy implements IStorageProxy {
     @Override
     public String getStartupScript() {
         if (config.getRedisCompatibleServer().equals(DYNO_ARDB_ROCKSDB)) {
-            return ArdbRocksDbRedisCompatible.ARDB_ROCKSDB_START_SCRIPT;
+            return config.getArdbRocksDBInitStart();
         }
 		return config.getRedisInitStart();
     }
@@ -699,7 +699,7 @@ public class RedisStorageProxy implements IStorageProxy {
     @Override
     public String getStopScript() {
         if (config.getRedisCompatibleServer().equals(DYNO_ARDB_ROCKSDB)) {
-            return ArdbRocksDbRedisCompatible.ARDB_ROCKSDB_STOP_SCRIPT;
+            return config.getArdbRocksDBInitStop();
         }
         return config.getRedisInitStop();
     }

@@ -261,8 +261,28 @@ public interface IConfiguration {
 	 * @return RESP backend server (redis, ardb-rocksdb)
      */
 	public String getRedisCompatibleServer();
-	// isBackendServer(REDIS)
-	// isBackendServer(ARDB_ROCKSDB)
-	// getBackendServer()
-	// isBackendServer(REDIS) { return getBackendServer().equals(REDIS) }
+
+	// ARDB RocksDB
+	// ============
+
+	/**
+	 * Get the full path to the rocksdb.conf configuration file.
+	 * Netflix:    /apps/ardb/conf/rocksdb.conf
+	 * DynomiteDB: /etc/dynomitedb/rocksdb.conf
+	 * @return the {@link String} full path to the rocksdb.conf configuration file
+	 */
+	public String getArdbRocksDBConf();
+
+	/**
+	 * Get the full path to the ARDB RocksDB init start script, including any arguments.
+	 * @return the full path of the ARDB RocksDB init start script
+	 */
+	public String getArdbRocksDBInitStart();
+
+	/**
+	 * Get the full path to the ARDB RocksDB init stop script, including any arguments.
+	 * @return the full path of the ARDB RocksDB init stop script
+	 */
+	public String getArdbRocksDBInitStop();
+
 }

@@ -32,30 +32,35 @@ import com.google.common.base.Charsets;
 
 public class ArdbRocksDbRedisCompatible {
     final static String DYNO_ARDB_CONF_PATH = "/apps/ardb/conf/rocksdb.conf";
-    final static String ARDB_ROCKSDB_START_SCRIPT = "/apps/ardb/bin/launch_ardb.sh";
-    final static String ARDB_ROCKSDB_STOP_SCRIPT = "/apps/ardb/bin/kill_ardb.sh";
-    
+
     private static final Logger logger = LoggerFactory.getLogger(ArdbRocksDbRedisCompatible.class);
-    
+
+//    @Inject
+//    private IConfiguration config;
+
     public static void updateConfiguration(long storeMaxMem) throws IOException {
-	
+
 	/**
 	 * write_buffer_size = 512MB;
          * max_write_buffer_number = 5;
-         * 
+         *
          * We check if the memory is above 10GB and then allocate more max_write_buffer_number.
          * This approach is naive and should be optimized
-         * 
+         *
 	 */
 	int max_write_buffer_number = 5;
 	if (storeMaxMem > 10*1024*1024*1024) { // max storage memory
 	    max_write_buffer_number = 20;
 	}
-	
+
 
   	String ardbRedisCompatibleMode = "^redis-compatible-mode \\s*[a-zA-Z]*";
   	String maxWriteBufferNumber = ".max_write_buffer_number \\s*[a-zA-Z]*";
 
+        // TODO: Change to non-static
+//        logger.info("Updating ARDB/RocksDB conf: " + config.getArdbRocksDBConf());
+//        Path confPath = Paths.get(config.getArdbRocksDBConf());
+//        Path backupPath = Paths.get(config.getArdbRocksDBConf() + ".bkp");
   	logger.info("Updating ARDB/RocksDB conf: " + DYNO_ARDB_CONF_PATH);
   	Path confPath = Paths.get(DYNO_ARDB_CONF_PATH);
   	Path backupPath = Paths.get(DYNO_ARDB_CONF_PATH + ".bkp");
@@ -79,7 +84,7 @@ public class ArdbRocksDbRedisCompatible {
   		lines.set(i, compatibable);
   	    }
   	    else if(line.matches(maxWriteBufferNumber)) {
-  		String writeBufferNumber = "max_write_buffer_number=" + max_write_buffer_number + ";\\"; 
+  		String writeBufferNumber = "max_write_buffer_number=" + max_write_buffer_number + ";\\";
   		String padded = String.format("%-20s", writeBufferNumber);
   		logger.info("updatng options to: " + writeBufferNumber);
   		lines.set(i, padded);

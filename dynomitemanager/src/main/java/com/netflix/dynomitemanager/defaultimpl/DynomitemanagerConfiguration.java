@@ -739,4 +739,27 @@ public class DynomitemanagerConfiguration implements IConfiguration {
         return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_SERVER, DEFAULT_REDIS_COMPATIBLE_SERVER);
     }
 
+    // ARDB RocksDB
+    // ============
+
+    @Override
+    public String getArdbRocksDBConf() {
+        String DEFAULT_ARDB_ROCKSDB_CONF = "/apps/ardb/conf/rocksdb.conf";
+        final String CONFIG_ARDB_ROCKSDB_CONF = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.conf";
+        return configSource.get(CONFIG_ARDB_ROCKSDB_CONF, DEFAULT_ARDB_ROCKSDB_CONF);
+    }
+
+    @Override
+    public String getArdbRocksDBInitStart() {
+        final String DEFAULT_ARDB_ROCKSDB_START_SCRIPT = "/apps/ardb/bin/launch_ardb.sh";
+        final String CONFIG_ARDB_ROCKSDB_START_SCRIPT = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.init.start";
+        return configSource.get(CONFIG_ARDB_ROCKSDB_START_SCRIPT, DEFAULT_ARDB_ROCKSDB_START_SCRIPT);
+    }
+
+    @Override
+    public String getArdbRocksDBInitStop() {
+        final String DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT = "/apps/ardb/bin/kill_ardb.sh";
+        final String CONFIG_ARDB_ROCKSDB_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.init.stop";
+        return configSource.get(CONFIG_ARDB_ROCKSDB_STOP_SCRIPT, DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT);
+    }
 }

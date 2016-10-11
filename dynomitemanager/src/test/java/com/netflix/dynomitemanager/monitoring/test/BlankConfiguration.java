@@ -365,4 +365,23 @@ public class BlankConfiguration implements IConfiguration {
 	public String getRedisInitStop() {
 		return null;
 	}
+
+    // ARDB RocksDB
+    // ============
+
+    @Override
+    public String getArdbRocksDBConf() {
+        return null;
+    }
+
+    @Override
+    public String getArdbRocksDBInitStart() {
+        return null;
+    }
+
+    @Override
+    public String getArdbRocksDBInitStop() {
+        return null;
+    }
+
 }
