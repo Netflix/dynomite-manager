@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
 
-/** 
+/**
  * Class that adds that acts as an interface between DM and Dynomite
  * through REST APIs
  */
@@ -64,7 +64,7 @@ public class DynomiteRest {
 	    logger.error("Failed to sendCommand and invoke url: " + url, e);
 	    return false;
 	}
-	logger.info("Dynomite REST completed succesfully: " + url);
+	logger.info("Dynomite REST completed successfully: " + url);
 
 	return true;
     }
