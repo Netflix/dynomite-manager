@@ -61,17 +61,19 @@ public interface IConfiguration {
 	 */
 	public String getInstanceName();
 
-	/**
-	 * @return Get the Region name
-	 */
-	public String getRegion();
+    /**
+     * Get the data center (AWS region).
+     * @return the data center (AWS region)
+     */
+    public String getRegion();
 
 	//public void setRegion(String region);
 
-	/**
-	 * @return Get the Data Center name (or region for AWS)
-	 */
-	public String getRack();
+    /**
+     * Get the rack (AWS AZ).
+     * @return the rack (AWS AZ)
+     */
+    public String getRack();
 
 	/**
 	 * @return Get the cross account rack if in dual account mode

@@ -19,12 +19,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Calls AWS ec2 metadata to get info on the location of the running instance in VPC.
- * Public Hostname will return local-hostname
- * Public IP will return local-ipv4
+ * Get AWS EC2 metadata for the current instance when the instance is in an AWS VPC network.
  */
 public class VpcInstanceDataRetriever implements InstanceDataRetriever {
 	private static final Logger logger = LoggerFactory.getLogger(VpcInstanceDataRetriever.class);
+
+    public String getDataCenter() {
+        String az = getRac();
+        String region = "";
+        if (az != null && az.length() > 0) {
+            region = az.substring(0, az.length()-1);
+        }
+        return region;
+    }
 
 	public String getRac() {
 		return SystemUtils

@@ -16,9 +16,18 @@ import com.netflix.dynomitemanager.sidecore.utils.SystemUtils;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 
 /**
- * Calls AWS ec2 metadata to get info on the location of the running instance.
+ * Get AWS EC2 metadata for the current instance when the instance is in an AWS classic network.
  */
 public class AwsInstanceDataRetriever implements InstanceDataRetriever {
+
+    public String getDataCenter() {
+        String az = getRac();
+        String region = "";
+        if (az != null && az.length() > 0) {
+            region = az.substring(0, az.length()-1);
+        }
+        return region;
+    }
 
 	public String getRac() {
 		return SystemUtils

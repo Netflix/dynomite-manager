@@ -14,7 +14,18 @@
 package com.netflix.dynomitemanager.sidecore.config;
 
 public interface InstanceDataRetriever {
-	String getRac();
+
+    /**
+     * Get the data center (AWS region) for the current instance.
+     * @return the instance's data center (AWS region)
+     */
+    String getDataCenter();
+
+    /**
+     * Get the rack (AWS AZ) for the current instance.
+     * @return the instance's rack (AWS AZ)
+     */
+    String getRac();
 
 	String getPublicHostname();
 

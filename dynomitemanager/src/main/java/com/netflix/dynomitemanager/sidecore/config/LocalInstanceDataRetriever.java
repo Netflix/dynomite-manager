@@ -21,6 +21,10 @@ package com.netflix.dynomitemanager.sidecore.config;
 public class LocalInstanceDataRetriever implements InstanceDataRetriever {
 	private static final String PREFIX = "dynomitemanager.localInstance.";
 
+    public String getDataCenter() {
+        return "us-east-1";
+    }
+
 	public String getRac() {
 		return "us-east-1c";
 	}
