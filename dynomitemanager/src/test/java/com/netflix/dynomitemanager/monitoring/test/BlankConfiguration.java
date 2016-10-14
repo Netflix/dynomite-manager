@@ -136,7 +136,7 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getRegion() {
+	public String getDataCenter() {
 		return null;
 	}
 

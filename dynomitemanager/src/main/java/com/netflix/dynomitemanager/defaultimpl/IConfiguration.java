@@ -65,7 +65,7 @@ public interface IConfiguration {
      * Get the data center (AWS region).
      * @return the data center (AWS region)
      */
-    public String getRegion();
+    public String getDataCenter();
 
 	//public void setRegion(String region);
 

@@ -89,7 +89,7 @@ public class FloridaStandardTuner implements ProcessTuner {
 	entries.put("tokens", ii.getTokens());
 	entries.put("secure_server_option", config.getSecuredOption());
 	entries.remove("redis");
-	entries.put("datacenter", config.getRegion());
+	entries.put("datacenter", config.getDataCenter());
 	entries.put("read_consistency", config.getReadConsistency());
 	entries.put("write_consistency", config.getWriteConsistency());
 	entries.put("pem_key_file", "/apps/dynomite/conf/dynomite.pem");

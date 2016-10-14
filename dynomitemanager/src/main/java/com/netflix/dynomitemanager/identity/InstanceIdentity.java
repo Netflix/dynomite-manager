@@ -266,10 +266,10 @@ public class InstanceIdentity {
             else {
         	rackMembershipSize = membership.getRacMembershipSize();
             }
-            
+
 	    logger.info(String.format(
 		    "Trying to createToken with slot %d with rac count %d with rac membership size %d with dc %s",
-		    my_slot, membership.getRacCount(), rackMembershipSize, config.getRegion()));
+		    my_slot, membership.getRacCount(), rackMembershipSize, config.getDataCenter()));
 	    // String payload = tokenManager.createToken(my_slot,
 	    // membership.getRacCount(), membership.getRacMembershipSize(),
 	    // config.getDataCenter());

@@ -136,7 +136,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getRegion() {
+	public String getDataCenter() {
 		return null;
 	}
 
