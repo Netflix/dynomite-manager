@@ -369,25 +369,25 @@ public class AWSMembership implements IMembership {
 
     protected AmazonAutoScaling getAutoScalingClient() {
 	AmazonAutoScaling client = new AmazonAutoScalingClient(provider.getAwsCredentialProvider());
-	client.setEndpoint("autoscaling." + config.getRegion() + ".amazonaws.com");
+	client.setEndpoint("autoscaling." + config.getDataCenter() + ".amazonaws.com");
 	return client;
     }
 
     protected AmazonAutoScaling getCrossAccountAutoScalingClient() {
 	AmazonAutoScaling client = new AmazonAutoScalingClient(crossAccountProvider.getAwsCredentialProvider());
-	client.setEndpoint("autoscaling." + config.getRegion() + ".amazonaws.com");
+	client.setEndpoint("autoscaling." + config.getDataCenter() + ".amazonaws.com");
 	return client;
     }
 
     protected AmazonEC2 getEc2Client() {
 	AmazonEC2 client = new AmazonEC2Client(provider.getAwsCredentialProvider());
-	client.setEndpoint("ec2." + config.getRegion() + ".amazonaws.com");
+	client.setEndpoint("ec2." + config.getDataCenter() + ".amazonaws.com");
 	return client;
     }
 
     protected AmazonEC2 getCrossAccountEc2Client() {
 	AmazonEC2 client = new AmazonEC2Client(crossAccountProvider.getAwsCredentialProvider());
-	client.setEndpoint("ec2." + config.getRegion() + ".amazonaws.com");
+	client.setEndpoint("ec2." + config.getDataCenter() + ".amazonaws.com");
 	return client;
     }
 

@@ -88,7 +88,7 @@ public class CassandraInstanceFactory implements IAppsInstanceFactory {
 			ins.setHostIP(ip);
 			ins.setId(id);
 			ins.setInstanceId(instanceID);
-			ins.setDatacenter(config.getRegion());
+			ins.setDatacenter(config.getDataCenter());
 			ins.setToken(payload);
 			ins.setVolumes(v);
 

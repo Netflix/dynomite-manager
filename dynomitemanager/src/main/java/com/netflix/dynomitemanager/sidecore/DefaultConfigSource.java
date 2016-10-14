@@ -21,18 +21,22 @@ import javax.inject.Inject;
  * Load Dynomite Manager's configuration from the following sources:
  *
  * <ul>
- * <li>{@link com.netflix.dynomitemanager.sidecore.SimpleDBConfigSource}
  * <li>{@link com.netflix.dynomitemanager.sidecore.PropertiesConfigSource}
  * <li>{@link com.netflix.dynomitemanager.sidecore.SystemPropertiesConfigSource}
  * </ul>
  */
 public class DefaultConfigSource extends CompositeConfigSource {
 
+    /**
+     * Provide list of configuration sources to check for properties (aka Fast Properties or FP).
+     * @param propertiesConfigSource the dynomitemanager.properties file
+     * @param systemPropertiesConfigSource Java properties passed on the command line via "-Dproperty=value"
+     */
 	@Inject
-	public DefaultConfigSource(final SimpleDBConfigSource simpleDBConfigSource,
-			final PropertiesConfigSource propertiesConfigSource,
+	public DefaultConfigSource(final PropertiesConfigSource propertiesConfigSource,
 			final SystemPropertiesConfigSource systemPropertiesConfigSource) {
-		super(simpleDBConfigSource, propertiesConfigSource, systemPropertiesConfigSource);
+
+		super(propertiesConfigSource, systemPropertiesConfigSource);
 	}
 
 }

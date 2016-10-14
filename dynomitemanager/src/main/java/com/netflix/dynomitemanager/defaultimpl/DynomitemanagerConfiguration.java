@@ -194,7 +194,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String VPC_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever";
 
     private static String ASG_NAME = System.getenv("ASG_NAME");
-    private static String REGION = System.getenv("EC2_REGION");
 
     private final InstanceDataRetriever retriever;
     private final ICredential provider;
@@ -263,9 +262,9 @@ public class DynomitemanagerConfiguration implements IConfiguration {
      * Set Dynomite Manager's configuration options.
      */
     public void initialize() {
-	setupEnvVars();
-	this.configSource.initialize(ASG_NAME, REGION);
-	setDefaultRACList(REGION);
+        setupEnvVars();
+        this.configSource.initialize(ASG_NAME, getDataCenter());
+        setDefaultRACList(getDataCenter());
     }
 
     /**
@@ -282,20 +281,16 @@ public class DynomitemanagerConfiguration implements IConfiguration {
      * </ol>
      */
     private void setupEnvVars() {
-	// Search in java opt properties
-	try {
-	    logger.info("Setting up environmental variables and Java properties.");
-	    REGION = StringUtils.isBlank(REGION) ? System.getProperty("EC2_REGION") : REGION;
-	    // Infer from zone
-	    if (StringUtils.isBlank(REGION))
-		REGION = this.retriever.getRac().substring(0, this.retriever.getRac().length() - 1);
-	    ASG_NAME = StringUtils.isBlank(ASG_NAME) ? System.getProperty("ASG_NAME") : ASG_NAME;
-	    if (StringUtils.isBlank(ASG_NAME))
-		ASG_NAME = populateASGName(REGION, this.retriever.getInstanceId());
-	    logger.info(String.format("REGION set to %s, ASG Name set to %s", REGION, ASG_NAME));
-	} catch (Exception e) {
-	    throw new RuntimeException(e.getMessage(), e);
-	}
+        // Search in java opt properties
+        try {
+            logger.info("Setting up environmental variables and Java properties.");
+            ASG_NAME = StringUtils.isBlank(ASG_NAME) ? System.getProperty("ASG_NAME") : ASG_NAME;
+            if (StringUtils.isBlank(ASG_NAME))
+                ASG_NAME = populateASGName(getDataCenter(), this.retriever.getInstanceId());
+            logger.info(String.format("REGION set to %s, ASG Name set to %s", getDataCenter(), ASG_NAME));
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -411,9 +406,20 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.getList(CONFIG_AVAILABILITY_RACKS, DEFAULT_AVAILABILITY_RACKS);
     }
 
-    public String getRegion() {
-	return System.getenv("EC2_REGION") == null ? configSource.get(CONFIG_REGION_NAME, "")
-		: System.getenv("EC2_REGION");
+    public String getDataCenter() {
+        String dcEnv = System.getenv("EC2_REGION");
+        String dcMetadata = retriever.getDataCenter();
+        String dcConfig = configSource.get(CONFIG_REGION_NAME, "");
+
+        if (dcEnv != null && !dcEnv.isEmpty()) {
+            return dcEnv;
+        } else if (dcMetadata != null && !dcMetadata.isEmpty()) {
+            return dcMetadata;
+        } else if (dcConfig != null && !dcConfig.isEmpty()) {
+            return dcConfig;
+        }
+
+        return dcMetadata;
     }
 
     @Override
