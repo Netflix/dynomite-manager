@@ -149,6 +149,11 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // VPC
     private static final String CONFIG_INSTANCE_DATA_RETRIEVER = DYNOMITEMANAGER_PRE + ".instanceDataRetriever";
 
+    // RocksDB 
+    private static final String CONFIG_WRITE_BUFFER_SIZE_MB = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.writebuffermb";
+    private static final String CONFIG_MAX_WRITE_BUFFER_NUMBER = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.maxwritebuffernumber";
+    private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.minwritebuffernametomerge";
+        
     // Defaults
     private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
     private final String DEFAULT_SEED_PROVIDER = "florida_provider";
@@ -190,12 +195,17 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String DEFAULT_BACKUP_SCHEDULE = "day";
     private static final int DEFAULT_BACKUP_HOUR = 12;
 
-    // Persistence
+    // Redis
     private static final boolean DEFAULT_PERSISTENCE_ENABLED = false;
     private static final String DEFAULT_PERSISTENCE_TYPE = "aof";
     private static final String DEFAULT_PERSISTENCE_DIR = "/mnt/data/nfredis";
 
-    // Redis compatible
+    // Ardb
+    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128; 
+    private static final int DEFAULT_MAX_WRITE_BUFFER_NUMBER = 16;
+    private static final int DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE = 4;
+    
+    // Redis compatible storage engine
     private static final String DEFAULT_REDIS_COMPATIBLE_ENGINE = "redis";
 
     // AWS Dual Account
@@ -678,6 +688,22 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     public String getVpcId() {
 	return NETWORK_VPC;
     }
+    
+    // RocksDB
+    @Override
+    public int getWriteBufferSize() {
+	return configSource.get(CONFIG_WRITE_BUFFER_SIZE_MB,DEFAULT_WRITE_BUFFER_SIZE_MB);
+    }
+    
+    @Override
+    public int getMaxWriteBufferNumber() {
+	return configSource.get(CONFIG_MAX_WRITE_BUFFER_NUMBER,DEFAULT_MAX_WRITE_BUFFER_NUMBER);
+    }
+    
+    @Override
+    public int getMinWriteBufferToMerge() {
+	return configSource.get(CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE,DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE);
+    }      
 
     @Override
     public String getClassicAWSRoleAssumptionArn() {

@@ -19,215 +19,224 @@ import java.util.List;
  */
 public interface IConfiguration {
 
-	public void initialize();
-
-	/**
-	 * @return Path to the home dir of target application
-	 */
-	public String getAppHome();
+    public void initialize();
+
+    /**
+     * @return Path to the home dir of target application
+     */
+    public String getAppHome();
 
-	/**
-	 * @return Path to target application startup script
-	 */
-	public String getDynomiteStartupScript();
+    /**
+     * @return Path to target application startup script
+     */
+    public String getDynomiteStartupScript();
 
-	/**
-	 * @return Path to target application stop script
-	 */
-	public String getDynomiteStopScript();
+    /**
+     * @return Path to target application stop script
+     */
+    public String getDynomiteStopScript();
 
-	/**
-	 * @return Cluster name
-	 */
-	public String getAppName();
+    /**
+     * @return Cluster name
+     */
+    public String getAppName();
 
-	/**
-	 * @return Zone (or zone for AWS)
-	 */
-	public String getZone();
+    /**
+     * @return Zone (or zone for AWS)
+     */
+    public String getZone();
 
-	/**
-	 * @return List of all RAC used for the cluster
-	 */
-	public List<String> getZones();
+    /**
+     * @return List of all RAC used for the cluster
+     */
+    public List<String> getZones();
 
-	/**
-	 * @return Local hostname
-	 */
-	public String getHostname();
+    /**
+     * @return Local hostname
+     */
+    public String getHostname();
 
-	/**
-	 * @return Get instance name (for AWS)
-	 */
-	public String getInstanceName();
+    /**
+     * @return Get instance name (for AWS)
+     */
+    public String getInstanceName();
 
-	/**
-	 * @return Get the Region name
-	 */
-	public String getRegion();
+    /**
+     * @return Get the Region name
+     */
+    public String getRegion();
 
-	//public void setRegion(String region);
+    // public void setRegion(String region);
 
-	/**
-	 * @return Get the Data Center name (or region for AWS)
-	 */
-	public String getRack();
+    /**
+     * @return Get the Data Center name (or region for AWS)
+     */
+    public String getRack();
 
-	/**
-	 * @return Get the cross account rack if in dual account mode
-	 */
-	public String getCrossAccountRack();
+    /**
+     * @return Get the cross account rack if in dual account mode
+     */
+    public String getCrossAccountRack();
 
-	public List<String> getRacks();
+    public List<String> getRacks();
 
-	/**
-	 * Amazon specific setting to query ASG Membership
-	 */
-	public String getASGName();
+    /**
+     * Amazon specific setting to query ASG Membership
+     */
+    public String getASGName();
 
-	/**
-	 * Get the security group associated with nodes in this cluster
-	 */
-	public String getACLGroupName();
+    /**
+     * Get the security group associated with nodes in this cluster
+     */
+    public String getACLGroupName();
 
-	/**
-	 * @return Get host IP
-	 */
-	public String getHostIP();
+    /**
+     * @return Get host IP
+     */
+    public String getHostIP();
 
-	/**
-	 * @return Bootstrap cluster name (depends on another Cassandra cluster)
-	 */
-	public String getBootClusterName();
+    /**
+     * @return Bootstrap cluster name (depends on another Cassandra cluster)
+     */
+    public String getBootClusterName();
 
-	/**
-	 * @return Get the name of seed provider
-	 */
-	public String getSeedProviderName();
+    /**
+     * @return Get the name of seed provider
+     */
+    public String getSeedProviderName();
 
-	/**
-	 * @return Process Name
-	 */
-	public String getProcessName();
+    /**
+     * @return Process Name
+     */
+    public String getProcessName();
 
-	public String getReadConsistency();
+    public String getReadConsistency();
 
-	public String getWriteConsistency();
+    public String getWriteConsistency();
 
-	public int getPeerListenerPort();
+    public int getPeerListenerPort();
 
-	public int getSecuredPeerListenerPort();
+    public int getSecuredPeerListenerPort();
 
-	public int getListenerPort();
+    public int getListenerPort();
 
-	public String getYamlLocation();
+    public String getYamlLocation();
 
-	public boolean getAutoEjectHosts();
+    public boolean getAutoEjectHosts();
 
-	public String getDistribution();
+    public String getDistribution();
 
-	public String getDynListenPort();
+    public String getDynListenPort();
 
-	public int getGossipInterval();
+    public int getGossipInterval();
 
-	public String getHash();
+    public String getHash();
 
-	public String getClientListenPort();
+    public String getClientListenPort();
 
-	public boolean getPreconnect();
+    public boolean getPreconnect();
 
-	public int getServerRetryTimeout();
+    public int getServerRetryTimeout();
 
-	public int getTimeout();
+    public int getTimeout();
 
-	public String getTokens();
+    public String getTokens();
 
-	public String getMetadataKeyspace();
+    public String getMetadataKeyspace();
 
-	public boolean isMultiRegionedCluster();
+    public boolean isMultiRegionedCluster();
 
-	public String getSecuredOption();
+    public String getSecuredOption();
 
-	public boolean isWarmBootstrap();
+    public boolean isWarmBootstrap();
 
-	public boolean isForceWarm();
+    public boolean isForceWarm();
 
-	public boolean isHealthCheckEnable();
+    public boolean isHealthCheckEnable();
 
-	public int getAllowableBytesSyncDiff();
+    public int getAllowableBytesSyncDiff();
 
-	public int getMaxTimeToBootstrap();
+    public int getMaxTimeToBootstrap();
 
-	/**
-	 * @return the max percentage of system memory to be allocated to the Dynomite fronted data store.
-	 */
-	public int getStorageMemPercent();
+    /**
+     * @return the max percentage of system memory to be allocated to the
+     *         Dynomite fronted data store.
+     */
+    public int getStorageMemPercent();
 
-	public int getMbufSize();
+    public int getMbufSize();
 
-	public int getAllocatedMessages();
+    public int getAllocatedMessages();
 
-	// VPC
-	public boolean isVpc();
+    // VPC
+    public boolean isVpc();
 
-	/**
-	 * @return the VPC id of the running instance.
-	 */
-	public String getVpcId();
+    /**
+     * @return the VPC id of the running instance.
+     */
+    public String getVpcId();
 
-	/*
-	 * @return the Amazon Resource Name (ARN) for EC2 classic.
-	 */
-	public String getClassicAWSRoleAssumptionArn();
+    /*
+     * @return the Amazon Resource Name (ARN) for EC2 classic.
+     */
+    public String getClassicAWSRoleAssumptionArn();
 
-	/*
-	 * @return the Amazon Resource Name (ARN) for VPC.
-	 */
-	public String getVpcAWSRoleAssumptionArn();
+    /*
+     * @return the Amazon Resource Name (ARN) for VPC.
+     */
+    public String getVpcAWSRoleAssumptionArn();
 
-	/*
-	 * @return cross-account deployments
-	 */
-	public boolean isDualAccount();
+    /*
+     * @return cross-account deployments
+     */
+    public boolean isDualAccount();
 
-	// Backup and Restore
+    // Backup and Restore
 
-	public String getBucketName();
+    public String getBucketName();
 
-	public String getBackupLocation();
+    public String getBackupLocation();
 
-	public boolean isBackupEnabled();
+    public boolean isBackupEnabled();
 
-	public boolean isRestoreEnabled();
+    public boolean isRestoreEnabled();
 
-	public String getBackupSchedule();
+    public String getBackupSchedule();
 
-	public int getBackupHour();
+    public int getBackupHour();
 
-	public String getRestoreDate();
+    public String getRestoreDate();
 
-	// Persistence
+    // Persistence
 
-	public String getPersistenceLocation();
+    public String getPersistenceLocation();
 
-	public boolean isPersistenceEnabled();
+    public boolean isPersistenceEnabled();
 
-	public boolean isAof();
+    public boolean isAof();
 
-	// Cassandra
-	public String getCassandraKeyspaceName();
+    // RocksDB
 
-	public int getCassandraThriftPortForAstyanax();
+    public int getWriteBufferSize();
 
-	public String getCommaSeparatedCassandraHostNames();
+    public int getMaxWriteBufferNumber();
 
-	public boolean isEurekaHostSupplierEnabled();
+    public int getMinWriteBufferToMerge();
 
-	// Redis compatible
-	public String getRedisCompatibleEngine();
+    // Cassandra
+    public String getCassandraKeyspaceName();
 
-	// Redis
-	// =====
+    public int getCassandraThriftPortForAstyanax();
 
-	public String getRedisConf();
+    public String getCommaSeparatedCassandraHostNames();
+
+    public boolean isEurekaHostSupplierEnabled();
+
+    // Redis compatible
+    public String getRedisCompatibleEngine();
+
+    // Redis
+    // =====
+
+    public String getRedisConf();
 }
