@@ -19,272 +19,296 @@ import java.util.List;
  */
 public interface IConfiguration {
 
-	public void initialize();
+    public void initialize();
 
-	/**
-	 * @return Path to the home dir of target application
-	 */
-	public String getAppHome();
+    /**
+     * @return Path to the home dir of target application
+     */
+    public String getAppHome();
 
-	/**
-	 * @return Path to target application startup script
-	 */
-	public String getDynomiteStartupScript();
+    /**
+     * @return Path to target application startup script
+     */
+    public String getDynomiteStartupScript();
 
-	/**
-	 * @return Path to target application stop script
-	 */
-	public String getDynomiteStopScript();
+    /**
+     * @return Path to target application stop script
+     */
+    public String getDynomiteStopScript();
 
-	/**
-	 * @return Cluster name
-	 */
-	public String getAppName();
+    /**
+     * @return Cluster name
+     */
+    public String getAppName();
 
-	/**
-	 * @return Zone (or zone for AWS)
-	 */
-	public String getZone();
+    /**
+     * @return Zone (or zone for AWS)
+     */
+    public String getZone();
 
-	/**
-	 * @return List of all RAC used for the cluster
-	 */
-	public List<String> getZones();
+    /**
+     * @return List of all RAC used for the cluster
+     */
+    public List<String> getZones();
 
-	/**
-	 * @return Local hostname
-	 */
-	public String getHostname();
+    /**
+     * @return Local hostname
+     */
+    public String getHostname();
 
-	/**
-	 * @return Get instance name (for AWS)
-	 */
-	public String getInstanceName();
+    /**
+     * @return Get instance name (for AWS)
+     */
+    public String getInstanceName();
 
     /**
      * Get the data center (AWS region).
+     * 
      * @return the data center (AWS region)
      */
     public String getDataCenter();
 
-	//public void setRegion(String region);
+    // public void setRegion(String region);
 
     /**
      * Get the rack (AWS AZ).
+     * 
      * @return the rack (AWS AZ)
      */
     public String getRack();
 
-	/**
-	 * @return Get the cross account rack if in dual account mode
-	 */
-	public String getCrossAccountRack();
+    /**
+     * @return Get the cross account rack if in dual account mode
+     */
+    public String getCrossAccountRack();
 
-	public List<String> getRacks();
-
-	/**
-	 * Amazon specific setting to query ASG Membership
-	 */
-	public String getASGName();
-
-	/**
-	 * Get the security group associated with nodes in this cluster
-	 */
-	public String getACLGroupName();
-
-	/**
-	 * @return Get host IP
-	 */
-	public String getHostIP();
-
-	/**
-	 * @return Bootstrap cluster name (depends on another Cassandra cluster)
-	 */
-	public String getBootClusterName();
-
-	/**
-	 * @return Get the name of seed provider
-	 */
-	public String getSeedProviderName();
-
-	/**
-	 * @return Process Name
-	 */
-	public String getProcessName();
-
-	public String getReadConsistency();
-
-	public String getWriteConsistency();
-
-	public int getPeerListenerPort();
-
-	public int getSecuredPeerListenerPort();
-
-	public int getListenerPort();
-
-	public String getYamlLocation();
-
-	public boolean getAutoEjectHosts();
-
-	public String getDistribution();
-
-	public String getDynListenPort();
-
-	public int getGossipInterval();
-
-	public String getHash();
-
-	public String getClientListenPort();
-
-	public boolean getPreconnect();
-
-	public int getServerRetryTimeout();
-
-	public int getTimeout();
-
-	public String getTokens();
-
-	public String getMetadataKeyspace();
-
-	public boolean isMultiRegionedCluster();
-
-	public String getSecuredOption();
-
-	public boolean isWarmBootstrap();
-
-	public boolean isForceWarm();
-
-	public boolean isHealthCheckEnable();
-
-	public int getAllowableBytesSyncDiff();
-
-	public int getMaxTimeToBootstrap();
-
-	/**
-	 * @return the max percentage of system memory to be allocated to the Dynomite fronted data store.
-	 */
-	public int getStorageMemPercent();
-
-	public int getMbufSize();
-
-	public int getAllocatedMessages();
-
-	// VPC
-	public boolean isVpc();
-
-	/**
-	 * @return the VPC id of the running instance.
-	 */
-	public String getVpcId();
-
-	/*
-	 * @return the Amazon Resource Name (ARN) for EC2 classic.
-	 */
-	public String getClassicAWSRoleAssumptionArn();
-
-	/*
-	 * @return the Amazon Resource Name (ARN) for VPC.
-	 */
-	public String getVpcAWSRoleAssumptionArn();
-
-	/*
-	 * @return cross-account deployments
-	 */
-	public boolean isDualAccount();
-
-	// Backup and Restore
-
-	public String getBucketName();
-
-	public String getBackupLocation();
-
-	public boolean isBackupEnabled();
-
-	public boolean isRestoreEnabled();
-
-	public String getBackupSchedule();
-
-	public int getBackupHour();
-
-	public String getRestoreDate();
-
-	// Cassandra
-	public String getCassandraKeyspaceName();
-
-	public int getCassandraThriftPortForAstyanax();
-
-	public String getCommaSeparatedCassandraHostNames();
-
-	public boolean isEurekaHostSupplierEnabled();
-
-	// Redis
-	// =====
-
-	/**
-	 * Get the full path to the redis.conf configuration file.
-	 * Netflix:    /apps/nfredis/conf/redis.conf
-	 * DynomiteDB: /etc/dynomitedb/redis.conf
-	 * @return the {@link String} full path to the redis.conf configuration file
-	 */
-	public String getRedisConf();
+    public List<String> getRacks();
 
     /**
-	 * Get the full path to the Redis init start script, including any arguments.
-	 * @return the full path of the Redis init start script
+     * Amazon specific setting to query ASG Membership
+     */
+    public String getASGName();
+
+    /**
+     * Get the security group associated with nodes in this cluster
+     */
+    public String getACLGroupName();
+
+    /**
+     * @return Get host IP
+     */
+    public String getHostIP();
+
+    /**
+     * @return Bootstrap cluster name (depends on another Cassandra cluster)
+     */
+    public String getBootClusterName();
+
+    /**
+     * @return Get the name of seed provider
+     */
+    public String getSeedProviderName();
+
+    /**
+     * @return Process Name
+     */
+    public String getProcessName();
+
+    public String getReadConsistency();
+
+    public String getWriteConsistency();
+
+    public int getPeerListenerPort();
+
+    public int getSecuredPeerListenerPort();
+
+    public int getListenerPort();
+
+    public String getYamlLocation();
+
+    public boolean getAutoEjectHosts();
+
+    public String getDistribution();
+
+    public String getDynListenPort();
+
+    public int getGossipInterval();
+
+    public String getHash();
+
+    public String getClientListenPort();
+
+    public boolean getPreconnect();
+
+    public int getServerRetryTimeout();
+
+    public int getTimeout();
+
+    public String getTokens();
+
+    public String getMetadataKeyspace();
+
+    public boolean isMultiRegionedCluster();
+
+    public String getSecuredOption();
+
+    public boolean isWarmBootstrap();
+
+    public boolean isForceWarm();
+
+    public boolean isHealthCheckEnable();
+
+    public int getAllowableBytesSyncDiff();
+
+    public int getMaxTimeToBootstrap();
+
+    /**
+     * @return the max percentage of system memory to be allocated to the
+     *         Dynomite fronted data store.
+     */
+    public int getStorageMemPercent();
+
+    public int getMbufSize();
+
+    public int getAllocatedMessages();
+
+    // VPC
+    public boolean isVpc();
+
+    /**
+     * @return the VPC id of the running instance.
+     */
+    public String getVpcId();
+
+    /*
+     * @return the Amazon Resource Name (ARN) for EC2 classic.
+     */
+    public String getClassicAWSRoleAssumptionArn();
+
+    /*
+     * @return the Amazon Resource Name (ARN) for VPC.
+     */
+    public String getVpcAWSRoleAssumptionArn();
+
+    /*
+     * @return cross-account deployments
+     */
+    public boolean isDualAccount();
+
+    // Backup and Restore
+
+    public String getBucketName();
+
+    public String getBackupLocation();
+
+    public boolean isBackupEnabled();
+
+    public boolean isRestoreEnabled();
+
+    public String getBackupSchedule();
+
+    public int getBackupHour();
+
+    public String getRestoreDate();
+
+    // Cassandra
+    public String getCassandraKeyspaceName();
+
+    public int getCassandraThriftPortForAstyanax();
+
+    public String getCommaSeparatedCassandraHostNames();
+
+    public boolean isEurekaHostSupplierEnabled();
+
+    // Redis
+    // =====
+
+    /**
+     * Get the full path to the redis.conf configuration file. Netflix:
+     * /apps/nfredis/conf/redis.conf DynomiteDB: /etc/dynomitedb/redis.conf
+     * 
+     * @return the {@link String} full path to the redis.conf configuration file
+     */
+    public String getRedisConf();
+
+    /**
+     * Get the full path to the Redis init start script, including any
+     * arguments.
+     * 
+     * @return the full path of the Redis init start script
      */
     public String getRedisInitStart();
 
-	/**
-	 * Get the full path to the Redis init stop script, including any arguments.
-	 * @return the full path of the Redis init stop script
-	 */
+    /**
+     * Get the full path to the Redis init stop script, including any arguments.
+     * 
+     * @return the full path of the Redis init stop script
+     */
     public String getRedisInitStop();
 
-	/**
-	 * Determines whether or not Redis will save data to disk.
-	 * @return true if Redis should persist in-memory data to disk or false if Redis should only store data in-memory
-	 */
-	public boolean isRedisPersistenceEnabled();
+    /**
+     * Determines whether or not Redis will save data to disk.
+     * 
+     * @return true if Redis should persist in-memory data to disk or false if
+     *         Redis should only store data in-memory
+     */
+    public boolean isRedisPersistenceEnabled();
 
-	/**
-     * Get the full path to the directory where Redis stores its AOF or RDB data files.
+    /**
+     * Get the full path to the directory where Redis stores its AOF or RDB data
+     * files.
+     * 
      * @return the full path to the directory where Redis stores its data files
      */
     public String getRedisDataDir();
 
-	/**
-	 * Checks if Redis append-only file (AOF) persistence is enabled.
-	 * @return true to indicate that AOF persistence is enabled or false to indicate that RDB persistence is enabled
-	 */
-	public boolean isRedisAofEnabled();
-
-	/**
-	 * Get the type of Redis compatible (RESP) backend server.
-	 * @return RESP backend server (redis, ardb-rocksdb)
+    /**
+     * Checks if Redis append-only file (AOF) persistence is enabled.
+     * 
+     * @return true to indicate that AOF persistence is enabled or false to
+     *         indicate that RDB persistence is enabled
      */
-	public String getRedisCompatibleServer();
+    public boolean isRedisAofEnabled();
 
-	// ARDB RocksDB
-	// ============
+    /**
+     * Get the type of Redis compatible (RESP) backend server.
+     * 
+     * @return RESP backend server (redis, ardb-rocksdb)
+     */
+    public String getRedisCompatibleServer();
 
-	/**
-	 * Get the full path to the rocksdb.conf configuration file.
-	 * Netflix:    /apps/ardb/conf/rocksdb.conf
-	 * DynomiteDB: /etc/dynomitedb/rocksdb.conf
-	 * @return the {@link String} full path to the rocksdb.conf configuration file
-	 */
-	public String getArdbRocksDBConf();
+    // ARDB RocksDB
+    // ============
 
-	/**
-	 * Get the full path to the ARDB RocksDB init start script, including any arguments.
-	 * @return the full path of the ARDB RocksDB init start script
-	 */
-	public String getArdbRocksDBInitStart();
+    /**
+     * Get the full path to the rocksdb.conf configuration file. Netflix:
+     * /apps/ardb/conf/rocksdb.conf DynomiteDB: /etc/dynomitedb/rocksdb.conf
+     * 
+     * @return the {@link String} full path to the rocksdb.conf configuration
+     *         file
+     */
+    public String getArdbRocksDBConf();
 
-	/**
-	 * Get the full path to the ARDB RocksDB init stop script, including any arguments.
-	 * @return the full path of the ARDB RocksDB init stop script
-	 */
-	public String getArdbRocksDBInitStop();
+    /**
+     * Get the full path to the ARDB RocksDB init start script, including any
+     * arguments.
+     * 
+     * @return the full path of the ARDB RocksDB init start script
+     */
+    public String getArdbRocksDBInitStart();
+
+    /**
+     * Get the full path to the ARDB RocksDB init stop script, including any
+     * arguments.
+     * 
+     * @return the full path of the ARDB RocksDB init stop script
+     */
+    public String getArdbRocksDBInitStop();
+        
+    public int getWriteBufferSize();
+    
+    public int getMaxWriteBufferNumber();
+    
+    public int getMinWriteBufferToMerge();
 
 }

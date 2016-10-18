@@ -550,7 +550,7 @@ public class RedisStorageProxy implements IStorageProxy {
 	long storeMaxMem = getStoreMaxMem();
 
 	if (config.getRedisCompatibleServer().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB_ROCKSDB)) {
-	    ArdbRocksDbRedisCompatible.updateConfiguration(storeMaxMem);
+	    ArdbRocksDbRedisCompatible.updateConfiguration(storeMaxMem, config);
 	} else {
 	    // Updating the file.
 	    logger.info("Updating redis.conf: " + config.getRedisConf());

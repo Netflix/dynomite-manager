@@ -143,6 +143,11 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // VPC
     private static final String CONFIG_INSTANCE_DATA_RETRIEVER = DYNOMITEMANAGER_PRE + ".instanceDataRetriever";
 
+    // RocksDB 
+    private static final String CONFIG_WRITE_BUFFER_SIZE_MB = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.writebuffermb";
+    private static final String CONFIG_MAX_WRITE_BUFFER_NUMBER = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.maxwritebuffernumber";
+    private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.minwritebuffernametomerge";
+    
     // Defaults
     private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
     private final String DEFAULT_SEED_PROVIDER = "florida_provider";
@@ -183,6 +188,11 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String DEFAULT_RESTORE_TIME = "20101010";
     private static final String DEFAULT_BACKUP_SCHEDULE = "day";
     private static final int DEFAULT_BACKUP_HOUR = 12;
+    
+    // Ardb
+    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128; 
+    private static final int DEFAULT_MAX_WRITE_BUFFER_NUMBER = 16;
+    private static final int DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE = 4;
 
     // AWS Dual Account
     private static final boolean DEFAULT_DUAL_ACCOUNT = false;
@@ -642,8 +652,23 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     }
 
     // VPC
+    @Override
     public String getVpcId() {
 	return NETWORK_VPC;
+    }
+    
+    // RocksDB
+    @Override
+    public int getWriteBufferSize() {
+	return configSource.get(CONFIG_WRITE_BUFFER_SIZE_MB,DEFAULT_WRITE_BUFFER_SIZE_MB);
+    }
+    
+    public int getMaxWriteBufferNumber() {
+	return configSource.get(CONFIG_MAX_WRITE_BUFFER_NUMBER,DEFAULT_MAX_WRITE_BUFFER_NUMBER);
+    }
+    
+    public int getMinWriteBufferToMerge() {
+	return configSource.get(CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE,DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE);
     }
 
     @Override
