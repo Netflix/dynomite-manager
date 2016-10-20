@@ -385,4 +385,19 @@ public class SimpleTestConfiguration implements IConfiguration {
 		return null;
 	}
 
+	@Override
+	public int getWriteBufferSize() {
+	    return 0;
+	}
+
+	@Override
+	public int getMaxWriteBufferNumber() {
+	    return 0;
+	}
+
+	@Override
+	public int getMinWriteBufferToMerge() {
+	    return 0;
+	}
+
 }
