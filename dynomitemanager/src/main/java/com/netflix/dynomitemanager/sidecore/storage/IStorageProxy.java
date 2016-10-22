@@ -14,14 +14,27 @@ package com.netflix.dynomitemanager.sidecore.storage;
 
 import java.io.IOException;
 
+
 public interface IStorageProxy {
 
+    /**
+     * @return Storage is alive
+     */
     boolean isAlive();
-
+        
+    /**
+     * @return Getting the up time of the storage
+     */
     long getUptime();
-
-    Bootstrap warmUpStorage(String[] peers);
-
+    
+    /**
+     * @return The status of the warm up
+     */
+    Bootstrap warmUpStorage(String[] peers);    
+    
+    /**
+     * @return Turn slave to master
+     */
     boolean resetStorage();
 
     boolean takeSnapshot();
@@ -40,12 +53,11 @@ public interface IStorageProxy {
     
     String getStopScript();
     
-    public String getIpAddress();
+    String getIpAddress();
     
-    public int getPort();
+    int getPort();
     
-    public long getStoreMaxMem();
+    long getStoreMaxMem();
     
-    public long getTotalAvailableSystemMemory();
-
+    long getTotalAvailableSystemMemory();
 }

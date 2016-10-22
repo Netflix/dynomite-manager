@@ -1,0 +1,9 @@
+plugins {
+  id 'jetty'
+}
+
+apply plugin: 'war'
+
+dependencies {
+    compile project(':dynomitemanager')
+}
