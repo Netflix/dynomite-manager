@@ -103,17 +103,15 @@ public class RedisStorageProxy implements IStorageProxy {
      */
     private void startPeerSync(String peer, int port) {
 	boolean isDone = false;
-	Jedis peerJedis = JedisUtils.connect(peer, port);
-
+	localRedisConnect();
+	
 	while (!isDone) {
 	    try {
 		// only sync from one peer for now
-		isDone = (peerJedis.slaveof(peer, port) != null);
+		isDone = (this.localJedis.slaveof(peer, port) != null);
 		sleeper.sleepQuietly(1000);
-	    } catch (JedisConnectionException e) {
-		peerJedis = JedisUtils.connect(peer, port);
 	    } catch (Exception e) {
-		peerJedis = JedisUtils.connect(peer, port);
+	        localRedisConnect();
 	    }
 	}
     }
