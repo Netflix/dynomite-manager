@@ -275,7 +275,7 @@ public interface IConfiguration {
      * 
      * @return RESP backend server (redis, ardb-rocksdb)
      */
-    public String getRedisCompatibleServer();
+    public String getRedisCompatibleEngine();
 
     // ARDB RocksDB
     // ============

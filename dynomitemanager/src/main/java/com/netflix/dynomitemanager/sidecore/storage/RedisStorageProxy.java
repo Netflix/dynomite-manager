@@ -547,9 +547,11 @@ public class RedisStorageProxy implements IStorageProxy {
 
 	long storeMaxMem = getStoreMaxMem();
 
-	if (config.getRedisCompatibleServer().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB_ROCKSDB)) {
-	    ArdbRocksDbRedisCompatible.updateConfiguration(storeMaxMem, config);
-	} else {
+        if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
+            ArdbRocksDbRedisCompatible rocksDb = new ArdbRocksDbRedisCompatible(storeMaxMem,
+                    config.getWriteBufferSize(), config.getMaxWriteBufferNumber(), config.getMinWriteBufferToMerge());
+            rocksDb.updateConfiguration(ArdbRocksDbRedisCompatible.DYNO_ARDB_CONF_PATH);
+        } else {
 	    // Updating the file.
 	    logger.info("Updating redis.conf: " + config.getRedisConf());
 	    Path confPath = Paths.get(config.getRedisConf());
@@ -687,7 +689,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
     @Override
     public String getStartupScript() {
-        if (config.getRedisCompatibleServer().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB_ROCKSDB)) {
+        if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
             return config.getArdbRocksDBInitStart();
         }
         return config.getRedisInitStart();
@@ -695,7 +697,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
     @Override
     public String getStopScript() {
-        if (config.getRedisCompatibleServer().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB_ROCKSDB)) {
+        if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
             return config.getArdbRocksDBInitStop();
         }
         return config.getRedisInitStop();
