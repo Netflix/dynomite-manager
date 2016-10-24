@@ -347,7 +347,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getRedisCompatibleServer() {
+	public String getRedisCompatibleEngine() {
 		// TODO Auto-generated method stub
 		return null;
 	}

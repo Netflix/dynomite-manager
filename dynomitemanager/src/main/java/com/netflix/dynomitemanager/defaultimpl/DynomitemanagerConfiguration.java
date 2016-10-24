@@ -763,7 +763,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getRedisCompatibleServer() {
+    public String getRedisCompatibleEngine() {
         final String DEFAULT_REDIS_COMPATIBLE_SERVER = "redis";
         final String CONFIG_DYNO_REDIS_COMPATIBLE_SERVER = DYNOMITEMANAGER_PRE + ".dyno.redis.compatible.engine";
         return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_SERVER, DEFAULT_REDIS_COMPATIBLE_SERVER);

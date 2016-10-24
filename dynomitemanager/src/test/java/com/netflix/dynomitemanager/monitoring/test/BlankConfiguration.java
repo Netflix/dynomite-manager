@@ -346,7 +346,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getRedisCompatibleServer() {
+    public String getRedisCompatibleEngine() {
 	return null;
     }
 
