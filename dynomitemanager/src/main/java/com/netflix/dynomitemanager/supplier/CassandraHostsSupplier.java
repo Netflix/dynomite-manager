@@ -27,13 +27,13 @@ import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
  * Use the {@code DM_CASSANDRA_CLUSTER_SEEDS} environment variable to provide a list of Cassandra hosts that contain the
  * complete Dynomite topology.
  */
-public class LocalHostsSupplier implements HostSupplier {
+public class CassandraHostsSupplier implements HostSupplier {
 
 	private static final String errMsg = "DM_CASSANDRA_CLUSTER_SEEDS cannot be empty. It must contain one or more Cassandra hosts.";
 	private IConfiguration config;
 
 	@Inject
-	public LocalHostsSupplier(IConfiguration config) {
+	public CassandraHostsSupplier(IConfiguration config) {
 		this.config = config;
 	}
 
@@ -53,8 +53,7 @@ public class LocalHostsSupplier implements HostSupplier {
 			if (seeds == null || "".equals(seeds))
 				throw new RuntimeException(errMsg);
 
-			List<String> cassHostnames = new ArrayList<String>(
-					Arrays.asList(StringUtils.split(seeds, ",")));
+			List<String> cassHostnames = new ArrayList<String>(Arrays.asList(StringUtils.split(seeds, ",")));
 
 			if (cassHostnames.size() == 0)
 				throw new RuntimeException(errMsg);
