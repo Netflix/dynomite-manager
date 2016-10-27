@@ -176,11 +176,6 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getMetadataKeyspace() {
-		return null;
-	}
-
-	@Override
 	public int getMbufSize() {
 		return 0;
 	}

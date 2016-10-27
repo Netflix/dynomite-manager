@@ -93,7 +93,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     private static final String CONFIG_DYN_PROCESS_NAME = DYNOMITEMANAGER_PRE + ".dyno.processname";
     private static final String CONFIG_YAML_LOCATION = DYNOMITEMANAGER_PRE + ".yamlLocation";
-    private static final String CONFIG_METADATA_KEYSPACE = DYNOMITEMANAGER_PRE + ".metadata.keyspace";
     private static final String CONFIG_SECURED_OPTION = DYNOMITEMANAGER_PRE + ".secured.option";
     private static final String CONFIG_DYNO_AUTO_EJECT_HOSTS = DYNOMITEMANAGER_PRE + ".auto.eject.hosts";
 
@@ -143,11 +142,11 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // VPC
     private static final String CONFIG_INSTANCE_DATA_RETRIEVER = DYNOMITEMANAGER_PRE + ".instanceDataRetriever";
 
-    // RocksDB 
+    // RocksDB
     private static final String CONFIG_WRITE_BUFFER_SIZE_MB = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.writebuffermb";
     private static final String CONFIG_MAX_WRITE_BUFFER_NUMBER = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.maxwritebuffernumber";
     private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.minwritebuffernametomerge";
-    
+
     // Defaults
     private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
     private final String DEFAULT_SEED_PROVIDER = "florida_provider";
@@ -188,9 +187,9 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String DEFAULT_RESTORE_TIME = "20101010";
     private static final String DEFAULT_BACKUP_SCHEDULE = "day";
     private static final int DEFAULT_BACKUP_HOUR = 12;
-    
+
     // Ardb
-    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128; 
+    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
     private static final int DEFAULT_MAX_WRITE_BUFFER_NUMBER = 16;
     private static final int DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE = 4;
 
@@ -364,12 +363,12 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     @Override
     public String getAppName() {
-	String clusterName = System.getenv("NETFLIX_APP");
+        String clusterName = System.getenv("NETFLIX_APP");
 
-	if (StringUtils.isBlank(clusterName))
-	    return configSource.get(CONFIG_CLUSTER_NAME, DEFAULT_CLUSTER_NAME);
+        if (StringUtils.isBlank(clusterName))
+            return configSource.get(CONFIG_CLUSTER_NAME, DEFAULT_CLUSTER_NAME);
 
-	return clusterName;
+        return clusterName;
     }
 
     @Override
@@ -539,10 +538,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_REQ_TIMEOUT_NAME, DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC);
     }
 
-    public String getMetadataKeyspace() {
-	return configSource.get(CONFIG_METADATA_KEYSPACE, DEFAULT_METADATA_KEYSPACE);
-    }
-
     @Override
     public String getTokens() {
 	// TODO Auto-generated method stub
@@ -656,17 +651,17 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     public String getVpcId() {
 	return NETWORK_VPC;
     }
-    
+
     // RocksDB
     @Override
     public int getWriteBufferSize() {
 	return configSource.get(CONFIG_WRITE_BUFFER_SIZE_MB,DEFAULT_WRITE_BUFFER_SIZE_MB);
     }
-    
+
     public int getMaxWriteBufferNumber() {
 	return configSource.get(CONFIG_MAX_WRITE_BUFFER_NUMBER,DEFAULT_MAX_WRITE_BUFFER_NUMBER);
     }
-    
+
     public int getMinWriteBufferToMerge() {
 	return configSource.get(CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE,DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE);
     }

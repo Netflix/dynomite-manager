@@ -63,7 +63,7 @@ public interface IConfiguration {
 
     /**
      * Get the data center (AWS region).
-     * 
+     *
      * @return the data center (AWS region)
      */
     public String getDataCenter();
@@ -72,7 +72,7 @@ public interface IConfiguration {
 
     /**
      * Get the rack (AWS AZ).
-     * 
+     *
      * @return the rack (AWS AZ)
      */
     public String getRack();
@@ -145,8 +145,6 @@ public interface IConfiguration {
     public int getTimeout();
 
     public String getTokens();
-
-    public String getMetadataKeyspace();
 
     public boolean isMultiRegionedCluster();
 
@@ -226,7 +224,7 @@ public interface IConfiguration {
     /**
      * Get the full path to the redis.conf configuration file. Netflix:
      * /apps/nfredis/conf/redis.conf DynomiteDB: /etc/dynomitedb/redis.conf
-     * 
+     *
      * @return the {@link String} full path to the redis.conf configuration file
      */
     public String getRedisConf();
@@ -234,21 +232,21 @@ public interface IConfiguration {
     /**
      * Get the full path to the Redis init start script, including any
      * arguments.
-     * 
+     *
      * @return the full path of the Redis init start script
      */
     public String getRedisInitStart();
 
     /**
      * Get the full path to the Redis init stop script, including any arguments.
-     * 
+     *
      * @return the full path of the Redis init stop script
      */
     public String getRedisInitStop();
 
     /**
      * Determines whether or not Redis will save data to disk.
-     * 
+     *
      * @return true if Redis should persist in-memory data to disk or false if
      *         Redis should only store data in-memory
      */
@@ -257,14 +255,14 @@ public interface IConfiguration {
     /**
      * Get the full path to the directory where Redis stores its AOF or RDB data
      * files.
-     * 
+     *
      * @return the full path to the directory where Redis stores its data files
      */
     public String getRedisDataDir();
 
     /**
      * Checks if Redis append-only file (AOF) persistence is enabled.
-     * 
+     *
      * @return true to indicate that AOF persistence is enabled or false to
      *         indicate that RDB persistence is enabled
      */
@@ -272,7 +270,7 @@ public interface IConfiguration {
 
     /**
      * Get the type of Redis compatible (RESP) backend server.
-     * 
+     *
      * @return RESP backend server (redis, ardb-rocksdb)
      */
     public String getRedisCompatibleEngine();
@@ -283,7 +281,7 @@ public interface IConfiguration {
     /**
      * Get the full path to the rocksdb.conf configuration file. Netflix:
      * /apps/ardb/conf/rocksdb.conf DynomiteDB: /etc/dynomitedb/rocksdb.conf
-     * 
+     *
      * @return the {@link String} full path to the rocksdb.conf configuration
      *         file
      */
@@ -292,7 +290,7 @@ public interface IConfiguration {
     /**
      * Get the full path to the ARDB RocksDB init start script, including any
      * arguments.
-     * 
+     *
      * @return the full path of the ARDB RocksDB init start script
      */
     public String getArdbRocksDBInitStart();
@@ -300,15 +298,15 @@ public interface IConfiguration {
     /**
      * Get the full path to the ARDB RocksDB init stop script, including any
      * arguments.
-     * 
+     *
      * @return the full path of the ARDB RocksDB init stop script
      */
     public String getArdbRocksDBInitStop();
-        
+
     public int getWriteBufferSize();
-    
+
     public int getMaxWriteBufferNumber();
-    
+
     public int getMinWriteBufferToMerge();
 
 }
