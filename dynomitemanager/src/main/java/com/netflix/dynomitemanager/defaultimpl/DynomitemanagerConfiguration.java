@@ -691,7 +691,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     @Override
     public int getCassandraThriftPortForAstyanax() {
-	return configSource.get(CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
+        return configSource.get(CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
     }
 
     @Override

@@ -50,8 +50,8 @@ public class CassandraHostsSupplier implements HostSupplier {
 		if (bootCluster == null)
 			bootCluster = "";
 
+        // This condition will always be true at runtime. The else condition is only used by a unit test.
 		if (bootCluster.equals(clusterName)) {
-
 			String seeds = System.getenv("DM_CASSANDRA_CLUSTER_SEEDS");
 
             if (seeds == null || "".equals(seeds)) {
@@ -68,10 +68,11 @@ public class CassandraHostsSupplier implements HostSupplier {
 				throw new RuntimeException(errMsg);
 
 			for (String cassHost : cassHostnames) {
-				hosts.add(new Host(cassHost, 9160));
+				hosts.add(new Host(cassHost, config.getCassandraThriftPortForAstyanax()));
 			}
-
 		} else {
+            // This branch will never be reached in production. It is only used by CassandraHostsSupplierTest.
+            // TODO: Remove this condition and rewrite the test.
 			hosts.add(new Host("127.0.0.1", 9160).setRack("localdc"));
 		}
 
