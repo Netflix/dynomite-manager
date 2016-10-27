@@ -22,7 +22,8 @@ import java.util.Map;
 public interface IAppsInstanceFactory {
 
 	/**
-	 * Return a list of all Dynomite server nodes registered.
+	 * Return a list of all Dynomite server nodes. This is the static list of cluster nodes (i.e. the complete topology)
+     * stored in a database (such as Cassandra).
 	 * @param appName the cluster name
 	 * @return a list of all nodes in {@code appName}
 	 */
@@ -44,18 +45,20 @@ public interface IAppsInstanceFactory {
 	 */
 	public AppsInstance getInstance(String appName, String dc, int id);
 
-	/**
-	 * Create/Register an instance of the server with its info.
-	 * @param app
-	 * @param id
-	 * @param instanceID
-	 * @param hostname
-	 * @param ip
-	 * @param rac
-	 * @param volumes
-	 * @param token
-	 * @return the new node
-	 */
+    /**
+     * Insert (create/register) this instance in a database. The database (ex. Cassandra) records the entire Dynomite
+     * cluster topology. This method essentially registers this instance as a member of the Dynomite cluster.
+     * @param app
+     * @param id
+     * @param instanceID
+     * @param hostname
+     * @param ip
+     * @param rac
+     * @param volumes
+     * @param token
+     * @param datacenter
+     * @return the new node
+     */
 	public AppsInstance create(String app, int id, String instanceID, String hostname, String ip, String rac,
 			Map<String, Object> volumes, String token, String datacenter);
 

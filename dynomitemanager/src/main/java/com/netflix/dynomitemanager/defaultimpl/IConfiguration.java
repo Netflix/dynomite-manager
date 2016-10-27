@@ -37,7 +37,9 @@ public interface IConfiguration {
     public String getDynomiteStopScript();
 
     /**
-     * @return Cluster name
+     * Get the cluster name that is saved in tokens.appId in Cassandra. Cluster name is used to group Dynomite nodes
+     * that are part of the same cluster.
+     * @return the cluster name
      */
     public String getAppName();
 
@@ -90,7 +92,8 @@ public interface IConfiguration {
     public String getASGName();
 
     /**
-     * Get the security group associated with nodes in this cluster
+     * Get the AWS Security Group (SG) assigned to the Dynomite cluster nodes.
+     * @return the AWS Security Group
      */
     public String getACLGroupName();
 
@@ -100,7 +103,9 @@ public interface IConfiguration {
     public String getHostIP();
 
     /**
-     * @return Bootstrap cluster name (depends on another Cassandra cluster)
+     * Get the Cassandra cluster name for the topology database (i.e. the database that stores the complete Dynomite
+     * cluster topology).
+     * @return the Cassandra cluster name for the topology database
      */
     public String getBootClusterName();
 
