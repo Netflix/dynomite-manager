@@ -22,14 +22,18 @@ import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 import com.netflix.astyanax.connectionpool.Host;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
+ * Get a list of  Cassandra hosts that contain the complete Dynomite topology.
+ *
  * Use the {@code DM_CASSANDRA_CLUSTER_SEEDS} environment variable to provide a list of Cassandra hosts that contain the
- * complete Dynomite topology.
  */
 public class CassandraHostsSupplier implements HostSupplier {
+    private static final Logger logger = LoggerFactory.getLogger(CassandraHostsSupplier.class);
 
-	private static final String errMsg = "DM_CASSANDRA_CLUSTER_SEEDS cannot be empty. It must contain one or more Cassandra hosts.";
+	private static final String errMsg = "No Cassandra hosts were provided. Use DM_CASSANDRA_CLUSTER_SEEDS or configuration property.";
 	private IConfiguration config;
 
 	@Inject
@@ -49,6 +53,11 @@ public class CassandraHostsSupplier implements HostSupplier {
 		if (bootCluster.equals(clusterName)) {
 
 			String seeds = System.getenv("DM_CASSANDRA_CLUSTER_SEEDS");
+
+            if (seeds == null || "".equals(seeds)) {
+                logger.info("DM_CASSANDRA_CLUSTER_SEEDS was empty. Getting configuration property.");
+                seeds = config.getCassandraHostNames();
+            }
 
 			if (seeds == null || "".equals(seeds))
 				throw new RuntimeException(errMsg);

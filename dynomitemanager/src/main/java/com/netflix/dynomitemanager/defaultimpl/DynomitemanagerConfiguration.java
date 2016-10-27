@@ -102,8 +102,8 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_BOOTCLUSTER_NAME = DYNOMITEMANAGER_PRE + ".bootcluster";
     private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
     private static final String CONFIG_CASSANDRA_THRIFT_PORT = DYNOMITEMANAGER_PRE + ".cassandra.thrift.port";
-    private static final String CONFIG_COMMA_SEPARATED_CASSANDRA_HOSTNAMES = DYNOMITEMANAGER_PRE
-	    + ".cassandra.comma.separated.hostnames";
+    private static final String CONFIG_CASSANDRA_HOSTNAMES = DYNOMITEMANAGER_PRE
+            + ".cassandra.comma.separated.hostnames";
 
     // Eureka
     private static final String CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED = DYNOMITEMANAGER_PRE
@@ -216,7 +216,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String DEFAULT_BOOTCLUSTER_NAME = "cass_dyno";
     private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
     private static final String DEFAULT_CASSANDRA_KEYSPACE_NAME = "dyno_bootstrap";
-    private static final String DEFAULT_COMMA_SEPARATED_CASSANDRA_HOSTNAMES = "127.0.0.1";
+    private static final String DEFAULT_CASSANDRA_HOSTNAMES = "127.0.0.1";
     private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
 
     // = instance identity meta data
@@ -695,9 +695,8 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getCommaSeparatedCassandraHostNames() {
-	return configSource.get(CONFIG_COMMA_SEPARATED_CASSANDRA_HOSTNAMES,
-		DEFAULT_COMMA_SEPARATED_CASSANDRA_HOSTNAMES);
+    public String getCassandraHostNames() {
+        return configSource.get(CONFIG_CASSANDRA_HOSTNAMES, DEFAULT_CASSANDRA_HOSTNAMES);
     }
 
     @Override

@@ -215,11 +215,18 @@ public interface IConfiguration {
     public String getRestoreDate();
 
     // Cassandra
+    // =========
+    // Cassandra can be used to store the complete Dynomite cluster topology.
+
     public String getCassandraKeyspaceName();
 
     public int getCassandraThriftPortForAstyanax();
 
-    public String getCommaSeparatedCassandraHostNames();
+    /**
+     * Get a comma separated list of Cassandra hostnames.
+     * @return a comma separated list of Cassandra hostnames or IP address
+     */
+    public String getCassandraHostNames();
 
     public boolean isEurekaHostSupplierEnabled();
 

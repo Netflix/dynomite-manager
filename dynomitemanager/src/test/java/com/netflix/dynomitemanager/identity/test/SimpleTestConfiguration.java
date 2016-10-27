@@ -226,7 +226,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getCommaSeparatedCassandraHostNames() {
+	public String getCassandraHostNames() {
 		return "localhost";
 	}
 

@@ -226,7 +226,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getCommaSeparatedCassandraHostNames() {
+    public String getCassandraHostNames() {
 	return null;
     }
 
