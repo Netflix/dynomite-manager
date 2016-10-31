@@ -27,16 +27,6 @@ public interface IConfiguration {
     public String getAppHome();
 
     /**
-     * @return Path to target application startup script
-     */
-    public String getDynomiteStartupScript();
-
-    /**
-     * @return Path to target application stop script
-     */
-    public String getDynomiteStopScript();
-
-    /**
      * Get the cluster name that is saved in tokens.appId in Cassandra. Cluster name is used to group Dynomite nodes
      * that are part of the same cluster.
      * @return the cluster name
@@ -119,10 +109,6 @@ public interface IConfiguration {
      */
     public String getProcessName();
 
-    public String getReadConsistency();
-
-    public String getWriteConsistency();
-
     public int getPeerListenerPort();
 
     public int getSecuredPeerListenerPort();
@@ -170,10 +156,6 @@ public interface IConfiguration {
      *         Dynomite fronted data store.
      */
     public int getStorageMemPercent();
-
-    public int getMbufSize();
-
-    public int getAllocatedMessages();
 
     // VPC
     public boolean isVpc();

@@ -86,11 +86,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getWriteConsistency() {
-	return null;
-    }
-
-    @Override
     public String getVpcId() {
 	return null;
     }
@@ -141,11 +136,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getReadConsistency() {
-	return null;
-    }
-
-    @Override
     public List<String> getRacks() {
 	return null;
     }
@@ -172,11 +162,6 @@ public class BlankConfiguration implements IConfiguration {
 
     @Override
     public int getPeerListenerPort() {
-	return 0;
-    }
-
-    @Override
-    public int getMbufSize() {
 	return 0;
     }
 
@@ -276,16 +261,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getDynomiteStopScript() {
-	return null;
-    }
-
-    @Override
-    public String getDynomiteStartupScript() {
-	return null;
-    }
-
-    @Override
     public String getAppName() {
 	return null;
     }
@@ -297,11 +272,6 @@ public class BlankConfiguration implements IConfiguration {
 
     @Override
     public int getAllowableBytesSyncDiff() {
-	return 0;
-    }
-
-    @Override
-    public int getAllocatedMessages() {
 	return 0;
     }
 

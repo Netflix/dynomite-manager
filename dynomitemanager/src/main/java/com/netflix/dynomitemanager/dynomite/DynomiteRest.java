@@ -22,22 +22,20 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
-
 /**
- * Class that adds that acts as an interface between DM and Dynomite
- * through REST APIs
+ * Query the Dynomite REST API.
  */
 public class DynomiteRest {
 
     private static final Logger logger = LoggerFactory.getLogger(DynomiteRest.class);
 
-    public static boolean sendCommand(String cmd) {
-	DynamicStringProperty adminUrl = DynamicPropertyFactory.getInstance().getStringProperty("florida.metrics.url",
-		"http://localhost:22222");
-
-	String url = adminUrl.get() + cmd;
+    /**
+     * Query the Dynomite REST API.
+     *
+     * @param url full URL to the Dynomite REST API endpoint
+     * @return true if the request was successful or false if it failed
+     */
+    public static boolean sendCommand(String url) {
 	HttpClient client = new HttpClient();
 	client.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler());
 

@@ -76,6 +76,10 @@ public class FloridaServer {
     private final InstanceState state;
     private static final Logger logger = LoggerFactory.getLogger(FloridaServer.class);
 
+    static {
+        System.setProperty("archaius.configurationSource.defaultFileName", "dynomitedb.properties");
+    }
+
     @Inject
     public FloridaServer(IConfiguration config, TaskScheduler scheduler, InstanceIdentity id, Sleeper sleeper,
 	    TuneTask tuneTask, InstanceState state, IDynomiteProcess dynProcess, StorageProcessManager storageProcess) {
@@ -96,7 +100,7 @@ public class FloridaServer {
 
     /**
      * Start Dynomite Manager.
-     * 
+     *
      * @throws Exception
      */
     public void initialize() throws Exception {

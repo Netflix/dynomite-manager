@@ -42,25 +42,26 @@ public class DynomiteProcessManager implements IDynomiteProcess {
     private static final Logger logger = LoggerFactory.getLogger(DynomiteProcessManager.class);
     private static final String SUDO_STRING = "/usr/bin/sudo";
     private static final int SCRIPT_EXECUTE_WAIT_TIME_MS = 5000;
-    private final IConfiguration config;
+    DynomiteConfiguration dynomiteConfig;
     private final Sleeper sleeper;
     private final InstanceState instanceState;
     private final IDynomiteProcess dynProcess;
 
     @Inject
-    public DynomiteProcessManager(IConfiguration config, Sleeper sleeper, InstanceState instanceState,
-	    IDynomiteProcess dynProcess) {
-	this.config = config;
+    public DynomiteProcessManager(DynomiteConfiguration dynomiteConfig, Sleeper sleeper,
+            InstanceState instanceState, IDynomiteProcess dynProcess) {
+
+        this.dynomiteConfig = dynomiteConfig;
 	this.sleeper = sleeper;
 	this.instanceState = instanceState;
 	this.dynProcess = dynProcess;
     }
 
     protected void setDynomiteEnv(Map<String, String> env) {
-	env.put("MBUF_SIZE", String.valueOf(config.getMbufSize()));
-	if (config.getAllocatedMessages() > 0) {
-	    env.put("ALLOC_MSGS", String.valueOf(config.getAllocatedMessages()));
-	}
+        env.put("MBUF_SIZE", String.valueOf(dynomiteConfig.getMbufSize()));
+        if (dynomiteConfig.getAllocatedMessages() > 0) {
+            env.put("ALLOC_MSGS", String.valueOf(dynomiteConfig.getAllocatedMessages()));
+        }
     }
 
     public void start() throws IOException {
@@ -99,7 +100,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 
     protected List<String> getStartCommand() {
 	List<String> startCmd = new LinkedList<String>();
-	for (String param : config.getDynomiteStartupScript().split(" ")) {
+	for (String param : dynomiteConfig.getStartScript().split(" ")) {
 	    if (StringUtils.isNotBlank(param))
 		startCmd.add(param);
 	}
@@ -134,7 +135,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 	    command.add("-n");
 	    command.add("-E");
 	}
-	for (String param : config.getDynomiteStopScript().split(" ")) {
+	for (String param : dynomiteConfig.getStopScript().split(" ")) {
 	    if (StringUtils.isNotBlank(param))
 		command.add(param);
 	}
@@ -160,7 +161,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 
     /**
      * Ping Dynomite to perform a basic health check.
-     * 
+     *
      * @param dynomiteJedis
      *            the Jedis client with a connection to Dynomite.
      * @return true if Dynomite replies to PING with PONG, else false.
@@ -176,11 +177,11 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 
     /**
      * Basic health check for Dynomite.
-     * 
+     *
      * @return true if health check passes, or false if health check fails.
      */
     private boolean dynomiteRedisCheck() {
-	Jedis dynomiteJedis = new Jedis(LOCAL_ADDRESS, DYNO_PORT, 5000);
+        Jedis dynomiteJedis = new Jedis(LOCAL_ADDRESS, dynomiteConfig.getClientPort(), 5000);
 	try {
 	    dynomiteJedis.connect();
 	    if (!dynomiteRedisPing(dynomiteJedis)) {

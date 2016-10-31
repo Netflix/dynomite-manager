@@ -127,6 +127,10 @@ public class InstanceDataDAOCassandra {
 
 		getLock(instance);
 
+        // START HERE
+        // 1. config.getRack() should be moved to AWS Instance identity
+        // 2. CN_DC is a duplicate with CN_LOCATION
+        // 3. Rename identity files to
 		try {
 			MutationBatch m = bootKeyspace.prepareMutationBatch();
 			ColumnListMutation<String> clm = m.withRow(CF_TOKENS, key);

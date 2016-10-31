@@ -61,8 +61,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     public static final String LOCAL_ADDRESS = "127.0.0.1";
 
     private static final String CONFIG_DYN_HOME_DIR = DYNOMITEMANAGER_PRE + ".dyno.home";
-    private static final String CONFIG_DYN_START_SCRIPT = DYNOMITEMANAGER_PRE + ".dyno.startscript";
-    private static final String CONFIG_DYN_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".dyno.stopscript";
 
     // Cluster name is saved as tokens.appId in Cassandra.
     // The cluster name is used as the default AWS Security Group name, if SG name is null.
@@ -86,9 +84,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // The max percentage of system memory to be allocated to the Dynomite
     // fronted data store.
     private static final String CONFIG_DYNO_STORAGE_MEM_PCT_INT = DYNOMITEMANAGER_PRE + ".dyno.storage.mem.pct.int";
-
-    private static final String CONFIG_DYNO_MBUF_SIZE = DYNOMITEMANAGER_PRE + ".dyno.mbuf.size";
-    private static final String CONFIG_DYNO_MAX_ALLOC_MSGS = DYNOMITEMANAGER_PRE + ".dyno.allocated.messages";
 
     private static final String CONFIG_AVAILABILITY_ZONES = DYNOMITEMANAGER_PRE + ".zones.available";
     private static final String CONFIG_AVAILABILITY_RACKS = DYNOMITEMANAGER_PRE + ".racks.available";
@@ -121,10 +116,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_DUAL_ACCOUNT = DYNOMITEMANAGER_PRE + ".roleassumption.dualaccount";
     private static final String CONFIG_DUAL_ACCOUNT_AZ = DYNOMITEMANAGER_PRE + ".roleassumption.az";
 
-    // Dynomite Consistency
-    private static final String CONFIG_DYNO_READ_CONS = DYNOMITEMANAGER_PRE + ".dyno.read.consistency";
-    private static final String CONFIG_DYNO_WRITE_CONS = DYNOMITEMANAGER_PRE + ".dyno.write.consistency";
-
     // warm up
     private static final String CONFIG_DYNO_WARM_FORCE = DYNOMITEMANAGER_PRE + ".dyno.warm.force";
     private static final String CONFIG_DYNO_WARM_BOOTSTRAP = DYNOMITEMANAGER_PRE + ".dyno.warm.bootstrap";
@@ -153,8 +144,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
     private final String DEFAULT_SEED_PROVIDER = "florida_provider";
     private final String DEFAULT_DYNOMITE_HOME_DIR = "/apps/dynomite";
-    private final String DEFAULT_DYNOMITE_START_SCRIPT = "/apps/dynomite/bin/launch_dynomite.sh";
-    private final String DEFAULT_DYNOMITE_STOP_SCRIPT = "/apps/dynomite/bin/kill_dynomite.sh";
 
     private List<String> DEFAULT_AVAILABILITY_ZONES = ImmutableList.of();
     private List<String> DEFAULT_AVAILABILITY_RACKS = ImmutableList.of();
@@ -200,10 +189,32 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(DynomitemanagerConfiguration.class);
 
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
+    // ASA: IDENTICAL VALUE TO ASG_NAME
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
     private final String AUTO_SCALE_GROUP_NAME = System.getenv("AUTO_SCALE_GROUP");
     private static final String DEFAULT_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.AwsInstanceDataRetriever";
     private static final String VPC_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever";
 
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
+    // ASA: IDENTICAL VALUE TO AUTO_SCALE_GROUP_NAME
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
     private static String ASG_NAME = System.getenv("ASG_NAME");
 
     private final InstanceDataRetriever retriever;
@@ -353,14 +364,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     private boolean useAsgForRackName() {
 	return configSource.get(CONFIG_USE_ASG_FOR_RACK_NAME, true);
-    }
-
-    public String getDynomiteStartupScript() {
-	return configSource.get(CONFIG_DYN_START_SCRIPT, DEFAULT_DYNOMITE_START_SCRIPT);
-    }
-
-    public String getDynomiteStopScript() {
-	return configSource.get(CONFIG_DYN_STOP_SCRIPT, DEFAULT_DYNOMITE_STOP_SCRIPT);
     }
 
     @Override
@@ -579,25 +582,9 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_MAX_TIME_BOOTSTRAP, 900000);
     }
 
-    public String getReadConsistency() {
-	return configSource.get(CONFIG_DYNO_READ_CONS, "DC_ONE");
-    }
-
-    public String getWriteConsistency() {
-	return configSource.get(CONFIG_DYNO_WRITE_CONS, "DC_ONE");
-    }
-
     @Override
     public int getStorageMemPercent() {
 	return configSource.get(CONFIG_DYNO_STORAGE_MEM_PCT_INT, 85);
-    }
-
-    public int getMbufSize() {
-	return configSource.get(CONFIG_DYNO_MBUF_SIZE, 16384);
-    }
-
-    public int getAllocatedMessages() {
-	return configSource.get(CONFIG_DYNO_MAX_ALLOC_MSGS, 200000);
     }
 
     public boolean isVpc() {

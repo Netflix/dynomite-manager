@@ -14,6 +14,7 @@ package com.netflix.dynomitemanager.defaultimpl;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.netflix.dynomitemanager.dynomite.DynomiteConfiguration;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
@@ -41,15 +42,17 @@ public class FloridaStandardTuner implements ProcessTuner {
     private static final Logger logger = LoggerFactory.getLogger(FloridaStandardTuner.class);
     private static final String ROOT_NAME = "dyn_o_mite";
 
+    DynomiteConfiguration dynomiteConfig;
     protected final IConfiguration config;
     protected final InstanceIdentity ii;
     protected final IInstanceState instanceState;
     protected final IStorageProxy storageProxy;
 
     @Inject
-    public FloridaStandardTuner(IConfiguration config, InstanceIdentity ii, IInstanceState instanceState,
-	    IStorageProxy storageProxy) {
+    public FloridaStandardTuner(IConfiguration config, DynomiteConfiguration dynomiteConfig,InstanceIdentity ii,
+            IInstanceState instanceState, IStorageProxy storageProxy) {
 	this.config = config;
+        this.dynomiteConfig = dynomiteConfig;
 	this.ii = ii;
 	this.instanceState = instanceState;
 	this.storageProxy = storageProxy;
@@ -90,8 +93,8 @@ public class FloridaStandardTuner implements ProcessTuner {
 	entries.put("secure_server_option", config.getSecuredOption());
 	entries.remove("redis");
 	entries.put("datacenter", config.getDataCenter());
-	entries.put("read_consistency", config.getReadConsistency());
-	entries.put("write_consistency", config.getWriteConsistency());
+	entries.put("read_consistency", dynomiteConfig.getReadConsistency());
+	entries.put("write_consistency", dynomiteConfig.getWriteConsistency());
 	entries.put("pem_key_file", "/apps/dynomite/conf/dynomite.pem");
 
 	List seedp = (List) entries.get("dyn_seeds");

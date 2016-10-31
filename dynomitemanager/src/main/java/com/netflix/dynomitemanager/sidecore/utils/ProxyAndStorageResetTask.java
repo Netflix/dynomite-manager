@@ -12,6 +12,7 @@
  */
 package com.netflix.dynomitemanager.sidecore.utils;
 
+import com.netflix.dynomitemanager.dynomite.DynomiteConfiguration;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
@@ -35,7 +36,7 @@ import com.netflix.dynomitemanager.dynomite.DynomiteRest;
 /**
  * Stop Redis replication, change Redis from slave to master, and restart
  * dynomite (if necessary).
- * 
+ *
  * @author ipapapa
  */
 @Singleton
@@ -43,14 +44,17 @@ public class ProxyAndStorageResetTask extends Task {
     public static final String JOBNAME = "ProxyResetTask-Task";
     private static final Logger logger = LoggerFactory.getLogger(ProxyAndStorageResetTask.class);
 
+    DynomiteConfiguration dynomiteConfig;
     private final IDynomiteProcess dynProcess;
     private final IStorageProxy storageProxy;
     private final Sleeper sleeper;
 
     @Inject
-    public ProxyAndStorageResetTask(IConfiguration config, IDynomiteProcess dynProcess, IStorageProxy storageProxy,
-	    Sleeper sleeper) {
+    public ProxyAndStorageResetTask(IConfiguration config, DynomiteConfiguration dynomiteConfig,
+            IDynomiteProcess dynProcess, IStorageProxy storageProxy, Sleeper sleeper) {
+
 	super(config);
+        this.dynomiteConfig = dynomiteConfig;
 	this.storageProxy = storageProxy;
 	this.dynProcess = dynProcess;
 	this.sleeper = sleeper;
@@ -68,12 +72,14 @@ public class ProxyAndStorageResetTask extends Task {
     }
 
     private void setConsistency() {
-	logger.info("Setting the consistency level for the cluster");
-	if (!DynomiteRest.sendCommand("/set_consistency/read/" + config.getReadConsistency()))
-	    logger.error("REST call to Dynomite for read consistency failed --> using the default");
+        logger.info("Setting the consistency level for the cluster");
+        if (!DynomiteRest.sendCommand(dynomiteConfig.getApiSetReadConsistency()))
+            logger.error("Set Dynomite read consistency level via REST API failed (using default read CL). API: "
+                    + dynomiteConfig.getApiSetReadConsistency());
 
-	if (!DynomiteRest.sendCommand("/set_consistency/write/" + config.getReadConsistency()))
-	    logger.error("REST call to Dynomite for write consistency failed --> using the default");
+        if (!DynomiteRest.sendCommand(dynomiteConfig.getApiSetWriteConsistency()))
+            logger.error("Set Dynomite write consistency level via REST API failed (using default write CL). API: "
+                    + dynomiteConfig.getApiSetWriteConsistency());
     }
 
     private void dynomiteCheck() {
