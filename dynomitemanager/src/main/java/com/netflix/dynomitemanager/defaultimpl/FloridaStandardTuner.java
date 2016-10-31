@@ -49,7 +49,7 @@ public class FloridaStandardTuner implements ProcessTuner {
     protected final IStorageProxy storageProxy;
 
     @Inject
-    public FloridaStandardTuner(IConfiguration config, DynomiteConfiguration dynomiteConfig,InstanceIdentity ii,
+    public FloridaStandardTuner(IConfiguration config, DynomiteConfiguration dynomiteConfig, InstanceIdentity ii,
             IInstanceState instanceState, IStorageProxy storageProxy) {
 	this.config = config;
         this.dynomiteConfig = dynomiteConfig;
@@ -61,16 +61,11 @@ public class FloridaStandardTuner implements ProcessTuner {
     /**
      * Generate dynomite.yaml.
      *
-     * @param yamlLocation
-     *            path to the dynomite.yaml file
-     * @param hostname
-     *            UNUSED ARGUMENT
-     * @param seedProvider
-     *            UNUSED ARGUMENT
+     * @param yamlLocation path to the dynomite.yaml file
      * @throws IOException
      */
     @SuppressWarnings("unchecked")
-    public void writeAllProperties(String yamlLocation, String hostname, String seedProvider) throws IOException {
+    public void writeAllProperties(String yamlLocation) throws IOException {
 	DumperOptions options = new DumperOptions();
 	options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 	Yaml yaml = new Yaml(options);

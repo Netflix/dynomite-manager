@@ -40,7 +40,7 @@ public class TuneTask extends Task {
 	}
 
 	public void execute() throws IOException {
-        tuner.writeAllProperties(config.getYamlLocation(), null, dynomiteConfig.getSeedProvider());
+        tuner.writeAllProperties(config.getYamlLocation());
 	}
 
 	@Override
