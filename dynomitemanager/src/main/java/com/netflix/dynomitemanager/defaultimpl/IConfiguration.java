@@ -100,11 +100,6 @@ public interface IConfiguration {
     public String getBootClusterName();
 
     /**
-     * @return Get the name of seed provider
-     */
-    public String getSeedProviderName();
-
-    /**
      * @return Process Name
      */
     public String getProcessName();

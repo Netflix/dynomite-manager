@@ -111,11 +111,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getSeedProviderName() {
-	return null;
-    }
-
-    @Override
     public int getSecuredPeerListenerPort() {
 	return 0;
     }

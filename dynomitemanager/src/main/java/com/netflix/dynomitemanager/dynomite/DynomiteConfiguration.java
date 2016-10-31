@@ -47,4 +47,10 @@ public interface DynomiteConfiguration {
 
     String getStartScript();
     String getStopScript();
+
+    // Misc settings
+    // =============
+
+    String getSeedProvider();
+
 }

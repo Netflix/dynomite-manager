@@ -17,6 +17,7 @@ import java.io.IOException;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
+import com.netflix.dynomitemanager.dynomite.DynomiteConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
@@ -29,15 +30,17 @@ public class TuneTask extends Task {
 
 	public static final String JOBNAME = "Tune-Task";
 	private final ProcessTuner tuner;
+    DynomiteConfiguration dynomiteConfig;
 
-	@Inject
-	public TuneTask(IConfiguration config, ProcessTuner tuner) {
+    @Inject
+    public TuneTask(IConfiguration config, DynomiteConfiguration dynomiteConfig, ProcessTuner tuner) {
 		super(config);
+        this.dynomiteConfig = dynomiteConfig;
 		this.tuner = tuner;
 	}
 
 	public void execute() throws IOException {
-		tuner.writeAllProperties(config.getYamlLocation(), null, config.getSeedProviderName());
+        tuner.writeAllProperties(config.getYamlLocation(), null, dynomiteConfig.getSeedProvider());
 	}
 
 	@Override

@@ -65,7 +65,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // Cluster name is saved as tokens.appId in Cassandra.
     // The cluster name is used as the default AWS Security Group name, if SG name is null.
     private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
-    private static final String CONFIG_SEED_PROVIDER_NAME = DYNOMITEMANAGER_PRE + ".dyno.seed.provider";
     private static final String CONFIG_DYN_LISTENER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.port";
     private static final String CONFIG_DYN_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.peer.port";
     private static final String CONFIG_DYN_SECURED_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.secured.peer.port";
@@ -142,7 +141,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     // Defaults
     private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
-    private final String DEFAULT_SEED_PROVIDER = "florida_provider";
     private final String DEFAULT_DYNOMITE_HOME_DIR = "/apps/dynomite";
 
     private List<String> DEFAULT_AVAILABILITY_ZONES = ImmutableList.of();
@@ -472,11 +470,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     @Override
     public String getBootClusterName() {
         return configSource.get(CONFIG_BOOTCLUSTER_NAME, DEFAULT_BOOTCLUSTER_NAME);
-    }
-
-    @Override
-    public String getSeedProviderName() {
-	return configSource.get(CONFIG_SEED_PROVIDER_NAME, DEFAULT_SEED_PROVIDER);
     }
 
     @Override
