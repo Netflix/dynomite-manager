@@ -161,11 +161,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getListenerPort() {
-	return 0;
-    }
-
-    @Override
     public String getInstanceName() {
 	return null;
     }
@@ -202,11 +197,6 @@ public class BlankConfiguration implements IConfiguration {
 
     @Override
     public String getCassandraHostNames() {
-	return null;
-    }
-
-    @Override
-    public String getClientListenPort() {
 	return null;
     }
 

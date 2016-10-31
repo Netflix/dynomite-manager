@@ -80,7 +80,7 @@ public class FloridaStandardTuner implements ProcessTuner {
 	entries.put("dyn_seed_provider", dynomiteConfig.getSeedProvider());
 	entries.put("gos_interval", config.getGossipInterval());
 	entries.put("hash", config.getHash());
-	entries.put("listen", config.getClientListenPort());
+	entries.put("listen", dynomiteConfig.getClientListen());
 	entries.put("preconnect", config.getPreconnect());
 	entries.put("server_retry_timeout", config.getServerRetryTimeout());
 	entries.put("timeout", config.getTimeout());

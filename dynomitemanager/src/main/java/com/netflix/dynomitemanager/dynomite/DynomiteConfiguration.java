@@ -13,9 +13,15 @@ public interface DynomiteConfiguration {
 
     /**
      * Get the client port used by Redis (i.e. RESP) clients to query Dynomite.
-     * @return the client port
+     * @return the port that Dynomite listens on for client requests
      */
     int getClientPort();
+
+    /**
+     * Get the host and port that Dynomite listens on for Redis (RESP) client requests.
+     * @return the host and address that Dynomite listens on for client requests
+     */
+    String getClientListen();
 
     /**
      * Get the peer-to-peer port used by Dynomite to communicate with other Dynomite nodes.

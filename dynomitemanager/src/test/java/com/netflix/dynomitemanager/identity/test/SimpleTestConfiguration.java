@@ -161,11 +161,6 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getListenerPort() {
-		return 0;
-	}
-
-	@Override
 	public String getInstanceName() {
 		return null;
 	}
@@ -203,11 +198,6 @@ public class SimpleTestConfiguration implements IConfiguration {
 	@Override
 	public String getCassandraHostNames() {
 		return "localhost";
-	}
-
-	@Override
-	public String getClientListenPort() {
-		return null;
 	}
 
 	@Override

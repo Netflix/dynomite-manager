@@ -103,8 +103,6 @@ public interface IConfiguration {
 
     public int getSecuredPeerListenerPort();
 
-    public int getListenerPort();
-
     public String getYamlLocation();
 
     public boolean getAutoEjectHosts();
@@ -116,8 +114,6 @@ public interface IConfiguration {
     public int getGossipInterval();
 
     public String getHash();
-
-    public String getClientListenPort();
 
     public boolean getPreconnect();
 

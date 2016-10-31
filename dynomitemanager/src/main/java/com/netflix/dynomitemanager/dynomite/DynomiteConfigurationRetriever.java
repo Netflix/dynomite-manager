@@ -25,6 +25,8 @@ import com.netflix.dynomitemanager.conf.ModuleConfigurationRetriever;
 public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever implements DynomiteConfiguration {
 
     private static final String MODULE_PREFIX = ".dynomite";
+    private static final String IPV4_ADDRESS_ALL_HOSTS = "0.0.0.0";
+    private static final String IPV4_ADDRESS_LOCALHOST = "127.0.0.1";
 
     // Ports
     // =====
@@ -38,6 +40,11 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
     @Override
     public int getClientPort() {
         return getIntProperty(CLIENT_PORT_CONF, CLIENT_PORT_DEFAULT);
+    }
+
+    @Override
+    public String getClientListen() {
+        return IPV4_ADDRESS_ALL_HOSTS + ":" + getClientPort();
     }
 
     @Override

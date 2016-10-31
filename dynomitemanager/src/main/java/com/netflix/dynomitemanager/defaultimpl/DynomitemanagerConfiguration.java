@@ -485,16 +485,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getListenerPort() {
-	return configSource.get(CONFIG_DYN_LISTENER_PORT_NAME, DEFAULT_DYN_LISTENER_PORT);
-    }
-
-    @Override
-    public String getClientListenPort() {
-	return "0.0.0.0:" + getListenerPort();
-    }
-
-    @Override
     public int getPeerListenerPort() {
 	return configSource.get(CONFIG_DYN_PEER_PORT_NAME, DEFAULT_DYN_PEER_PORT);
     }
