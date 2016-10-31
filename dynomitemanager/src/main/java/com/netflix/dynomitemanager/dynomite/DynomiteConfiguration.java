@@ -134,4 +134,13 @@ public interface DynomiteConfiguration {
      */
     String getProcessName();
 
+    // Tokens
+    // ======
+
+    /**
+     * Get the token distribution type: ketama, modula, random, vnode (default), single.
+     * @return the token distribution method
+     */
+    String getTokenDistributionType();
+
 }

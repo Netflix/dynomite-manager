@@ -176,11 +176,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getDistribution() {
-	return null;
-    }
-
-    @Override
     public String getCassandraHostNames() {
 	return null;
     }

@@ -175,4 +175,14 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
     public String getProcessName() {
         return getStringProperty(PROCESS_NAME_CONF, PROCESS_NAME_DEFAULT);
     }
+
+    // Tokens
+    // ======
+
+    private String DISTRIBUTION_TYPE_CONF = DM_PREFIX + MODULE_PREFIX + ".token.distribution";
+    private static final String DISTRIBUTION_TYPE_DEFAULT = "vnode";
+    @Override
+    public String getTokenDistributionType() {
+        return getStringProperty(DISTRIBUTION_TYPE_CONF, DISTRIBUTION_TYPE_DEFAULT);
+    }
 }

@@ -103,8 +103,6 @@ public interface IConfiguration {
 
     public boolean getAutoEjectHosts();
 
-    public String getDistribution();
-
     public int getGossipInterval();
 
     public String getHash();
