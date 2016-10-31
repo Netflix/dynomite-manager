@@ -99,8 +99,6 @@ public interface IConfiguration {
      */
     public String getBootClusterName();
 
-    public int getPeerListenerPort();
-
     public int getSecuredPeerListenerPort();
 
     public String getYamlLocation();
@@ -108,8 +106,6 @@ public interface IConfiguration {
     public boolean getAutoEjectHosts();
 
     public String getDistribution();
-
-    public String getDynListenPort();
 
     public int getGossipInterval();
 

@@ -19,7 +19,7 @@ public interface DynomiteConfiguration {
 
     /**
      * Get the host and port that Dynomite listens on for Redis (RESP) client requests.
-     * @return the host and address that Dynomite listens on for client requests
+     * @return the host and port that Dynomite listens on for client requests
      */
     String getClientListen();
 
@@ -28,6 +28,12 @@ public interface DynomiteConfiguration {
      * @return the peer-to-peer port used for intra-cluster communication
      */
     int getPeerPort();
+
+    /**
+     * Get the host ane port that Dynomite listens on for peer requests from other Dynomite nodes.
+     * @return the host and port that Dynomite listens on for peer requests
+     */
+    String getPeerListen();
 
     // Memory usage
     // ============

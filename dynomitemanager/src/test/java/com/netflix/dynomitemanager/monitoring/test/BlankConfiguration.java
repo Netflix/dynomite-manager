@@ -151,11 +151,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getPeerListenerPort() {
-	return 0;
-    }
-
-    @Override
     public int getMaxTimeToBootstrap() {
 	return 0;
     }
@@ -183,11 +178,6 @@ public class BlankConfiguration implements IConfiguration {
     @Override
     public int getGossipInterval() {
 	return 0;
-    }
-
-    @Override
-    public String getDynListenPort() {
-	return null;
     }
 
     @Override

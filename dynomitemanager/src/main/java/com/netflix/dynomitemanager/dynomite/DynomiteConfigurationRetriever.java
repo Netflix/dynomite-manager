@@ -52,6 +52,11 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
         return getIntProperty(PEER_PORT_CONF, PEER_PORT_DEFAULT);
     }
 
+    @Override
+    public String getPeerListen() {
+        return IPV4_ADDRESS_ALL_HOSTS + ":" + getPeerPort();
+    }
+
     // Memory usage
     // ============
 
