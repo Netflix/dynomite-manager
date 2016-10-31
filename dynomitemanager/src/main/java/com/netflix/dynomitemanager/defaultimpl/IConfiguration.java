@@ -99,8 +99,6 @@ public interface IConfiguration {
      */
     public String getBootClusterName();
 
-    public int getSecuredPeerListenerPort();
-
     public String getYamlLocation();
 
     public boolean getAutoEjectHosts();

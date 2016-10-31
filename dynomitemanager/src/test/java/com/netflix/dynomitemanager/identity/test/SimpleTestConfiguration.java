@@ -111,11 +111,6 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getSecuredPeerListenerPort() {
-		return 0;
-	}
-
-	@Override
 	public String getSecuredOption() {
 		return null;
 	}

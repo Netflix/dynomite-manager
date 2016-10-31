@@ -65,7 +65,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // Cluster name is saved as tokens.appId in Cassandra.
     // The cluster name is used as the default AWS Security Group name, if SG name is null.
     private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
-    private static final String CONFIG_DYN_SECURED_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.secured.peer.port";
     private static final String CONFIG_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.rack";
     private static final String CONFIG_USE_ASG_FOR_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.asg.rack";
     private static final String CONFIG_TOKENS_DISTRIBUTION_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.distribution";
@@ -143,7 +142,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private List<String> DEFAULT_AVAILABILITY_ZONES = ImmutableList.of();
     private List<String> DEFAULT_AVAILABILITY_RACKS = ImmutableList.of();
 
-    private final int DEFAULT_DYN_SECURED_PEER_PORT = 8101;
     private final String DEFAULT_DYN_RACK = "RAC1";
     private final String DEFAULT_TOKENS_DISTRIBUTION = "vnode";
     private final int DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC = 5000;
@@ -513,11 +511,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     public boolean isMultiRegionedCluster() {
 	return configSource.get(CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER, true);
-    }
-
-    @Override
-    public int getSecuredPeerListenerPort() {
-	return configSource.get(CONFIG_DYN_SECURED_PEER_PORT_NAME, DEFAULT_DYN_SECURED_PEER_PORT);
     }
 
     public String getSecuredOption() {
