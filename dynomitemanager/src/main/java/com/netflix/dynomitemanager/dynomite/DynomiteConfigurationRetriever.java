@@ -155,4 +155,12 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
     public String getSeedProvider() {
         return getStringProperty(SEED_PROVIDER_CONF, SEED_PROVIDER_DEFAULT);
     }
+
+    private String PROCESS_NAME_CONF = DM_PREFIX + MODULE_PREFIX + ".process.name";
+    private static final String PROCESS_NAME_DEFAULT = "dynomite";
+
+    @Override
+    public String getProcessName() {
+        return getStringProperty(PROCESS_NAME_CONF, PROCESS_NAME_DEFAULT);
+    }
 }

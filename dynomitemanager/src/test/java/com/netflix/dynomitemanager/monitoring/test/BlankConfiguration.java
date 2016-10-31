@@ -141,11 +141,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getProcessName() {
-	return null;
-    }
-
-    @Override
     public boolean getPreconnect() {
 	return false;
     }

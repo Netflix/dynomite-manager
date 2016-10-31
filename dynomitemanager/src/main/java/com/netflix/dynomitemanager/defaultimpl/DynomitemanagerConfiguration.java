@@ -87,7 +87,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_AVAILABILITY_ZONES = DYNOMITEMANAGER_PRE + ".zones.available";
     private static final String CONFIG_AVAILABILITY_RACKS = DYNOMITEMANAGER_PRE + ".racks.available";
 
-    private static final String CONFIG_DYN_PROCESS_NAME = DYNOMITEMANAGER_PRE + ".dyno.processname";
     private static final String CONFIG_YAML_LOCATION = DYNOMITEMANAGER_PRE + ".yamlLocation";
     private static final String CONFIG_SECURED_OPTION = DYNOMITEMANAGER_PRE + ".secured.option";
     private static final String CONFIG_DYNO_AUTO_EJECT_HOSTS = DYNOMITEMANAGER_PRE + ".auto.eject.hosts";
@@ -146,7 +145,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private List<String> DEFAULT_AVAILABILITY_ZONES = ImmutableList.of();
     private List<String> DEFAULT_AVAILABILITY_RACKS = ImmutableList.of();
 
-    private final String DEFAULT_DYN_PROCESS_NAME = "dynomite";
     private final int DEFAULT_DYN_LISTENER_PORT = 8102;
     private final int DEFAULT_DYN_SECURED_PEER_PORT = 8101;
     private final int DEFAULT_DYN_PEER_PORT = 8101;
@@ -470,11 +468,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     @Override
     public String getBootClusterName() {
         return configSource.get(CONFIG_BOOTCLUSTER_NAME, DEFAULT_BOOTCLUSTER_NAME);
-    }
-
-    @Override
-    public String getProcessName() {
-	return configSource.get(CONFIG_DYN_PROCESS_NAME, DEFAULT_DYN_PROCESS_NAME);
     }
 
     public String getYamlLocation() {

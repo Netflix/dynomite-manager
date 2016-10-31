@@ -99,11 +99,6 @@ public interface IConfiguration {
      */
     public String getBootClusterName();
 
-    /**
-     * @return Process Name
-     */
-    public String getProcessName();
-
     public int getPeerListenerPort();
 
     public int getSecuredPeerListenerPort();
