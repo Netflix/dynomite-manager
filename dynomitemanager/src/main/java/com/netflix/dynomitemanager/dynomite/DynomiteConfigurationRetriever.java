@@ -185,4 +185,14 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
     public String getTokenDistributionType() {
         return getStringProperty(DISTRIBUTION_TYPE_CONF, DISTRIBUTION_TYPE_DEFAULT);
     }
+
+    // Timeouts
+    // ========
+
+    private String BACKEND_REQUEST_TIMEOUT_CONF = DM_PREFIX + MODULE_PREFIX + ".backend.request.timeout";
+    private static final int BACKEND_REQUEST_TIMEOUT_DEFAULT = 5000; // milliseconds
+    public int getBackendRequestTimeout() {
+        return getIntProperty(BACKEND_REQUEST_TIMEOUT_CONF, BACKEND_REQUEST_TIMEOUT_DEFAULT);
+    }
+
 }

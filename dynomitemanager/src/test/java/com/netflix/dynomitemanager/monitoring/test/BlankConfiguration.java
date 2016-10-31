@@ -96,11 +96,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getTimeout() {
-	return 0;
-    }
-
-    @Override
     public int getStorageMemPercent() {
 	return 0;
     }

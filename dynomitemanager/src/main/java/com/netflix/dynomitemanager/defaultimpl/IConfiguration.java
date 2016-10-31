@@ -111,8 +111,6 @@ public interface IConfiguration {
 
     public int getServerRetryTimeout();
 
-    public int getTimeout();
-
     public String getTokens();
 
     public boolean isMultiRegionedCluster();

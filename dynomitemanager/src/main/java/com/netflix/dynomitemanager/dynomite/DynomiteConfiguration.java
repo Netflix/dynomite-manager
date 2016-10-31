@@ -143,4 +143,14 @@ public interface DynomiteConfiguration {
      */
     String getTokenDistributionType();
 
+    // Timeouts
+    // ========
+
+    /**
+     * Get the amount of time in milliseconds that Dynomite will wait to establish a connection to a backend server or
+     * will wait for a response from a backend server (such as Redis or ARDB).
+     * @return the backend request timeout in milliseconds
+     */
+    int getBackendRequestTimeout();
+
 }
