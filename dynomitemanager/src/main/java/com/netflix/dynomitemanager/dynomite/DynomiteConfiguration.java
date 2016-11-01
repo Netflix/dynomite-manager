@@ -153,6 +153,15 @@ public interface DynomiteConfiguration {
     String getProcessName();
 
     /**
+     * Determine whether or not Dynomite should preconnect to the backend server (i.e. Redis or ARDB).
+     * @return true if Dynomite should preconnect, false if it should not preconnect
+     */
+    boolean getPreconnectToBackend();
+
+    // Security
+    // ========
+
+    /**
      * Get the level of encryption to use for dynomite-to-dynomite communication. Possible values are none, datacenter,
      * rack, and all.
      * @return the dynomite-to-dynomite encryption option
@@ -160,10 +169,11 @@ public interface DynomiteConfiguration {
     String getPeerToPeerEncryption();
 
     /**
-     * Determine whether or not Dynomite should preconnect to the backend server (i.e. Redis or ARDB).
-     * @return true if Dynomite should preconnect, false if it should not preconnect
+     * Get the full path to the PEM key file used to encrypt communication.
+     *
+     * @return full path to the PEM key file
      */
-    boolean getPreconnectToBackend();
+    String getPemKeyFile();
 
     // Tokens
     // ======

@@ -176,6 +176,15 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
         return getStringProperty(PROCESS_NAME_CONF, PROCESS_NAME_DEFAULT);
     }
 
+    private static final String PRECONNECT_TO_BACKEND_CONF = DM_PREFIX + MODULE_PREFIX + ".preconnect.to.backend";
+    private static final boolean PRECONNECT_TO_BACKEND_DEFAULT = true;
+    public boolean getPreconnectToBackend() {
+        return getBooleanProperty(PRECONNECT_TO_BACKEND_CONF, PRECONNECT_TO_BACKEND_DEFAULT);
+    }
+
+    // Security
+    // ========
+
     private static final String PEER_TO_PEER_ENCRYPTION_CONF = DM_PREFIX + MODULE_PREFIX + ".peer.to.peer.encryption";
     private static final String PEER_TO_PEER_ENCRYPTION_DEFAULT = "datacenter";
     @Override
@@ -183,10 +192,11 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
         return getStringProperty(PEER_TO_PEER_ENCRYPTION_CONF, PEER_TO_PEER_ENCRYPTION_DEFAULT);
     }
 
-    private static final String PRECONNECT_TO_BACKEND_CONF = DM_PREFIX + MODULE_PREFIX + ".preconnect.to.backend";
-    private static final boolean PRECONNECT_TO_BACKEND_DEFAULT = true;
-    public boolean getPreconnectToBackend() {
-        return getBooleanProperty(PRECONNECT_TO_BACKEND_CONF, PRECONNECT_TO_BACKEND_DEFAULT);
+    private static final String PEM_KEY_FILE_CONF = DM_PREFIX + MODULE_PREFIX + ".pem.key.file";
+    private static final String PEM_KEY_FILE_DEFAULT = "/apps/dynomite/conf/dynomite.pem";
+    @Override
+    public String getPemKeyFile() {
+        return getStringProperty(PEM_KEY_FILE_CONF, PEM_KEY_FILE_DEFAULT);
     }
 
     // Tokens

@@ -90,7 +90,7 @@ public class FloridaStandardTuner implements ProcessTuner {
 	entries.put("datacenter", config.getDataCenter());
 	entries.put("read_consistency", dynomiteConfig.getReadConsistency());
 	entries.put("write_consistency", dynomiteConfig.getWriteConsistency());
-	entries.put("pem_key_file", "/apps/dynomite/conf/dynomite.pem");
+	entries.put("pem_key_file", dynomiteConfig.getPemKeyFile());
 
 	List seedp = (List) entries.get("dyn_seeds");
 	if (seedp == null) {
