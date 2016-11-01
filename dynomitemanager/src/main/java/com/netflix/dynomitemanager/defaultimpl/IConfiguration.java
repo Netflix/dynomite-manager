@@ -94,8 +94,6 @@ public interface IConfiguration {
      */
     public String getBootClusterName();
 
-    public boolean getAutoEjectHosts();
-
     public String getHash();
 
     public boolean getPreconnect();

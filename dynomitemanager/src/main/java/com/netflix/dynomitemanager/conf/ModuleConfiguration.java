@@ -23,13 +23,13 @@ import com.google.inject.ImplementedBy;
 public interface ModuleConfiguration {
 
     /**
-     * Get a string value from Archaius.
+     * Get a boolean value from Archaius.
      *
      * @param key          the property's key
      * @param defaultValue the property's default value
      * @return the property's value as returned by Archaius
      */
-    String getStringProperty(String key, String defaultValue);
+    boolean getBooleanProperty(String key, boolean defaultValue);
 
     /**
      * Get an int value from Archaius.
@@ -39,5 +39,14 @@ public interface ModuleConfiguration {
      * @return the property's value as returned by Archaius
      */
     int getIntProperty(String key, int defaultValue);
+
+    /**
+     * Get a string value from Archaius.
+     *
+     * @param key          the property's key
+     * @param defaultValue the property's default value
+     * @return the property's value as returned by Archaius
+     */
+    String getStringProperty(String key, String defaultValue);
 
 }

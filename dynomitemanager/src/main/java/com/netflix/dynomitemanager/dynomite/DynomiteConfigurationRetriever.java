@@ -227,4 +227,13 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
         return getStringProperty(DYNOMITE_YAML_CONF, DYNOMITE_YAML_DEFAULT);
     }
 
+    // Health
+    // ======
+
+    public static final String AUTO_EJECT_NODES_CONF = ".auto.eject.nodes";
+    public static final boolean AUTO_EJECT_NODES_DEFAULT = true;
+    public boolean getAutoEjectPeers() {
+        return getBooleanProperty(AUTO_EJECT_NODES_CONF, AUTO_EJECT_NODES_DEFAULT);
+    }
+
 }

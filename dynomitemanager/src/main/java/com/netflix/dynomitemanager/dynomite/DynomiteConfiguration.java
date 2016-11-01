@@ -207,4 +207,15 @@ public interface DynomiteConfiguration {
      * @return the full path to the dynomite.yaml file
      */
     String getDynomiteYaml();
+
+    // Health
+    // ======
+
+    /**
+     * Determine if the Dynomite cluster can temporarily and automatically eject (remove) a Dynomite node (i.e. a peer)
+     * from the cluster.
+     *
+     * @return true if Dynomite can automatically eject a peer node, false if it cannot
+     */
+    boolean getAutoEjectPeers();
 }

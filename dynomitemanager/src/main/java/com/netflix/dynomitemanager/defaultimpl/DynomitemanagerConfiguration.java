@@ -79,8 +79,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_AVAILABILITY_ZONES = DYNOMITEMANAGER_PRE + ".zones.available";
     private static final String CONFIG_AVAILABILITY_RACKS = DYNOMITEMANAGER_PRE + ".racks.available";
 
-    private static final String CONFIG_DYNO_AUTO_EJECT_HOSTS = DYNOMITEMANAGER_PRE + ".auto.eject.hosts";
-
     // Cassandra Cluster for token management
     private static final String CONFIG_BOOTCLUSTER_NAME = DYNOMITEMANAGER_PRE + ".bootcluster";
     private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
@@ -447,11 +445,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     @Override
     public String getBootClusterName() {
         return configSource.get(CONFIG_BOOTCLUSTER_NAME, DEFAULT_BOOTCLUSTER_NAME);
-    }
-
-    @Override
-    public boolean getAutoEjectHosts() {
-	return configSource.get(CONFIG_DYNO_AUTO_EJECT_HOSTS, true);
     }
 
     @Override

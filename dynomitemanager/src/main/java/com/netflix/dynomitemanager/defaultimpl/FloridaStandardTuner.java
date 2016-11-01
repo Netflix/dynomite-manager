@@ -73,7 +73,7 @@ public class FloridaStandardTuner implements ProcessTuner {
 	Map map = (Map) yaml.load(new FileInputStream(yamlFile));
 	Map entries = (Map) map.get(ROOT_NAME);
 
-	entries.put("auto_eject_hosts", config.getAutoEjectHosts());
+	entries.put("auto_eject_hosts", dynomiteConfig.getAutoEjectPeers());
 	entries.put("rack", config.getRack());
 	entries.put("distribution", dynomiteConfig.getTokenDistributionType());
 	entries.put("dyn_listen", dynomiteConfig.getPeerListen());

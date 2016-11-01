@@ -14,6 +14,7 @@
  */
 package com.netflix.dynomitemanager.conf;
 
+import com.netflix.config.DynamicBooleanProperty;
 import com.netflix.config.DynamicIntProperty;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
@@ -40,14 +41,22 @@ public class ModuleConfigurationRetriever implements ModuleConfiguration {
         return DM_PREFIX + "." + modulePrefix + "." + key;
     }
 
-    public String getStringProperty(String key, String defaultValue) {
-        DynamicStringProperty property = DynamicPropertyFactory.getInstance()
-                .getStringProperty(key, defaultValue);
+    @Override
+    public boolean getBooleanProperty(String key, boolean defaultValue) {
+        DynamicBooleanProperty property = DynamicPropertyFactory.getInstance().getBooleanProperty(key, defaultValue);
         return property.get();
     }
 
+    @Override
     public int getIntProperty(String key, int defaultValue) {
         DynamicIntProperty property = DynamicPropertyFactory.getInstance().getIntProperty(key, defaultValue);
+        return property.get();
+    }
+
+    @Override
+    public String getStringProperty(String key, String defaultValue) {
+        DynamicStringProperty property = DynamicPropertyFactory.getInstance()
+                .getStringProperty(key, defaultValue);
         return property.get();
     }
 

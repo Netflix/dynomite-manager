@@ -186,11 +186,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public boolean getAutoEjectHosts() {
-	return false;
-    }
-
-    @Override
     public String getAppName() {
 	return null;
     }
