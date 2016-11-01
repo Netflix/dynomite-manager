@@ -10,25 +10,25 @@ package com.netflix.dynomitemanager.supplier.test;
 
 import java.util.List;
 
+import com.netflix.dynomitemanager.supplier.CassandraHostsSupplier;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.netflix.astyanax.connectionpool.Host;
 import com.netflix.dynomitemanager.monitoring.test.BlankConfiguration;
-import com.netflix.dynomitemanager.supplier.LocalHostsSupplier;
 
 /**
- * Unit Tests for LocalHostsSupplier
+ * Unit Tests for CassandraHostsSupplier
  *
  * @author diegopacheco
  *
  */
-public class LocalHostsSupplierTest {
+public class CassandraHostsSupplierTest {
 
 	@Test
 	public void testSupplier() {
-		LocalHostsSupplier lhs = new LocalHostsSupplier(new BlankConfiguration());
-		List<Host> hosts = lhs.getSupplier("DmClusterTest").get();
+		CassandraHostsSupplier chs = new CassandraHostsSupplier(new BlankConfiguration());
+		List<Host> hosts = chs.getSupplier("DmClusterTest").get();
 		Assert.assertNotNull(hosts);
 		Assert.assertTrue(hosts.get(0) != null);
 		Assert.assertTrue(hosts.get(0).getPort() == 9160);

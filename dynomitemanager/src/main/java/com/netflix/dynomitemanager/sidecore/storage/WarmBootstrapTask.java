@@ -16,15 +16,15 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.netflix.dynomitemanager.InstanceState;
+import com.netflix.dynomitemanager.dynomite.DynomiteConfiguration;
 import com.netflix.dynomitemanager.identity.AppsInstance;
 import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
-import com.netflix.dynomitemanager.sidecore.storage.WarmBootstrapTask;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
-import com.netflix.dynomitemanager.dynomite.DynomiteRest;
+import com.netflix.dynomitemanager.dynomite.DynomiteAPI;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 
@@ -45,6 +45,7 @@ public class WarmBootstrapTask extends Task {
     private static final Logger logger = LoggerFactory.getLogger(WarmBootstrapTask.class);
 
     public static final String JOBNAME = "Bootstrap-Task";
+    DynomiteConfiguration dynomiteConfig;
     private final IDynomiteProcess dynProcess;
     private final IStorageProxy storageProxy;
     private final IAppsInstanceFactory appsInstanceFactory;
@@ -54,10 +55,12 @@ public class WarmBootstrapTask extends Task {
     private final StorageProcessManager storageProcessMgr;
 
     @Inject
-    public WarmBootstrapTask(IConfiguration config, IAppsInstanceFactory appsInstanceFactory, InstanceIdentity id,
-	    IDynomiteProcess dynProcess, IStorageProxy storageProxy, InstanceState ss, Sleeper sleeper,
-	    StorageProcessManager storageProcessMgr) {
+    public WarmBootstrapTask(IConfiguration config, DynomiteConfiguration dynomiteConfig,
+            IAppsInstanceFactory appsInstanceFactory, InstanceIdentity id, IDynomiteProcess dynProcess,
+            IStorageProxy storageProxy, InstanceState ss, Sleeper sleeper, StorageProcessManager storageProcessMgr) {
+
 	super(config);
+        this.dynomiteConfig = dynomiteConfig;
 	this.dynProcess = dynProcess;
 	this.storageProxy = storageProxy;
 	this.appsInstanceFactory = appsInstanceFactory;
@@ -65,6 +68,7 @@ public class WarmBootstrapTask extends Task {
 	this.state = ss;
 	this.sleeper = sleeper;
 	this.storageProcessMgr = storageProcessMgr;
+
     }
 
     public void execute() throws IOException {
@@ -112,18 +116,18 @@ public class WarmBootstrapTask extends Task {
 			this.state.setBootstrapStatus(bootstrap);
 
 			logger.info("Set Dynomite to allow writes only!!!");
-			DynomiteRest.sendCommand("/state/writes_only");
+                DynomiteAPI.sendCommand(dynomiteConfig.getApiSetStateWritesOnly());
 
 			logger.info("Stop Redis' Peer syncing!!!");
 			this.storageProxy.stopPeerSync();
 
 			logger.info("Set Dynomite to resuming state to allow writes and flush delayed writes");
-			DynomiteRest.sendCommand("/state/resuming");
+                DynomiteAPI.sendCommand(dynomiteConfig.getApiSetStateResuming());
 
 			// sleep 15s for the flushing to catch up
 			sleeper.sleepQuietly(15000);
 			logger.info("Set Dynomite to normal state");
-			DynomiteRest.sendCommand("/state/normal");
+                DynomiteAPI.sendCommand(dynomiteConfig.getApiSetStateNormal());
 		    } else {
 			logger.error("Dynomite health check and restart attempts failed");
 		    }

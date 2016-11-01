@@ -57,52 +57,30 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	// Dynomite
 	// ========
 
-    public static final int DYNO_PORT = 8102;
     public static final String LOCAL_ADDRESS = "127.0.0.1";
 
-    private static final String CONFIG_DYN_HOME_DIR = DYNOMITEMANAGER_PRE + ".dyno.home";
-    private static final String CONFIG_DYN_START_SCRIPT = DYNOMITEMANAGER_PRE + ".dyno.startscript";
-    private static final String CONFIG_DYN_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".dyno.stopscript";
-
+    // Cluster name is saved as tokens.appId in Cassandra.
+    // The cluster name is used as the default AWS Security Group name, if SG name is null.
     private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
-    private static final String CONFIG_SEED_PROVIDER_NAME = DYNOMITEMANAGER_PRE + ".dyno.seed.provider";
-    private static final String CONFIG_DYN_LISTENER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.port";
-    private static final String CONFIG_DYN_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.peer.port";
-    private static final String CONFIG_DYN_SECURED_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.secured.peer.port";
     private static final String CONFIG_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.rack";
     private static final String CONFIG_USE_ASG_FOR_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.asg.rack";
-    private static final String CONFIG_TOKENS_DISTRIBUTION_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.distribution";
-    private static final String CONFIG_DYNO_REQ_TIMEOUT_NAME = DYNOMITEMANAGER_PRE + ".dyno.request.timeout"; // in
-													      // milliseconds
-    private static final String CONFIG_DYNO_GOSSIP_INTERVAL_NAME = DYNOMITEMANAGER_PRE + ".dyno.gossip.interval"; // in
-														  // milliseconds
-    private static final String CONFIG_DYNO_TOKENS_HASH_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.hash";
-    private static final String CONFIG_DYNO_CONNECTIONS_PRECONNECT = DYNOMITEMANAGER_PRE
-	    + ".dyno.connections.preconnect";
     private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
-    private static final String CONFIG_DYNO_HEALTHCHECK_ENABLE = DYNOMITEMANAGER_PRE + ".dyno.healthcheck.enable";
+
+    // ASA: RedisConfiguration
     // The max percentage of system memory to be allocated to the Dynomite
     // fronted data store.
     private static final String CONFIG_DYNO_STORAGE_MEM_PCT_INT = DYNOMITEMANAGER_PRE + ".dyno.storage.mem.pct.int";
 
-    private static final String CONFIG_DYNO_MBUF_SIZE = DYNOMITEMANAGER_PRE + ".dyno.mbuf.size";
-    private static final String CONFIG_DYNO_MAX_ALLOC_MSGS = DYNOMITEMANAGER_PRE + ".dyno.allocated.messages";
-
+    // ASA: AwsConfiguration (duplicate)
     private static final String CONFIG_AVAILABILITY_ZONES = DYNOMITEMANAGER_PRE + ".zones.available";
     private static final String CONFIG_AVAILABILITY_RACKS = DYNOMITEMANAGER_PRE + ".racks.available";
-
-    private static final String CONFIG_DYN_PROCESS_NAME = DYNOMITEMANAGER_PRE + ".dyno.processname";
-    private static final String CONFIG_YAML_LOCATION = DYNOMITEMANAGER_PRE + ".yamlLocation";
-    private static final String CONFIG_METADATA_KEYSPACE = DYNOMITEMANAGER_PRE + ".metadata.keyspace";
-    private static final String CONFIG_SECURED_OPTION = DYNOMITEMANAGER_PRE + ".secured.option";
-    private static final String CONFIG_DYNO_AUTO_EJECT_HOSTS = DYNOMITEMANAGER_PRE + ".auto.eject.hosts";
 
     // Cassandra Cluster for token management
     private static final String CONFIG_BOOTCLUSTER_NAME = DYNOMITEMANAGER_PRE + ".bootcluster";
     private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
     private static final String CONFIG_CASSANDRA_THRIFT_PORT = DYNOMITEMANAGER_PRE + ".cassandra.thrift.port";
-    private static final String CONFIG_COMMA_SEPARATED_CASSANDRA_HOSTNAMES = DYNOMITEMANAGER_PRE
-	    + ".cassandra.comma.separated.hostnames";
+    private static final String CONFIG_CASSANDRA_HOSTNAMES = DYNOMITEMANAGER_PRE
+            + ".cassandra.comma.separated.hostnames";
 
     // Eureka
     private static final String CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED = DYNOMITEMANAGER_PRE
@@ -119,10 +97,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_VPC_ROLE_ASSUMPTION_ARN = DYNOMITEMANAGER_PRE + ".vpc.roleassumption.arn";
     private static final String CONFIG_DUAL_ACCOUNT = DYNOMITEMANAGER_PRE + ".roleassumption.dualaccount";
     private static final String CONFIG_DUAL_ACCOUNT_AZ = DYNOMITEMANAGER_PRE + ".roleassumption.az";
-
-    // Dynomite Consistency
-    private static final String CONFIG_DYNO_READ_CONS = DYNOMITEMANAGER_PRE + ".dyno.read.consistency";
-    private static final String CONFIG_DYNO_WRITE_CONS = DYNOMITEMANAGER_PRE + ".dyno.write.consistency";
 
     // warm up
     private static final String CONFIG_DYNO_WARM_FORCE = DYNOMITEMANAGER_PRE + ".dyno.warm.force";
@@ -143,33 +117,20 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // VPC
     private static final String CONFIG_INSTANCE_DATA_RETRIEVER = DYNOMITEMANAGER_PRE + ".instanceDataRetriever";
 
-    // RocksDB 
+    // RocksDB
     private static final String CONFIG_WRITE_BUFFER_SIZE_MB = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.writebuffermb";
     private static final String CONFIG_MAX_WRITE_BUFFER_NUMBER = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.maxwritebuffernumber";
     private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.minwritebuffernametomerge";
-    
+
     // Defaults
     private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
-    private final String DEFAULT_SEED_PROVIDER = "florida_provider";
-    private final String DEFAULT_DYNOMITE_HOME_DIR = "/apps/dynomite";
-    private final String DEFAULT_DYNOMITE_START_SCRIPT = "/apps/dynomite/bin/launch_dynomite.sh";
-    private final String DEFAULT_DYNOMITE_STOP_SCRIPT = "/apps/dynomite/bin/kill_dynomite.sh";
 
     private List<String> DEFAULT_AVAILABILITY_ZONES = ImmutableList.of();
     private List<String> DEFAULT_AVAILABILITY_RACKS = ImmutableList.of();
 
-    private final String DEFAULT_DYN_PROCESS_NAME = "dynomite";
-    private final int DEFAULT_DYN_LISTENER_PORT = 8102;
-    private final int DEFAULT_DYN_SECURED_PEER_PORT = 8101;
-    private final int DEFAULT_DYN_PEER_PORT = 8101;
     private final String DEFAULT_DYN_RACK = "RAC1";
-    private final String DEFAULT_TOKENS_DISTRIBUTION = "vnode";
-    private final int DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC = 5000;
-    private final int DEFAULT_DYNO_GOSSIP_INTERVAL = 10000;
-    private final String DEFAULT_DYNO_TOKENS_HASH = "murmur";
 
     private final String DEFAULT_METADATA_KEYSPACE = "dyno_bootstrap";
-    private final String DEFAULT_SECURED_OPTION = "datacenter";
 
     // Backup & Restore
     private static final boolean DEFAULT_BACKUP_ENABLED = false;
@@ -188,9 +149,9 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String DEFAULT_RESTORE_TIME = "20101010";
     private static final String DEFAULT_BACKUP_SCHEDULE = "day";
     private static final int DEFAULT_BACKUP_HOUR = 12;
-    
+
     // Ardb
-    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128; 
+    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
     private static final int DEFAULT_MAX_WRITE_BUFFER_NUMBER = 16;
     private static final int DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE = 4;
 
@@ -199,10 +160,32 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(DynomitemanagerConfiguration.class);
 
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
+    // ASA: IDENTICAL VALUE TO ASG_NAME
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
     private final String AUTO_SCALE_GROUP_NAME = System.getenv("AUTO_SCALE_GROUP");
     private static final String DEFAULT_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.AwsInstanceDataRetriever";
     private static final String VPC_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever";
 
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
+    // ASA: IDENTICAL VALUE TO AUTO_SCALE_GROUP_NAME
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
+    // =============================================
     private static String ASG_NAME = System.getenv("ASG_NAME");
 
     private final InstanceDataRetriever retriever;
@@ -215,7 +198,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String DEFAULT_BOOTCLUSTER_NAME = "cass_dyno";
     private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
     private static final String DEFAULT_CASSANDRA_KEYSPACE_NAME = "dyno_bootstrap";
-    private static final String DEFAULT_COMMA_SEPARATED_CASSANDRA_HOSTNAMES = "127.0.0.1";
+    private static final String DEFAULT_CASSANDRA_HOSTNAMES = "127.0.0.1";
     private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
 
     // = instance identity meta data
@@ -354,27 +337,14 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_USE_ASG_FOR_RACK_NAME, true);
     }
 
-    public String getDynomiteStartupScript() {
-	return configSource.get(CONFIG_DYN_START_SCRIPT, DEFAULT_DYNOMITE_START_SCRIPT);
-    }
-
-    public String getDynomiteStopScript() {
-	return configSource.get(CONFIG_DYN_STOP_SCRIPT, DEFAULT_DYNOMITE_STOP_SCRIPT);
-    }
-
     @Override
     public String getAppName() {
-	String clusterName = System.getenv("NETFLIX_APP");
+        String clusterName = System.getenv("NETFLIX_APP");
 
-	if (StringUtils.isBlank(clusterName))
-	    return configSource.get(CONFIG_CLUSTER_NAME, DEFAULT_CLUSTER_NAME);
+        if (StringUtils.isBlank(clusterName))
+            return configSource.get(CONFIG_CLUSTER_NAME, DEFAULT_CLUSTER_NAME);
 
-	return clusterName;
-    }
-
-    @Override
-    public String getAppHome() {
-	return configSource.get(CONFIG_DYN_HOME_DIR, DEFAULT_DYNOMITE_HOME_DIR);
+        return clusterName;
     }
 
     @Override
@@ -401,6 +371,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_RACK_NAME, DEFAULT_DYN_RACK);
     }
 
+    // ASA: Unused (may be a duplicate). Similar to getRacks().
     @Override
     public List<String> getZones() {
 	return configSource.getList(CONFIG_AVAILABILITY_ZONES, DEFAULT_AVAILABILITY_ZONES);
@@ -412,6 +383,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DUAL_ACCOUNT_AZ, getRack());
     }
 
+    // ASA: Similar to getZones()
     public List<String> getRacks() {
 	return configSource.getList(CONFIG_AVAILABILITY_RACKS, DEFAULT_AVAILABILITY_RACKS);
     }
@@ -457,7 +429,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     @Override
     public String getACLGroupName() {
-	return configSource.get(CONFIG_ACL_GROUP_NAME, this.getAppName());
+        return configSource.get(CONFIG_ACL_GROUP_NAME, this.getAppName());
     }
 
     @Override
@@ -467,80 +439,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     @Override
     public String getBootClusterName() {
-	return configSource.get(CONFIG_BOOTCLUSTER_NAME, DEFAULT_BOOTCLUSTER_NAME);
-    }
-
-    @Override
-    public String getSeedProviderName() {
-	return configSource.get(CONFIG_SEED_PROVIDER_NAME, DEFAULT_SEED_PROVIDER);
-    }
-
-    @Override
-    public String getProcessName() {
-	return configSource.get(CONFIG_DYN_PROCESS_NAME, DEFAULT_DYN_PROCESS_NAME);
-    }
-
-    public String getYamlLocation() {
-	return configSource.get(CONFIG_YAML_LOCATION, getAppHome() + "/conf/dynomite.yml");
-    }
-
-    @Override
-    public boolean getAutoEjectHosts() {
-	return configSource.get(CONFIG_DYNO_AUTO_EJECT_HOSTS, true);
-    }
-
-    @Override
-    public String getDistribution() {
-	return configSource.get(CONFIG_TOKENS_DISTRIBUTION_NAME, DEFAULT_TOKENS_DISTRIBUTION);
-    }
-
-    @Override
-    public int getListenerPort() {
-	return configSource.get(CONFIG_DYN_LISTENER_PORT_NAME, DEFAULT_DYN_LISTENER_PORT);
-    }
-
-    @Override
-    public String getClientListenPort() {
-	return "0.0.0.0:" + getListenerPort();
-    }
-
-    @Override
-    public int getPeerListenerPort() {
-	return configSource.get(CONFIG_DYN_PEER_PORT_NAME, DEFAULT_DYN_PEER_PORT);
-    }
-
-    @Override
-    public String getDynListenPort() { // return full string
-	return "0.0.0.0:" + getPeerListenerPort();
-    }
-
-    @Override
-    public int getGossipInterval() {
-	return configSource.get(CONFIG_DYNO_GOSSIP_INTERVAL_NAME, DEFAULT_DYNO_GOSSIP_INTERVAL);
-    }
-
-    @Override
-    public String getHash() {
-	return configSource.get(CONFIG_DYNO_TOKENS_HASH_NAME, DEFAULT_DYNO_TOKENS_HASH);
-    }
-
-    @Override
-    public boolean getPreconnect() {
-	return configSource.get(CONFIG_DYNO_CONNECTIONS_PRECONNECT, true);
-    }
-
-    @Override
-    public int getServerRetryTimeout() {
-	return 30000;
-    }
-
-    @Override
-    public int getTimeout() {
-	return configSource.get(CONFIG_DYNO_REQ_TIMEOUT_NAME, DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC);
-    }
-
-    public String getMetadataKeyspace() {
-	return configSource.get(CONFIG_METADATA_KEYSPACE, DEFAULT_METADATA_KEYSPACE);
+        return configSource.get(CONFIG_BOOTCLUSTER_NAME, DEFAULT_BOOTCLUSTER_NAME);
     }
 
     @Override
@@ -549,21 +448,9 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return null;
     }
 
+    // ASA: Should this be moved to Dynomite?
     public boolean isMultiRegionedCluster() {
 	return configSource.get(CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER, true);
-    }
-
-    @Override
-    public int getSecuredPeerListenerPort() {
-	return configSource.get(CONFIG_DYN_SECURED_PEER_PORT_NAME, DEFAULT_DYN_SECURED_PEER_PORT);
-    }
-
-    public String getSecuredOption() {
-	return configSource.get(CONFIG_SECURED_OPTION, DEFAULT_SECURED_OPTION);
-    }
-
-    public boolean isHealthCheckEnable() {
-	return configSource.get(CONFIG_DYNO_HEALTHCHECK_ENABLE, true);
     }
 
     public boolean isWarmBootstrap() {
@@ -582,25 +469,10 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_MAX_TIME_BOOTSTRAP, 900000);
     }
 
-    public String getReadConsistency() {
-	return configSource.get(CONFIG_DYNO_READ_CONS, "DC_ONE");
-    }
-
-    public String getWriteConsistency() {
-	return configSource.get(CONFIG_DYNO_WRITE_CONS, "DC_ONE");
-    }
-
+    // ASA: RedisConfiguration
     @Override
     public int getStorageMemPercent() {
 	return configSource.get(CONFIG_DYNO_STORAGE_MEM_PCT_INT, 85);
-    }
-
-    public int getMbufSize() {
-	return configSource.get(CONFIG_DYNO_MBUF_SIZE, 16384);
-    }
-
-    public int getAllocatedMessages() {
-	return configSource.get(CONFIG_DYNO_MAX_ALLOC_MSGS, 200000);
     }
 
     public boolean isVpc() {
@@ -656,17 +528,17 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     public String getVpcId() {
 	return NETWORK_VPC;
     }
-    
+
     // RocksDB
     @Override
     public int getWriteBufferSize() {
 	return configSource.get(CONFIG_WRITE_BUFFER_SIZE_MB,DEFAULT_WRITE_BUFFER_SIZE_MB);
     }
-    
+
     public int getMaxWriteBufferNumber() {
 	return configSource.get(CONFIG_MAX_WRITE_BUFFER_NUMBER,DEFAULT_MAX_WRITE_BUFFER_NUMBER);
     }
-    
+
     public int getMinWriteBufferToMerge() {
 	return configSource.get(CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE,DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE);
     }
@@ -694,13 +566,12 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     @Override
     public int getCassandraThriftPortForAstyanax() {
-	return configSource.get(CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
+        return configSource.get(CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
     }
 
     @Override
-    public String getCommaSeparatedCassandraHostNames() {
-	return configSource.get(CONFIG_COMMA_SEPARATED_CASSANDRA_HOSTNAMES,
-		DEFAULT_COMMA_SEPARATED_CASSANDRA_HOSTNAMES);
+    public String getCassandraHostNames() {
+        return configSource.get(CONFIG_CASSANDRA_HOSTNAMES, DEFAULT_CASSANDRA_HOSTNAMES);
     }
 
     @Override

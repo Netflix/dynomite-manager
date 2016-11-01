@@ -17,14 +17,30 @@ import java.io.IOException;
 import com.google.inject.ImplementedBy;
 
 /**
- * Interface to aid in starting and stopping Dynomite.
+ * Manage the Dynomite process including start/stop and health check.
  */
 @ImplementedBy(DynomiteProcessManager.class)
 public interface IDynomiteProcess {
+
+    /**
+     * Start the Dynomite process.
+     *
+     * @throws IOException exception if Dynomite does not start
+     */
     void start() throws IOException;
 
+    /**
+     * Stop the Dynomite process.
+     *
+     * @throws IOException exception if Dynomite does not stop
+     */
     void stop() throws IOException;
 
+    /**
+     * Perform a health check on Dynomite.
+     *
+     * @return true if Dynomite is healthy or false if there is a problem with Dynomite
+     */
     boolean dynomiteCheck();
 
 }

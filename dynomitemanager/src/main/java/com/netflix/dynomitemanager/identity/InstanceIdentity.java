@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import com.netflix.dynomitemanager.dynomite.DynomiteConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,7 @@ public class InstanceIdentity {
     private final IAppsInstanceFactory factory;
     private final IMembership membership;
     private final IConfiguration config;
+    DynomiteConfiguration dynomiteConfig;
     private final Sleeper sleeper;
     private final ITokenManager tokenManager;
     private final InstanceEnvIdentity insEnvIdentity;
@@ -79,14 +81,18 @@ public class InstanceIdentity {
 
     @Inject
     public InstanceIdentity(IAppsInstanceFactory factory, IMembership membership, IConfiguration config,
-	    Sleeper sleeper, ITokenManager tokenManager, InstanceEnvIdentity insEnvIdentity) throws Exception {
+            DynomiteConfiguration dynomiteConfig, Sleeper sleeper, ITokenManager tokenManager,
+            InstanceEnvIdentity insEnvIdentity) throws Exception {
+
 	this.factory = factory;
 	this.membership = membership;
 	this.config = config;
+        this.dynomiteConfig = dynomiteConfig;
 	this.sleeper = sleeper;
 	this.tokenManager = tokenManager;
 	this.insEnvIdentity = insEnvIdentity;
 	init();
+
     }
 
     public AppsInstance getInstance() {
@@ -295,15 +301,15 @@ public class InstanceIdentity {
      * locMap.get(myInstance.getRac()).get(0).getHostIP().equals(myInstance.
      * getHostIP())) //{
      * //seeds.add(locMap.get(myInstance.getRac()).get(1).getHostName());
-     * //seedp.add(seed + ":" + config.getPeerListenerPort() + ":" +
+     * //seedp.add(seed + ":" + dynomiteConfig.getPeerPort() + ":" +
      * config.getDataCenter() + ":5622637");
      * seeds.add(locMap.get(myInstance.getRac()).get(1).getHostName() + ":" +
-     * config.getPeerListenerPort() + ":" + config.getDataCenter() + ":" +
+     * dynomiteConfig.getPeerPort() + ":" + config.getDataCenter() + ":" +
      * locMap.get(myInstance.getRac()).get(1).getToken()); //} } for (String loc
      * : locMap.keySet()) { AppsInstance instance =
      * Iterables.tryFind(locMap.get(loc), differentHostPredicate).orNull(); if
      * (instance != null) { //seeds.add(instance.getHostName());
-     * seeds.add(instance.getHostName() + ":" + config.getPeerListenerPort() +
+     * seeds.add(instance.getHostName() + ":" + dynomiteConfig.getPeerPort() +
      * ":" + config.getDataCenter() + ":" + instance.getToken()); } } return
      * seeds; }
      */
@@ -315,7 +321,7 @@ public class InstanceIdentity {
 	for (AppsInstance ins : factory.getAllIds(config.getAppName())) {
 	    if (!ins.getInstanceId().equals(myInstance.getInstanceId())) {
 		logger.debug("Adding node: " + ins.getInstanceId());
-		seeds.add(ins.getHostName() + ":" + config.getPeerListenerPort() + ":" + ins.getRack() + ":"
+		seeds.add(ins.getHostName() + ":" + dynomiteConfig.getPeerPort() + ":" + ins.getRack() + ":"
 			+ ins.getDatacenter() + ":" + ins.getToken());
 	    }
 	}

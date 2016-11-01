@@ -29,7 +29,7 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskScheduler;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessMonitorTask;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.sidecore.utils.ProxyAndStorageResetTask;
-import com.netflix.dynomitemanager.sidecore.utils.TuneTask;
+import com.netflix.dynomitemanager.dynomite.DynomiteYamlTuneTask;
 import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 import com.netflix.dynomitemanager.sidecore.storage.StorageProcessManager;
 import com.netflix.dynomitemanager.sidecore.storage.WarmBootstrapTask;
@@ -44,7 +44,7 @@ import com.netflix.servo.monitor.Monitors;
  * <li>{@link com.netflix.dynomitemanager.sidecore.aws.UpdateSecuritySettings}:
  * In a multi-DC deployment, update the AWS security group (SG) inbound traffic
  * filters.
- * <li>{@link com.netflix.dynomitemanager.sidecore.utils.TuneTask}: Write the
+ * <li>{@link DynomiteYamlTuneTask}: Write the
  * dynomite.yaml configuration file.
  * <li>{@link com.netflix.dynomitemanager.sidecore.backup.RestoreTask}: If
  * restore mode, then restore data from an object store (i.e. S3).
@@ -70,21 +70,25 @@ public class FloridaServer {
     private final IConfiguration config;
     private final InstanceIdentity id;
     private final Sleeper sleeper;
-    private final TuneTask tuneTask;
+    private final DynomiteYamlTuneTask dynomiteYamlTuneTask;
     private final IDynomiteProcess dynProcess;
     private final StorageProcessManager storageProcess;
     private final InstanceState state;
     private static final Logger logger = LoggerFactory.getLogger(FloridaServer.class);
 
+    static {
+        System.setProperty("archaius.configurationSource.defaultFileName", "dynomitemanager.properties");
+    }
+
     @Inject
     public FloridaServer(IConfiguration config, TaskScheduler scheduler, InstanceIdentity id, Sleeper sleeper,
-	    TuneTask tuneTask, InstanceState state, IDynomiteProcess dynProcess, StorageProcessManager storageProcess) {
+	    DynomiteYamlTuneTask dynomiteYamlTuneTask, InstanceState state, IDynomiteProcess dynProcess, StorageProcessManager storageProcess) {
 
 	this.config = config;
 	this.scheduler = scheduler;
 	this.id = id;
 	this.sleeper = sleeper;
-	this.tuneTask = tuneTask;
+	this.dynomiteYamlTuneTask = dynomiteYamlTuneTask;
 	this.state = state;
 	this.dynProcess = dynProcess;
 	this.storageProcess = storageProcess;
@@ -96,7 +100,7 @@ public class FloridaServer {
 
     /**
      * Start Dynomite Manager.
-     * 
+     *
      * @throws Exception
      */
     public void initialize() throws Exception {
@@ -124,12 +128,12 @@ public class FloridaServer {
 		    UpdateSecuritySettings.getTimer(id));
 	}
 
-	// scheduler.runTaskNow(TuneTask.class);
+	// scheduler.runTaskNow(DynomiteYamlTuneTask.class);
 	// Invoking the task directly as any errors in this task
 	// should not let Florida continue. However, we don't want to kill
 	// the Florida process, but, want it to be stuck.
-	logger.info("Running TuneTask and updating configuration.");
-	tuneTask.execute();
+	logger.info("Running DynomiteYamlTuneTask and updating configuration.");
+	dynomiteYamlTuneTask.execute();
 
 	// Determine if we need to restore from backup else start Dynomite.
 	if (config.isRestoreEnabled()) {

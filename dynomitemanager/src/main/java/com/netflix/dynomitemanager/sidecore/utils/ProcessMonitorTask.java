@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
+import com.netflix.dynomitemanager.dynomite.DynomiteConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
@@ -65,14 +66,18 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
 
     public static final String JOBNAME = "DYNOMITE_PROCESS_MONITOR_THREAD";
     private static final Logger logger = LoggerFactory.getLogger(ProcessMonitorTask.class);
+    DynomiteConfiguration dynomiteConfig;
     private final IConfiguration config;
     private final InstanceState instanceState;
     private final IStorageProxy storageProxy;
 
     @Inject
-    protected ProcessMonitorTask(IConfiguration config, InstanceState instanceState, IStorageProxy storageProxy) {
+    protected ProcessMonitorTask(IConfiguration config, DynomiteConfiguration dynomiteConfig,
+            InstanceState instanceState, IStorageProxy storageProxy) {
+
 	super(config);
 	this.config = config;
+        this.dynomiteConfig = dynomiteConfig;
 	this.instanceState = instanceState;
 	this.storageProxy = storageProxy;
     }
@@ -105,20 +110,20 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
 	 * if (instanceState.isBootstrapping()) { logger.
 	 * info("Instance is bootstrapping. Skipping further process checks.");
 	 * return; }
-	 * 
-	 * 
+	 *
+	 *
 	 * if (!instanceState.isStorageAlive()) {
 	 * if(instanceState.isStorageProxyAlive() ||
 	 * instanceState.isStorageProxyProcessAlive()) {
 	 * logger.info("Stopping Dynomite process before warm bootstrapping.");
 	 * dynProcess.stop(); }
-	 * 
+	 *
 	 * if (config.isWarmBootstrap()) {
 	 * logger.info("Warm bootstraping node. Scheduling BootstrapTask now!");
 	 * scheduler.runTaskNow(WarmBootstrapTask.class); } else { logger.
 	 * info("Cold bootstraping, launching dynomite and storage process.");
 	 * dynProcess.start(true); }
-	 * 
+	 *
 	 * logger.info(String.
 	 * format("After corrective action ProcessMonitor state: %s, time elapsed to check (micros): %s"
 	 * , instanceState, stopwatch.elapsed(MICROSECONDS))); } else
@@ -126,7 +131,7 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
 	 * logger.info("Launching dynomite process."); // starts launch dynomite
 	 * script, which starts Redis if it's not already running.
 	 * dynProcess.start(true);
-	 * 
+	 *
 	 * logger.info(String.
 	 * format("After corrective action ProcessMonitor state: %s, time elapsted to check (micros): %s"
 	 * , instanceState, stopwatch.elapsed(MICROSECONDS))); }
@@ -141,7 +146,7 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
 
     private boolean checkProxyProcess() {
 	try {
-	    String cmd = String.format("ps -ef | grep  '[/]apps/%1$s/bin/%1$s'", config.getProcessName());
+	    String cmd = String.format("ps -ef | grep  '[/]apps/%1$s/bin/%1$s'", dynomiteConfig.getProcessName());
 	    String[] cmdArray = { "/bin/sh", "-c", cmd };
 	    logger.info("Running checkProxyProcess command: " + cmd);
 

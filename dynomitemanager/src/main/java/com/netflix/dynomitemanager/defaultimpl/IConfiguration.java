@@ -22,22 +22,9 @@ public interface IConfiguration {
     public void initialize();
 
     /**
-     * @return Path to the home dir of target application
-     */
-    public String getAppHome();
-
-    /**
-     * @return Path to target application startup script
-     */
-    public String getDynomiteStartupScript();
-
-    /**
-     * @return Path to target application stop script
-     */
-    public String getDynomiteStopScript();
-
-    /**
-     * @return Cluster name
+     * Get the cluster name that is saved in tokens.appId in Cassandra. Cluster name is used to group Dynomite nodes
+     * that are part of the same cluster.
+     * @return the cluster name
      */
     public String getAppName();
 
@@ -63,7 +50,7 @@ public interface IConfiguration {
 
     /**
      * Get the data center (AWS region).
-     * 
+     *
      * @return the data center (AWS region)
      */
     public String getDataCenter();
@@ -72,7 +59,7 @@ public interface IConfiguration {
 
     /**
      * Get the rack (AWS AZ).
-     * 
+     *
      * @return the rack (AWS AZ)
      */
     public String getRack();
@@ -90,7 +77,8 @@ public interface IConfiguration {
     public String getASGName();
 
     /**
-     * Get the security group associated with nodes in this cluster
+     * Get the AWS Security Group (SG) assigned to the Dynomite cluster nodes.
+     * @return the AWS Security Group
      */
     public String getACLGroupName();
 
@@ -100,63 +88,19 @@ public interface IConfiguration {
     public String getHostIP();
 
     /**
-     * @return Bootstrap cluster name (depends on another Cassandra cluster)
+     * Get the Cassandra cluster name for the topology database (i.e. the database that stores the complete Dynomite
+     * cluster topology).
+     * @return the Cassandra cluster name for the topology database
      */
     public String getBootClusterName();
 
-    /**
-     * @return Get the name of seed provider
-     */
-    public String getSeedProviderName();
-
-    /**
-     * @return Process Name
-     */
-    public String getProcessName();
-
-    public String getReadConsistency();
-
-    public String getWriteConsistency();
-
-    public int getPeerListenerPort();
-
-    public int getSecuredPeerListenerPort();
-
-    public int getListenerPort();
-
-    public String getYamlLocation();
-
-    public boolean getAutoEjectHosts();
-
-    public String getDistribution();
-
-    public String getDynListenPort();
-
-    public int getGossipInterval();
-
-    public String getHash();
-
-    public String getClientListenPort();
-
-    public boolean getPreconnect();
-
-    public int getServerRetryTimeout();
-
-    public int getTimeout();
-
     public String getTokens();
 
-    public String getMetadataKeyspace();
-
     public boolean isMultiRegionedCluster();
-
-    public String getSecuredOption();
 
     public boolean isWarmBootstrap();
 
     public boolean isForceWarm();
-
-    public boolean isHealthCheckEnable();
 
     public int getAllowableBytesSyncDiff();
 
@@ -167,10 +111,6 @@ public interface IConfiguration {
      *         Dynomite fronted data store.
      */
     public int getStorageMemPercent();
-
-    public int getMbufSize();
-
-    public int getAllocatedMessages();
 
     // VPC
     public boolean isVpc();
@@ -212,11 +152,18 @@ public interface IConfiguration {
     public String getRestoreDate();
 
     // Cassandra
+    // =========
+    // Cassandra can be used to store the complete Dynomite cluster topology.
+
     public String getCassandraKeyspaceName();
 
     public int getCassandraThriftPortForAstyanax();
 
-    public String getCommaSeparatedCassandraHostNames();
+    /**
+     * Get a comma separated list of Cassandra hostnames.
+     * @return a comma separated list of Cassandra hostnames or IP address
+     */
+    public String getCassandraHostNames();
 
     public boolean isEurekaHostSupplierEnabled();
 
@@ -226,7 +173,7 @@ public interface IConfiguration {
     /**
      * Get the full path to the redis.conf configuration file. Netflix:
      * /apps/nfredis/conf/redis.conf DynomiteDB: /etc/dynomitedb/redis.conf
-     * 
+     *
      * @return the {@link String} full path to the redis.conf configuration file
      */
     public String getRedisConf();
@@ -234,21 +181,21 @@ public interface IConfiguration {
     /**
      * Get the full path to the Redis init start script, including any
      * arguments.
-     * 
+     *
      * @return the full path of the Redis init start script
      */
     public String getRedisInitStart();
 
     /**
      * Get the full path to the Redis init stop script, including any arguments.
-     * 
+     *
      * @return the full path of the Redis init stop script
      */
     public String getRedisInitStop();
 
     /**
      * Determines whether or not Redis will save data to disk.
-     * 
+     *
      * @return true if Redis should persist in-memory data to disk or false if
      *         Redis should only store data in-memory
      */
@@ -257,14 +204,14 @@ public interface IConfiguration {
     /**
      * Get the full path to the directory where Redis stores its AOF or RDB data
      * files.
-     * 
+     *
      * @return the full path to the directory where Redis stores its data files
      */
     public String getRedisDataDir();
 
     /**
      * Checks if Redis append-only file (AOF) persistence is enabled.
-     * 
+     *
      * @return true to indicate that AOF persistence is enabled or false to
      *         indicate that RDB persistence is enabled
      */
@@ -272,7 +219,7 @@ public interface IConfiguration {
 
     /**
      * Get the type of Redis compatible (RESP) backend server.
-     * 
+     *
      * @return RESP backend server (redis, ardb-rocksdb)
      */
     public String getRedisCompatibleEngine();
@@ -283,7 +230,7 @@ public interface IConfiguration {
     /**
      * Get the full path to the rocksdb.conf configuration file. Netflix:
      * /apps/ardb/conf/rocksdb.conf DynomiteDB: /etc/dynomitedb/rocksdb.conf
-     * 
+     *
      * @return the {@link String} full path to the rocksdb.conf configuration
      *         file
      */
@@ -292,7 +239,7 @@ public interface IConfiguration {
     /**
      * Get the full path to the ARDB RocksDB init start script, including any
      * arguments.
-     * 
+     *
      * @return the full path of the ARDB RocksDB init start script
      */
     public String getArdbRocksDBInitStart();
@@ -300,15 +247,15 @@ public interface IConfiguration {
     /**
      * Get the full path to the ARDB RocksDB init stop script, including any
      * arguments.
-     * 
+     *
      * @return the full path of the ARDB RocksDB init stop script
      */
     public String getArdbRocksDBInitStop();
-        
+
     public int getWriteBufferSize();
-    
+
     public int getMaxWriteBufferNumber();
-    
+
     public int getMinWriteBufferToMerge();
 
 }

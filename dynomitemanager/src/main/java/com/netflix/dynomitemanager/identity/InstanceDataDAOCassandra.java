@@ -127,6 +127,10 @@ public class InstanceDataDAOCassandra {
 
 		getLock(instance);
 
+        // START HERE
+        // 1. config.getRack() should be moved to AWS Instance identity
+        // 2. CN_DC is a duplicate with CN_LOCATION
+        // 3. Rename identity files to
 		try {
 			MutationBatch m = bootKeyspace.prepareMutationBatch();
 			ColumnListMutation<String> clm = m.withRow(CF_TOKENS, key);
@@ -382,11 +386,11 @@ public class InstanceDataDAOCassandra {
 				List<Host> hosts = new ArrayList<Host>();
 
 				List<String> cassHostnames = new ArrayList<String>(Arrays.asList(StringUtils
-						.split(config.getCommaSeparatedCassandraHostNames(), ",")));
+						.split(config.getCassandraHostNames(), ",")));
 
 				if (cassHostnames.size() == 0)
 					throw new RuntimeException(
-							"Cassandra Host Names can not be blank. At least one host is needed. Please use getCommaSeparatedCassandraHostNames() property.");
+							"Cassandra Host Names can not be blank. At least one host is needed. Please use getCassandraHostNames() property.");
 
 				for (String cassHost : cassHostnames) {
 					logger.info("Adding Cassandra Host = {}", cassHost);

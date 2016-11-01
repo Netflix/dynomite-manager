@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.netflix.dynomitemanager.sidecore.utils;
+package com.netflix.dynomitemanager.dynomite;
 
 import java.io.IOException;
 
@@ -20,34 +20,37 @@ import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
+import com.netflix.dynomitemanager.conf.YamlTuner;
 
 /**
  * Tune a process by writing a YAML configuration file.
  */
 @Singleton
-public class TuneTask extends Task {
+public class DynomiteYamlTuneTask extends Task {
 
-	public static final String JOBNAME = "Tune-Task";
-	private final ProcessTuner tuner;
+    public static final String TASK_NAME = "Tune-Task";
+    private final YamlTuner tuner;
+    DynomiteConfiguration dynomiteConfig;
 
-	@Inject
-	public TuneTask(IConfiguration config, ProcessTuner tuner) {
-		super(config);
-		this.tuner = tuner;
-	}
+    @Inject
+    public DynomiteYamlTuneTask(IConfiguration config, DynomiteConfiguration dynomiteConfig, YamlTuner tuner) {
+        super(config);
+        this.dynomiteConfig = dynomiteConfig;
+        this.tuner = tuner;
+    }
 
-	public void execute() throws IOException {
-		tuner.writeAllProperties(config.getYamlLocation(), null, config.getSeedProviderName());
-	}
+    public void execute() throws IOException {
+        tuner.writeAllProperties(dynomiteConfig.getDynomiteYaml());
+    }
 
-	@Override
-	public String getName() {
-		return "Tune-Task";
-	}
+    @Override
+    public String getName() {
+        return TASK_NAME;
+    }
 
-	// update the YML every 60 seconds.
-	public static TaskTimer getTimer() {
-		return new SimpleTimer(JOBNAME, 60L * 1000);
-	}
+    // update the yaml file every 60 seconds
+    public static TaskTimer getTimer() {
+        return new SimpleTimer(TASK_NAME, 60L * 1000);
+    }
 
 }

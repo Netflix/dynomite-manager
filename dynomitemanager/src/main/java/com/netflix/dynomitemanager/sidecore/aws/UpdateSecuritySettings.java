@@ -18,7 +18,9 @@ import java.util.Random;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
+import com.netflix.dynomitemanager.dynomite.DynomiteConfiguration;
 import com.netflix.dynomitemanager.identity.AppsInstance;
 import com.netflix.dynomitemanager.identity.IAppsInstanceFactory;
 import com.netflix.dynomitemanager.identity.IMembership;
@@ -39,18 +41,23 @@ public class UpdateSecuritySettings extends Task {
 	private static final Random ran = new Random();
 	private final IMembership membership;
 	private final IAppsInstanceFactory factory;
+    DynomiteConfiguration dynomiteConfig;
 
-	@Inject
-	public UpdateSecuritySettings(IConfiguration config, IMembership membership, IAppsInstanceFactory factory) {
+    @Inject
+    public UpdateSecuritySettings(IConfiguration config, DynomiteConfiguration dynomiteConfig,
+            IMembership membership, IAppsInstanceFactory factory) {
+
 		super(config);
+        this.dynomiteConfig = dynomiteConfig;
 		this.membership = membership;
 		this.factory = factory;
-	}
+
+    }
 
 	@Override
 	public void execute() {
 		// if seed does not execute.
-		int port = config.getPeerListenerPort();
+		int port = dynomiteConfig.getPeerPort();
 		List<String> acls = membership.listACL(port, port);
 		List<AppsInstance> instances = factory.getAllIds(config.getAppName());
 

@@ -47,11 +47,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public boolean isHealthCheckEnable() {
-	return false;
-    }
-
-    @Override
     public boolean isEurekaHostSupplierEnabled() {
 	return false;
     }
@@ -81,16 +76,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getYamlLocation() {
-	return null;
-    }
-
-    @Override
-    public String getWriteConsistency() {
-	return null;
-    }
-
-    @Override
     public String getVpcId() {
 	return null;
     }
@@ -101,33 +86,8 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getTimeout() {
-	return 0;
-    }
-
-    @Override
     public int getStorageMemPercent() {
 	return 0;
-    }
-
-    @Override
-    public int getServerRetryTimeout() {
-	return 0;
-    }
-
-    @Override
-    public String getSeedProviderName() {
-	return null;
-    }
-
-    @Override
-    public int getSecuredPeerListenerPort() {
-	return 0;
-    }
-
-    @Override
-    public String getSecuredOption() {
-	return null;
     }
 
     @Override
@@ -137,11 +97,6 @@ public class BlankConfiguration implements IConfiguration {
 
     @Override
     public String getDataCenter() {
-	return null;
-    }
-
-    @Override
-    public String getReadConsistency() {
 	return null;
     }
 
@@ -156,42 +111,12 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getProcessName() {
-	return null;
-    }
-
-    @Override
-    public boolean getPreconnect() {
-	return false;
-    }
-
-    @Override
     public String getRedisDataDir() {
 	return null;
     }
 
     @Override
-    public int getPeerListenerPort() {
-	return 0;
-    }
-
-    @Override
-    public String getMetadataKeyspace() {
-	return null;
-    }
-
-    @Override
-    public int getMbufSize() {
-	return 0;
-    }
-
-    @Override
     public int getMaxTimeToBootstrap() {
-	return 0;
-    }
-
-    @Override
-    public int getListenerPort() {
 	return 0;
     }
 
@@ -211,32 +136,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getHash() {
-	return null;
-    }
-
-    @Override
-    public int getGossipInterval() {
-	return 0;
-    }
-
-    @Override
-    public String getDynListenPort() {
-	return null;
-    }
-
-    @Override
-    public String getDistribution() {
-	return null;
-    }
-
-    @Override
-    public String getCommaSeparatedCassandraHostNames() {
-	return null;
-    }
-
-    @Override
-    public String getClientListenPort() {
+    public String getCassandraHostNames() {
 	return null;
     }
 
@@ -276,37 +176,12 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public boolean getAutoEjectHosts() {
-	return false;
-    }
-
-    @Override
-    public String getDynomiteStopScript() {
-	return null;
-    }
-
-    @Override
-    public String getDynomiteStartupScript() {
-	return null;
-    }
-
-    @Override
     public String getAppName() {
 	return null;
     }
 
     @Override
-    public String getAppHome() {
-	return null;
-    }
-
-    @Override
     public int getAllowableBytesSyncDiff() {
-	return 0;
-    }
-
-    @Override
-    public int getAllocatedMessages() {
 	return 0;
     }
 
