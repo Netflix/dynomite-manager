@@ -117,8 +117,6 @@ public interface IConfiguration {
 
     public boolean isForceWarm();
 
-    public boolean isHealthCheckEnable();
-
     public int getAllowableBytesSyncDiff();
 
     public int getMaxTimeToBootstrap();

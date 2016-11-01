@@ -71,7 +71,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNO_CONNECTIONS_PRECONNECT = DYNOMITEMANAGER_PRE
 	    + ".dyno.connections.preconnect";
     private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
-    private static final String CONFIG_DYNO_HEALTHCHECK_ENABLE = DYNOMITEMANAGER_PRE + ".dyno.healthcheck.enable";
     // The max percentage of system memory to be allocated to the Dynomite
     // fronted data store.
     private static final String CONFIG_DYNO_STORAGE_MEM_PCT_INT = DYNOMITEMANAGER_PRE + ".dyno.storage.mem.pct.int";
@@ -481,16 +480,13 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return null;
     }
 
+    // ASA: Should this be moved to Dynomite?
     public boolean isMultiRegionedCluster() {
 	return configSource.get(CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER, true);
     }
 
     public String getSecuredOption() {
 	return configSource.get(CONFIG_SECURED_OPTION, DEFAULT_SECURED_OPTION);
-    }
-
-    public boolean isHealthCheckEnable() {
-	return configSource.get(CONFIG_DYNO_HEALTHCHECK_ENABLE, true);
     }
 
     public boolean isWarmBootstrap() {
