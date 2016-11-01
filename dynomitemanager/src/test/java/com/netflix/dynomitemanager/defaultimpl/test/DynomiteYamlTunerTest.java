@@ -14,27 +14,27 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import com.netflix.dynomitemanager.defaultimpl.DynomiteYamlTuner;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.netflix.dynomitemanager.defaultimpl.FloridaStandardTuner;
 import com.netflix.dynomitemanager.monitoring.test.BlankConfiguration;
 
 /**
  *
- * Unit Tests for FloridaStandardTuner
+ * Unit Tests for DynomiteYamlTuner
  *
  * @author diegopacheco
  * @author ipapapa
  *
  */
-public class FloridaStandardTunerTest {
+public class DynomiteYamlTunerTest {
 
 	@Test
 	public void testWriteAllProperties() throws Exception {
 		//TODO: we need to a FakeInstanceState in the future.
-		FloridaStandardTuner tuner = new FloridaStandardTuner(new BlankConfiguration(),
+		DynomiteYamlTuner tuner = new DynomiteYamlTuner(new BlankConfiguration(),
 				new FakeInstanceIdentity(), new FakeInstanceState(), new FakeStorageProxy());
 
 		String yamlPath = System.getProperty("java.io.tmpdir") + "/yaml-tunner.yaml";

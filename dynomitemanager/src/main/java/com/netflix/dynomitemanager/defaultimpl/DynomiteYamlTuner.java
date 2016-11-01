@@ -19,7 +19,6 @@ import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
 import com.netflix.dynomitemanager.IInstanceState;
-import com.netflix.dynomitemanager.defaultimpl.FloridaStandardTuner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +35,9 @@ import java.util.Map;
  * Generate and write the dynomite.yaml configuration file to disk.
  */
 @Singleton
-public class FloridaStandardTuner implements ProcessTuner {
+public class DynomiteYamlTuner implements ProcessTuner {
 
-    private static final Logger logger = LoggerFactory.getLogger(FloridaStandardTuner.class);
+    private static final Logger logger = LoggerFactory.getLogger(DynomiteYamlTuner.class);
     private static final String ROOT_NAME = "dyn_o_mite";
 
     DynomiteConfiguration dynomiteConfig;
@@ -48,7 +47,7 @@ public class FloridaStandardTuner implements ProcessTuner {
     protected final IStorageProxy storageProxy;
 
     @Inject
-    public FloridaStandardTuner(IConfiguration config, DynomiteConfiguration dynomiteConfig, InstanceIdentity ii,
+    public DynomiteYamlTuner(IConfiguration config, DynomiteConfiguration dynomiteConfig, InstanceIdentity ii,
             IInstanceState instanceState, IStorageProxy storageProxy) {
         this.config = config;
         this.dynomiteConfig = dynomiteConfig;

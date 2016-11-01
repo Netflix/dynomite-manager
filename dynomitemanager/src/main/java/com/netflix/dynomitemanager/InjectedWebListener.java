@@ -31,7 +31,7 @@ import com.google.inject.name.Names;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
-import com.netflix.dynomitemanager.defaultimpl.FloridaStandardTuner;
+import com.netflix.dynomitemanager.defaultimpl.DynomiteYamlTuner;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.dynomite.DynomiteProcessManager;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
@@ -119,7 +119,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
 	protected void configure() {
 	    logger.info("**Binding OSS Config classes.");
 	    binder().bind(IConfiguration.class).to(DynomitemanagerConfiguration.class);
-	    binder().bind(ProcessTuner.class).to(FloridaStandardTuner.class);
+	    binder().bind(ProcessTuner.class).to(DynomiteYamlTuner.class);
 	    binder().bind(IAppsInstanceFactory.class).to(CassandraInstanceFactory.class);
 	    binder().bind(SchedulerFactory.class).to(StdSchedulerFactory.class).asEagerSingleton();
 	    binder().bind(IDynomiteProcess.class).to(DynomiteProcessManager.class);
