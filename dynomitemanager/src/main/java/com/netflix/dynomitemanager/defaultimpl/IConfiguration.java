@@ -109,8 +109,6 @@ public interface IConfiguration {
 
     public boolean getPreconnect();
 
-    public int getServerRetryTimeout();
-
     public String getTokens();
 
     public boolean isMultiRegionedCluster();

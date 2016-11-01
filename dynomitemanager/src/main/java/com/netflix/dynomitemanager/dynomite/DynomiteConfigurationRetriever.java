@@ -190,9 +190,15 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
     // ========
 
     private String BACKEND_REQUEST_TIMEOUT_CONF = DM_PREFIX + MODULE_PREFIX + ".backend.request.timeout";
-    private static final int BACKEND_REQUEST_TIMEOUT_DEFAULT = 5000; // milliseconds
+    private static final int BACKEND_REQUEST_TIMEOUT_DEFAULT = 5000; // 5 seconds (in ms)
     public int getBackendRequestTimeout() {
         return getIntProperty(BACKEND_REQUEST_TIMEOUT_CONF, BACKEND_REQUEST_TIMEOUT_DEFAULT);
     }
 
+    // Saved as the server_retry_timeout value in dynomite.yaml
+    private String REJOIN_CLUSTER_WAIT_PERIOD_CONF = DM_PREFIX + MODULE_PREFIX + ".rejoin.cluster.wait.period";
+    public static final int REJOIN_CLUSTER_WAIT_PERIOD_DEFAULT = 30000; // 30 seconds (in ms)
+    public int getRejoinClusterWaitPeriod() {
+        return getIntProperty(REJOIN_CLUSTER_WAIT_PERIOD_CONF, REJOIN_CLUSTER_WAIT_PERIOD_DEFAULT);
+    }
 }

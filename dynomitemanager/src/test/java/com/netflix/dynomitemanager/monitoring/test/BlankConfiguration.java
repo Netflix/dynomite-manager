@@ -101,11 +101,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getServerRetryTimeout() {
-	return 0;
-    }
-
-    @Override
     public String getSecuredOption() {
 	return null;
     }

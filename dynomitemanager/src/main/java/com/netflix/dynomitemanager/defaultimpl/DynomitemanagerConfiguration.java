@@ -484,11 +484,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getServerRetryTimeout() {
-	return 30000;
-    }
-
-    @Override
     public String getTokens() {
 	// TODO Auto-generated method stub
 	return null;
