@@ -26,14 +26,14 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
  * Tune a process by writing a YAML configuration file.
  */
 @Singleton
-public class TuneTask extends Task {
+public class DynomiteYamlTuneTask extends Task {
 
     public static final String TASK_NAME = "Tune-Task";
     private final YamlTuner tuner;
     DynomiteConfiguration dynomiteConfig;
 
     @Inject
-    public TuneTask(IConfiguration config, DynomiteConfiguration dynomiteConfig, YamlTuner tuner) {
+    public DynomiteYamlTuneTask(IConfiguration config, DynomiteConfiguration dynomiteConfig, YamlTuner tuner) {
         super(config);
         this.dynomiteConfig = dynomiteConfig;
         this.tuner = tuner;
