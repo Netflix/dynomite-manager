@@ -163,6 +163,12 @@ public interface DynomiteConfiguration {
     // ======
 
     /**
+     * Get the hash algorithm used to generate a hash value from the data's key.
+     * @return the hash algorithm
+     */
+    String getHash();
+
+    /**
      * Get the token distribution type: ketama, modula, random, vnode (default), single.
      *
      * @return the token distribution method

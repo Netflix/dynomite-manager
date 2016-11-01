@@ -186,7 +186,14 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
     // Tokens
     // ======
 
-    private String DISTRIBUTION_TYPE_CONF = DM_PREFIX + MODULE_PREFIX + ".token.distribution";
+    private String HASH_CONF = DM_PREFIX + MODULE_PREFIX + ".tokens.hash";
+    private static final String HASH_DEFAULT = "murmur";
+    @Override
+    public String getHash() {
+        return getStringProperty(HASH_CONF, HASH_DEFAULT);
+    }
+
+    private String DISTRIBUTION_TYPE_CONF = DM_PREFIX + MODULE_PREFIX + ".tokens.distribution";
     private static final String DISTRIBUTION_TYPE_DEFAULT = "vnode";
     @Override
     public String getTokenDistributionType() {

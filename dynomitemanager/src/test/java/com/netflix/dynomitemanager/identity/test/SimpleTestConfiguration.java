@@ -141,11 +141,6 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getHash() {
-		return null;
-	}
-
-	@Override
 	public String getCassandraHostNames() {
 		return "localhost";
 	}

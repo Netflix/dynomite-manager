@@ -94,8 +94,6 @@ public interface IConfiguration {
      */
     public String getBootClusterName();
 
-    public String getHash();
-
     public boolean getPreconnect();
 
     public String getTokens();
