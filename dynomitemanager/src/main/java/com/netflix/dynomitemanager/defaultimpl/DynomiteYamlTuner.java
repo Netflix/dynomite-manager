@@ -17,7 +17,7 @@ import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.dynomite.DynomiteConfiguration;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
-import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
+import com.netflix.dynomitemanager.sidecore.utils.YamlTuner;
 import com.netflix.dynomitemanager.IInstanceState;
 
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ import java.util.Map;
  * Generate and write the dynomite.yaml configuration file to disk.
  */
 @Singleton
-public class DynomiteYamlTuner implements ProcessTuner {
+public class DynomiteYamlTuner implements YamlTuner {
 
     private static final Logger logger = LoggerFactory.getLogger(DynomiteYamlTuner.class);
     private static final String ROOT_NAME = "dyn_o_mite";

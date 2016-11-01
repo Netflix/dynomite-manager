@@ -29,11 +29,11 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
 public class TuneTask extends Task {
 
     public static final String TASK_NAME = "Tune-Task";
-    private final ProcessTuner tuner;
+    private final YamlTuner tuner;
     DynomiteConfiguration dynomiteConfig;
 
     @Inject
-    public TuneTask(IConfiguration config, DynomiteConfiguration dynomiteConfig, ProcessTuner tuner) {
+    public TuneTask(IConfiguration config, DynomiteConfiguration dynomiteConfig, YamlTuner tuner) {
         super(config);
         this.dynomiteConfig = dynomiteConfig;
         this.tuner = tuner;

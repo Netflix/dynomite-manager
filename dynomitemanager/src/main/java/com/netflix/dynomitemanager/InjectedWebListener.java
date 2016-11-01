@@ -55,7 +55,7 @@ import com.netflix.dynomitemanager.sidecore.config.VpcInstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.FloridaHealthCheckHandler;
-import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
+import com.netflix.dynomitemanager.sidecore.utils.YamlTuner;
 import com.netflix.dynomitemanager.supplier.HostSupplier;
 import com.netflix.dynomitemanager.supplier.CassandraHostsSupplier;
 import com.netflix.karyon.spi.HealthCheckHandler;
@@ -119,7 +119,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
 	protected void configure() {
 	    logger.info("**Binding OSS Config classes.");
 	    binder().bind(IConfiguration.class).to(DynomitemanagerConfiguration.class);
-	    binder().bind(ProcessTuner.class).to(DynomiteYamlTuner.class);
+	    binder().bind(YamlTuner.class).to(DynomiteYamlTuner.class);
 	    binder().bind(IAppsInstanceFactory.class).to(CassandraInstanceFactory.class);
 	    binder().bind(SchedulerFactory.class).to(StdSchedulerFactory.class).asEagerSingleton();
 	    binder().bind(IDynomiteProcess.class).to(DynomiteProcessManager.class);

@@ -17,7 +17,7 @@ import java.io.IOException;
 /**
  * Write a yaml file to disk.
  */
-public interface ProcessTuner {
+public interface YamlTuner {
 
     /**
      * Generate and write a yaml file to disk.
