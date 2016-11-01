@@ -67,8 +67,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
     private static final String CONFIG_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.rack";
     private static final String CONFIG_USE_ASG_FOR_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.asg.rack";
-    private static final String CONFIG_DYNO_GOSSIP_INTERVAL_NAME = DYNOMITEMANAGER_PRE + ".dyno.gossip.interval"; // in
-														  // milliseconds
     private static final String CONFIG_DYNO_TOKENS_HASH_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.hash";
     private static final String CONFIG_DYNO_CONNECTIONS_PRECONNECT = DYNOMITEMANAGER_PRE
 	    + ".dyno.connections.preconnect";
@@ -140,7 +138,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private List<String> DEFAULT_AVAILABILITY_RACKS = ImmutableList.of();
 
     private final String DEFAULT_DYN_RACK = "RAC1";
-    private final int DEFAULT_DYNO_GOSSIP_INTERVAL = 10000;
     private final String DEFAULT_DYNO_TOKENS_HASH = "murmur";
 
     private final String DEFAULT_METADATA_KEYSPACE = "dyno_bootstrap";
@@ -466,11 +463,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     @Override
     public boolean getAutoEjectHosts() {
 	return configSource.get(CONFIG_DYNO_AUTO_EJECT_HOSTS, true);
-    }
-
-    @Override
-    public int getGossipInterval() {
-	return configSource.get(CONFIG_DYNO_GOSSIP_INTERVAL_NAME, DEFAULT_DYNO_GOSSIP_INTERVAL);
     }
 
     @Override

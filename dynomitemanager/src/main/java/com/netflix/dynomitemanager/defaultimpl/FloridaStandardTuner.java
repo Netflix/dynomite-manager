@@ -78,7 +78,7 @@ public class FloridaStandardTuner implements ProcessTuner {
 	entries.put("distribution", dynomiteConfig.getTokenDistributionType());
 	entries.put("dyn_listen", dynomiteConfig.getPeerListen());
 	entries.put("dyn_seed_provider", dynomiteConfig.getSeedProvider());
-	entries.put("gos_interval", config.getGossipInterval());
+	entries.put("gos_interval", dynomiteConfig.getGossipInterval());
 	entries.put("hash", config.getHash());
 	entries.put("listen", dynomiteConfig.getClientListen());
 	entries.put("preconnect", config.getPreconnect());

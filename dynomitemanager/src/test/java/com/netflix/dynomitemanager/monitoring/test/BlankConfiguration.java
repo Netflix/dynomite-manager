@@ -161,11 +161,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getGossipInterval() {
-	return 0;
-    }
-
-    @Override
     public String getCassandraHostNames() {
 	return null;
     }

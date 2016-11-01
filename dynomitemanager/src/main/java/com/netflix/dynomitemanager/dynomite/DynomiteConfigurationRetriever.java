@@ -197,8 +197,18 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
 
     // Saved as the server_retry_timeout value in dynomite.yaml
     private String REJOIN_CLUSTER_WAIT_PERIOD_CONF = DM_PREFIX + MODULE_PREFIX + ".rejoin.cluster.wait.period";
-    public static final int REJOIN_CLUSTER_WAIT_PERIOD_DEFAULT = 30000; // 30 seconds (in ms)
+    private static final int REJOIN_CLUSTER_WAIT_PERIOD_DEFAULT = 30000; // 30 seconds (in ms)
     public int getRejoinClusterWaitPeriod() {
         return getIntProperty(REJOIN_CLUSTER_WAIT_PERIOD_CONF, REJOIN_CLUSTER_WAIT_PERIOD_DEFAULT);
     }
+
+    // Gossip
+    // ======
+
+    private String GOSSIP_INTERVAL_CONF = DM_PREFIX + MODULE_PREFIX + ".gossip.interval";
+    private static final int GOSSIP_INTERVAL_DEFAULT = 10000; // 10 seconds (in ms)
+    public int getGossipInterval() {
+        return getIntProperty(GOSSIP_INTERVAL_CONF, GOSSIP_INTERVAL_DEFAULT);
+    }
+
 }

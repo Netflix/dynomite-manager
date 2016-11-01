@@ -180,4 +180,13 @@ public interface DynomiteConfiguration {
      * @return the amount of time to wait before allowing a node to rejoin the cluster
      */
     int getRejoinClusterWaitPeriod();
+
+    // Gossip
+    // ======
+
+    /**
+     *
+     * @return
+     */
+    int getGossipInterval();
 }
