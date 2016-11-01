@@ -14,7 +14,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import com.netflix.dynomitemanager.defaultimpl.DynomiteYamlTuner;
+import com.netflix.dynomitemanager.dynomite.DynomiteYamlTuner;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;

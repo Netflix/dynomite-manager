@@ -29,7 +29,7 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskScheduler;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessMonitorTask;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.sidecore.utils.ProxyAndStorageResetTask;
-import com.netflix.dynomitemanager.sidecore.utils.DynomiteYamlTuneTask;
+import com.netflix.dynomitemanager.dynomite.DynomiteYamlTuneTask;
 import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 import com.netflix.dynomitemanager.sidecore.storage.StorageProcessManager;
 import com.netflix.dynomitemanager.sidecore.storage.WarmBootstrapTask;
