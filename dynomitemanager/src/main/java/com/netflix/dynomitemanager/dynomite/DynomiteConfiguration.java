@@ -152,6 +152,13 @@ public interface DynomiteConfiguration {
      */
     String getProcessName();
 
+    /**
+     * Get the level of encryption to use for dynomite-to-dynomite communication. Possible values are none, datacenter,
+     * rack, and all.
+     * @return the dynomite-to-dynomite encryption option
+     */
+    String getPeerToPeerEncryption();
+
     // Tokens
     // ======
 

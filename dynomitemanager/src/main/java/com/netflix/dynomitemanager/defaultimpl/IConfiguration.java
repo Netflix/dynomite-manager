@@ -104,8 +104,6 @@ public interface IConfiguration {
 
     public boolean isMultiRegionedCluster();
 
-    public String getSecuredOption();
-
     public boolean isWarmBootstrap();
 
     public boolean isForceWarm();

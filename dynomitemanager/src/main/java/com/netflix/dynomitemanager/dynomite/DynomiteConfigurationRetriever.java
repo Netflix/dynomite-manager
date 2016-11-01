@@ -176,6 +176,13 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
         return getStringProperty(PROCESS_NAME_CONF, PROCESS_NAME_DEFAULT);
     }
 
+    private static final String PEER_TO_PEER_ENCRYPTION_CONF = DM_PREFIX + MODULE_PREFIX + ".peer.to.peer.encryption";
+    private static final String PEER_TO_PEER_ENCRYPTION_DEFAULT = "datacenter";
+    @Override
+    public String getPeerToPeerEncryption() {
+        return getStringProperty(PEER_TO_PEER_ENCRYPTION_CONF, PEER_TO_PEER_ENCRYPTION_DEFAULT);
+    }
+
     // Tokens
     // ======
 

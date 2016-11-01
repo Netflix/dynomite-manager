@@ -91,11 +91,6 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getSecuredOption() {
-		return null;
-	}
-
-	@Override
 	public String getRestoreDate() {
 		return null;
 	}
