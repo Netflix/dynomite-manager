@@ -64,8 +64,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
     private static final String CONFIG_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.rack";
     private static final String CONFIG_USE_ASG_FOR_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.asg.rack";
-    private static final String CONFIG_DYNO_CONNECTIONS_PRECONNECT = DYNOMITEMANAGER_PRE
-	    + ".dyno.connections.preconnect";
     private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
 
     // ASA: RedisConfiguration
@@ -442,11 +440,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     @Override
     public String getBootClusterName() {
         return configSource.get(CONFIG_BOOTCLUSTER_NAME, DEFAULT_BOOTCLUSTER_NAME);
-    }
-
-    @Override
-    public boolean getPreconnect() {
-	return configSource.get(CONFIG_DYNO_CONNECTIONS_PRECONNECT, true);
     }
 
     @Override

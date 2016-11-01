@@ -159,6 +159,12 @@ public interface DynomiteConfiguration {
      */
     String getPeerToPeerEncryption();
 
+    /**
+     * Determine whether or not Dynomite should preconnect to the backend server (i.e. Redis or ARDB).
+     * @return true if Dynomite should preconnect, false if it should not preconnect
+     */
+    boolean getPreconnectToBackend();
+
     // Tokens
     // ======
 

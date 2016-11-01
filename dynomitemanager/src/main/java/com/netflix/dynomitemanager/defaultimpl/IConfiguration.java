@@ -94,8 +94,6 @@ public interface IConfiguration {
      */
     public String getBootClusterName();
 
-    public boolean getPreconnect();
-
     public String getTokens();
 
     public boolean isMultiRegionedCluster();

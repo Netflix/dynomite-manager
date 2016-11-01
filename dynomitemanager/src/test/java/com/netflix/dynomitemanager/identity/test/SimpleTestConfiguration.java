@@ -111,11 +111,6 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public boolean getPreconnect() {
-		return false;
-	}
-
-	@Override
 	public String getRedisDataDir() {
 		return null;
 	}

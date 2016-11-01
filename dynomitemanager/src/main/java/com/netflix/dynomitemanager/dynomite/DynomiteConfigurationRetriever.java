@@ -183,6 +183,12 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
         return getStringProperty(PEER_TO_PEER_ENCRYPTION_CONF, PEER_TO_PEER_ENCRYPTION_DEFAULT);
     }
 
+    private static final String PRECONNECT_TO_BACKEND_CONF = DM_PREFIX + MODULE_PREFIX + ".preconnect.to.backend";
+    private static final boolean PRECONNECT_TO_BACKEND_DEFAULT = true;
+    public boolean getPreconnectToBackend() {
+        return getBooleanProperty(PRECONNECT_TO_BACKEND_CONF, PRECONNECT_TO_BACKEND_DEFAULT);
+    }
+
     // Tokens
     // ======
 
