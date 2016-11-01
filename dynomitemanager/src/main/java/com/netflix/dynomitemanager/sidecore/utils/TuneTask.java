@@ -28,29 +28,29 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
 @Singleton
 public class TuneTask extends Task {
 
-	public static final String JOBNAME = "Tune-Task";
-	private final ProcessTuner tuner;
+    public static final String TASK_NAME = "Tune-Task";
+    private final ProcessTuner tuner;
     DynomiteConfiguration dynomiteConfig;
 
     @Inject
     public TuneTask(IConfiguration config, DynomiteConfiguration dynomiteConfig, ProcessTuner tuner) {
-		super(config);
+        super(config);
         this.dynomiteConfig = dynomiteConfig;
-		this.tuner = tuner;
-	}
+        this.tuner = tuner;
+    }
 
     public void execute() throws IOException {
         tuner.writeAllProperties(dynomiteConfig.getDynomiteYaml());
     }
 
-	@Override
-	public String getName() {
-		return "Tune-Task";
-	}
+    @Override
+    public String getName() {
+        return TASK_NAME;
+    }
 
-	// update the YML every 60 seconds.
-	public static TaskTimer getTimer() {
-		return new SimpleTimer(JOBNAME, 60L * 1000);
-	}
+    // update the yaml file every 60 seconds
+    public static TaskTimer getTimer() {
+        return new SimpleTimer(TASK_NAME, 60L * 1000);
+    }
 
 }

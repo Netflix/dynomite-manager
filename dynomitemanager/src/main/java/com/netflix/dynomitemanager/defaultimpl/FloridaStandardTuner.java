@@ -32,9 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 /**
- * Generate and write the dynomite.yaml and redis.conf configuration files to disk.
+ * Generate and write the dynomite.yaml configuration file to disk.
  */
 @Singleton
 public class FloridaStandardTuner implements ProcessTuner {
@@ -51,11 +50,11 @@ public class FloridaStandardTuner implements ProcessTuner {
     @Inject
     public FloridaStandardTuner(IConfiguration config, DynomiteConfiguration dynomiteConfig, InstanceIdentity ii,
             IInstanceState instanceState, IStorageProxy storageProxy) {
-	this.config = config;
+        this.config = config;
         this.dynomiteConfig = dynomiteConfig;
-	this.ii = ii;
-	this.instanceState = instanceState;
-	this.storageProxy = storageProxy;
+        this.ii = ii;
+        this.instanceState = instanceState;
+        this.storageProxy = storageProxy;
     }
 
     /**
@@ -66,71 +65,70 @@ public class FloridaStandardTuner implements ProcessTuner {
      */
     @SuppressWarnings("unchecked")
     public void writeAllProperties(String yamlLocation) throws IOException {
-	DumperOptions options = new DumperOptions();
-	options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-	Yaml yaml = new Yaml(options);
-	File yamlFile = new File(yamlLocation);
-	Map map = (Map) yaml.load(new FileInputStream(yamlFile));
-	Map entries = (Map) map.get(ROOT_NAME);
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        Yaml yaml = new Yaml(options);
+        File yamlFile = new File(yamlLocation);
+        Map map = (Map) yaml.load(new FileInputStream(yamlFile));
+        Map entries = (Map) map.get(ROOT_NAME);
 
-	entries.put("auto_eject_hosts", dynomiteConfig.getAutoEjectPeers());
-	entries.put("rack", config.getRack());
-	entries.put("distribution", dynomiteConfig.getTokenDistributionType());
-	entries.put("dyn_listen", dynomiteConfig.getPeerListen());
-	entries.put("dyn_seed_provider", dynomiteConfig.getSeedProvider());
-	entries.put("gos_interval", dynomiteConfig.getGossipInterval());
-	entries.put("hash", dynomiteConfig.getHash());
-	entries.put("listen", dynomiteConfig.getClientListen());
-	entries.put("preconnect", dynomiteConfig.getPreconnectToBackend());
-	entries.put("server_retry_timeout", dynomiteConfig.getRejoinClusterWaitPeriod());
-	entries.put("timeout", dynomiteConfig.getBackendRequestTimeout());
-	entries.put("tokens", ii.getTokens());
-	entries.put("secure_server_option", dynomiteConfig.getPeerToPeerEncryption());
-	entries.remove("redis");
-	entries.put("datacenter", config.getDataCenter());
-	entries.put("read_consistency", dynomiteConfig.getReadConsistency());
-	entries.put("write_consistency", dynomiteConfig.getWriteConsistency());
-	entries.put("pem_key_file", dynomiteConfig.getPemKeyFile());
+        entries.put("auto_eject_hosts", dynomiteConfig.getAutoEjectPeers());
+        entries.put("rack", config.getRack());
+        entries.put("distribution", dynomiteConfig.getTokenDistributionType());
+        entries.put("dyn_listen", dynomiteConfig.getPeerListen());
+        entries.put("dyn_seed_provider", dynomiteConfig.getSeedProvider());
+        entries.put("gos_interval", dynomiteConfig.getGossipInterval());
+        entries.put("hash", dynomiteConfig.getHash());
+        entries.put("listen", dynomiteConfig.getClientListen());
+        entries.put("preconnect", dynomiteConfig.getPreconnectToBackend());
+        entries.put("server_retry_timeout", dynomiteConfig.getRejoinClusterWaitPeriod());
+        entries.put("timeout", dynomiteConfig.getBackendRequestTimeout());
+        entries.put("tokens", ii.getTokens());
+        entries.put("secure_server_option", dynomiteConfig.getPeerToPeerEncryption());
+        entries.remove("redis");
+        entries.put("datacenter", config.getDataCenter());
+        entries.put("read_consistency", dynomiteConfig.getReadConsistency());
+        entries.put("write_consistency", dynomiteConfig.getWriteConsistency());
+        entries.put("pem_key_file", dynomiteConfig.getPemKeyFile());
 
-	List seedp = (List) entries.get("dyn_seeds");
-	if (seedp == null) {
-	    seedp = new ArrayList<String>();
-	    entries.put("dyn_seeds", seedp);
-	} else {
-	    seedp.clear();
-	}
+        List seedp = (List) entries.get("dyn_seeds");
+        if (seedp == null) {
+            seedp = new ArrayList<String>();
+            entries.put("dyn_seeds", seedp);
+        } else {
+            seedp.clear();
+        }
 
-	List<String> seeds = ii.getSeeds();
-	if (seeds.size() != 0) {
-	    for (String seed : seeds) {
-		seedp.add(seed);
-	    }
-	} else {
-	    entries.remove("dyn_seeds");
-	}
+        List<String> seeds = ii.getSeeds();
+        if (seeds.size() != 0) {
+            for (String seed : seeds) {
+                seedp.add(seed);
+            }
+        } else {
+            entries.remove("dyn_seeds");
+        }
 
-	List servers = (List) entries.get("servers");
-	if (servers == null) {
-	    servers = new ArrayList<String>();
-	    entries.put("servers", servers);
-	} else {
-	    servers.clear();
-	}
+        List servers = (List) entries.get("servers");
+        if (servers == null) {
+            servers = new ArrayList<String>();
+            entries.put("servers", servers);
+        } else {
+            servers.clear();
+        }
 
-	entries.put("data_store", storageProxy.getEngineNumber());
-	servers.add(storageProxy.getIpAddress() + ":" + storageProxy.getPort()  +":" + 1);
+        entries.put("data_store", storageProxy.getEngineNumber());
+        servers.add(storageProxy.getIpAddress() + ":" + storageProxy.getPort() + ":" + 1);
 
+        if (!this.instanceState.getYmlWritten()) {
+            logger.info("YAML Dump: ");
+            logger.info(yaml.dump(map));
+            storageProxy.updateConfiguration();
+        } else {
+            logger.info("Updating dynomite.yml with latest information");
+        }
+        yaml.dump(map, new FileWriter(yamlLocation));
 
-	if (!this.instanceState.getYmlWritten()) {
-	    logger.info("YAML Dump: ");
-	    logger.info(yaml.dump(map));
-	    storageProxy.updateConfiguration();
-	} else {
-	    logger.info("Updating dynomite.yml with latest information");
-	}
-	yaml.dump(map, new FileWriter(yamlLocation));
-
-	this.instanceState.setYmlWritten(true);
+        this.instanceState.setYmlWritten(true);
     }
 
     /**
@@ -142,15 +140,14 @@ public class FloridaStandardTuner implements ProcessTuner {
      */
     @SuppressWarnings("unchecked")
     public void updateAutoBootstrap(String yamlFile, boolean autobootstrap) throws IOException {
-	DumperOptions options = new DumperOptions();
-	options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-	Yaml yaml = new Yaml(options);
-	@SuppressWarnings("rawtypes")
-	Map map = (Map) yaml.load(new FileInputStream(yamlFile));
-	// Do not bootstrap in restore mode
-	map.put("auto_bootstrap", autobootstrap);
-	logger.info("Updating yaml" + yaml.dump(map));
-	yaml.dump(map, new FileWriter(yamlFile));
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        Yaml yaml = new Yaml(options);
+        @SuppressWarnings("rawtypes") Map map = (Map) yaml.load(new FileInputStream(yamlFile));
+        // Do not bootstrap in restore mode
+        map.put("auto_bootstrap", autobootstrap);
+        logger.info("Updating yaml" + yaml.dump(map));
+        yaml.dump(map, new FileWriter(yamlFile));
     }
 
 }

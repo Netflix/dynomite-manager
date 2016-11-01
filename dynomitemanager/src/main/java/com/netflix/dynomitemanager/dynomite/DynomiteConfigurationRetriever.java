@@ -178,6 +178,7 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
 
     private static final String PRECONNECT_TO_BACKEND_CONF = DM_PREFIX + MODULE_PREFIX + ".preconnect.to.backend";
     private static final boolean PRECONNECT_TO_BACKEND_DEFAULT = true;
+
     public boolean getPreconnectToBackend() {
         return getBooleanProperty(PRECONNECT_TO_BACKEND_CONF, PRECONNECT_TO_BACKEND_DEFAULT);
     }
@@ -187,6 +188,7 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
 
     private static final String PEER_TO_PEER_ENCRYPTION_CONF = DM_PREFIX + MODULE_PREFIX + ".peer.to.peer.encryption";
     private static final String PEER_TO_PEER_ENCRYPTION_DEFAULT = "datacenter";
+
     @Override
     public String getPeerToPeerEncryption() {
         return getStringProperty(PEER_TO_PEER_ENCRYPTION_CONF, PEER_TO_PEER_ENCRYPTION_DEFAULT);
@@ -194,6 +196,7 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
 
     private static final String PEM_KEY_FILE_CONF = DM_PREFIX + MODULE_PREFIX + ".pem.key.file";
     private static final String PEM_KEY_FILE_DEFAULT = "/apps/dynomite/conf/dynomite.pem";
+
     @Override
     public String getPemKeyFile() {
         return getStringProperty(PEM_KEY_FILE_CONF, PEM_KEY_FILE_DEFAULT);
@@ -204,6 +207,7 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
 
     private String HASH_CONF = DM_PREFIX + MODULE_PREFIX + ".tokens.hash";
     private static final String HASH_DEFAULT = "murmur";
+
     @Override
     public String getHash() {
         return getStringProperty(HASH_CONF, HASH_DEFAULT);
@@ -211,6 +215,7 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
 
     private String DISTRIBUTION_TYPE_CONF = DM_PREFIX + MODULE_PREFIX + ".tokens.distribution";
     private static final String DISTRIBUTION_TYPE_DEFAULT = "vnode";
+
     @Override
     public String getTokenDistributionType() {
         return getStringProperty(DISTRIBUTION_TYPE_CONF, DISTRIBUTION_TYPE_DEFAULT);
@@ -221,6 +226,7 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
 
     private String BACKEND_REQUEST_TIMEOUT_CONF = DM_PREFIX + MODULE_PREFIX + ".backend.request.timeout";
     private static final int BACKEND_REQUEST_TIMEOUT_DEFAULT = 5000; // 5 seconds (in ms)
+
     public int getBackendRequestTimeout() {
         return getIntProperty(BACKEND_REQUEST_TIMEOUT_CONF, BACKEND_REQUEST_TIMEOUT_DEFAULT);
     }
@@ -228,6 +234,7 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
     // Saved as the server_retry_timeout value in dynomite.yaml
     private String REJOIN_CLUSTER_WAIT_PERIOD_CONF = DM_PREFIX + MODULE_PREFIX + ".rejoin.cluster.wait.period";
     private static final int REJOIN_CLUSTER_WAIT_PERIOD_DEFAULT = 30000; // 30 seconds (in ms)
+
     public int getRejoinClusterWaitPeriod() {
         return getIntProperty(REJOIN_CLUSTER_WAIT_PERIOD_CONF, REJOIN_CLUSTER_WAIT_PERIOD_DEFAULT);
     }
@@ -237,6 +244,7 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
 
     private String GOSSIP_INTERVAL_CONF = DM_PREFIX + MODULE_PREFIX + ".gossip.interval";
     private static final int GOSSIP_INTERVAL_DEFAULT = 10000; // 10 seconds (in ms)
+
     public int getGossipInterval() {
         return getIntProperty(GOSSIP_INTERVAL_CONF, GOSSIP_INTERVAL_DEFAULT);
     }
@@ -246,6 +254,7 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
 
     private static final String DYNOMITE_YAML_CONF = DM_PREFIX + MODULE_PREFIX + ".yaml";
     private static final String DYNOMITE_YAML_DEFAULT = "/apps/dynomite/conf/dynomite.yml";
+
     public String getDynomiteYaml() {
         return getStringProperty(DYNOMITE_YAML_CONF, DYNOMITE_YAML_DEFAULT);
     }
@@ -255,6 +264,7 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
 
     public static final String AUTO_EJECT_NODES_CONF = ".auto.eject.nodes";
     public static final boolean AUTO_EJECT_NODES_DEFAULT = true;
+
     public boolean getAutoEjectPeers() {
         return getBooleanProperty(AUTO_EJECT_NODES_CONF, AUTO_EJECT_NODES_DEFAULT);
     }

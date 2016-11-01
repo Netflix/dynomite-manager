@@ -154,6 +154,7 @@ public interface DynomiteConfiguration {
 
     /**
      * Determine whether or not Dynomite should preconnect to the backend server (i.e. Redis or ARDB).
+     *
      * @return true if Dynomite should preconnect, false if it should not preconnect
      */
     boolean getPreconnectToBackend();
@@ -164,6 +165,7 @@ public interface DynomiteConfiguration {
     /**
      * Get the level of encryption to use for dynomite-to-dynomite communication. Possible values are none, datacenter,
      * rack, and all.
+     *
      * @return the dynomite-to-dynomite encryption option
      */
     String getPeerToPeerEncryption();
@@ -180,6 +182,7 @@ public interface DynomiteConfiguration {
 
     /**
      * Get the hash algorithm used to generate a hash value from the data's key.
+     *
      * @return the hash algorithm
      */
     String getHash();

@@ -55,8 +55,7 @@ public class ModuleConfigurationRetriever implements ModuleConfiguration {
 
     @Override
     public String getStringProperty(String key, String defaultValue) {
-        DynamicStringProperty property = DynamicPropertyFactory.getInstance()
-                .getStringProperty(key, defaultValue);
+        DynamicStringProperty property = DynamicPropertyFactory.getInstance().getStringProperty(key, defaultValue);
         return property.get();
     }
 
