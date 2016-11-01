@@ -12,7 +12,6 @@
  */
 package com.netflix.dynomitemanager.dynomite;
 
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_PORT;
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
 
 import com.google.common.collect.Lists;

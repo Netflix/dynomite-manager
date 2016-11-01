@@ -57,7 +57,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	// Dynomite
 	// ========
 
-    public static final int DYNO_PORT = 8102;
     public static final String LOCAL_ADDRESS = "127.0.0.1";
 
     // Cluster name is saved as tokens.appId in Cassandra.
