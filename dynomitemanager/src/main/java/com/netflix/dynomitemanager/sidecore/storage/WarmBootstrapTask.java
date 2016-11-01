@@ -24,7 +24,7 @@ import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
-import com.netflix.dynomitemanager.dynomite.DynomiteRest;
+import com.netflix.dynomitemanager.dynomite.DynomiteAPI;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 
@@ -116,18 +116,18 @@ public class WarmBootstrapTask extends Task {
 			this.state.setBootstrapStatus(bootstrap);
 
 			logger.info("Set Dynomite to allow writes only!!!");
-                DynomiteRest.sendCommand(dynomiteConfig.getApiSetStateWritesOnly());
+                DynomiteAPI.sendCommand(dynomiteConfig.getApiSetStateWritesOnly());
 
 			logger.info("Stop Redis' Peer syncing!!!");
 			this.storageProxy.stopPeerSync();
 
 			logger.info("Set Dynomite to resuming state to allow writes and flush delayed writes");
-                DynomiteRest.sendCommand(dynomiteConfig.getApiSetStateResuming());
+                DynomiteAPI.sendCommand(dynomiteConfig.getApiSetStateResuming());
 
 			// sleep 15s for the flushing to catch up
 			sleeper.sleepQuietly(15000);
 			logger.info("Set Dynomite to normal state");
-                DynomiteRest.sendCommand(dynomiteConfig.getApiSetStateNormal());
+                DynomiteAPI.sendCommand(dynomiteConfig.getApiSetStateNormal());
 		    } else {
 			logger.error("Dynomite health check and restart attempts failed");
 		    }

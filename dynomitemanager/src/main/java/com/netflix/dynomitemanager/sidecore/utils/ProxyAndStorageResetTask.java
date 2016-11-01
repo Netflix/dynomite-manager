@@ -30,7 +30,7 @@ import redis.clients.jedis.Jedis;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
-import com.netflix.dynomitemanager.dynomite.DynomiteRest;
+import com.netflix.dynomitemanager.dynomite.DynomiteAPI;
 
 /**
  * Stop Redis replication, change Redis from slave to master, and restart
@@ -72,11 +72,11 @@ public class ProxyAndStorageResetTask extends Task {
 
     private void setConsistency() {
         logger.info("Setting the consistency level for the cluster");
-        if (!DynomiteRest.sendCommand(dynomiteConfig.getApiSetReadConsistency()))
+        if (!DynomiteAPI.sendCommand(dynomiteConfig.getApiSetReadConsistency()))
             logger.error("Set Dynomite read consistency level via REST API failed (using default read CL). API: "
                     + dynomiteConfig.getApiSetReadConsistency());
 
-        if (!DynomiteRest.sendCommand(dynomiteConfig.getApiSetWriteConsistency()))
+        if (!DynomiteAPI.sendCommand(dynomiteConfig.getApiSetWriteConsistency()))
             logger.error("Set Dynomite write consistency level via REST API failed (using default write CL). API: "
                     + dynomiteConfig.getApiSetWriteConsistency());
     }

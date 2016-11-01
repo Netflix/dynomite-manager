@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Query the Dynomite REST API.
  */
-public class DynomiteRest {
+public class DynomiteAPI {
 
-    private static final Logger logger = LoggerFactory.getLogger(DynomiteRest.class);
+    private static final Logger logger = LoggerFactory.getLogger(DynomiteAPI.class);
 
     /**
      * Query the Dynomite REST API.
