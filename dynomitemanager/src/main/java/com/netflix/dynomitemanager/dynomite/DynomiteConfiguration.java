@@ -185,8 +185,19 @@ public interface DynomiteConfiguration {
     // ======
 
     /**
+     * Get the amount of time in milliseconds between gossip rounds.
      *
-     * @return
+     * @return the amount of time to wait between gossip rounds
      */
     int getGossipInterval();
+
+    // Files
+    // =====
+
+    /**
+     * Get the full path to the dynomite.yaml configuration file.
+     *
+     * @return the full path to the dynomite.yaml file
+     */
+    String getDynomiteYaml();
 }

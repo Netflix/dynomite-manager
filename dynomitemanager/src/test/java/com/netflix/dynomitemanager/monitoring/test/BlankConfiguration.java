@@ -76,11 +76,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getYamlLocation() {
-	return null;
-    }
-
-    @Override
     public String getVpcId() {
 	return null;
     }
@@ -202,11 +197,6 @@ public class BlankConfiguration implements IConfiguration {
 
     @Override
     public String getAppName() {
-	return null;
-    }
-
-    @Override
-    public String getAppHome() {
 	return null;
     }
 

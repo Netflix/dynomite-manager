@@ -39,9 +39,9 @@ public class TuneTask extends Task {
 		this.tuner = tuner;
 	}
 
-	public void execute() throws IOException {
-        tuner.writeAllProperties(config.getYamlLocation());
-	}
+    public void execute() throws IOException {
+        tuner.writeAllProperties(dynomiteConfig.getDynomiteYaml());
+    }
 
 	@Override
 	public String getName() {

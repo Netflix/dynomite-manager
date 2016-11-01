@@ -211,4 +211,13 @@ public class DynomiteConfigurationRetriever extends ModuleConfigurationRetriever
         return getIntProperty(GOSSIP_INTERVAL_CONF, GOSSIP_INTERVAL_DEFAULT);
     }
 
+    // Files
+    // =====
+
+    private static final String DYNOMITE_YAML_CONF = DM_PREFIX + MODULE_PREFIX + ".yaml";
+    private static final String DYNOMITE_YAML_DEFAULT = "/apps/dynomite/conf/dynomite.yml";
+    public String getDynomiteYaml() {
+        return getStringProperty(DYNOMITE_YAML_CONF, DYNOMITE_YAML_DEFAULT);
+    }
+
 }

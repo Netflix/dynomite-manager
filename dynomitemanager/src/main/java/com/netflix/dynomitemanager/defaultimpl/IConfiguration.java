@@ -22,11 +22,6 @@ public interface IConfiguration {
     public void initialize();
 
     /**
-     * @return Path to the home dir of target application
-     */
-    public String getAppHome();
-
-    /**
      * Get the cluster name that is saved in tokens.appId in Cassandra. Cluster name is used to group Dynomite nodes
      * that are part of the same cluster.
      * @return the cluster name
@@ -98,8 +93,6 @@ public interface IConfiguration {
      * @return the Cassandra cluster name for the topology database
      */
     public String getBootClusterName();
-
-    public String getYamlLocation();
 
     public boolean getAutoEjectHosts();
 

@@ -60,8 +60,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     public static final int DYNO_PORT = 8102;
     public static final String LOCAL_ADDRESS = "127.0.0.1";
 
-    private static final String CONFIG_DYN_HOME_DIR = DYNOMITEMANAGER_PRE + ".dyno.home";
-
     // Cluster name is saved as tokens.appId in Cassandra.
     // The cluster name is used as the default AWS Security Group name, if SG name is null.
     private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
@@ -71,14 +69,16 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNO_CONNECTIONS_PRECONNECT = DYNOMITEMANAGER_PRE
 	    + ".dyno.connections.preconnect";
     private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
+
+    // ASA: RedisConfiguration
     // The max percentage of system memory to be allocated to the Dynomite
     // fronted data store.
     private static final String CONFIG_DYNO_STORAGE_MEM_PCT_INT = DYNOMITEMANAGER_PRE + ".dyno.storage.mem.pct.int";
 
+    // ASA: AwsConfiguration (duplicate)
     private static final String CONFIG_AVAILABILITY_ZONES = DYNOMITEMANAGER_PRE + ".zones.available";
     private static final String CONFIG_AVAILABILITY_RACKS = DYNOMITEMANAGER_PRE + ".racks.available";
 
-    private static final String CONFIG_YAML_LOCATION = DYNOMITEMANAGER_PRE + ".yamlLocation";
     private static final String CONFIG_SECURED_OPTION = DYNOMITEMANAGER_PRE + ".secured.option";
     private static final String CONFIG_DYNO_AUTO_EJECT_HOSTS = DYNOMITEMANAGER_PRE + ".auto.eject.hosts";
 
@@ -131,7 +131,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     // Defaults
     private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
-    private final String DEFAULT_DYNOMITE_HOME_DIR = "/apps/dynomite";
 
     private List<String> DEFAULT_AVAILABILITY_ZONES = ImmutableList.of();
     private List<String> DEFAULT_AVAILABILITY_RACKS = ImmutableList.of();
@@ -358,11 +357,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getAppHome() {
-	return configSource.get(CONFIG_DYN_HOME_DIR, DEFAULT_DYNOMITE_HOME_DIR);
-    }
-
-    @Override
     public String getZone() {
 	return ZONE;
     }
@@ -386,6 +380,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_RACK_NAME, DEFAULT_DYN_RACK);
     }
 
+    // ASA: Unused (may be a duplicate). Similar to getRacks().
     @Override
     public List<String> getZones() {
 	return configSource.getList(CONFIG_AVAILABILITY_ZONES, DEFAULT_AVAILABILITY_ZONES);
@@ -397,6 +392,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DUAL_ACCOUNT_AZ, getRack());
     }
 
+    // ASA: Similar to getZones()
     public List<String> getRacks() {
 	return configSource.getList(CONFIG_AVAILABILITY_RACKS, DEFAULT_AVAILABILITY_RACKS);
     }
@@ -455,10 +451,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
         return configSource.get(CONFIG_BOOTCLUSTER_NAME, DEFAULT_BOOTCLUSTER_NAME);
     }
 
-    public String getYamlLocation() {
-	return configSource.get(CONFIG_YAML_LOCATION, getAppHome() + "/conf/dynomite.yml");
-    }
-
     @Override
     public boolean getAutoEjectHosts() {
 	return configSource.get(CONFIG_DYNO_AUTO_EJECT_HOSTS, true);
@@ -505,6 +497,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_MAX_TIME_BOOTSTRAP, 900000);
     }
 
+    // ASA: RedisConfiguration
     @Override
     public int getStorageMemPercent() {
 	return configSource.get(CONFIG_DYNO_STORAGE_MEM_PCT_INT, 85);
