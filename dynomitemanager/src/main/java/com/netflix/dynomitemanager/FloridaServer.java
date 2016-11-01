@@ -77,7 +77,7 @@ public class FloridaServer {
     private static final Logger logger = LoggerFactory.getLogger(FloridaServer.class);
 
     static {
-        System.setProperty("archaius.configurationSource.defaultFileName", "dynomitedb.properties");
+        System.setProperty("archaius.configurationSource.defaultFileName", "dynomitemanager.properties");
     }
 
     @Inject
