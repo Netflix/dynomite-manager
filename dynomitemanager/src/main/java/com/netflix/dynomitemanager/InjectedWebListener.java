@@ -90,7 +90,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
 
 	// Initialize the Dynomite Manager Server
 	try {
-	    injector.getInstance(FloridaServer.class).initialize();
+	    injector.getInstance(DynomiteManagerServer.class).initialize();
 	} catch (Exception e) {
 	    logger.error("Dynomite Manager Server: " + e.getMessage(), e);
 	    throw new RuntimeException(e.getMessage(), e);

@@ -65,7 +65,7 @@ import com.netflix.servo.monitor.Monitors;
  * </ul>
  */
 @Singleton
-public class FloridaServer {
+public class DynomiteManagerServer {
     private final TaskScheduler scheduler;
     private final IConfiguration config;
     private final InstanceIdentity id;
@@ -74,10 +74,10 @@ public class FloridaServer {
     private final IDynomiteProcess dynProcess;
     private final StorageProcessManager storageProcess;
     private final InstanceState state;
-    private static final Logger logger = LoggerFactory.getLogger(FloridaServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(DynomiteManagerServer.class);
 
     @Inject
-    public FloridaServer(IConfiguration config, TaskScheduler scheduler, InstanceIdentity id, Sleeper sleeper,
+    public DynomiteManagerServer(IConfiguration config, TaskScheduler scheduler, InstanceIdentity id, Sleeper sleeper,
 	    TuneTask tuneTask, InstanceState state, IDynomiteProcess dynProcess, StorageProcessManager storageProcess) {
 
 	this.config = config;
@@ -96,7 +96,7 @@ public class FloridaServer {
 
     /**
      * Start Dynomite Manager.
-     * 
+     *
      * @throws Exception
      */
     public void initialize() throws Exception {
