@@ -226,7 +226,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getCommaSeparatedCassandraHostNames() {
+    public String getCassandraSeeds() {
 	return null;
     }
 
@@ -236,7 +236,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getCassandraThriftPortForAstyanax() {
+    public int getCassandraThriftPort() {
 	return 0;
     }
 

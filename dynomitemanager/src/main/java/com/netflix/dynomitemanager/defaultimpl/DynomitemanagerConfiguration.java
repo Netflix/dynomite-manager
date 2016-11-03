@@ -14,7 +14,6 @@ package com.netflix.dynomitemanager.defaultimpl;
 
 import java.util.List;
 
-import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,8 +101,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_BOOTCLUSTER_NAME = DYNOMITEMANAGER_PRE + ".bootcluster";
     private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
     private static final String CONFIG_CASSANDRA_THRIFT_PORT = DYNOMITEMANAGER_PRE + ".cassandra.thrift.port";
-    private static final String CONFIG_COMMA_SEPARATED_CASSANDRA_HOSTNAMES = DYNOMITEMANAGER_PRE
-	    + ".cassandra.comma.separated.hostnames";
+    private static final String CONFIG_CASSANDRA_SEEDS = DYNOMITEMANAGER_PRE + ".cassandra.comma.separated.hostnames";
 
     // Eureka
     private static final String CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED = DYNOMITEMANAGER_PRE
@@ -215,7 +213,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String DEFAULT_BOOTCLUSTER_NAME = "cass_dyno";
     private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
     private static final String DEFAULT_CASSANDRA_KEYSPACE_NAME = "dyno_bootstrap";
-    private static final String DEFAULT_COMMA_SEPARATED_CASSANDRA_HOSTNAMES = "127.0.0.1";
+    private static final String DEFAULT_CASSANDRA_SEEDS = "127.0.0.1"; // comma separated list
     private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
 
     // = instance identity meta data
@@ -689,14 +687,19 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getCassandraThriftPortForAstyanax() {
+    public int getCassandraThriftPort() {
 	return configSource.get(CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
     }
 
     @Override
-    public String getCommaSeparatedCassandraHostNames() {
-	return configSource.get(CONFIG_COMMA_SEPARATED_CASSANDRA_HOSTNAMES,
-		DEFAULT_COMMA_SEPARATED_CASSANDRA_HOSTNAMES);
+    public String getCassandraSeeds() {
+        String envSeeds = System.getenv("DM_CASSANDRA_CLUSTER_SEEDS");
+        String confSeeds = configSource.get(CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
+
+        if (envSeeds == null || "".equals(envSeeds)) {
+            return confSeeds;
+        }
+        return envSeeds;
     }
 
     @Override

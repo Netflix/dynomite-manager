@@ -12,6 +12,8 @@
  */
 package com.netflix.dynomitemanager.supplier;
 
+import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,14 +24,16 @@ import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 import com.netflix.astyanax.connectionpool.Host;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Use the {@code DM_CASSANDRA_CLUSTER_SEEDS} environment variable to provide a list of Cassandra hosts that contain the
  * complete Dynomite topology.
  */
 public class LocalHostsSupplier implements HostSupplier {
-
-	private static final String errMsg = "DM_CASSANDRA_CLUSTER_SEEDS cannot be empty. It must contain one or more Cassandra hosts.";
+    private static final Logger logger = LoggerFactory.getLogger(LocalHostsSupplier.class);
+    private static final String errMsg = "No Cassandra hosts were provided. Use DM_CASSANDRA_CLUSTER_SEEDS or configuration property getCassandraSeeds().";
 	private IConfiguration config;
 
 	@Inject
@@ -46,9 +50,10 @@ public class LocalHostsSupplier implements HostSupplier {
 		if (bootCluster == null)
 			bootCluster = "";
 
+        // This condition will always be true at runtime. The else condition is only used by a unit test.
 		if (bootCluster.equals(clusterName)) {
-
-			String seeds = System.getenv("DM_CASSANDRA_CLUSTER_SEEDS");
+            String seeds = config.getCassandraSeeds();
+            logger.info("Cassandra hosts (seed servers) for cluster topology: " + seeds);
 
 			if (seeds == null || "".equals(seeds))
 				throw new RuntimeException(errMsg);
@@ -60,11 +65,12 @@ public class LocalHostsSupplier implements HostSupplier {
 				throw new RuntimeException(errMsg);
 
 			for (String cassHost : cassHostnames) {
-				hosts.add(new Host(cassHost, 9160));
+				hosts.add(new Host(cassHost, config.getCassandraThriftPort()));
 			}
-
 		} else {
-			hosts.add(new Host("127.0.0.1", 9160).setRack("localdc"));
+            // This branch will never be reached in production. It is only used by CassandraHostsSupplierTest.
+            // TODO: Remove this condition and rewrite the test.
+			hosts.add(new Host(LOCAL_ADDRESS, config.getCassandraThriftPort()).setRack("localdc"));
 		}
 
 		return new Supplier<List<Host>>() {
