@@ -22,6 +22,9 @@ import javax.servlet.ServletContextListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * THIS CLASS IS NEVER USED!
+ */
 public class PreStartServer implements ServletContextListener {
 	private static final Logger logger = LoggerFactory.getLogger(PreStartServer.class);
 	static final String bootPropFileName = "/etc/dynomitemanager.properties";
