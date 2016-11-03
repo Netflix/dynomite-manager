@@ -15,12 +15,23 @@
  */
 
 /**
+ * Identity refers to this instance's identifying information including it's instance ID, Security Group, environment,
+ * etc.
+ *
  * The identity package consists of the following components.
  *
  * <ul>
+ * <li>AppsInstance
+ * <li>AwsInstanceEnvIdentity
+ * <li>CassandraInstanceFactory
+ * <li>DefaultVpcInstanceEnvIdentity
  * <li>IAppsInstanceFactory: Manage the Dynomite cluster topology registry.
+ * <li>IMembership
+ * <li>InstanceDataDAOCassandra
  * <li>InstanceEnvIdentity: Indicates the runtime environment of AWS classic vs. AWS VPC.
+ * <li>InstanceIdentity
+ * <li>LocalInstanceIdentity
+ * <li>LocalInstanceEnvIdentity
  * </ul>
  */
 package com.netflix.dynomitemanager.identity;
-// TODO: Complete the package-info description
