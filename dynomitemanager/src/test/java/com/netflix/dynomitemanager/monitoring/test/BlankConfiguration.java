@@ -237,7 +237,7 @@ public class BlankConfiguration implements IConfiguration {
 
     @Override
     public int getCassandraThriftPort() {
-	return 0;
+        return 9160;
     }
 
     @Override
