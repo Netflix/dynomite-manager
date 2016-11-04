@@ -30,12 +30,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.netflix.config.DynamicIntProperty;
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
 import com.netflix.dynomitemanager.sidecore.IConfigSource;
 import com.netflix.dynomitemanager.sidecore.ICredential;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.utils.RetryableCallable;
 import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+
 
 /**
  * Define the list of available Dynomite Manager configuration options, then set options based on the environment and an
@@ -52,6 +57,23 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 @Singleton
 public class DynomitemanagerConfiguration implements IConfiguration {
     public static final String DYNOMITEMANAGER_PRE = "florida";
+
+    // Archaius
+    // ========
+
+    static {
+        System.setProperty("archaius.configurationSource.defaultFileName", "dynomitemanager.properties");
+    }
+
+    public String getStringProperty(String key, String defaultValue) {
+        DynamicStringProperty property = DynamicPropertyFactory.getInstance().getStringProperty(key, defaultValue);
+        return property.get();
+    }
+
+    public int getIntProperty(String key, int defaultValue) {
+        DynamicIntProperty property = DynamicPropertyFactory.getInstance().getIntProperty(key, defaultValue);
+        return property.get();
+    }
 
 	// Dynomite
 	// ========
@@ -694,7 +716,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     @Override
     public String getCassandraSeeds() {
         String envSeeds = System.getenv("DM_CASSANDRA_CLUSTER_SEEDS");
-        String confSeeds = configSource.get(CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
+        String confSeeds = getStringProperty(CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
 
         if (envSeeds == null || "".equals(envSeeds)) {
             return confSeeds;
