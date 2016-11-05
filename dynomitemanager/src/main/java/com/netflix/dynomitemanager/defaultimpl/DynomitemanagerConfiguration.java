@@ -522,7 +522,16 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     @Override
     public int getDynomiteClientPort() {
-        return configSource.get(CONFIG_DYNOMITE_CLIENT_PORT, DEFAULT_DYNOMITE_CLIENT_PORT);
+        String clientPort = System.getenv("DM_DYNOMITE_CLIENT_PORT");
+        if (clientPort != null && !"".equals(clientPort)) {
+            try {
+                return Integer.parseInt(clientPort);
+            } catch (NumberFormatException e) {
+                logger.info("DM_DYNOMITE_CLIENT_PORT must be an integer. Using value from Archaius.");
+            }
+        }
+
+        return getIntProperty(CONFIG_DYNOMITE_CLIENT_PORT, DEFAULT_DYNOMITE_CLIENT_PORT);
     }
 
     @Override

@@ -58,10 +58,28 @@ public class DynomiteManagerConfigurationTest {
                 storageProxy);
     }
 
-    //    @Test
-    //    public void testGetDynomiteClientPort() throws Exception {
-    //        Assert.assertThat(conf.getDynomiteClientPort(), is(8102));
-    //    }
+    // Dynomite
+    // ========
+
+    @Test
+    public void testGetDynomiteClientPort() throws Exception {
+        Assert.assertThat(conf.getDynomiteClientPort(), is(8102));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "1111";
+            }
+        };
+        Assert.assertThat(conf.getDynomiteClientPort(), is(1111));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat(conf.getDynomiteClientPort(), is(8102));
+    }
 
     // Cassandra
     // =========
