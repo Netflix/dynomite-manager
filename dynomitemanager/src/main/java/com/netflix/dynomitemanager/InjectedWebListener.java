@@ -141,8 +141,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
 	    /* AWS binding */
 	    bind(IMembership.class).to(AWSMembership.class);
 	    bind(ICredential.class).to(IAMCredential.class);
-	    bind(ICredential.class).annotatedWith(Names.named("awsroleassumption"))
-		    .to(AwsRoleAssumptionCredential.class);
+	    bind(ICredential.class).annotatedWith(Names.named("awsroleassumption")).to(AwsRoleAssumptionCredential.class);
 	    binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class).asEagerSingleton();
 	    bind(Backup.class).to(S3Backup.class);
 	    bind(Restore.class).to(S3Restore.class);

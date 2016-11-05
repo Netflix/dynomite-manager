@@ -39,9 +39,11 @@ import mockit.integration.junit4.JMockit;
 @RunWith(JMockit.class)
 public class EurekaHostsSupplierTest {
 
-	@Mocked(methods = { "getApplication" }) private DiscoveryClient dc;
+    @Mocked
+    private DiscoveryClient dc;
 
-	@Mocked(methods = { "getInstances" }) private Application app;
+    @Mocked
+    private Application app;
 
 	@Mocked private InstanceInfo ii;
 
