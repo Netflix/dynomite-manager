@@ -33,7 +33,7 @@ import java.util.Map;
 
 
 /**
- * Generate and write the dynomite.yaml and redis.conf configuration files to disk.
+ * Generate and write the dynomite.yaml configuration file to disk.
  */
 @Singleton
 public class FloridaStandardTuner implements ProcessTuner {

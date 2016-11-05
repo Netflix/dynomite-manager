@@ -186,7 +186,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getListenerPort() {
+	public int getDynomiteClientPort() {
 		return 0;
 	}
 
