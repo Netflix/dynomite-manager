@@ -56,7 +56,11 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
  */
 @Singleton
 public class DynomitemanagerConfiguration implements IConfiguration {
-    public static final String DYNOMITEMANAGER_PRE = "florida";
+    public static final String DYNOMITEMANAGER_PRE = "dm";
+    public static final String DYNOMITE = "dynomite";
+    public static final String REDIS = "redis";
+    public static final String DYNOMITE_PREFIX = DYNOMITEMANAGER_PRE + "." + DYNOMITE;
+    public static final String REDIS_PREFIX = DYNOMITEMANAGER_PRE + "." + REDIS;
 
     // Archaius
     // ========
@@ -78,7 +82,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	// Dynomite
 	// ========
 
-    public static final int DYNO_PORT = 8102;
     public static final String LOCAL_ADDRESS = "127.0.0.1";
 
     private static final String CONFIG_DYN_HOME_DIR = DYNOMITEMANAGER_PRE + ".dyno.home";
@@ -89,7 +92,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // The cluster name is used as the default AWS Security Group name, if SG name is null.
     private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
     private static final String CONFIG_SEED_PROVIDER_NAME = DYNOMITEMANAGER_PRE + ".dyno.seed.provider";
-    private static final String CONFIG_DYN_LISTENER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.port";
+    private static final String CONFIG_DYNOMITE_CLIENT_PORT = DYNOMITE_PREFIX + ".client.port";
     private static final String CONFIG_DYN_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.peer.port";
     private static final String CONFIG_DYN_SECURED_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.secured.peer.port";
     private static final String CONFIG_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.rack";
@@ -180,7 +183,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private List<String> DEFAULT_AVAILABILITY_RACKS = ImmutableList.of();
 
     private final String DEFAULT_DYN_PROCESS_NAME = "dynomite";
-    private final int DEFAULT_DYN_LISTENER_PORT = 8102;
+    private final int DEFAULT_DYNOMITE_CLIENT_PORT = 8102; // dyn_listen
     private final int DEFAULT_DYN_SECURED_PEER_PORT = 8101;
     private final int DEFAULT_DYN_PEER_PORT = 8101;
     private final String DEFAULT_DYN_RACK = "RAC1";
@@ -515,13 +518,13 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getListenerPort() {
-	return configSource.get(CONFIG_DYN_LISTENER_PORT_NAME, DEFAULT_DYN_LISTENER_PORT);
+    public int getDynomiteClientPort() {
+        return configSource.get(CONFIG_DYNOMITE_CLIENT_PORT, DEFAULT_DYNOMITE_CLIENT_PORT);
     }
 
     @Override
     public String getClientListenPort() {
-	return "0.0.0.0:" + getListenerPort();
+        return "0.0.0.0:" + getDynomiteClientPort();
     }
 
     @Override

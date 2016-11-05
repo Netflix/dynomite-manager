@@ -15,7 +15,6 @@ package com.netflix.dynomitemanager.sidecore.utils;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_PORT;
 
 import java.io.IOException;
 
@@ -35,7 +34,7 @@ import com.netflix.dynomitemanager.dynomite.DynomiteRest;
 /**
  * Stop Redis replication, change Redis from slave to master, and restart
  * dynomite (if necessary).
- * 
+ *
  * @author ipapapa
  */
 @Singleton
@@ -77,7 +76,7 @@ public class ProxyAndStorageResetTask extends Task {
     }
 
     private void dynomiteCheck() {
-	Jedis dynomiteJedis = new Jedis(LOCAL_ADDRESS, DYNO_PORT, 5000);
+        Jedis dynomiteJedis = new Jedis(LOCAL_ADDRESS, config.getDynomiteClientPort(), 5000);
 	logger.info("Checking Dynomite's status");
 	try {
 	    dynomiteJedis.connect();

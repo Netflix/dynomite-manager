@@ -12,7 +12,6 @@
  */
 package com.netflix.dynomitemanager.dynomite;
 
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.DYNO_PORT;
 import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
 
 import com.google.common.collect.Lists;
@@ -160,7 +159,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 
     /**
      * Ping Dynomite to perform a basic health check.
-     * 
+     *
      * @param dynomiteJedis
      *            the Jedis client with a connection to Dynomite.
      * @return true if Dynomite replies to PING with PONG, else false.
@@ -176,11 +175,11 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 
     /**
      * Basic health check for Dynomite.
-     * 
+     *
      * @return true if health check passes, or false if health check fails.
      */
     private boolean dynomiteRedisCheck() {
-	Jedis dynomiteJedis = new Jedis(LOCAL_ADDRESS, DYNO_PORT, 5000);
+        Jedis dynomiteJedis = new Jedis(LOCAL_ADDRESS, config.getDynomiteClientPort(), 5000);
 	try {
 	    dynomiteJedis.connect();
 	    if (!dynomiteRedisPing(dynomiteJedis)) {
