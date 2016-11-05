@@ -176,11 +176,6 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getMetadataKeyspace() {
-		return null;
-	}
-
-	@Override
 	public int getMbufSize() {
 		return 0;
 	}
@@ -231,7 +226,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getCommaSeparatedCassandraHostNames() {
+	public String getCassandraSeeds() {
 		return "localhost";
 	}
 
@@ -241,7 +236,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getCassandraThriftPortForAstyanax() {
+	public int getCassandraThriftPort() {
 		return 9911;
 	}
 

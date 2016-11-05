@@ -176,11 +176,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getMetadataKeyspace() {
-	return null;
-    }
-
-    @Override
     public int getMbufSize() {
 	return 0;
     }
@@ -231,7 +226,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getCommaSeparatedCassandraHostNames() {
+    public String getCassandraSeeds() {
 	return null;
     }
 
@@ -241,8 +236,8 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getCassandraThriftPortForAstyanax() {
-	return 0;
+    public int getCassandraThriftPort() {
+        return 9160;
     }
 
     @Override

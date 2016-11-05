@@ -34,7 +34,6 @@ import com.netflix.astyanax.serializers.StringSerializer;
 import com.netflix.astyanax.thrift.ThriftFamilyFactory;
 import com.netflix.astyanax.util.TimeUUIDUtils;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
-import com.netflix.dynomitemanager.supplier.EurekaHostsSupplier;
 import com.netflix.dynomitemanager.supplier.HostSupplier;
 
 import org.apache.commons.lang.StringUtils;
@@ -100,10 +99,10 @@ public class InstanceDataDAOCassandra {
 			throw new RuntimeException(
 					"Cassandra Keyspace can not be blank. Please use getCassandraKeyspaceName() property.");
 
-		thriftPortForAstyanax = config.getCassandraThriftPortForAstyanax();
+		thriftPortForAstyanax = config.getCassandraThriftPort();
 		if (thriftPortForAstyanax <= 0)
 			throw new RuntimeException(
-					"Thrift Port for Astyanax can not be blank. Please use getCassandraThriftPortForAstyanax() property.");
+					"Thrift Port for Astyanax can not be blank. Please use getCassandraThriftPort() property.");
 
 		this.hostSupplier = hostSupplier;
 
@@ -382,11 +381,11 @@ public class InstanceDataDAOCassandra {
 				List<Host> hosts = new ArrayList<Host>();
 
 				List<String> cassHostnames = new ArrayList<String>(Arrays.asList(StringUtils
-						.split(config.getCommaSeparatedCassandraHostNames(), ",")));
+						.split(config.getCassandraSeeds(), ",")));
 
 				if (cassHostnames.size() == 0)
 					throw new RuntimeException(
-							"Cassandra Host Names can not be blank. At least one host is needed. Please use getCommaSeparatedCassandraHostNames() property.");
+							"Cassandra Host Names can not be blank. At least one host is needed. Please use getCassandraSeeds() property.");
 
 				for (String cassHost : cassHostnames) {
 					logger.info("Adding Cassandra Host = {}", cassHost);

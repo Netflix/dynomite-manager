@@ -14,7 +14,6 @@ package com.netflix.dynomitemanager.defaultimpl;
 
 import java.util.List;
 
-import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +30,17 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.netflix.config.DynamicIntProperty;
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
 import com.netflix.dynomitemanager.sidecore.IConfigSource;
 import com.netflix.dynomitemanager.sidecore.ICredential;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.utils.RetryableCallable;
 import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+
 
 /**
  * Define the list of available Dynomite Manager configuration options, then set options based on the environment and an
@@ -54,6 +58,23 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 public class DynomitemanagerConfiguration implements IConfiguration {
     public static final String DYNOMITEMANAGER_PRE = "florida";
 
+    // Archaius
+    // ========
+
+    static {
+        System.setProperty("archaius.configurationSource.defaultFileName", "dynomitemanager.properties");
+    }
+
+    public String getStringProperty(String key, String defaultValue) {
+        DynamicStringProperty property = DynamicPropertyFactory.getInstance().getStringProperty(key, defaultValue);
+        return property.get();
+    }
+
+    public int getIntProperty(String key, int defaultValue) {
+        DynamicIntProperty property = DynamicPropertyFactory.getInstance().getIntProperty(key, defaultValue);
+        return property.get();
+    }
+
 	// Dynomite
 	// ========
 
@@ -64,6 +85,8 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYN_START_SCRIPT = DYNOMITEMANAGER_PRE + ".dyno.startscript";
     private static final String CONFIG_DYN_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".dyno.stopscript";
 
+    // Cluster name is saved as tokens.appId in Cassandra.
+    // The cluster name is used as the default AWS Security Group name, if SG name is null.
     private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
     private static final String CONFIG_SEED_PROVIDER_NAME = DYNOMITEMANAGER_PRE + ".dyno.seed.provider";
     private static final String CONFIG_DYN_LISTENER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.port";
@@ -93,7 +116,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     private static final String CONFIG_DYN_PROCESS_NAME = DYNOMITEMANAGER_PRE + ".dyno.processname";
     private static final String CONFIG_YAML_LOCATION = DYNOMITEMANAGER_PRE + ".yamlLocation";
-    private static final String CONFIG_METADATA_KEYSPACE = DYNOMITEMANAGER_PRE + ".metadata.keyspace";
     private static final String CONFIG_SECURED_OPTION = DYNOMITEMANAGER_PRE + ".secured.option";
     private static final String CONFIG_DYNO_AUTO_EJECT_HOSTS = DYNOMITEMANAGER_PRE + ".auto.eject.hosts";
 
@@ -101,8 +123,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_BOOTCLUSTER_NAME = DYNOMITEMANAGER_PRE + ".bootcluster";
     private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
     private static final String CONFIG_CASSANDRA_THRIFT_PORT = DYNOMITEMANAGER_PRE + ".cassandra.thrift.port";
-    private static final String CONFIG_COMMA_SEPARATED_CASSANDRA_HOSTNAMES = DYNOMITEMANAGER_PRE
-	    + ".cassandra.comma.separated.hostnames";
+    private static final String CONFIG_CASSANDRA_SEEDS = DYNOMITEMANAGER_PRE + ".cassandra.comma.separated.hostnames";
 
     // Eureka
     private static final String CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED = DYNOMITEMANAGER_PRE
@@ -143,11 +164,11 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // VPC
     private static final String CONFIG_INSTANCE_DATA_RETRIEVER = DYNOMITEMANAGER_PRE + ".instanceDataRetriever";
 
-    // RocksDB 
+    // RocksDB
     private static final String CONFIG_WRITE_BUFFER_SIZE_MB = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.writebuffermb";
     private static final String CONFIG_MAX_WRITE_BUFFER_NUMBER = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.maxwritebuffernumber";
     private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.minwritebuffernametomerge";
-    
+
     // Defaults
     private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
     private final String DEFAULT_SEED_PROVIDER = "florida_provider";
@@ -168,7 +189,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private final int DEFAULT_DYNO_GOSSIP_INTERVAL = 10000;
     private final String DEFAULT_DYNO_TOKENS_HASH = "murmur";
 
-    private final String DEFAULT_METADATA_KEYSPACE = "dyno_bootstrap";
     private final String DEFAULT_SECURED_OPTION = "datacenter";
 
     // Backup & Restore
@@ -188,9 +208,9 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String DEFAULT_RESTORE_TIME = "20101010";
     private static final String DEFAULT_BACKUP_SCHEDULE = "day";
     private static final int DEFAULT_BACKUP_HOUR = 12;
-    
+
     // Ardb
-    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128; 
+    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
     private static final int DEFAULT_MAX_WRITE_BUFFER_NUMBER = 16;
     private static final int DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE = 4;
 
@@ -215,7 +235,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String DEFAULT_BOOTCLUSTER_NAME = "cass_dyno";
     private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
     private static final String DEFAULT_CASSANDRA_KEYSPACE_NAME = "dyno_bootstrap";
-    private static final String DEFAULT_COMMA_SEPARATED_CASSANDRA_HOSTNAMES = "127.0.0.1";
+    private static final String DEFAULT_CASSANDRA_SEEDS = "127.0.0.1"; // comma separated list
     private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
 
     // = instance identity meta data
@@ -539,10 +559,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_REQ_TIMEOUT_NAME, DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC);
     }
 
-    public String getMetadataKeyspace() {
-	return configSource.get(CONFIG_METADATA_KEYSPACE, DEFAULT_METADATA_KEYSPACE);
-    }
-
     @Override
     public String getTokens() {
 	// TODO Auto-generated method stub
@@ -656,17 +672,17 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     public String getVpcId() {
 	return NETWORK_VPC;
     }
-    
+
     // RocksDB
     @Override
     public int getWriteBufferSize() {
 	return configSource.get(CONFIG_WRITE_BUFFER_SIZE_MB,DEFAULT_WRITE_BUFFER_SIZE_MB);
     }
-    
+
     public int getMaxWriteBufferNumber() {
 	return configSource.get(CONFIG_MAX_WRITE_BUFFER_NUMBER,DEFAULT_MAX_WRITE_BUFFER_NUMBER);
     }
-    
+
     public int getMinWriteBufferToMerge() {
 	return configSource.get(CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE,DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE);
     }
@@ -693,14 +709,19 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getCassandraThriftPortForAstyanax() {
+    public int getCassandraThriftPort() {
 	return configSource.get(CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
     }
 
     @Override
-    public String getCommaSeparatedCassandraHostNames() {
-	return configSource.get(CONFIG_COMMA_SEPARATED_CASSANDRA_HOSTNAMES,
-		DEFAULT_COMMA_SEPARATED_CASSANDRA_HOSTNAMES);
+    public String getCassandraSeeds() {
+        String envSeeds = System.getenv("DM_CASSANDRA_CLUSTER_SEEDS");
+        String confSeeds = getStringProperty(CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
+
+        if (envSeeds == null || "".equals(envSeeds)) {
+            return confSeeds;
+        }
+        return envSeeds;
     }
 
     @Override

@@ -13,7 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
- * Provide Dynomite Manager with a list of Cassandra hosts that store the complete Dynomite topology.
+ * Provide Dynomite Manager with the complete Dynomite topology. The following host suppliers are currently implemented:
+ * <ul>
+ * <li>EurekaHostsSupplier
+ * <li>CassandraHostsSupplier
+ * </ul>
  */
 package com.netflix.dynomitemanager.supplier;

@@ -56,8 +56,8 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.storage.RedisStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.FloridaHealthCheckHandler;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
+import com.netflix.dynomitemanager.supplier.CassandraHostsSupplier;
 import com.netflix.dynomitemanager.supplier.HostSupplier;
-import com.netflix.dynomitemanager.supplier.LocalHostsSupplier;
 import com.netflix.karyon.spi.HealthCheckHandler;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
@@ -90,7 +90,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
 
 	// Initialize the Dynomite Manager Server
 	try {
-	    injector.getInstance(FloridaServer.class).initialize();
+	    injector.getInstance(DynomiteManagerServer.class).initialize();
 	} catch (Exception e) {
 	    logger.error("Dynomite Manager Server: " + e.getMessage(), e);
 	    throw new RuntimeException(e.getMessage(), e);
@@ -127,7 +127,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
 	    binder().bind(InstanceDataRetriever.class).to(VpcInstanceDataRetriever.class);
 	    // binder().bind(InstanceDataRetriever.class).to(LocalInstanceDataRetriever.class);
 	    // binder().bind(HostSupplier.class).to(EurekaHostsSupplier.class);
-	    binder().bind(HostSupplier.class).to(LocalHostsSupplier.class);
+	    binder().bind(HostSupplier.class).to(CassandraHostsSupplier.class);
 
 	    // binder().bind(InstanceEnvIdentity.class).to(LocalInstanceEnvIdentity.class);
 	    binder().bind(HealthCheckHandler.class).to(FloridaHealthCheckHandler.class).asEagerSingleton();
