@@ -57,10 +57,13 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 @Singleton
 public class DynomitemanagerConfiguration implements IConfiguration {
     public static final String DYNOMITEMANAGER_PRE = "dm";
-    public static final String DYNOMITE = "dynomite";
-    public static final String REDIS = "redis";
-    public static final String DYNOMITE_PREFIX = DYNOMITEMANAGER_PRE + "." + DYNOMITE;
-    public static final String REDIS_PREFIX = DYNOMITEMANAGER_PRE + "." + REDIS;
+    public static final String CASSANDRA_PREFIX = "cassandra";
+    public static final String DYNOMITE_PREFIX = "dynomite";
+    public static final String REDIS_PREFIX = "redis";
+
+    public static final String DYNOMITE_PROPS = DYNOMITEMANAGER_PRE + "." + DYNOMITE_PREFIX;
+    public static final String REDIS_PROPS = DYNOMITEMANAGER_PRE + "." + REDIS_PREFIX;
+    public static final String CASSANDRA_PROPS = DYNOMITEMANAGER_PRE + "." + CASSANDRA_PREFIX;
 
     // Archaius
     // ========
@@ -92,7 +95,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // The cluster name is used as the default AWS Security Group name, if SG name is null.
     private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
     private static final String CONFIG_SEED_PROVIDER_NAME = DYNOMITEMANAGER_PRE + ".dyno.seed.provider";
-    private static final String CONFIG_DYNOMITE_CLIENT_PORT = DYNOMITE_PREFIX + ".client.port";
+    private static final String CONFIG_DYNOMITE_CLIENT_PORT = DYNOMITE_PROPS + ".client.port";
     private static final String CONFIG_DYN_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.peer.port";
     private static final String CONFIG_DYN_SECURED_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.secured.peer.port";
     private static final String CONFIG_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.rack";
@@ -126,7 +129,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_BOOTCLUSTER_NAME = DYNOMITEMANAGER_PRE + ".bootcluster";
     private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
     private static final String CONFIG_CASSANDRA_THRIFT_PORT = DYNOMITEMANAGER_PRE + ".cassandra.thrift.port";
-    private static final String CONFIG_CASSANDRA_SEEDS = DYNOMITEMANAGER_PRE + ".cassandra.comma.separated.hostnames";
+    private static final String CONFIG_CASSANDRA_SEEDS = CASSANDRA_PROPS + ".seeds";
 
     // Eureka
     private static final String CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED = DYNOMITEMANAGER_PRE
@@ -718,13 +721,12 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     @Override
     public String getCassandraSeeds() {
-        String envSeeds = System.getenv("DM_CASSANDRA_CLUSTER_SEEDS");
-        String confSeeds = getStringProperty(CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
-
-        if (envSeeds == null || "".equals(envSeeds)) {
-            return confSeeds;
+        String envSeeds = System.getenv("DM_CASSANDRA_SEEDS");
+        if (envSeeds != null && !"".equals(envSeeds)) {
+            return envSeeds;
         }
-        return envSeeds;
+
+        return getStringProperty(CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
     }
 
     @Override
