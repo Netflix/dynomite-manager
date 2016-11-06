@@ -12,7 +12,7 @@
  */
 package com.netflix.dynomitemanager.dynomite;
 
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
+import static com.netflix.dynomitemanager.defaultimpl.DynomiteManagerConfiguration.LOCAL_ADDRESS;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;

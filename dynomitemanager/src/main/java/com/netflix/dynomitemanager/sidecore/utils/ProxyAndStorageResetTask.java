@@ -14,7 +14,7 @@ package com.netflix.dynomitemanager.sidecore.utils;
 
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
+import static com.netflix.dynomitemanager.defaultimpl.DynomiteManagerConfiguration.LOCAL_ADDRESS;
 
 import java.io.IOException;
 

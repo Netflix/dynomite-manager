@@ -55,7 +55,7 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
  * </ul>
  */
 @Singleton
-public class DynomitemanagerConfiguration implements IConfiguration {
+public class DynomiteManagerConfiguration implements IConfiguration {
     public static final String DYNOMITEMANAGER_PRE = "dm";
     public static final String CASSANDRA_PREFIX = "cassandra";
     public static final String DYNOMITE_PREFIX = "dynomite";
@@ -223,7 +223,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // AWS Dual Account
     private static final boolean DEFAULT_DUAL_ACCOUNT = false;
 
-    private static final Logger logger = LoggerFactory.getLogger(DynomitemanagerConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(DynomiteManagerConfiguration.class);
 
     private final String AUTO_SCALE_GROUP_NAME = System.getenv("AUTO_SCALE_GROUP");
     private static final String DEFAULT_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.AwsInstanceDataRetriever";
@@ -253,7 +253,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private String NETWORK_VPC; // Fetch the vpc id of running instance
 
     @Inject
-    public DynomitemanagerConfiguration(ICredential provider, IConfigSource configSource,
+    public DynomiteManagerConfiguration(ICredential provider, IConfigSource configSource,
 	    InstanceDataRetriever retriever, InstanceEnvIdentity insEnvIdentity,
 	    IStorageProxy storageProxy) {
 	this.retriever = retriever;
