@@ -14,7 +14,7 @@
  */
 package com.netflix.dynomitemanager.defaultimpl.test;
 
-import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.DynomiteManagerConfiguration;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.identity.InstanceEnvIdentity;
 import com.netflix.dynomitemanager.sidecore.IConfigSource;
@@ -54,7 +54,7 @@ public class DynomiteManagerConfigurationTest {
 
     @Before
     public void runBeforeTests() {
-        conf = new DynomitemanagerConfiguration(credential, configSource, instanceDataRetriever, instanceEnvIdentity,
+        conf = new DynomiteManagerConfiguration(credential, configSource, instanceDataRetriever, instanceEnvIdentity,
                 storageProxy);
     }
 

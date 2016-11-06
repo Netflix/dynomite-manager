@@ -14,7 +14,7 @@ package com.netflix.dynomitemanager.sidecore;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.DynomiteManagerConfiguration;
 
 import java.util.Map;
 import java.util.Properties;
@@ -22,7 +22,7 @@ import java.util.Properties;
 /**
  * Loads Dynomite Manager's configuration from Java properties that are set via the "-Dproperty=value" on the command
  * line. Dynomite Manager's configuration options are defined in
- * {@link com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration}.
+ * {@link DynomiteManagerConfiguration}.
  *
  * Implementation note: {@link #set(String, String)} does not write to system properties, but will write to a new map.
  * This means that setting values to this source has no effect on system properties or other instances of this class.
@@ -40,7 +40,7 @@ public final class SystemPropertiesConfigSource extends AbstractConfigSource {
 		Properties systemProps = System.getProperties();
 
 		for (final String key : systemProps.stringPropertyNames()) {
-			if (!key.startsWith(DynomitemanagerConfiguration.DYNOMITEMANAGER_PRE))
+			if (!key.startsWith(DynomiteManagerConfiguration.DYNOMITEMANAGER_PRE))
 				continue;
 			final String value = systemProps.getProperty(key);
 			if (value != null && !BLANK.equals(value)) {
