@@ -295,15 +295,15 @@ public class InstanceIdentity {
      * locMap.get(myInstance.getRac()).get(0).getHostIP().equals(myInstance.
      * getHostIP())) //{
      * //seeds.add(locMap.get(myInstance.getRac()).get(1).getHostName());
-     * //seedp.add(seed + ":" + config.getPeerPort() + ":" +
+     * //seedp.add(seed + ":" + config.getDynomitePeerPort() + ":" +
      * config.getDataCenter() + ":5622637");
      * seeds.add(locMap.get(myInstance.getRac()).get(1).getHostName() + ":" +
-     * config.getPeerPort() + ":" + config.getDataCenter() + ":" +
+     * config.getDynomitePeerPort() + ":" + config.getDataCenter() + ":" +
      * locMap.get(myInstance.getRac()).get(1).getToken()); //} } for (String loc
      * : locMap.keySet()) { AppsInstance instance =
      * Iterables.tryFind(locMap.get(loc), differentHostPredicate).orNull(); if
      * (instance != null) { //seeds.add(instance.getHostName());
-     * seeds.add(instance.getHostName() + ":" + config.getPeerPort() +
+     * seeds.add(instance.getHostName() + ":" + config.getDynomitePeerPort() +
      * ":" + config.getDataCenter() + ":" + instance.getToken()); } } return
      * seeds; }
      */
@@ -315,7 +315,7 @@ public class InstanceIdentity {
 	for (AppsInstance ins : factory.getAllIds(config.getAppName())) {
 	    if (!ins.getInstanceId().equals(myInstance.getInstanceId())) {
 		logger.debug("Adding node: " + ins.getInstanceId());
-		seeds.add(ins.getHostName() + ":" + config.getPeerPort() + ":" + ins.getRack() + ":"
+		seeds.add(ins.getHostName() + ":" + config.getDynomitePeerPort() + ":" + ins.getRack() + ":"
 			+ ins.getDatacenter() + ":" + ins.getToken());
 	    }
 	}

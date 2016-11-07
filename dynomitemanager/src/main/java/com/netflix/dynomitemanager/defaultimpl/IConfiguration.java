@@ -128,7 +128,7 @@ public interface IConfiguration {
      *
      * @return the peer-to-peer port used for intra-cluster communication
      */
-    public int getPeerPort();
+    public int getDynomitePeerPort();
 
     public int getSecuredPeerListenerPort();
 
