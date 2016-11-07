@@ -55,8 +55,15 @@ import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
  * </ul>
  */
 @Singleton
-public class DynomitemanagerConfiguration implements IConfiguration {
-    public static final String DYNOMITEMANAGER_PRE = "florida";
+public class DynomiteManagerConfiguration implements IConfiguration {
+    public static final String DYNOMITEMANAGER_PRE = "dm";
+    public static final String CASSANDRA_PREFIX = "cassandra";
+    public static final String DYNOMITE_PREFIX = "dynomite";
+    public static final String REDIS_PREFIX = "redis";
+
+    public static final String DYNOMITE_PROPS = DYNOMITEMANAGER_PRE + "." + DYNOMITE_PREFIX;
+    public static final String REDIS_PROPS = DYNOMITEMANAGER_PRE + "." + REDIS_PREFIX;
+    public static final String CASSANDRA_PROPS = DYNOMITEMANAGER_PRE + "." + CASSANDRA_PREFIX;
 
     // Archaius
     // ========
@@ -78,7 +85,6 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 	// Dynomite
 	// ========
 
-    public static final int DYNO_PORT = 8102;
     public static final String LOCAL_ADDRESS = "127.0.0.1";
 
     private static final String CONFIG_DYN_HOME_DIR = DYNOMITEMANAGER_PRE + ".dyno.home";
@@ -89,8 +95,8 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // The cluster name is used as the default AWS Security Group name, if SG name is null.
     private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
     private static final String CONFIG_SEED_PROVIDER_NAME = DYNOMITEMANAGER_PRE + ".dyno.seed.provider";
-    private static final String CONFIG_DYN_LISTENER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.port";
-    private static final String CONFIG_DYN_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.peer.port";
+    private static final String CONFIG_DYNOMITE_CLIENT_PORT = DYNOMITE_PROPS + ".client.port";
+    private static final String CONFIG_DYNOMITE_PEER_PORT = DYNOMITE_PROPS + ".peer.port";
     private static final String CONFIG_DYN_SECURED_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.secured.peer.port";
     private static final String CONFIG_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.rack";
     private static final String CONFIG_USE_ASG_FOR_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.asg.rack";
@@ -123,7 +129,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private static final String CONFIG_BOOTCLUSTER_NAME = DYNOMITEMANAGER_PRE + ".bootcluster";
     private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
     private static final String CONFIG_CASSANDRA_THRIFT_PORT = DYNOMITEMANAGER_PRE + ".cassandra.thrift.port";
-    private static final String CONFIG_CASSANDRA_SEEDS = DYNOMITEMANAGER_PRE + ".cassandra.comma.separated.hostnames";
+    private static final String CONFIG_CASSANDRA_SEEDS = CASSANDRA_PROPS + ".seeds";
 
     // Eureka
     private static final String CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED = DYNOMITEMANAGER_PRE
@@ -180,9 +186,9 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private List<String> DEFAULT_AVAILABILITY_RACKS = ImmutableList.of();
 
     private final String DEFAULT_DYN_PROCESS_NAME = "dynomite";
-    private final int DEFAULT_DYN_LISTENER_PORT = 8102;
+    private final int DEFAULT_DYNOMITE_CLIENT_PORT = 8102; // dyn_listen
     private final int DEFAULT_DYN_SECURED_PEER_PORT = 8101;
-    private final int DEFAULT_DYN_PEER_PORT = 8101;
+    private final int DEFAULT_DYNOMITE_PEER_PORT = 8101;
     private final String DEFAULT_DYN_RACK = "RAC1";
     private final String DEFAULT_TOKENS_DISTRIBUTION = "vnode";
     private final int DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC = 5000;
@@ -217,7 +223,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     // AWS Dual Account
     private static final boolean DEFAULT_DUAL_ACCOUNT = false;
 
-    private static final Logger logger = LoggerFactory.getLogger(DynomitemanagerConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(DynomiteManagerConfiguration.class);
 
     private final String AUTO_SCALE_GROUP_NAME = System.getenv("AUTO_SCALE_GROUP");
     private static final String DEFAULT_INSTANCE_DATA_RETRIEVER = "com.netflix.dynomitemanager.sidecore.config.AwsInstanceDataRetriever";
@@ -247,7 +253,7 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     private String NETWORK_VPC; // Fetch the vpc id of running instance
 
     @Inject
-    public DynomitemanagerConfiguration(ICredential provider, IConfigSource configSource,
+    public DynomiteManagerConfiguration(ICredential provider, IConfigSource configSource,
 	    InstanceDataRetriever retriever, InstanceEnvIdentity insEnvIdentity,
 	    IStorageProxy storageProxy) {
 	this.retriever = retriever;
@@ -515,23 +521,41 @@ public class DynomitemanagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getListenerPort() {
-	return configSource.get(CONFIG_DYN_LISTENER_PORT_NAME, DEFAULT_DYN_LISTENER_PORT);
+    public int getDynomiteClientPort() {
+        String clientPort = System.getenv("DM_DYNOMITE_CLIENT_PORT");
+        if (clientPort != null && !"".equals(clientPort)) {
+            try {
+                return Integer.parseInt(clientPort);
+            } catch (NumberFormatException e) {
+                logger.info("DM_DYNOMITE_CLIENT_PORT must be an integer. Using value from Archaius.");
+            }
+        }
+
+        return getIntProperty(CONFIG_DYNOMITE_CLIENT_PORT, DEFAULT_DYNOMITE_CLIENT_PORT);
     }
 
     @Override
     public String getClientListenPort() {
-	return "0.0.0.0:" + getListenerPort();
+        return "0.0.0.0:" + getDynomiteClientPort();
     }
 
     @Override
-    public int getPeerListenerPort() {
-	return configSource.get(CONFIG_DYN_PEER_PORT_NAME, DEFAULT_DYN_PEER_PORT);
+    public int getDynomitePeerPort() {
+        String peerPort = System.getenv("DM_DYNOMITE_PEER_PORT");
+        if (peerPort != null && !"".equals(peerPort)) {
+            try {
+                return Integer.parseInt(peerPort);
+            } catch (NumberFormatException e) {
+                logger.info("DM_DYNOMITE_PEER_PORT must be an integer. Using value from Archaius.");
+            }
+        }
+
+        return getIntProperty(CONFIG_DYNOMITE_PEER_PORT, DEFAULT_DYNOMITE_PEER_PORT);
     }
 
     @Override
     public String getDynListenPort() { // return full string
-	return "0.0.0.0:" + getPeerListenerPort();
+	return "0.0.0.0:" + getDynomitePeerPort();
     }
 
     @Override
@@ -715,13 +739,12 @@ public class DynomitemanagerConfiguration implements IConfiguration {
 
     @Override
     public String getCassandraSeeds() {
-        String envSeeds = System.getenv("DM_CASSANDRA_CLUSTER_SEEDS");
-        String confSeeds = getStringProperty(CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
-
-        if (envSeeds == null || "".equals(envSeeds)) {
-            return confSeeds;
+        String envSeeds = System.getenv("DM_CASSANDRA_SEEDS");
+        if (envSeeds != null && !"".equals(envSeeds)) {
+            return envSeeds;
         }
-        return envSeeds;
+
+        return getStringProperty(CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
     }
 
     @Override

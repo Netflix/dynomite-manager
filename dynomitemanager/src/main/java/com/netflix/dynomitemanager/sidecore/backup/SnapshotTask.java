@@ -12,7 +12,7 @@
  */
 package com.netflix.dynomitemanager.sidecore.backup;
 
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
+import static com.netflix.dynomitemanager.defaultimpl.DynomiteManagerConfiguration.LOCAL_ADDRESS;
 
 import java.io.File;
 import java.time.Instant;

@@ -171,7 +171,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getPeerListenerPort() {
+    public int getDynomitePeerPort() {
 	return 0;
     }
 
@@ -186,7 +186,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getListenerPort() {
+    public int getDynomiteClientPort() {
 	return 0;
     }
 

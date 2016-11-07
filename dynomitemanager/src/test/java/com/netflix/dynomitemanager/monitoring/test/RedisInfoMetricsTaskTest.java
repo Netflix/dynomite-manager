@@ -35,7 +35,8 @@ import redis.clients.jedis.Jedis;
 @RunWith(JMockit.class)
 public class RedisInfoMetricsTaskTest {
 
-	@Mocked(methods = { "connect", "disconnect", "info" }) Jedis jedis;
+    @Mocked
+    Jedis jedis;
 
 	@Test
 	public void executeTest() throws Exception {

@@ -30,7 +30,7 @@ import com.google.inject.Module;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.DynomiteManagerConfiguration;
 import com.netflix.dynomitemanager.defaultimpl.FloridaStandardTuner;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.dynomite.DynomiteProcessManager;
@@ -118,7 +118,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
 	@Override
 	protected void configure() {
 	    logger.info("**Binding OSS Config classes.");
-	    binder().bind(IConfiguration.class).to(DynomitemanagerConfiguration.class);
+	    binder().bind(IConfiguration.class).to(DynomiteManagerConfiguration.class);
 	    binder().bind(ProcessTuner.class).to(FloridaStandardTuner.class);
 	    binder().bind(IAppsInstanceFactory.class).to(CassandraInstanceFactory.class);
 	    binder().bind(SchedulerFactory.class).to(StdSchedulerFactory.class).asEagerSingleton();
@@ -141,8 +141,7 @@ public class InjectedWebListener extends GuiceServletContextListener {
 	    /* AWS binding */
 	    bind(IMembership.class).to(AWSMembership.class);
 	    bind(ICredential.class).to(IAMCredential.class);
-	    bind(ICredential.class).annotatedWith(Names.named("awsroleassumption"))
-		    .to(AwsRoleAssumptionCredential.class);
+	    bind(ICredential.class).annotatedWith(Names.named("awsroleassumption")).to(AwsRoleAssumptionCredential.class);
 	    binder().bind(InstanceEnvIdentity.class).to(DefaultVpcInstanceEnvIdentity.class).asEagerSingleton();
 	    bind(Backup.class).to(S3Backup.class);
 	    bind(Restore.class).to(S3Restore.class);
