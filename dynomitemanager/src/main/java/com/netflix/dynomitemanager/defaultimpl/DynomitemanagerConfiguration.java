@@ -96,7 +96,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
     private static final String CONFIG_SEED_PROVIDER_NAME = DYNOMITEMANAGER_PRE + ".dyno.seed.provider";
     private static final String CONFIG_DYNOMITE_CLIENT_PORT = DYNOMITE_PROPS + ".client.port";
-    private static final String CONFIG_DYN_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.peer.port";
+    private static final String CONFIG_DYNOMITE_PEER_PORT = DYNOMITE_PROPS + ".peer.port";
     private static final String CONFIG_DYN_SECURED_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.secured.peer.port";
     private static final String CONFIG_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.rack";
     private static final String CONFIG_USE_ASG_FOR_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.asg.rack";
@@ -188,7 +188,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private final String DEFAULT_DYN_PROCESS_NAME = "dynomite";
     private final int DEFAULT_DYNOMITE_CLIENT_PORT = 8102; // dyn_listen
     private final int DEFAULT_DYN_SECURED_PEER_PORT = 8101;
-    private final int DEFAULT_DYN_PEER_PORT = 8101;
+    private final int DEFAULT_DYNOMITE_PEER_PORT = 8101;
     private final String DEFAULT_DYN_RACK = "RAC1";
     private final String DEFAULT_TOKENS_DISTRIBUTION = "vnode";
     private final int DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC = 5000;
@@ -540,13 +540,22 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getPeerListenerPort() {
-	return configSource.get(CONFIG_DYN_PEER_PORT_NAME, DEFAULT_DYN_PEER_PORT);
+    public int getPeerPort() {
+        String peerPort = System.getenv("DM_DYNOMITE_PEER_PORT");
+        if (peerPort != null && !"".equals(peerPort)) {
+            try {
+                return Integer.parseInt(peerPort);
+            } catch (NumberFormatException e) {
+                logger.info("DM_DYNOMITE_PEER_PORT must be an integer. Using value from Archaius.");
+            }
+        }
+
+        return getIntProperty(CONFIG_DYNOMITE_PEER_PORT, DEFAULT_DYNOMITE_PEER_PORT);
     }
 
     @Override
     public String getDynListenPort() { // return full string
-	return "0.0.0.0:" + getPeerListenerPort();
+	return "0.0.0.0:" + getPeerPort();
     }
 
     @Override

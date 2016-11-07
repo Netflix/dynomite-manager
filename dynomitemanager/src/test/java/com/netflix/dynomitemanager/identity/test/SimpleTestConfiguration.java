@@ -171,7 +171,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getPeerListenerPort() {
+	public int getPeerPort() {
 		return 0;
 	}
 

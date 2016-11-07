@@ -123,7 +123,12 @@ public interface IConfiguration {
 
     public String getWriteConsistency();
 
-    public int getPeerListenerPort();
+    /**
+     * Get the peer-to-peer port used by Dynomite to communicate with other Dynomite nodes.
+     *
+     * @return the peer-to-peer port used for intra-cluster communication
+     */
+    public int getPeerPort();
 
     public int getSecuredPeerListenerPort();
 
