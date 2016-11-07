@@ -171,7 +171,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getPeerPort() {
+    public int getDynomitePeerPort() {
 	return 0;
     }
 

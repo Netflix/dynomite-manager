@@ -81,6 +81,26 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat(conf.getDynomiteClientPort(), is(8102));
     }
 
+    @Test
+    public void testGetDynomitePeerPort() throws Exception {
+        Assert.assertThat(conf.getDynomitePeerPort(), is(8101));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "2222";
+            }
+        };
+        Assert.assertThat(conf.getDynomitePeerPort(), is(2222));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat(conf.getDynomitePeerPort(), is(8101));
+    }
+
     // Cassandra
     // =========
 

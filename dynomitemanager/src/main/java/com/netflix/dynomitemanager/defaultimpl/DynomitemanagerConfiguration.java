@@ -540,7 +540,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getPeerPort() {
+    public int getDynomitePeerPort() {
         String peerPort = System.getenv("DM_DYNOMITE_PEER_PORT");
         if (peerPort != null && !"".equals(peerPort)) {
             try {
@@ -555,7 +555,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     @Override
     public String getDynListenPort() { // return full string
-	return "0.0.0.0:" + getPeerPort();
+	return "0.0.0.0:" + getDynomitePeerPort();
     }
 
     @Override
