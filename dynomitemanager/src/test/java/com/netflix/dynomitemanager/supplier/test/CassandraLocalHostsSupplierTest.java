@@ -19,7 +19,7 @@ import org.junit.Test;
 
 import com.netflix.astyanax.connectionpool.Host;
 import com.netflix.dynomitemanager.monitoring.test.BlankConfiguration;
-import com.netflix.dynomitemanager.supplier.CassandraHostsSupplier;
+import com.netflix.dynomitemanager.supplier.CassandraLocalHostsSupplier;
 
 import static org.hamcrest.CoreMatchers.is;
 
@@ -29,11 +29,11 @@ import static org.hamcrest.CoreMatchers.is;
  * @author diegopacheco
  * @author akbarahmed
  */
-public class CassandraHostsSupplierTest {
+public class CassandraLocalHostsSupplierTest {
 
 	@Test
 	public void testSupplier() {
-		CassandraHostsSupplier lhs = new CassandraHostsSupplier(new BlankConfiguration());
+		CassandraLocalHostsSupplier lhs = new CassandraLocalHostsSupplier(new BlankConfiguration());
 		List<Host> hosts = lhs.getSupplier("DmClusterTest").get();
 		Assert.assertNotNull(hosts);
 		Assert.assertTrue(hosts.get(0) != null);
