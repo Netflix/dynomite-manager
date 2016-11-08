@@ -31,13 +31,13 @@ import org.slf4j.LoggerFactory;
  * Use the {@code DM_CASSANDRA_CLUSTER_SEEDS} environment variable to provide a list of Cassandra hosts that contain the
  * complete Dynomite topology.
  */
-public class CassandraHostsSupplier implements HostSupplier {
-    private static final Logger logger = LoggerFactory.getLogger(CassandraHostsSupplier.class);
+public class CassandraLocalHostsSupplier implements HostSupplier {
+    private static final Logger logger = LoggerFactory.getLogger(CassandraLocalHostsSupplier.class);
     private static final String errMsg = "No Cassandra hosts were provided. Use DM_CASSANDRA_CLUSTER_SEEDS or configuration property getCassandraSeeds().";
 	private IConfiguration config;
 
 	@Inject
-	public CassandraHostsSupplier(IConfiguration config) {
+	public CassandraLocalHostsSupplier(IConfiguration config) {
 		this.config = config;
 	}
 
