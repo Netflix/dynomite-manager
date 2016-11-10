@@ -46,7 +46,7 @@ public class RetryableCallableTest {
 			public String retriableCall() throws Exception {
 				if (first) {
 					first = false;
-					throw new RuntimeException("We should fail 1 time at leat, but this is ok.");
+					throw new RuntimeException("We should fail 1 time at least, but this is ok.");
 				}
 				return "OK";
 			}
@@ -67,7 +67,7 @@ public class RetryableCallableTest {
 			public String retriableCall() throws Exception {
 				if (first) {
 					first = false;
-					throw new RuntimeException("We should fail 1 time at leat, but this is ok.");
+					throw new RuntimeException("We should fail 1 time at least, but this is ok.");
 				}
 				return "OK";
 			}
@@ -88,7 +88,7 @@ public class RetryableCallableTest {
 			public String retriableCall() throws Exception {
 				if (first) {
 					first = false;
-					throw new RuntimeException("We should fail 1 time at leat, but this is ok.");
+					throw new RuntimeException("We should fail 1 time at least, but this is ok.");
 				}
 				return "OK";
 			}

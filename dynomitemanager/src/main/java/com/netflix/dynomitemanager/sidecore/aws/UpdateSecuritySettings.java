@@ -50,7 +50,7 @@ public class UpdateSecuritySettings extends Task {
 	@Override
 	public void execute() {
 		// if seed does not execute.
-		int port = config.getPeerListenerPort();
+		int port = config.getDynomitePeerPort();
 		List<String> acls = membership.listACL(port, port);
 		List<AppsInstance> instances = factory.getAllIds(config.getAppName());
 

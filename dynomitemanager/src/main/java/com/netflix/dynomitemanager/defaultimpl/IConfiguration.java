@@ -123,11 +123,21 @@ public interface IConfiguration {
 
     public String getWriteConsistency();
 
-    public int getPeerListenerPort();
+    /**
+     * Get the peer-to-peer port used by Dynomite to communicate with other Dynomite nodes.
+     *
+     * @return the peer-to-peer port used for intra-cluster communication
+     */
+    public int getDynomitePeerPort();
 
     public int getSecuredPeerListenerPort();
 
-    public int getListenerPort();
+    /**
+     * Get the client port used by Redis (i.e. RESP) clients to query Dynomite (default: 8102).
+     *
+     * @return the port that Dynomite listens on for client requests
+     */
+    public int getDynomiteClientPort();
 
     public String getYamlLocation();
 

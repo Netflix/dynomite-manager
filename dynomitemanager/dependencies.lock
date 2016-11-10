@@ -28,6 +28,10 @@
             "locked": "0.6.0",
             "requested": "0.6.0"
         },
+        "com.netflix.astyanax:astyanax": {
+            "locked": "2.0.1",
+            "requested": "2.0.1"
+        },
         "com.netflix.karyon:karyon-core": {
             "locked": "1.0.3",
             "requested": "1.0.3"
@@ -39,6 +43,18 @@
         "com.ning:compress-lzf": {
             "locked": "0.9.5",
             "requested": "0.9.5"
+        },
+        "com.sun.jersey.contribs:jersey-guice": {
+            "locked": "1.9.1",
+            "requested": "1.9.1"
+        },
+        "com.sun.jersey:jersey-core": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
+        },
+        "com.sun.jersey:jersey-server": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
         },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
@@ -53,7 +69,7 @@
             "requested": "3.1"
         },
         "commons-io:commons-io": {
-            "locked": "2.4",
+            "locked": "2.5",
             "requested": "latest.release"
         },
         "javax.servlet:servlet-api": {
@@ -76,10 +92,6 @@
             "locked": "3.2.3",
             "requested": "3.2.3"
         },
-        "org.apache.cassandra:cassandra-all": {
-            "locked": "1.2.7",
-            "requested": "[1.2.0,1.2.8["
-        },
         "org.apache.cassandra:cassandra-thrift": {
             "locked": "1.2.11",
             "requested": "1.2.11"
@@ -93,7 +105,7 @@
             "requested": "1.7.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.2",
+            "locked": "1.7.5",
             "requested": "1.6.1"
         },
         "org.slf4j:slf4j-log4j12": {
@@ -142,6 +154,10 @@
             "locked": "0.6.0",
             "requested": "0.6.0"
         },
+        "com.netflix.astyanax:astyanax": {
+            "locked": "2.0.1",
+            "requested": "2.0.1"
+        },
         "com.netflix.karyon:karyon-core": {
             "locked": "1.0.3",
             "requested": "1.0.3"
@@ -153,6 +169,18 @@
         "com.ning:compress-lzf": {
             "locked": "0.9.5",
             "requested": "0.9.5"
+        },
+        "com.sun.jersey.contribs:jersey-guice": {
+            "locked": "1.9.1",
+            "requested": "1.9.1"
+        },
+        "com.sun.jersey:jersey-core": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
+        },
+        "com.sun.jersey:jersey-server": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
         },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
@@ -167,7 +195,7 @@
             "requested": "3.1"
         },
         "commons-io:commons-io": {
-            "locked": "2.4",
+            "locked": "2.5",
             "requested": "latest.release"
         },
         "javax.servlet:servlet-api": {
@@ -190,10 +218,6 @@
             "locked": "3.2.3",
             "requested": "3.2.3"
         },
-        "org.apache.cassandra:cassandra-all": {
-            "locked": "1.2.7",
-            "requested": "[1.2.0,1.2.8["
-        },
         "org.apache.cassandra:cassandra-thrift": {
             "locked": "1.2.11",
             "requested": "1.2.11"
@@ -207,7 +231,7 @@
             "requested": "1.7.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.2",
+            "locked": "1.7.5",
             "requested": "1.6.1"
         },
         "org.slf4j:slf4j-log4j12": {
@@ -256,6 +280,10 @@
             "locked": "0.6.0",
             "requested": "0.6.0"
         },
+        "com.netflix.astyanax:astyanax": {
+            "locked": "2.0.1",
+            "requested": "2.0.1"
+        },
         "com.netflix.karyon:karyon-core": {
             "locked": "1.0.3",
             "requested": "1.0.3"
@@ -267,6 +295,18 @@
         "com.ning:compress-lzf": {
             "locked": "0.9.5",
             "requested": "0.9.5"
+        },
+        "com.sun.jersey.contribs:jersey-guice": {
+            "locked": "1.9.1",
+            "requested": "1.9.1"
+        },
+        "com.sun.jersey:jersey-core": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
+        },
+        "com.sun.jersey:jersey-server": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
         },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
@@ -281,7 +321,7 @@
             "requested": "3.1"
         },
         "commons-io:commons-io": {
-            "locked": "2.4",
+            "locked": "2.5",
             "requested": "latest.release"
         },
         "javax.servlet:servlet-api": {
@@ -304,10 +344,6 @@
             "locked": "3.2.3",
             "requested": "3.2.3"
         },
-        "org.apache.cassandra:cassandra-all": {
-            "locked": "1.2.7",
-            "requested": "[1.2.0,1.2.8["
-        },
         "org.apache.cassandra:cassandra-thrift": {
             "locked": "1.2.11",
             "requested": "1.2.11"
@@ -321,7 +357,7 @@
             "requested": "1.7.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.2",
+            "locked": "1.7.5",
             "requested": "1.6.1"
         },
         "org.slf4j:slf4j-log4j12": {
@@ -370,6 +406,10 @@
             "locked": "0.6.0",
             "requested": "0.6.0"
         },
+        "com.netflix.astyanax:astyanax": {
+            "locked": "2.0.1",
+            "requested": "2.0.1"
+        },
         "com.netflix.karyon:karyon-core": {
             "locked": "1.0.3",
             "requested": "1.0.3"
@@ -381,6 +421,18 @@
         "com.ning:compress-lzf": {
             "locked": "0.9.5",
             "requested": "0.9.5"
+        },
+        "com.sun.jersey.contribs:jersey-guice": {
+            "locked": "1.9.1",
+            "requested": "1.9.1"
+        },
+        "com.sun.jersey:jersey-core": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
+        },
+        "com.sun.jersey:jersey-server": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
         },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
@@ -395,7 +447,7 @@
             "requested": "3.1"
         },
         "commons-io:commons-io": {
-            "locked": "2.4",
+            "locked": "2.5",
             "requested": "latest.release"
         },
         "javax.servlet:servlet-api": {
@@ -418,10 +470,6 @@
             "locked": "3.2.3",
             "requested": "3.2.3"
         },
-        "org.apache.cassandra:cassandra-all": {
-            "locked": "1.2.7",
-            "requested": "[1.2.0,1.2.8["
-        },
         "org.apache.cassandra:cassandra-thrift": {
             "locked": "1.2.11",
             "requested": "1.2.11"
@@ -435,7 +483,7 @@
             "requested": "1.7.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.2",
+            "locked": "1.7.5",
             "requested": "1.6.1"
         },
         "org.slf4j:slf4j-log4j12": {
@@ -494,6 +542,10 @@
             "locked": "0.6.0",
             "requested": "0.6.0"
         },
+        "com.netflix.astyanax:astyanax": {
+            "locked": "2.0.1",
+            "requested": "2.0.1"
+        },
         "com.netflix.karyon:karyon-core": {
             "locked": "1.0.3",
             "requested": "1.0.3"
@@ -505,6 +557,18 @@
         "com.ning:compress-lzf": {
             "locked": "0.9.5",
             "requested": "0.9.5"
+        },
+        "com.sun.jersey.contribs:jersey-guice": {
+            "locked": "1.9.1",
+            "requested": "1.9.1"
+        },
+        "com.sun.jersey:jersey-core": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
+        },
+        "com.sun.jersey:jersey-server": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
         },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
@@ -519,7 +583,7 @@
             "requested": "3.1"
         },
         "commons-io:commons-io": {
-            "locked": "2.4",
+            "locked": "2.5",
             "requested": "latest.release"
         },
         "javax.servlet:servlet-api": {
@@ -542,10 +606,6 @@
             "locked": "3.2.3",
             "requested": "3.2.3"
         },
-        "org.apache.cassandra:cassandra-all": {
-            "locked": "1.2.7",
-            "requested": "[1.2.0,1.2.8["
-        },
         "org.apache.cassandra:cassandra-thrift": {
             "locked": "1.2.11",
             "requested": "1.2.11"
@@ -559,7 +619,7 @@
             "requested": "1.7.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.2",
+            "locked": "1.7.5",
             "requested": "1.6.1"
         },
         "org.slf4j:slf4j-log4j12": {
@@ -604,10 +664,6 @@
             "locked": "3.0",
             "requested": "3.0"
         },
-        "com.googlecode.jmockit:jmockit": {
-            "locked": "0.999.17",
-            "requested": "0.999.17"
-        },
         "com.googlecode.json-simple:json-simple": {
             "locked": "1.1",
             "requested": "1.1"
@@ -615,6 +671,10 @@
         "com.netflix.archaius:archaius-core": {
             "locked": "0.6.0",
             "requested": "0.6.0"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "locked": "2.0.1",
+            "requested": "2.0.1"
         },
         "com.netflix.karyon:karyon-core": {
             "locked": "1.0.3",
@@ -627,6 +687,18 @@
         "com.ning:compress-lzf": {
             "locked": "0.9.5",
             "requested": "0.9.5"
+        },
+        "com.sun.jersey.contribs:jersey-guice": {
+            "locked": "1.9.1",
+            "requested": "1.9.1"
+        },
+        "com.sun.jersey:jersey-core": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
+        },
+        "com.sun.jersey:jersey-server": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
         },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
@@ -641,7 +713,7 @@
             "requested": "3.1"
         },
         "commons-io:commons-io": {
-            "locked": "2.4",
+            "locked": "2.5",
             "requested": "latest.release"
         },
         "javax.servlet:servlet-api": {
@@ -664,10 +736,6 @@
             "locked": "3.2.3",
             "requested": "3.2.3"
         },
-        "org.apache.cassandra:cassandra-all": {
-            "locked": "1.2.7",
-            "requested": "[1.2.0,1.2.8["
-        },
         "org.apache.cassandra:cassandra-thrift": {
             "locked": "1.2.11",
             "requested": "1.2.11"
@@ -676,12 +744,16 @@
             "locked": "4.3.3",
             "requested": "4.2.2"
         },
+        "org.jmockit:jmockit": {
+            "locked": "1.28",
+            "requested": "1.28"
+        },
         "org.quartz-scheduler:quartz": {
             "locked": "1.7.3",
             "requested": "1.7.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.2",
+            "locked": "1.7.5",
             "requested": "1.6.1"
         },
         "org.slf4j:slf4j-log4j12": {
@@ -726,10 +798,6 @@
             "locked": "3.0",
             "requested": "3.0"
         },
-        "com.googlecode.jmockit:jmockit": {
-            "locked": "0.999.17",
-            "requested": "0.999.17"
-        },
         "com.googlecode.json-simple:json-simple": {
             "locked": "1.1",
             "requested": "1.1"
@@ -737,6 +805,10 @@
         "com.netflix.archaius:archaius-core": {
             "locked": "0.6.0",
             "requested": "0.6.0"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "locked": "2.0.1",
+            "requested": "2.0.1"
         },
         "com.netflix.karyon:karyon-core": {
             "locked": "1.0.3",
@@ -749,6 +821,18 @@
         "com.ning:compress-lzf": {
             "locked": "0.9.5",
             "requested": "0.9.5"
+        },
+        "com.sun.jersey.contribs:jersey-guice": {
+            "locked": "1.9.1",
+            "requested": "1.9.1"
+        },
+        "com.sun.jersey:jersey-core": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
+        },
+        "com.sun.jersey:jersey-server": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
         },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
@@ -763,7 +847,7 @@
             "requested": "3.1"
         },
         "commons-io:commons-io": {
-            "locked": "2.4",
+            "locked": "2.5",
             "requested": "latest.release"
         },
         "javax.servlet:servlet-api": {
@@ -786,10 +870,6 @@
             "locked": "3.2.3",
             "requested": "3.2.3"
         },
-        "org.apache.cassandra:cassandra-all": {
-            "locked": "1.2.7",
-            "requested": "[1.2.0,1.2.8["
-        },
         "org.apache.cassandra:cassandra-thrift": {
             "locked": "1.2.11",
             "requested": "1.2.11"
@@ -798,12 +878,16 @@
             "locked": "4.3.3",
             "requested": "4.2.2"
         },
+        "org.jmockit:jmockit": {
+            "locked": "1.28",
+            "requested": "1.28"
+        },
         "org.quartz-scheduler:quartz": {
             "locked": "1.7.3",
             "requested": "1.7.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.2",
+            "locked": "1.7.5",
             "requested": "1.6.1"
         },
         "org.slf4j:slf4j-log4j12": {
@@ -844,10 +928,6 @@
             "locked": "3.0",
             "requested": "3.0"
         },
-        "com.googlecode.jmockit:jmockit": {
-            "locked": "0.999.17",
-            "requested": "0.999.17"
-        },
         "com.googlecode.json-simple:json-simple": {
             "locked": "1.1",
             "requested": "1.1"
@@ -855,6 +935,10 @@
         "com.netflix.archaius:archaius-core": {
             "locked": "0.6.0",
             "requested": "0.6.0"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "locked": "2.0.1",
+            "requested": "2.0.1"
         },
         "com.netflix.karyon:karyon-core": {
             "locked": "1.0.3",
@@ -867,6 +951,18 @@
         "com.ning:compress-lzf": {
             "locked": "0.9.5",
             "requested": "0.9.5"
+        },
+        "com.sun.jersey.contribs:jersey-guice": {
+            "locked": "1.9.1",
+            "requested": "1.9.1"
+        },
+        "com.sun.jersey:jersey-core": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
+        },
+        "com.sun.jersey:jersey-server": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
         },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
@@ -881,7 +977,7 @@
             "requested": "3.1"
         },
         "commons-io:commons-io": {
-            "locked": "2.4",
+            "locked": "2.5",
             "requested": "latest.release"
         },
         "javax.servlet:servlet-api": {
@@ -904,10 +1000,6 @@
             "locked": "3.2.3",
             "requested": "3.2.3"
         },
-        "org.apache.cassandra:cassandra-all": {
-            "locked": "1.2.7",
-            "requested": "[1.2.0,1.2.8["
-        },
         "org.apache.cassandra:cassandra-thrift": {
             "locked": "1.2.11",
             "requested": "1.2.11"
@@ -916,12 +1008,16 @@
             "locked": "4.3.3",
             "requested": "4.2.2"
         },
+        "org.jmockit:jmockit": {
+            "locked": "1.28",
+            "requested": "1.28"
+        },
         "org.quartz-scheduler:quartz": {
             "locked": "1.7.3",
             "requested": "1.7.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.2",
+            "locked": "1.7.5",
             "requested": "1.6.1"
         },
         "org.slf4j:slf4j-log4j12": {
@@ -962,10 +1058,6 @@
             "locked": "3.0",
             "requested": "3.0"
         },
-        "com.googlecode.jmockit:jmockit": {
-            "locked": "0.999.17",
-            "requested": "0.999.17"
-        },
         "com.googlecode.json-simple:json-simple": {
             "locked": "1.1",
             "requested": "1.1"
@@ -973,6 +1065,10 @@
         "com.netflix.archaius:archaius-core": {
             "locked": "0.6.0",
             "requested": "0.6.0"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "locked": "2.0.1",
+            "requested": "2.0.1"
         },
         "com.netflix.karyon:karyon-core": {
             "locked": "1.0.3",
@@ -985,6 +1081,18 @@
         "com.ning:compress-lzf": {
             "locked": "0.9.5",
             "requested": "0.9.5"
+        },
+        "com.sun.jersey.contribs:jersey-guice": {
+            "locked": "1.9.1",
+            "requested": "1.9.1"
+        },
+        "com.sun.jersey:jersey-core": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
+        },
+        "com.sun.jersey:jersey-server": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
         },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
@@ -999,7 +1107,7 @@
             "requested": "3.1"
         },
         "commons-io:commons-io": {
-            "locked": "2.4",
+            "locked": "2.5",
             "requested": "latest.release"
         },
         "javax.servlet:servlet-api": {
@@ -1022,10 +1130,6 @@
             "locked": "3.2.3",
             "requested": "3.2.3"
         },
-        "org.apache.cassandra:cassandra-all": {
-            "locked": "1.2.7",
-            "requested": "[1.2.0,1.2.8["
-        },
         "org.apache.cassandra:cassandra-thrift": {
             "locked": "1.2.11",
             "requested": "1.2.11"
@@ -1034,12 +1138,16 @@
             "locked": "4.3.3",
             "requested": "4.2.2"
         },
+        "org.jmockit:jmockit": {
+            "locked": "1.28",
+            "requested": "1.28"
+        },
         "org.quartz-scheduler:quartz": {
             "locked": "1.7.3",
             "requested": "1.7.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.2",
+            "locked": "1.7.5",
             "requested": "1.6.1"
         },
         "org.slf4j:slf4j-log4j12": {
@@ -1080,10 +1188,6 @@
             "locked": "3.0",
             "requested": "3.0"
         },
-        "com.googlecode.jmockit:jmockit": {
-            "locked": "0.999.17",
-            "requested": "0.999.17"
-        },
         "com.googlecode.json-simple:json-simple": {
             "locked": "1.1",
             "requested": "1.1"
@@ -1091,6 +1195,10 @@
         "com.netflix.archaius:archaius-core": {
             "locked": "0.6.0",
             "requested": "0.6.0"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "locked": "2.0.1",
+            "requested": "2.0.1"
         },
         "com.netflix.karyon:karyon-core": {
             "locked": "1.0.3",
@@ -1103,6 +1211,18 @@
         "com.ning:compress-lzf": {
             "locked": "0.9.5",
             "requested": "0.9.5"
+        },
+        "com.sun.jersey.contribs:jersey-guice": {
+            "locked": "1.9.1",
+            "requested": "1.9.1"
+        },
+        "com.sun.jersey:jersey-core": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
+        },
+        "com.sun.jersey:jersey-server": {
+            "locked": "1.17.1",
+            "requested": "1.17.1"
         },
         "commons-cli:commons-cli": {
             "locked": "1.3.1",
@@ -1117,7 +1237,7 @@
             "requested": "3.1"
         },
         "commons-io:commons-io": {
-            "locked": "2.4",
+            "locked": "2.5",
             "requested": "latest.release"
         },
         "javax.servlet:servlet-api": {
@@ -1140,10 +1260,6 @@
             "locked": "3.2.3",
             "requested": "3.2.3"
         },
-        "org.apache.cassandra:cassandra-all": {
-            "locked": "1.2.7",
-            "requested": "[1.2.0,1.2.8["
-        },
         "org.apache.cassandra:cassandra-thrift": {
             "locked": "1.2.11",
             "requested": "1.2.11"
@@ -1152,12 +1268,16 @@
             "locked": "4.3.3",
             "requested": "4.2.2"
         },
+        "org.jmockit:jmockit": {
+            "locked": "1.28",
+            "requested": "1.28"
+        },
         "org.quartz-scheduler:quartz": {
             "locked": "1.7.3",
             "requested": "1.7.3"
         },
         "org.slf4j:slf4j-api": {
-            "locked": "1.7.2",
+            "locked": "1.7.5",
             "requested": "1.6.1"
         },
         "org.slf4j:slf4j-log4j12": {

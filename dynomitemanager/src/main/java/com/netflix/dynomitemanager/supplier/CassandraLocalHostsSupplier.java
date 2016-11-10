@@ -12,7 +12,7 @@
  */
 package com.netflix.dynomitemanager.supplier;
 
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
+import static com.netflix.dynomitemanager.defaultimpl.DynomiteManagerConfiguration.LOCAL_ADDRESS;
 
 import java.util.ArrayList;
 import java.util.Arrays;
