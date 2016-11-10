@@ -1,0 +1,381 @@
+package com.netflix.dynomitemanager.identity.test;
+
+import java.util.List;
+
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
+
+public class DatatStaxConfiguration implements IConfiguration {
+
+	@Override
+	public boolean isWarmBootstrap() {
+		return false;
+	}
+
+	@Override
+	public boolean isVpc() {
+		return false;
+	}
+
+	@Override
+	public boolean isRestoreEnabled() {
+		return false;
+	}
+
+	@Override
+	public boolean isRedisPersistenceEnabled() {
+		return false;
+	}
+
+	@Override
+	public boolean isMultiRegionedCluster() {
+		return false;
+	}
+
+	@Override
+	public boolean isHealthCheckEnable() {
+		return false;
+	}
+
+	@Override
+	public boolean isEurekaHostSupplierEnabled() {
+		return false;
+	}
+
+	@Override
+	public boolean isBackupEnabled() {
+		return false;
+	}
+
+	@Override
+	public boolean isRedisAofEnabled() {
+		return false;
+	}
+
+	@Override
+	public void initialize() {
+	}
+
+	@Override
+	public List<String> getZones() {
+		return null;
+	}
+
+	@Override
+	public String getZone() {
+		return null;
+	}
+
+	@Override
+	public String getYamlLocation() {
+		return null;
+	}
+
+	@Override
+	public String getWriteConsistency() {
+		return null;
+	}
+
+	@Override
+	public String getVpcId() {
+		return null;
+	}
+
+	@Override
+	public String getTokens() {
+		return null;
+	}
+
+	@Override
+	public int getTimeout() {
+		return 0;
+	}
+
+	@Override
+	public int getStorageMemPercent() {
+		return 0;
+	}
+
+	@Override
+	public int getServerRetryTimeout() {
+		return 0;
+	}
+
+	@Override
+	public String getSeedProviderName() {
+		return null;
+	}
+
+	@Override
+	public int getSecuredPeerListenerPort() {
+		return 0;
+	}
+
+	@Override
+	public String getSecuredOption() {
+		return null;
+	}
+
+	@Override
+	public String getRestoreDate() {
+		return null;
+	}
+
+	@Override
+	public String getDataCenter() {
+		return null;
+	}
+
+	@Override
+	public String getReadConsistency() {
+		return null;
+	}
+
+	@Override
+	public List<String> getRacks() {
+		return null;
+	}
+
+	@Override
+	public String getRack() {
+		return null;
+	}
+
+	@Override
+	public String getProcessName() {
+		return null;
+	}
+
+	@Override
+	public boolean getPreconnect() {
+		return false;
+	}
+
+	@Override
+	public String getRedisDataDir() {
+		return null;
+	}
+
+	@Override
+	public int getPeerListenerPort() {
+		return 0;
+	}
+
+	@Override
+	public int getMbufSize() {
+		return 0;
+	}
+
+	@Override
+	public int getMaxTimeToBootstrap() {
+		return 0;
+	}
+
+	@Override
+	public int getListenerPort() {
+		return 0;
+	}
+
+	@Override
+	public String getInstanceName() {
+		return null;
+	}
+
+	@Override
+	public String getHostname() {
+		return null;
+	}
+
+	@Override
+	public String getHostIP() {
+		return null;
+	}
+
+	@Override
+	public String getHash() {
+		return null;
+	}
+
+	@Override
+	public int getGossipInterval() {
+		return 0;
+	}
+
+	@Override
+	public String getDynListenPort() {
+		return null;
+	}
+
+	@Override
+	public String getDistribution() {
+		return null;
+	}
+
+	@Override
+	public String getCassandraSeeds() {
+		return "localhost";
+	}
+
+	@Override
+	public String getClientListenPort() {
+		return null;
+	}
+
+	@Override
+	public int getCassandraThriftPort() {
+		return 9160;
+	}
+
+	@Override
+	public String getCassandraKeyspaceName() {
+		return "dyno_bootstrap";
+	}
+
+	@Override
+	public String getBucketName() {
+		return null;
+	}
+
+	@Override
+	public String getBootClusterName() {
+		return "Test Cluster";
+	}
+
+	@Override
+	public String getBackupSchedule() {
+		return null;
+	}
+
+	@Override
+	public String getBackupLocation() {
+		return null;
+	}
+
+	@Override
+	public int getBackupHour() {
+		return 0;
+	}
+
+	@Override
+	public boolean getAutoEjectHosts() {
+		return false;
+	}
+
+	@Override
+	public String getDynomiteStopScript() {
+		return null;
+	}
+
+	@Override
+	public String getDynomiteStartupScript() {
+		return null;
+	}
+
+	@Override
+	public String getAppName() {
+		return null;
+	}
+
+	@Override
+	public String getAppHome() {
+		return null;
+	}
+
+	@Override
+	public int getAllowableBytesSyncDiff() {
+		return 0;
+	}
+
+	@Override
+	public int getAllocatedMessages() {
+		return 0;
+	}
+
+	@Override
+	public String getASGName() {
+		return null;
+	}
+
+	@Override
+	public String getACLGroupName() {
+		return null;
+	}
+
+	@Override
+	public String getClassicAWSRoleAssumptionArn() {
+		return null;
+	}
+
+	@Override
+	public String getVpcAWSRoleAssumptionArn() {
+		return null;
+	}
+
+	@Override
+	public boolean isDualAccount() {
+		return false;
+	}
+
+	@Override
+	public boolean isForceWarm() {
+		return false;
+	}
+
+	@Override
+	public String getCrossAccountRack() {
+		return null;
+	}
+
+	@Override
+	public String getRedisCompatibleEngine() {
+		return null;
+	}
+
+	@Override
+	public String getRedisConf() {
+		return null;
+	}
+
+	@Override
+	public String getRedisInitStart() {
+		return null;
+	}
+
+	@Override
+	public String getRedisInitStop() {
+		return null;
+	}
+
+	// ARDB RocksDB
+	// ============
+
+	@Override
+	public String getArdbRocksDBConf() {
+		return null;
+	}
+
+	@Override
+	public String getArdbRocksDBInitStart() {
+		return null;
+	}
+
+	@Override
+	public String getArdbRocksDBInitStop() {
+		return null;
+	}
+
+	@Override
+	public int getWriteBufferSize() {
+		return 0;
+	}
+
+	@Override
+	public int getMaxWriteBufferNumber() {
+		return 0;
+	}
+
+	@Override
+	public int getMinWriteBufferToMerge() {
+		return 0;
+	}
+
+}

@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.identity.InstanceDataDAODataStaxCassandra;
-import com.netflix.dynomitemanager.monitoring.test.BlankConfiguration;
 import com.netflix.dynomitemanager.supplier.CassandraLocalHostsSupplier;
 
 /**
@@ -18,7 +17,7 @@ public class InstanceDataDAODataStaxCassandraTest {
 	
 	@Test
 	public void testContructor(){
-		IConfiguration ic = new BlankConfiguration();
+		IConfiguration ic = new DatatStaxConfiguration();
 		new InstanceDataDAODataStaxCassandra(ic,new CassandraLocalHostsSupplier(ic));
 	}
 	

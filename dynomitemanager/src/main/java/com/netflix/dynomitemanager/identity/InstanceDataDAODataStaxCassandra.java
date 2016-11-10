@@ -5,8 +5,11 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.HostDistance;
+import com.datastax.driver.core.PoolingOptions;
+import com.datastax.driver.core.Session;
 import com.google.inject.Inject;
-import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.supplier.HostSupplier;
 
@@ -37,6 +40,8 @@ public class InstanceDataDAODataStaxCassandra implements InstanceData {
 	
 	private final String BOOT_CLUSTER;
 	private final String KS_NAME;
+	private Cluster cluster;
+	private Session session;
 	
 	private final IConfiguration config;
 	private final HostSupplier hostSupplier;
@@ -54,14 +59,31 @@ public class InstanceDataDAODataStaxCassandra implements InstanceData {
 		if (KS_NAME == null || KS_NAME.isEmpty())
 			throw new RuntimeException("Cassandra Keyspace can not be blank. Please use getCassandraKeyspaceName() property.");
 
-//		if (config.isEurekaHostSupplierEnabled())
-//			ctx = initWithThriftDriverWithEurekaHostsSupplier();
-//		else
-//			ctx = initWithThriftDriverWithExternalHostsSupplier();
-//
+		if (config.isEurekaHostSupplierEnabled())
+			//TODO: SUPORT EUREKA
+			;
+		else
+			initWithNativeDriverWithExternalHostsSupplier();
+
 //		ctx.start();
 //		bootKeyspace = ctx.getClient();
 	}
+	
+	private Cluster initWithNativeDriverWithExternalHostsSupplier() {
+
+		logger.info("BOOT_CLUSTER = {}, KS_NAME = {}", BOOT_CLUSTER, KS_NAME);
+		cluster = Cluster.builder()
+                .addContactPoints(config.getCassandraSeeds().split(",")).withPort(9042)
+                .build();
+		
+//		PoolingOptions poolingOptions = cluster.getConfiguration().getPoolingOptions();
+//		poolingOptions.setCoreConnectionsPerHost(HostDistance.LOCAL,  8);
+//		poolingOptions.setCoreConnectionsPerHost(HostDistance.REMOTE, 2);
+		
+        this.session = cluster.connect();
+        return cluster;
+	}
+	
 	
 	@Override
 	public void createInstanceEntry(AppsInstance instance) {
