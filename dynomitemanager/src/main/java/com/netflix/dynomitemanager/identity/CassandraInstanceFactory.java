@@ -92,13 +92,6 @@ public class CassandraInstanceFactory implements IAppsInstanceFactory {
 			ins.setToken(payload);
 			ins.setVolumes(v);
 
-			// remove old data node which are dead.
-			//if (app.endsWith("-dead")) {
-			//       AppsInstance oldData = dao.getInstance(app, ins.getRack(), id);
-			// clean up a very old data...
-			//if (null != oldData)
-			//     dao.deleteInstanceEntry(oldData);
-			//}
 			dao.createInstanceEntry(ins);
 			return ins;
 		} catch (Exception e) {

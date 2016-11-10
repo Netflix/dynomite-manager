@@ -12,7 +12,17 @@
  */
 package com.netflix.dynomitemanager.identity;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
@@ -29,19 +39,20 @@ import com.netflix.astyanax.connectionpool.impl.ConnectionPoolConfigurationImpl;
 import com.netflix.astyanax.connectionpool.impl.ConnectionPoolType;
 import com.netflix.astyanax.connectionpool.impl.CountingConnectionPoolMonitor;
 import com.netflix.astyanax.impl.AstyanaxConfigurationImpl;
-import com.netflix.astyanax.model.*;
+import com.netflix.astyanax.model.Column;
+import com.netflix.astyanax.model.ColumnFamily;
+import com.netflix.astyanax.model.ColumnList;
+import com.netflix.astyanax.model.CqlResult;
+import com.netflix.astyanax.model.Row;
 import com.netflix.astyanax.serializers.StringSerializer;
 import com.netflix.astyanax.thrift.ThriftFamilyFactory;
 import com.netflix.astyanax.util.TimeUUIDUtils;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.supplier.HostSupplier;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Singleton
-public class InstanceDataDAOCassandra {
+public class InstanceDataDAOCassandra implements InstanceData {
+
 	private static final Logger logger = LoggerFactory.getLogger(InstanceDataDAOCassandra.class);
 
 	private String CN_ID = "Id";
@@ -90,8 +101,7 @@ public class InstanceDataDAOCassandra {
 		BOOT_CLUSTER = config.getBootClusterName();
 
 		if (BOOT_CLUSTER == null || BOOT_CLUSTER.isEmpty())
-			throw new RuntimeException(
-					"BootCluster can not be blank. Please use getBootClusterName() property.");
+			throw new RuntimeException("BootCluster can not be blank. Please use getBootClusterName() property.");
 
 		KS_NAME = config.getCassandraKeyspaceName();
 
@@ -115,7 +125,7 @@ public class InstanceDataDAOCassandra {
 		bootKeyspace = ctx.getClient();
 	}
 
-	public void createInstanceEntry(AppsInstance instance) throws Exception {
+	public void createInstanceEntry(AppsInstance instance) {
 		logger.info("*** Creating New Instance Entry ***");
 		String key = getRowKey(instance);
 		// If the key exists throw exception
@@ -142,8 +152,7 @@ public class InstanceDataDAOCassandra {
 			Map<String, Object> volumes = instance.getVolumes();
 			if (volumes != null) {
 				for (String path : volumes.keySet()) {
-					clm.putColumn(CN_VOLUME_PREFIX + "_" + path, volumes.get(path).toString(),
-							null);
+					clm.putColumn(CN_VOLUME_PREFIX + "_" + path, volumes.get(path).toString(), null);
 				}
 			}
 			m.execute();
@@ -160,79 +169,96 @@ public class InstanceDataDAOCassandra {
 	 * out. - Once there are no contenders, grab the lock if it is not already
 	 * taken.
 	 */
-	private void getLock(AppsInstance instance) throws Exception {
+	private void getLock(AppsInstance instance) {
+		try {
 
-		String choosingkey = getChoosingKey(instance);
-		MutationBatch m = bootKeyspace.prepareMutationBatch();
-		ColumnListMutation<String> clm = m.withRow(CF_LOCKS, choosingkey);
+			String choosingkey = getChoosingKey(instance);
+			MutationBatch m = bootKeyspace.prepareMutationBatch();
+			ColumnListMutation<String> clm = m.withRow(CF_LOCKS, choosingkey);
 
-		// Expire in 6 sec
-		clm.putColumn(instance.getInstanceId(), instance.getInstanceId(), new Integer(6));
-		m.execute();
-		int count = bootKeyspace.prepareQuery(CF_LOCKS).getKey(choosingkey).getCount().execute().getResult();
-		if (count > 1) {
-			// Need to delete my entry
-			m.withRow(CF_LOCKS, choosingkey).deleteColumn(instance.getInstanceId());
+			// Expire in 6 sec
+			clm.putColumn(instance.getInstanceId(), instance.getInstanceId(), new Integer(6));
 			m.execute();
-			throw new Exception(String.format("More than 1 contender for lock %s %d", choosingkey, count));
+			int count = bootKeyspace.prepareQuery(CF_LOCKS).getKey(choosingkey).getCount().execute().getResult();
+			if (count > 1) {
+				// Need to delete my entry
+				m.withRow(CF_LOCKS, choosingkey).deleteColumn(instance.getInstanceId());
+				m.execute();
+				throw new RuntimeException(String.format("More than 1 contender for lock %s %d", choosingkey, count));
+			}
+
+			String lockKey = getLockingKey(instance);
+			OperationResult<ColumnList<String>> result = bootKeyspace.prepareQuery(CF_LOCKS).getKey(lockKey).execute();
+			if (result.getResult().size() > 0
+					&& !result.getResult().getColumnByIndex(0).getName().equals(instance.getInstanceId()))
+				throw new RuntimeException(String.format("Lock already taken %s", lockKey));
+
+			clm = m.withRow(CF_LOCKS, lockKey);
+			clm.putColumn(instance.getInstanceId(), instance.getInstanceId(), new Integer(600));
+			m.execute();
+			Thread.sleep(100);
+			result = bootKeyspace.prepareQuery(CF_LOCKS).getKey(lockKey).execute();
+			if (result.getResult().size() == 1
+					&& result.getResult().getColumnByIndex(0).getName().equals(instance.getInstanceId())) {
+				logger.info("Got lock " + lockKey);
+				return;
+			} else
+				throw new RuntimeException(String.format("Cannot insert lock %s", lockKey));
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
-		String lockKey = getLockingKey(instance);
-		OperationResult<ColumnList<String>> result = bootKeyspace.prepareQuery(CF_LOCKS).getKey(lockKey)
-				.execute();
-		if (result.getResult().size() > 0 && !result.getResult().getColumnByIndex(0).getName()
-				.equals(instance.getInstanceId()))
-			throw new Exception(String.format("Lock already taken %s", lockKey));
+	}
 
-		clm = m.withRow(CF_LOCKS, lockKey);
-		clm.putColumn(instance.getInstanceId(), instance.getInstanceId(), new Integer(600));
-		m.execute();
-		Thread.sleep(100);
-		result = bootKeyspace.prepareQuery(CF_LOCKS).getKey(lockKey).execute();
-		if (result.getResult().size() == 1 && result.getResult().getColumnByIndex(0).getName()
-				.equals(instance.getInstanceId())) {
-			logger.info("Got lock " + lockKey);
-			return;
-		} else
-			throw new Exception(String.format("Cannot insert lock %s", lockKey));
+	private void releaseLock(AppsInstance instance) {
+		try {
+
+			String choosingkey = getChoosingKey(instance);
+			MutationBatch m = bootKeyspace.prepareMutationBatch();
+			ColumnListMutation<String> clm = m.withRow(CF_LOCKS, choosingkey);
+
+			m.withRow(CF_LOCKS, choosingkey).deleteColumn(instance.getInstanceId());
+			m.execute();
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 
-	private void releaseLock(AppsInstance instance) throws Exception {
-		String choosingkey = getChoosingKey(instance);
-		MutationBatch m = bootKeyspace.prepareMutationBatch();
-		ColumnListMutation<String> clm = m.withRow(CF_LOCKS, choosingkey);
+	public void deleteInstanceEntry(AppsInstance instance) {
+		try {
 
-		m.withRow(CF_LOCKS, choosingkey).deleteColumn(instance.getInstanceId());
-		m.execute();
-	}
+			// Acquire the lock first
+			getLock(instance);
 
-	public void deleteInstanceEntry(AppsInstance instance) throws Exception {
-		// Acquire the lock first
-		getLock(instance);
+			// Delete the row
+			String key = findKey(instance.getApp(), String.valueOf(instance.getId()), instance.getDatacenter(),
+					instance.getRack());
+			if (key == null)
+				return; // don't fail it
 
-		// Delete the row
-		String key = findKey(instance.getApp(), String.valueOf(instance.getId()), instance.getDatacenter(),
-				instance.getRack());
-		if (key == null)
-			return;  //don't fail it
+			MutationBatch m = bootKeyspace.prepareMutationBatch();
+			m.withRow(CF_TOKENS, key).delete();
+			m.execute();
 
-		MutationBatch m = bootKeyspace.prepareMutationBatch();
-		m.withRow(CF_TOKENS, key).delete();
-		m.execute();
+			key = getLockingKey(instance);
+			// Delete key
+			m = bootKeyspace.prepareMutationBatch();
+			m.withRow(CF_LOCKS, key).delete();
+			m.execute();
 
-		key = getLockingKey(instance);
-		// Delete key
-		m = bootKeyspace.prepareMutationBatch();
-		m.withRow(CF_LOCKS, key).delete();
-		m.execute();
+			// Have to delete choosing key as well to avoid issues with delete
+			// followed by immediate writes
+			key = getChoosingKey(instance);
+			m = bootKeyspace.prepareMutationBatch();
+			m.withRow(CF_LOCKS, key).delete();
+			m.execute();
 
-		// Have to delete choosing key as well to avoid issues with delete
-		// followed by immediate writes
-		key = getChoosingKey(instance);
-		m = bootKeyspace.prepareMutationBatch();
-		m.withRow(CF_LOCKS, key).delete();
-		m.execute();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 
@@ -260,13 +286,12 @@ public class InstanceDataDAOCassandra {
 		Set<AppsInstance> set = new HashSet<AppsInstance>();
 		try {
 
-			final String selectClause = String
-					.format("SELECT * FROM %s USING CONSISTENCY LOCAL_QUORUM WHERE %s = '%s' ",
-							CF_NAME_TOKENS, CN_APPID, app);
+			final String selectClause = String.format(
+					"SELECT * FROM %s USING CONSISTENCY LOCAL_QUORUM WHERE %s = '%s' ", CF_NAME_TOKENS, CN_APPID, app);
 			logger.debug(selectClause);
 
-			final ColumnFamily<String, String> CF_TOKENS_NEW = ColumnFamily
-					.newColumnFamily(KS_NAME, StringSerializer.get(), StringSerializer.get());
+			final ColumnFamily<String, String> CF_TOKENS_NEW = ColumnFamily.newColumnFamily(KS_NAME,
+					StringSerializer.get(), StringSerializer.get());
 
 			OperationResult<CqlResult<String, String>> result = bootKeyspace.prepareQuery(CF_TOKENS_NEW)
 					.withCql(selectClause).execute();
@@ -282,14 +307,13 @@ public class InstanceDataDAOCassandra {
 
 	public String findKey(String app, String id, String location, String datacenter) {
 		try {
-			final String selectClause = String
-					.format("SELECT * FROM %s USING CONSISTENCY LOCAL_QUORUM WHERE %s = '%s' and %s = '%s' and %s = '%s' and %s = '%s' ",
-							"tokens", CN_APPID, app, CN_ID, id, CN_LOCATION, location,
-							CN_DC, datacenter);
+			final String selectClause = String.format(
+					"SELECT * FROM %s USING CONSISTENCY LOCAL_QUORUM WHERE %s = '%s' and %s = '%s' and %s = '%s' and %s = '%s' ",
+					"tokens", CN_APPID, app, CN_ID, id, CN_LOCATION, location, CN_DC, datacenter);
 			logger.info(selectClause);
 
-			final ColumnFamily<String, String> CF_INSTANCES_NEW = ColumnFamily
-					.newColumnFamily(KS_NAME, StringSerializer.get(), StringSerializer.get());
+			final ColumnFamily<String, String> CF_INSTANCES_NEW = ColumnFamily.newColumnFamily(KS_NAME,
+					StringSerializer.get(), StringSerializer.get());
 
 			OperationResult<CqlResult<String, String>> result = bootKeyspace.prepareQuery(CF_INSTANCES_NEW)
 					.withCql(selectClause).execute();
@@ -301,8 +325,8 @@ public class InstanceDataDAOCassandra {
 			return row.getKey();
 
 		} catch (Exception e) {
-			logger.warn("Caught an Unknown Exception during find a row matching cluster[" + app +
-					"], id[" + id + "], and region[" + datacenter + "]  ... -> " + e.getMessage());
+			logger.warn("Caught an Unknown Exception during find a row matching cluster[" + app + "], id[" + id
+					+ "], and region[" + datacenter + "]  ... -> " + e.getMessage());
 			throw new RuntimeException(e);
 		}
 
@@ -312,7 +336,8 @@ public class InstanceDataDAOCassandra {
 		AppsInstance ins = new AppsInstance();
 		Map<String, String> cmap = new HashMap<String, String>();
 		for (Column<String> column : columns) {
-			//        		logger.info("***Column Name = "+column.getName()+ " Value = "+column.getStringValue());
+			// logger.info("***Column Name = "+column.getName()+ " Value =
+			// "+column.getStringValue());
 			cmap.put(column.getName(), column.getStringValue());
 			if (column.getName().equals(CN_APPID))
 				ins.setUpdatetime(column.getTimestamp());
@@ -346,8 +371,8 @@ public class InstanceDataDAOCassandra {
 
 		logger.info("BOOT_CLUSTER = {}, KS_NAME = {}", BOOT_CLUSTER, KS_NAME);
 		return new AstyanaxContext.Builder().forCluster(BOOT_CLUSTER).forKeyspace(KS_NAME)
-				.withAstyanaxConfiguration(new AstyanaxConfigurationImpl()
-						.setDiscoveryType(NodeDiscoveryType.DISCOVERY_SERVICE))
+				.withAstyanaxConfiguration(
+						new AstyanaxConfigurationImpl().setDiscoveryType(NodeDiscoveryType.DISCOVERY_SERVICE))
 				.withConnectionPoolConfiguration(new ConnectionPoolConfigurationImpl("MyConnectionPool")
 						.setMaxConnsPerHost(3).setPort(thriftPortForAstyanax))
 				.withHostSupplier(hostSupplier.getSupplier(BOOT_CLUSTER))
@@ -360,13 +385,12 @@ public class InstanceDataDAOCassandra {
 
 		logger.info("BOOT_CLUSTER = {}, KS_NAME = {}", BOOT_CLUSTER, KS_NAME);
 		return new AstyanaxContext.Builder().forCluster(BOOT_CLUSTER).forKeyspace(KS_NAME)
-				.withAstyanaxConfiguration(new AstyanaxConfigurationImpl()
-						.setDiscoveryType(NodeDiscoveryType.DISCOVERY_SERVICE)
-						.setConnectionPoolType(ConnectionPoolType.ROUND_ROBIN))
+				.withAstyanaxConfiguration(
+						new AstyanaxConfigurationImpl().setDiscoveryType(NodeDiscoveryType.DISCOVERY_SERVICE)
+								.setConnectionPoolType(ConnectionPoolType.ROUND_ROBIN))
 				.withConnectionPoolConfiguration(new ConnectionPoolConfigurationImpl("MyConnectionPool")
 						.setMaxConnsPerHost(3).setPort(thriftPortForAstyanax))
-				.withHostSupplier(getSupplier())
-				.withConnectionPoolMonitor(new CountingConnectionPoolMonitor())
+				.withHostSupplier(getSupplier()).withConnectionPoolMonitor(new CountingConnectionPoolMonitor())
 				.buildKeyspace(ThriftFamilyFactory.getInstance());
 
 	}
@@ -380,8 +404,8 @@ public class InstanceDataDAOCassandra {
 
 				List<Host> hosts = new ArrayList<Host>();
 
-				List<String> cassHostnames = new ArrayList<String>(Arrays.asList(StringUtils
-						.split(config.getCassandraSeeds(), ",")));
+				List<String> cassHostnames = new ArrayList<String>(
+						Arrays.asList(StringUtils.split(config.getCassandraSeeds(), ",")));
 
 				if (cassHostnames.size() == 0)
 					throw new RuntimeException(
