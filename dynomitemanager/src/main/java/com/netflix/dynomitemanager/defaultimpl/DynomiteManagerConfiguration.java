@@ -583,12 +583,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_REQ_TIMEOUT_NAME, DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC);
     }
 
-    @Override
-    public String getTokens() {
-	// TODO Auto-generated method stub
-	return null;
-    }
-
     public boolean isMultiRegionedCluster() {
 	return configSource.get(CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER, true);
     }
@@ -671,14 +665,14 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     @Override
     public String getBackupSchedule() {
-	if (CONFIG_BACKUP_SCHEDULE != null && !"day".equals(CONFIG_BACKUP_SCHEDULE)
-		&& !"week".equals(CONFIG_BACKUP_SCHEDULE)) {
-
-	    logger.error("The persistence schedule FP is wrong: day or week");
-	    logger.error("Defaulting to day");
-	    return configSource.get("day", DEFAULT_BACKUP_SCHEDULE);
-	}
-	return configSource.get(CONFIG_BACKUP_SCHEDULE, DEFAULT_BACKUP_SCHEDULE);
+        String configBackupSchedule = configSource.get(CONFIG_BACKUP_SCHEDULE);
+	    if (configBackupSchedule != null && !"day".equals(configBackupSchedule)
+		    && !"week".equals(configBackupSchedule)) {
+	        logger.error("The persistence schedule FP is wrong: day or week");
+	        logger.error("Defaulting to " + DEFAULT_BACKUP_SCHEDULE);
+	        return DEFAULT_BACKUP_SCHEDULE;
+	    }
+	    return configSource.get(CONFIG_BACKUP_SCHEDULE);
     }
 
     @Override

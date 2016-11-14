@@ -159,8 +159,6 @@ public interface IConfiguration {
 
     public int getTimeout();
 
-    public String getTokens();
-
     public boolean isMultiRegionedCluster();
 
     public String getSecuredOption();
