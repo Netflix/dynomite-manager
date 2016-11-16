@@ -96,11 +96,6 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getTokens() {
-		return null;
-	}
-
-	@Override
 	public int getTimeout() {
 		return 0;
 	}
