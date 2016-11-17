@@ -94,6 +94,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // Cluster name is saved as tokens.appId in Cassandra.
     // The cluster name is used as the default AWS Security Group name, if SG name is null.
     private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
+    private static final String CONFIG_DYNOMITE_CLUSTER_NAME = DYNOMITE_PROPS + ".cluster.name";
     private static final String CONFIG_SEED_PROVIDER_NAME = DYNOMITEMANAGER_PRE + ".dyno.seed.provider";
     private static final String CONFIG_DYNOMITE_CLIENT_PORT = DYNOMITE_PROPS + ".client.port";
     private static final String CONFIG_DYNOMITE_PEER_PORT = DYNOMITE_PROPS + ".peer.port";
@@ -176,7 +177,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.minwritebuffernametomerge";
 
     // Defaults
-    private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
+    private final String DEFAULT_DYNOMITE_CLUSTER_NAME = "dynomite_demo1";
     private final String DEFAULT_SEED_PROVIDER = "florida_provider";
     private final String DEFAULT_DYNOMITE_HOME_DIR = "/apps/dynomite";
     private final String DEFAULT_DYNOMITE_START_SCRIPT = "/apps/dynomite/bin/launch_dynomite.sh";
@@ -389,16 +390,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getAppName() {
-	String clusterName = System.getenv("NETFLIX_APP");
-
-	if (StringUtils.isBlank(clusterName))
-	    return configSource.get(CONFIG_CLUSTER_NAME, DEFAULT_CLUSTER_NAME);
-
-	return clusterName;
-    }
-
-    @Override
     public String getAppHome() {
 	return configSource.get(CONFIG_DYN_HOME_DIR, DEFAULT_DYNOMITE_HOME_DIR);
     }
@@ -483,7 +474,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     @Override
     public String getACLGroupName() {
-	return configSource.get(CONFIG_ACL_GROUP_NAME, this.getAppName());
+        return configSource.get(CONFIG_ACL_GROUP_NAME, this.getDynomiteClusterName());
     }
 
     @Override
@@ -520,6 +511,9 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_TOKENS_DISTRIBUTION_NAME, DEFAULT_TOKENS_DISTRIBUTION);
     }
 
+    // Dynomite
+    // ========
+
     @Override
     public int getDynomiteClientPort() {
         String clientPort = System.getenv("DM_DYNOMITE_CLIENT_PORT");
@@ -537,6 +531,23 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     @Override
     public String getClientListenPort() {
         return "0.0.0.0:" + getDynomiteClientPort();
+    }
+
+    @Override
+    public String getDynomiteClusterName() {
+        // Maintain backward compatibility for env var
+        String clusterNameOldEnvVar = System.getenv("NETFLIX_APP");
+        if (clusterNameOldEnvVar != null && !"".equals(clusterNameOldEnvVar)) {
+            logger.warn("NETFLIX_APP is deprecated. Use DM_DYNOMITE_CLUSTER_NAME.");
+            return clusterNameOldEnvVar;
+        }
+
+        String clusterName = System.getenv("DM_DYNOMITE_CLUSTER_NAME");
+        if (clusterName != null && !"".equals(clusterName)) {
+            return clusterName;
+        }
+
+        return getStringProperty(CONFIG_DYNOMITE_CLUSTER_NAME, DEFAULT_DYNOMITE_CLUSTER_NAME);
     }
 
     @Override

@@ -1,13 +1,39 @@
-build/
+# Gradle
+.gradle
+!gradle/wrapper/gradle-wrapper.jar
 .gradle/
 
+# Builds
+build
+
+# IDE
+.idea
+*.iws
 *.iml
 *.ipr
-*.iws
-.idea/
+
+# Mac files
+.DS_Store
+lib-cov
+
+# Packages
+*.jar
+*.war
+*.ear
+
+# Temp files / working directories
+*.swp
+*.*~
+*.bkp
+
+# Compressed files
+*.bz
+*.gz
+*.tar
+*.zip
+*.tgz
+
 /bin/
-
-
 *.classpath
 *.project
 */.settings/*

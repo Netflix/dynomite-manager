@@ -52,11 +52,11 @@ public class UpdateSecuritySettings extends Task {
 		// if seed does not execute.
 		int port = config.getDynomitePeerPort();
 		List<String> acls = membership.listACL(port, port);
-		List<AppsInstance> instances = factory.getAllIds(config.getAppName());
+		List<AppsInstance> instances = factory.getAllIds(config.getDynomiteClusterName());
 
 		// iterate to add...
 		List<String> add = Lists.newArrayList();
-		for (AppsInstance instance : factory.getAllIds(config.getAppName())) {
+		for (AppsInstance instance : factory.getAllIds(config.getDynomiteClusterName())) {
 			String range = instance.getHostIP() + "/32";
 			if (!acls.contains(range))
 				add.add(range);

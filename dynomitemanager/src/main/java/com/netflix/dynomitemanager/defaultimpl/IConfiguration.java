@@ -41,7 +41,7 @@ public interface IConfiguration {
      * that are part of the same cluster.
      * @return the cluster name
      */
-    public String getAppName();
+    public String getDynomiteClusterName();
 
     /**
      * @return Zone (or zone for AWS)

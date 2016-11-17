@@ -80,6 +80,26 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteClusterName() throws Exception {
+        Assert.assertThat("Cluster name = default", conf.getDynomiteClusterName(), is("dynomite_demo1"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "testcluster";
+            }
+        };
+        Assert.assertThat("Cluster name = env var", conf.getDynomiteClusterName(), is("testcluster"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Cluster name = default", conf.getDynomiteClusterName(), is("dynomite_demo1"));
+    }
+
+    @Test
     public void testGetDynomitePeerPort() throws Exception {
         Assert.assertThat(conf.getDynomitePeerPort(), is(8101));
 
