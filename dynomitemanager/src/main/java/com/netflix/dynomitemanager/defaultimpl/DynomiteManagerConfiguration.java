@@ -624,10 +624,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_SECURED_OPTION, DEFAULT_SECURED_OPTION);
     }
 
-    public boolean isHealthCheckEnable() {
-	return configSource.get(CONFIG_DYNO_HEALTHCHECK_ENABLE, true);
-    }
-
     public boolean isWarmBootstrap() {
 	return configSource.get(CONFIG_DYNO_WARM_BOOTSTRAP, false);
     }

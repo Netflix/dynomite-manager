@@ -47,11 +47,6 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public boolean isHealthCheckEnable() {
-	return false;
-    }
-
-    @Override
     public boolean isEurekaHostSupplierEnabled() {
 	return false;
     }
