@@ -81,6 +81,13 @@ public interface IConfiguration {
     public String getDynomiteStopScript();
 
     /**
+     * Should Dynomite preconnect to the backend storage engine.
+     *
+     * @return true if Dynomite should preconnect to the backend storage engine, false if it should not preconnect
+     */
+    public boolean getDynomiteStoragePreconnect();
+
+    /**
      * Get the full path to the dynomite.yml configuration file.
      *
      * @return full path to the dynomite.yml file.
@@ -178,8 +185,6 @@ public interface IConfiguration {
     public String getDynListenPort();
 
     public String getClientListenPort();
-
-    public boolean getPreconnect();
 
     public int getServerRetryTimeout();
 

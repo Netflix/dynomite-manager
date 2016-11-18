@@ -151,7 +151,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public boolean getPreconnect() {
+    public boolean getDynomiteStoragePreconnect() {
 	return false;
     }
 

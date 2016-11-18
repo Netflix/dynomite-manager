@@ -151,7 +151,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public boolean getPreconnect() {
+	public boolean getDynomiteStoragePreconnect() {
 		return false;
 	}
 

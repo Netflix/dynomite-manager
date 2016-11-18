@@ -260,6 +260,26 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteStoragePreconnect() throws Exception {
+        Assert.assertThat("Dynomite storage preconnect = default", conf.getDynomiteStoragePreconnect(), is(true));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "false";
+            }
+        };
+        Assert.assertThat("Dynomite storage preconnect = env var", conf.getDynomiteStoragePreconnect(), is(false));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Dynomite storage preconnect = default", conf.getDynomiteStoragePreconnect(), is(true));
+    }
+
+    @Test
     public void testGetDynomiteYaml() {
         Assert.assertThat("dynomite.yml = default", conf.getDynomiteYaml(), is("/apps/dynomite/conf/dynomite.yml"));
 

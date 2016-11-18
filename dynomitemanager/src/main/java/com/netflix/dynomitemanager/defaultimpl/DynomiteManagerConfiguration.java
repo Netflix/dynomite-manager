@@ -14,6 +14,7 @@ package com.netflix.dynomitemanager.defaultimpl;
 
 import java.util.List;
 
+import com.netflix.config.DynamicBooleanProperty;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +75,20 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         System.setProperty("archaius.configurationSource.defaultFileName", "dynomitemanager.properties");
     }
 
+    private boolean getBooleanProperty(String envVar, String key, boolean defaultValue) {
+        String envVal = System.getenv(envVar);
+        if (envVal != null && !"".equals(envVal) && ("true".equals(envVal) || "false".equals(envVal))) {
+            try {
+                return Boolean.parseBoolean(envVal);
+            } catch (NumberFormatException e) {
+                logger.info(envVar + " must be a boolean (true, false). Using value from Archaius.");
+            }
+        }
+
+        DynamicBooleanProperty property = DynamicPropertyFactory.getInstance().getBooleanProperty(key, defaultValue);
+        return property.get();
+    }
+
     private String getStringProperty(String envVar, String key, String defaultValue) {
         String envVal = System.getenv(envVar);
         if (envVal != null && !"".equals(envVal)) {
@@ -120,8 +135,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 													      // milliseconds
     private static final String CONFIG_DYNOMITE_GOSSIP_INTERVAL = DYNOMITE_PROPS + ".gossip.interval"; // in ms
     private static final String CONFIG_DYNOMITE_HASH_ALGORITHM = DYNOMITE_PROPS + ".hash.algorithm";
-    private static final String CONFIG_DYNO_CONNECTIONS_PRECONNECT = DYNOMITEMANAGER_PRE
-	    + ".dyno.connections.preconnect";
+    private static final String CONFIG_DYNOMITE_STORAGE_PRECONNECT = DYNOMITE_PROPS + ".storage.preconnect";
     private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
     private static final String CONFIG_DYNO_HEALTHCHECK_ENABLE = DYNOMITEMANAGER_PRE + ".dyno.healthcheck.enable";
 
@@ -571,6 +585,11 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         return getStringProperty("DM_DYNOMITE_STOP_SCRIPT", CONFIG_DYNOMITE_STOP_SCRIPT, DEFAULT_DYNOMITE_STOP_SCRIPT);
     }
 
+    @Override
+    public boolean getDynomiteStoragePreconnect() {
+        return getBooleanProperty("DM_DYNOMITE_STORAGE_PRECONNECT", CONFIG_DYNOMITE_STORAGE_PRECONNECT, true);
+    }
+
     public String getDynomiteYaml() {
         String dynomiteYaml = getStringProperty("DM_DYNOMITE_YAML", CONFIG_DYNOMITE_YAML, DEFAULT_DYNOMITE_YAML);
         // If a user sets a relative path to dynomite.yaml then we need to prepend the Dynomite installation directory
@@ -585,11 +604,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     @Override
     public String getDynListenPort() { // return full string
 	return "0.0.0.0:" + getDynomitePeerPort();
-    }
-
-    @Override
-    public boolean getPreconnect() {
-	return configSource.get(CONFIG_DYNO_CONNECTIONS_PRECONNECT, true);
     }
 
     @Override
