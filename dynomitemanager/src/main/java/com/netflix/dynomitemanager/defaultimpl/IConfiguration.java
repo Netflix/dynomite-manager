@@ -47,6 +47,13 @@ public interface IConfiguration {
     public String getDynomiteInstallDir();
 
     /**
+     * Get the Dynomite process name.
+     *
+     * @return the Dynomite process name
+     */
+    public String getDynomiteProcessName();
+
+    /**
      * Get the name of the seed provider that Dynomite uses to learn the cluster's topology.
      * @return the seed provider name
      */
@@ -138,11 +145,6 @@ public interface IConfiguration {
      * @return the Cassandra cluster name for the topology database
      */
     public String getBootClusterName();
-
-    /**
-     * @return Process Name
-     */
-    public String getProcessName();
 
     public String getReadConsistency();
 

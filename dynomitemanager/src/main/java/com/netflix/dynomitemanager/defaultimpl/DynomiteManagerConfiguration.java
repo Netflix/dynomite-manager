@@ -133,7 +133,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_AVAILABILITY_ZONES = DYNOMITEMANAGER_PRE + ".zones.available";
     private static final String CONFIG_AVAILABILITY_RACKS = DYNOMITEMANAGER_PRE + ".racks.available";
 
-    private static final String CONFIG_DYN_PROCESS_NAME = DYNOMITEMANAGER_PRE + ".dyno.processname";
+    private static final String CONFIG_DYNOMITE_PROCESS_NAME = DYNOMITE_PROPS + ".process.name";
     private static final String CONFIG_DYNOMITE_YAML = DYNOMITE_PROPS + ".yaml";
     private static final String CONFIG_SECURED_OPTION = DYNOMITEMANAGER_PRE + ".secured.option";
     private static final String CONFIG_DYNO_AUTO_EJECT_HOSTS = DYNOMITEMANAGER_PRE + ".auto.eject.hosts";
@@ -201,7 +201,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private List<String> DEFAULT_AVAILABILITY_ZONES = ImmutableList.of();
     private List<String> DEFAULT_AVAILABILITY_RACKS = ImmutableList.of();
 
-    private final String DEFAULT_DYN_PROCESS_NAME = "dynomite";
+    private final String DEFAULT_DYNOMITE_PROCESS_NAME = "dynomite";
     private final int DEFAULT_DYNOMITE_CLIENT_PORT = 8102; // dyn_listen
     private final int DEFAULT_DYN_SECURED_PEER_PORT = 8101;
     private final int DEFAULT_DYNOMITE_PEER_PORT = 8101;
@@ -490,11 +490,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getProcessName() {
-	return configSource.get(CONFIG_DYN_PROCESS_NAME, DEFAULT_DYN_PROCESS_NAME);
-    }
-
-    @Override
     public boolean getAutoEjectHosts() {
 	return configSource.get(CONFIG_DYNO_AUTO_EJECT_HOSTS, true);
     }
@@ -521,7 +516,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
             return clusterNameOldEnvVar;
         }
 
-        return getStringProperty("DM_DYNOMITE_CLUSTER_NAME", CONFIG_DYNOMITE_CLUSTER_NAME, DEFAULT_DYNOMITE_CLUSTER_NAME);
+        return getStringProperty("DM_DYNOMITE_CLUSTER_NAME", CONFIG_DYNOMITE_CLUSTER_NAME,
+                DEFAULT_DYNOMITE_CLUSTER_NAME);
     }
 
     @Override
@@ -546,12 +542,20 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
+    public String getDynomiteProcessName() {
+        return getStringProperty("DM_DYNOMITE_PROCESS_NAME", CONFIG_DYNOMITE_PROCESS_NAME,
+                DEFAULT_DYNOMITE_PROCESS_NAME);
+    }
+
+    @Override
     public String getDynomiteSeedProvider() {
-        return getStringProperty("DM_DYNOMITE_SEED_PROVIDER", CONFIG_DYNOMITE_SEED_PROVIDER, DEFAULT_DYNOMITE_SEED_PROVIDER);
+        return getStringProperty("DM_DYNOMITE_SEED_PROVIDER", CONFIG_DYNOMITE_SEED_PROVIDER,
+                DEFAULT_DYNOMITE_SEED_PROVIDER);
     }
 
     public String getDynomiteStartScript() {
-        return getStringProperty("DM_DYNOMITE_START_SCRIPT", CONFIG_DYNOMITE_START_SCRIPT, DEFAULT_DYNOMITE_START_SCRIPT);
+        return getStringProperty("DM_DYNOMITE_START_SCRIPT", CONFIG_DYNOMITE_START_SCRIPT,
+                DEFAULT_DYNOMITE_START_SCRIPT);
     }
 
     public String getDynomiteStopScript() {

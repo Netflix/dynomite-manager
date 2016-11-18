@@ -151,7 +151,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getProcessName() {
+	public String getDynomiteProcessName() {
 		return null;
 	}
 

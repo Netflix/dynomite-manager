@@ -160,6 +160,26 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteProcessName() throws Exception {
+        Assert.assertThat("Dynomite process name = default", conf.getDynomiteProcessName(), is("dynomite"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "renamed";
+            }
+        };
+        Assert.assertThat("Dynomite process name = env var", conf.getDynomiteProcessName(), is("renamed"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Dynomite process name = default", conf.getDynomiteProcessName(), is("dynomite"));
+    }
+
+    @Test
     public void testGetDynomiteSeedProvider() throws Exception {
         Assert.assertThat("Seed provider = default", conf.getDynomiteSeedProvider(), is("florida_provider"));
 
