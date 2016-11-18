@@ -72,12 +72,26 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         System.setProperty("archaius.configurationSource.defaultFileName", "dynomitemanager.properties");
     }
 
-    public String getStringProperty(String key, String defaultValue) {
+    private String getStringProperty(String envVar, String key, String defaultValue) {
+        String envVal = System.getenv(envVar);
+        if (envVal != null && !"".equals(envVal)) {
+            return envVal;
+        }
+
         DynamicStringProperty property = DynamicPropertyFactory.getInstance().getStringProperty(key, defaultValue);
         return property.get();
     }
 
-    public int getIntProperty(String key, int defaultValue) {
+    private int getIntProperty(String envVar, String key, int defaultValue) {
+        String envVal = System.getenv(envVar);
+        if (envVal != null && !"".equals(envVal)) {
+            try {
+                return Integer.parseInt(envVal);
+            } catch (NumberFormatException e) {
+                logger.info(envVar + " must be an integer. Using value from Archaius.");
+            }
+        }
+
         DynamicIntProperty property = DynamicPropertyFactory.getInstance().getIntProperty(key, defaultValue);
         return property.get();
     }
@@ -502,16 +516,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     @Override
     public int getDynomiteClientPort() {
-        String clientPort = System.getenv("DM_DYNOMITE_CLIENT_PORT");
-        if (clientPort != null && !"".equals(clientPort)) {
-            try {
-                return Integer.parseInt(clientPort);
-            } catch (NumberFormatException e) {
-                logger.info("DM_DYNOMITE_CLIENT_PORT must be an integer. Using value from Archaius.");
-            }
-        }
-
-        return getIntProperty(CONFIG_DYNOMITE_CLIENT_PORT, DEFAULT_DYNOMITE_CLIENT_PORT);
+        return getIntProperty("DM_DYNOMITE_CLIENT_PORT", CONFIG_DYNOMITE_CLIENT_PORT, DEFAULT_DYNOMITE_CLIENT_PORT);
     }
 
     @Override
@@ -528,54 +533,25 @@ public class DynomiteManagerConfiguration implements IConfiguration {
             return clusterNameOldEnvVar;
         }
 
-        String clusterName = System.getenv("DM_DYNOMITE_CLUSTER_NAME");
-        if (clusterName != null && !"".equals(clusterName)) {
-            return clusterName;
-        }
-
-        return getStringProperty(CONFIG_DYNOMITE_CLUSTER_NAME, DEFAULT_DYNOMITE_CLUSTER_NAME);
+        return getStringProperty("DM_DYNOMITE_CLUSTER_NAME", CONFIG_DYNOMITE_CLUSTER_NAME, DEFAULT_DYNOMITE_CLUSTER_NAME);
     }
 
     @Override
     public int getDynomitePeerPort() {
-        String peerPort = System.getenv("DM_DYNOMITE_PEER_PORT");
-        if (peerPort != null && !"".equals(peerPort)) {
-            try {
-                return Integer.parseInt(peerPort);
-            } catch (NumberFormatException e) {
-                logger.info("DM_DYNOMITE_PEER_PORT must be an integer. Using value from Archaius.");
-            }
-        }
-
-        return getIntProperty(CONFIG_DYNOMITE_PEER_PORT, DEFAULT_DYNOMITE_PEER_PORT);
+        return getIntProperty("DM_DYNOMITE_PEER_PORT", CONFIG_DYNOMITE_PEER_PORT, DEFAULT_DYNOMITE_PEER_PORT);
     }
 
     @Override
     public String getDynomiteSeedProvider() {
-        String seedProvider = System.getenv("DM_DYNOMITE_SEED_PROVIDER");
-        if (seedProvider != null && !"".equals(seedProvider)) {
-            return seedProvider;
-        }
-
-        return getStringProperty(CONFIG_DYNOMITE_SEED_PROVIDER, DEFAULT_DYNOMITE_SEED_PROVIDER);
+        return getStringProperty("DM_DYNOMITE_SEED_PROVIDER", CONFIG_DYNOMITE_SEED_PROVIDER, DEFAULT_DYNOMITE_SEED_PROVIDER);
     }
 
     public String getDynomiteStartScript() {
-        String startScript = System.getenv("DM_DYNOMITE_START_SCRIPT");
-        if (startScript != null && !"".equals(startScript)) {
-            return startScript;
-        }
-
-        return getStringProperty(CONFIG_DYNOMITE_START_SCRIPT, DEFAULT_DYNOMITE_START_SCRIPT);
+        return getStringProperty("DM_DYNOMITE_START_SCRIPT", CONFIG_DYNOMITE_START_SCRIPT, DEFAULT_DYNOMITE_START_SCRIPT);
     }
 
     public String getDynomiteStopScript() {
-        String stopScript = System.getenv("DM_DYNOMITE_STOP_SCRIPT");
-        if (stopScript != null && !"".equals(stopScript)) {
-            return stopScript;
-        }
-
-        return getStringProperty(CONFIG_DYNOMITE_STOP_SCRIPT, DEFAULT_DYNOMITE_STOP_SCRIPT);
+        return getStringProperty("DM_DYNOMITE_STOP_SCRIPT", CONFIG_DYNOMITE_STOP_SCRIPT, DEFAULT_DYNOMITE_STOP_SCRIPT);
     }
 
     @Override
@@ -758,12 +734,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     @Override
     public String getCassandraSeeds() {
-        String envSeeds = System.getenv("DM_CASSANDRA_SEEDS");
-        if (envSeeds != null && !"".equals(envSeeds)) {
-            return envSeeds;
-        }
-
-        return getStringProperty(CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
+        return getStringProperty("DM_CASSANDRA_SEEDS", CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
     }
 
     @Override
