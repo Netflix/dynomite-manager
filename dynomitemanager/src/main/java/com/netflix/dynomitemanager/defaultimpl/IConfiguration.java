@@ -40,6 +40,13 @@ public interface IConfiguration {
     public int getDynomiteGossipInterval();
 
     /**
+     * Get the hash algorithm that Dynomite uses to hash the data's key.
+     *
+     * @return the hash algorithm used to hash the data key
+     */
+    public String getDynomiteHashAlgorithm();
+
+    /**
      * Get the full path to Dynomite's installation directory.
      *
      * @return full path to the Dynomite installation directory
@@ -169,8 +176,6 @@ public interface IConfiguration {
     public String getDistribution();
 
     public String getDynListenPort();
-
-    public String getHash();
 
     public String getClientListenPort();
 

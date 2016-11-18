@@ -120,6 +120,26 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteHashAlgorithm() throws Exception {
+        Assert.assertThat(conf.getDynomiteHashAlgorithm(), is("murmur"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "murmur3";
+            }
+        };
+        Assert.assertThat(conf.getDynomiteHashAlgorithm(), is("murmur3"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat(conf.getDynomiteHashAlgorithm(), is("murmur"));
+    }
+
+    @Test
     public void testGetDynomiteInstallDir() throws Exception {
         Assert.assertThat("Install dir = default", conf.getDynomiteInstallDir(), is("/apps/dynomite"));
 

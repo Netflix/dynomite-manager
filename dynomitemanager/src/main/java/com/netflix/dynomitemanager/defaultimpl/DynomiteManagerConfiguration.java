@@ -119,7 +119,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNO_REQ_TIMEOUT_NAME = DYNOMITEMANAGER_PRE + ".dyno.request.timeout"; // in
 													      // milliseconds
     private static final String CONFIG_DYNOMITE_GOSSIP_INTERVAL = DYNOMITE_PROPS + ".gossip.interval"; // in ms
-    private static final String CONFIG_DYNO_TOKENS_HASH_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.hash";
+    private static final String CONFIG_DYNOMITE_HASH_ALGORITHM = DYNOMITE_PROPS + ".hash.algorithm";
     private static final String CONFIG_DYNO_CONNECTIONS_PRECONNECT = DYNOMITEMANAGER_PRE
 	    + ".dyno.connections.preconnect";
     private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
@@ -212,7 +212,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private final String DEFAULT_TOKENS_DISTRIBUTION = "vnode";
     private final int DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC = 5000;
     private final int DEFAULT_DYNOMITE_GOSSIP_INTERVAL = 10000;
-    private final String DEFAULT_DYNO_TOKENS_HASH = "murmur";
+    private final String DEFAULT_DYNOMITE_HASH_ALGORITHM = "murmur";
 
     private final String DEFAULT_SECURED_OPTION = "datacenter";
 
@@ -530,6 +530,12 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
+    public String getDynomiteHashAlgorithm() {
+        return getStringProperty("DM_DYNOMITE_HASH_ALGORITHM", CONFIG_DYNOMITE_HASH_ALGORITHM,
+                DEFAULT_DYNOMITE_HASH_ALGORITHM);
+    }
+
+    @Override
     public String getDynomiteInstallDir() {
         return getStringProperty("DM_DYNOMITE_INSTALL_DIR", CONFIG_DYNOMITE_INSTALL_DIR, DEFAULT_DYNOMITE_INSTALL_DIR);
     }
@@ -579,11 +585,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     @Override
     public String getDynListenPort() { // return full string
 	return "0.0.0.0:" + getDynomitePeerPort();
-    }
-
-    @Override
-    public String getHash() {
-	return configSource.get(CONFIG_DYNO_TOKENS_HASH_NAME, DEFAULT_DYNO_TOKENS_HASH);
     }
 
     @Override

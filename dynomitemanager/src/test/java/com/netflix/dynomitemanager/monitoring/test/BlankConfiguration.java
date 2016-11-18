@@ -196,7 +196,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getHash() {
+    public String getDynomiteHashAlgorithm() {
 	return null;
     }
 
