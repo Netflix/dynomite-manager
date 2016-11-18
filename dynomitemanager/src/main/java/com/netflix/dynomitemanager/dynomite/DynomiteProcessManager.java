@@ -56,7 +56,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
     }
 
     protected void setDynomiteEnv(Map<String, String> env) {
-	env.put("MBUF_SIZE", String.valueOf(config.getMbufSize()));
+	env.put("MBUF_SIZE", String.valueOf(config.getDynomiteMBufSize()));
 	if (config.getAllocatedMessages() > 0) {
 	    env.put("ALLOC_MSGS", String.valueOf(config.getAllocatedMessages()));
 	}

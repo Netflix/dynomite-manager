@@ -54,6 +54,13 @@ public interface IConfiguration {
     public String getDynomiteInstallDir();
 
     /**
+     * Get the size (in bytes) of Dynomite's memory buffer (mbuf).
+     *
+     * @return size of Dynomite mbuf in bytes
+     */
+    public int getDynomiteMBufSize();
+
+    /**
      * Get the Dynomite process name.
      *
      * @return the Dynomite process name
@@ -216,8 +223,6 @@ public interface IConfiguration {
      * @return the max percentage of memory allocated to the storage engine
      */
     public int getStorageMaxMemoryPercent();
-
-    public int getMbufSize();
 
     public int getAllocatedMessages();
 

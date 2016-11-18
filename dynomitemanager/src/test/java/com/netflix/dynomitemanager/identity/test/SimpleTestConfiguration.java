@@ -161,7 +161,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getMbufSize() {
+	public int getDynomiteMBufSize() {
 		return 0;
 	}
 

@@ -137,9 +137,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNOMITE_HASH_ALGORITHM = DYNOMITE_PROPS + ".hash.algorithm";
     private static final String CONFIG_DYNOMITE_STORAGE_PRECONNECT = DYNOMITE_PROPS + ".storage.preconnect";
     private static final String CONFIG_DYNOMITE_MULTI_DC = DYNOMITE_PROPS + ".multi.dc";
-    private static final String CONFIG_DYNO_HEALTHCHECK_ENABLE = DYNOMITEMANAGER_PRE + ".dyno.healthcheck.enable";
 
-    private static final String CONFIG_DYNO_MBUF_SIZE = DYNOMITEMANAGER_PRE + ".dyno.mbuf.size";
+    private static final String CONFIG_DYNOMITE_MBUF_SIZE = DYNOMITE_PROPS + ".mbuf.size";
     private static final String CONFIG_DYNO_MAX_ALLOC_MSGS = DYNOMITEMANAGER_PRE + ".dyno.allocated.messages";
 
     private static final String CONFIG_AVAILABILITY_ZONES = DYNOMITEMANAGER_PRE + ".zones.available";
@@ -564,6 +563,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         return getIntProperty("DM_DYNOMITE_PEER_PORT", CONFIG_DYNOMITE_PEER_PORT, DEFAULT_DYNOMITE_PEER_PORT);
     }
 
+    public int getDynomiteMBufSize() {
+        return getIntProperty("DM_DYNOMITE_MBUF_SIZE", CONFIG_DYNOMITE_MBUF_SIZE, 16384);
+    }
+
     @Override
     public String getDynomiteProcessName() {
         return getStringProperty("DM_DYNOMITE_PROCESS_NAME", CONFIG_DYNOMITE_PROCESS_NAME,
@@ -654,10 +657,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     @Override
     public int getStorageMaxMemoryPercent() {
         return getIntProperty("DM_STORAGE_MAX_MEMORY_PERCENT", CONFIG_STORAGE_MAX_MEMORY_PERCENT, 85);
-    }
-
-    public int getMbufSize() {
-	return configSource.get(CONFIG_DYNO_MBUF_SIZE, 16384);
     }
 
     public int getAllocatedMessages() {

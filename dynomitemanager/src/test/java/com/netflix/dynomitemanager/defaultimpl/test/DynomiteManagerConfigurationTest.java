@@ -160,6 +160,26 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteMBufSize() throws Exception {
+        Assert.assertThat("mbuf size = default", conf.getDynomiteMBufSize(), is(16384));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "32768";
+            }
+        };
+        Assert.assertThat("mbuf size = env var", conf.getDynomiteMBufSize(), is(32768));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("mbuf size = default", conf.getDynomiteMBufSize(), is(16384));
+    }
+
+    @Test
     public void testGetDynomitePeerPort() throws Exception {
         Assert.assertThat(conf.getDynomitePeerPort(), is(8101));
 
