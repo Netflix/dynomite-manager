@@ -194,11 +194,15 @@ public interface IConfiguration {
 
     public int getMaxTimeToBootstrap();
 
+    // Storage engine (aka backend)
+    // ============================
+
     /**
-     * @return the max percentage of system memory to be allocated to the
-     *         Dynomite fronted data store.
+     * Get the maximum percentage of system memory to be allocated to the backend storage engine, such as Redis or ARDB.
+     *
+     * @return the max percentage of memory allocated to the storage engine
      */
-    public int getStorageMemPercent();
+    public int getStorageMaxMemoryPercent();
 
     public int getMbufSize();
 

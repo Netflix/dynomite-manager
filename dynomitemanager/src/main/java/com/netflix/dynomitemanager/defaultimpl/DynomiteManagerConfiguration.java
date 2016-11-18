@@ -60,8 +60,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     public static final String CASSANDRA_PREFIX = "cassandra";
     public static final String DYNOMITE_PREFIX = "dynomite";
     public static final String REDIS_PREFIX = "redis";
+    public static final String STORAGE_PREFIX = "storage"; // Storage engine (aka backend)
 
     public static final String DYNOMITE_PROPS = DYNOMITEMANAGER_PRE + "." + DYNOMITE_PREFIX;
+    public static final String STORAGE_PROPS = DYNOMITEMANAGER_PRE + "." + STORAGE_PREFIX;
     public static final String REDIS_PROPS = DYNOMITEMANAGER_PRE + "." + REDIS_PREFIX;
     public static final String CASSANDRA_PROPS = DYNOMITEMANAGER_PRE + "." + CASSANDRA_PREFIX;
 
@@ -122,9 +124,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	    + ".dyno.connections.preconnect";
     private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
     private static final String CONFIG_DYNO_HEALTHCHECK_ENABLE = DYNOMITEMANAGER_PRE + ".dyno.healthcheck.enable";
-    // The max percentage of system memory to be allocated to the Dynomite
-    // fronted data store.
-    private static final String CONFIG_DYNO_STORAGE_MEM_PCT_INT = DYNOMITEMANAGER_PRE + ".dyno.storage.mem.pct.int";
 
     private static final String CONFIG_DYNO_MBUF_SIZE = DYNOMITEMANAGER_PRE + ".dyno.mbuf.size";
     private static final String CONFIG_DYNO_MAX_ALLOC_MSGS = DYNOMITEMANAGER_PRE + ".dyno.allocated.messages";
@@ -142,6 +141,12 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
     private static final String CONFIG_CASSANDRA_THRIFT_PORT = DYNOMITEMANAGER_PRE + ".cassandra.thrift.port";
     private static final String CONFIG_CASSANDRA_SEEDS = CASSANDRA_PROPS + ".seeds";
+
+    // Storage engine (aka backend)
+    // ============================
+
+    // The max percentage of system memory to be allocated to the backend data storage engine (ex. Redis, ARDB).
+    private static final String CONFIG_STORAGE_MAX_MEMORY_PERCENT = STORAGE_PROPS + ".max.memory.percent";
 
     // Eureka
     private static final String CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED = DYNOMITEMANAGER_PRE
@@ -632,9 +637,12 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_WRITE_CONS, "DC_ONE");
     }
 
+    // Storage engine (aka backend)
+    // ============================
+
     @Override
-    public int getStorageMemPercent() {
-	return configSource.get(CONFIG_DYNO_STORAGE_MEM_PCT_INT, 85);
+    public int getStorageMaxMemoryPercent() {
+        return getIntProperty("DM_STORAGE_MAX_MEMORY_PERCENT", CONFIG_STORAGE_MAX_MEMORY_PERCENT, 85);
     }
 
     public int getMbufSize() {

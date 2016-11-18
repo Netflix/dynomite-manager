@@ -101,7 +101,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getStorageMemPercent() {
+	public int getStorageMaxMemoryPercent() {
 		return 0;
 	}
 

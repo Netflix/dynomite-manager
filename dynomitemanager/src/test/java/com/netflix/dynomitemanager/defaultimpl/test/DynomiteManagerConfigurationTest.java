@@ -269,6 +269,29 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("dynomite.yml = default", conf.getDynomiteYaml(), is("/apps/dynomite/conf/dynomite.yml"));
     }
 
+    // Storage engine (aka backend)
+    // ============================
+
+    @Test
+    public void testGetStorageMaxMemoryPercent() throws Exception {
+        Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "70";
+            }
+        };
+        Assert.assertThat("storage max memory percent = env var", conf.getStorageMaxMemoryPercent(), is(70));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
+    }
+
     // Cassandra
     // =========
 
