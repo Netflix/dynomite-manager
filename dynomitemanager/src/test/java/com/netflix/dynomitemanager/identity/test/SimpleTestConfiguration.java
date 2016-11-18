@@ -286,7 +286,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getAllocatedMessages() {
+	public int getDynomiteMaxAllocatedMessages() {
 		return 0;
 	}
 

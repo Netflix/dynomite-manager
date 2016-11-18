@@ -160,6 +160,27 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteMaxAllocatedMessages() throws Exception {
+        Assert.assertThat("max allocated messages = default", conf.getDynomiteMaxAllocatedMessages(), is(200000));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "400000";
+            }
+        };
+        Assert.assertThat("max allocated messages = env var", conf.getDynomiteMaxAllocatedMessages(), is(400000));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("max allocated messages = default", conf.getDynomiteMaxAllocatedMessages(), is(200000));
+    }
+
+
+    @Test
     public void testGetDynomiteMBufSize() throws Exception {
         Assert.assertThat("mbuf size = default", conf.getDynomiteMBufSize(), is(16384));
 

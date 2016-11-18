@@ -139,7 +139,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNOMITE_MULTI_DC = DYNOMITE_PROPS + ".multi.dc";
 
     private static final String CONFIG_DYNOMITE_MBUF_SIZE = DYNOMITE_PROPS + ".mbuf.size";
-    private static final String CONFIG_DYNO_MAX_ALLOC_MSGS = DYNOMITEMANAGER_PRE + ".dyno.allocated.messages";
+    private static final String CONFIG_DYNOMITE_MAX_ALLOCATED_MESSAGES = DYNOMITE_PROPS + ".max.allocated.messages";
 
     private static final String CONFIG_AVAILABILITY_ZONES = DYNOMITEMANAGER_PRE + ".zones.available";
     private static final String CONFIG_AVAILABILITY_RACKS = DYNOMITEMANAGER_PRE + ".racks.available";
@@ -558,6 +558,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         return "0.0.0.0:" + getDynomiteClientPort();
     }
 
+    public int getDynomiteMaxAllocatedMessages() {
+        return getIntProperty("DM_DYNOMITE_MAX_ALLOCATED_MESSAGES", CONFIG_DYNOMITE_MAX_ALLOCATED_MESSAGES, 200000);
+    }
+
     @Override
     public int getDynomitePeerPort() {
         return getIntProperty("DM_DYNOMITE_PEER_PORT", CONFIG_DYNOMITE_PEER_PORT, DEFAULT_DYNOMITE_PEER_PORT);
@@ -657,10 +661,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     @Override
     public int getStorageMaxMemoryPercent() {
         return getIntProperty("DM_STORAGE_MAX_MEMORY_PERCENT", CONFIG_STORAGE_MAX_MEMORY_PERCENT, 85);
-    }
-
-    public int getAllocatedMessages() {
-	return configSource.get(CONFIG_DYNO_MAX_ALLOC_MSGS, 200000);
     }
 
     public boolean isVpc() {

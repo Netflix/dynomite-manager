@@ -54,6 +54,13 @@ public interface IConfiguration {
     public String getDynomiteInstallDir();
 
     /**
+     * Get the maximum number of messages that Dynomite will hold in queue.
+     *
+     * @return the maximum number of messages that Dynomite will allocate
+     */
+    public int getDynomiteMaxAllocatedMessages();
+
+    /**
      * Get the size (in bytes) of Dynomite's memory buffer (mbuf).
      *
      * @return size of Dynomite mbuf in bytes
@@ -223,8 +230,6 @@ public interface IConfiguration {
      * @return the max percentage of memory allocated to the storage engine
      */
     public int getStorageMaxMemoryPercent();
-
-    public int getAllocatedMessages();
 
     // VPC
     public boolean isVpc();
