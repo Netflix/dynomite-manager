@@ -309,6 +309,26 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("dynomite.yml = default", conf.getDynomiteYaml(), is("/apps/dynomite/conf/dynomite.yml"));
     }
 
+    @Test
+    public void testIsDynomiteMultiDC() throws Exception {
+        Assert.assertThat("Dynomite multi-DC = default", conf.isDynomiteMultiDC(), is(true));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "false";
+            }
+        };
+        Assert.assertThat("Dynomite multi-DC = env var", conf.isDynomiteMultiDC(), is(false));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Dynomite multi-DC = default", conf.isDynomiteMultiDC(), is(true));
+    }
+
     // Storage engine (aka backend)
     // ============================
 

@@ -136,7 +136,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNOMITE_GOSSIP_INTERVAL = DYNOMITE_PROPS + ".gossip.interval"; // in ms
     private static final String CONFIG_DYNOMITE_HASH_ALGORITHM = DYNOMITE_PROPS + ".hash.algorithm";
     private static final String CONFIG_DYNOMITE_STORAGE_PRECONNECT = DYNOMITE_PROPS + ".storage.preconnect";
-    private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
+    private static final String CONFIG_DYNOMITE_MULTI_DC = DYNOMITE_PROPS + ".multi.dc";
     private static final String CONFIG_DYNO_HEALTHCHECK_ENABLE = DYNOMITEMANAGER_PRE + ".dyno.healthcheck.enable";
 
     private static final String CONFIG_DYNO_MBUF_SIZE = DYNOMITEMANAGER_PRE + ".dyno.mbuf.size";
@@ -601,6 +601,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         }
     }
 
+    public boolean isDynomiteMultiDC() {
+        return getBooleanProperty("DM_DYNOMITE_MULTI_DC", CONFIG_DYNOMITE_MULTI_DC, true);
+    }
+
     @Override
     public String getDynListenPort() { // return full string
 	return "0.0.0.0:" + getDynomitePeerPort();
@@ -614,10 +618,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     @Override
     public int getTimeout() {
 	return configSource.get(CONFIG_DYNO_REQ_TIMEOUT_NAME, DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC);
-    }
-
-    public boolean isMultiRegionedCluster() {
-	return configSource.get(CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER, true);
     }
 
     public String getSecuredOption() {

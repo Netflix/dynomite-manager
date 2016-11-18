@@ -95,6 +95,13 @@ public interface IConfiguration {
     public String getDynomiteYaml();
 
     /**
+     * Determine if Dynomite is configured as a multi-DC (data center) cluster).
+     *
+     * @return true if the Dynomite cluster is running across multiple DCs
+     */
+    public boolean isDynomiteMultiDC();
+
+    /**
      * @return Zone (or zone for AWS)
      */
     public String getZone();
@@ -189,8 +196,6 @@ public interface IConfiguration {
     public int getServerRetryTimeout();
 
     public int getTimeout();
-
-    public boolean isMultiRegionedCluster();
 
     public String getSecuredOption();
 
