@@ -164,8 +164,6 @@ public interface IConfiguration {
      */
     public int getDynomitePeerPort();
 
-    public int getSecuredPeerListenerPort();
-
     public boolean getAutoEjectHosts();
 
     public String getDistribution();

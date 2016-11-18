@@ -111,7 +111,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNOMITE_SEED_PROVIDER = DYNOMITE_PROPS + ".seed.provider";
     private static final String CONFIG_DYNOMITE_CLIENT_PORT = DYNOMITE_PROPS + ".client.port";
     private static final String CONFIG_DYNOMITE_PEER_PORT = DYNOMITE_PROPS + ".peer.port";
-    private static final String CONFIG_DYN_SECURED_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.secured.peer.port";
     private static final String CONFIG_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.rack";
     private static final String CONFIG_USE_ASG_FOR_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.asg.rack";
     private static final String CONFIG_TOKENS_DISTRIBUTION_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.distribution";
@@ -203,7 +202,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     private final String DEFAULT_DYNOMITE_PROCESS_NAME = "dynomite";
     private final int DEFAULT_DYNOMITE_CLIENT_PORT = 8102; // dyn_listen
-    private final int DEFAULT_DYN_SECURED_PEER_PORT = 8101;
     private final int DEFAULT_DYNOMITE_PEER_PORT = 8101;
     private final String DEFAULT_DYN_RACK = "RAC1";
     private final String DEFAULT_TOKENS_DISTRIBUTION = "vnode";
@@ -600,11 +598,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     public boolean isMultiRegionedCluster() {
 	return configSource.get(CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER, true);
-    }
-
-    @Override
-    public int getSecuredPeerListenerPort() {
-	return configSource.get(CONFIG_DYN_SECURED_PEER_PORT_NAME, DEFAULT_DYN_SECURED_PEER_PORT);
     }
 
     public String getSecuredOption() {
