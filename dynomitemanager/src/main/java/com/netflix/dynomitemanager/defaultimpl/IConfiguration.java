@@ -21,13 +21,15 @@ public interface IConfiguration {
 
     public void initialize();
 
-    /**
-     * @return Path to the home dir of target application
-     */
-    public String getAppHome();
-
     // Dynomite
     // ========
+
+    /**
+     * Get the full path to Dynomite's installation directory.
+     *
+     * @return full path to the Dynomite installation directory
+     */
+    public String getDynomiteInstallDir();
 
     /**
      * Get the name of the seed provider that Dynomite uses to learn the cluster's topology.

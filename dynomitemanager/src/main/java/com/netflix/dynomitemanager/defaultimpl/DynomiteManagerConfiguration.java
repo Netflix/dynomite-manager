@@ -101,7 +101,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     public static final String LOCAL_ADDRESS = "127.0.0.1";
 
-    private static final String CONFIG_DYN_HOME_DIR = DYNOMITEMANAGER_PRE + ".dyno.home";
+    private static final String CONFIG_DYNOMITE_INSTALL_DIR = DYNOMITE_PROPS + ".install.dir";
     private static final String CONFIG_DYNOMITE_START_SCRIPT = DYNOMITE_PROPS + ".start.script";
     private static final String CONFIG_DYNOMITE_STOP_SCRIPT = DYNOMITE_PROPS + ".stop.script";
 
@@ -189,10 +189,12 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_MAX_WRITE_BUFFER_NUMBER = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.maxwritebuffernumber";
     private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.minwritebuffernametomerge";
 
-    // Defaults
+    // Defaults: Dynomite
+    // ==================
+
     private final String DEFAULT_DYNOMITE_CLUSTER_NAME = "dynomite_demo1";
     private final String DEFAULT_DYNOMITE_SEED_PROVIDER = "florida_provider";
-    private final String DEFAULT_DYNOMITE_HOME_DIR = "/apps/dynomite";
+    private final String DEFAULT_DYNOMITE_INSTALL_DIR = "/apps/dynomite";
     private final String DEFAULT_DYNOMITE_START_SCRIPT = "/apps/dynomite/bin/launch_dynomite.sh";
     private final String DEFAULT_DYNOMITE_STOP_SCRIPT = "/apps/dynomite/bin/kill_dynomite.sh";
 
@@ -395,11 +397,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getAppHome() {
-	return configSource.get(CONFIG_DYN_HOME_DIR, DEFAULT_DYNOMITE_HOME_DIR);
-    }
-
-    @Override
     public String getZone() {
 	return ZONE;
     }
@@ -498,7 +495,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     public String getYamlLocation() {
-	return configSource.get(CONFIG_YAML_LOCATION, getAppHome() + "/conf/dynomite.yml");
+        return configSource.get(CONFIG_YAML_LOCATION, getDynomiteInstallDir() + "/conf/dynomite.yml");
     }
 
     @Override
@@ -517,6 +514,11 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     @Override
     public int getDynomiteClientPort() {
         return getIntProperty("DM_DYNOMITE_CLIENT_PORT", CONFIG_DYNOMITE_CLIENT_PORT, DEFAULT_DYNOMITE_CLIENT_PORT);
+    }
+
+    @Override
+    public String getDynomiteInstallDir() {
+        return getStringProperty("DM_DYNOMITE_INSTALL_DIR", CONFIG_DYNOMITE_INSTALL_DIR, DEFAULT_DYNOMITE_INSTALL_DIR);
     }
 
     @Override

@@ -100,6 +100,26 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteInstallDir() throws Exception {
+        Assert.assertThat("Install dir = default", conf.getDynomiteInstallDir(), is("/apps/dynomite"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/dynomite";
+            }
+        };
+        Assert.assertThat("Install dir = env var", conf.getDynomiteInstallDir(), is("/etc/dynomite"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Install dir = default", conf.getDynomiteInstallDir(), is("/apps/dynomite"));
+    }
+
+    @Test
     public void testGetDynomitePeerPort() throws Exception {
         Assert.assertThat(conf.getDynomitePeerPort(), is(8101));
 

@@ -286,7 +286,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getAppHome() {
+    public String getDynomiteInstallDir() {
 	return null;
     }
 
