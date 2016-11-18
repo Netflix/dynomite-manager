@@ -18,7 +18,6 @@ import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
 import com.netflix.dynomitemanager.IInstanceState;
-import com.netflix.dynomitemanager.defaultimpl.FloridaStandardTuner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +78,7 @@ public class FloridaStandardTuner implements ProcessTuner {
 	entries.put("rack", config.getRack());
 	entries.put("distribution", config.getDistribution());
 	entries.put("dyn_listen", config.getDynListenPort());
-	entries.put("dyn_seed_provider", config.getSeedProviderName());
+	entries.put("dyn_seed_provider", config.getDynomiteSeedProvider());
 	entries.put("gos_interval", config.getGossipInterval());
 	entries.put("hash", config.getHash());
 	entries.put("listen", config.getClientListenPort());

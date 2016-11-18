@@ -5,6 +5,7 @@
 
 # Builds
 build
+cleanup.sh
 
 # IDE
 .idea

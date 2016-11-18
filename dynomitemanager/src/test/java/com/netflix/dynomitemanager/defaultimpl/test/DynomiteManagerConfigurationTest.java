@@ -119,6 +119,26 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat(conf.getDynomitePeerPort(), is(8101));
     }
 
+    @Test
+    public void testGetDynomiteSeedProvider() throws Exception {
+        Assert.assertThat("Seed provider = default", conf.getDynomiteSeedProvider(), is("florida_provider"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "simple_provider";
+            }
+        };
+        Assert.assertThat("Seed provider = env var", conf.getDynomiteSeedProvider(), is("simple_provider"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Seed provider = default", conf.getDynomiteSeedProvider(), is("florida_provider"));
+    }
+
     // Cassandra
     // =========
 

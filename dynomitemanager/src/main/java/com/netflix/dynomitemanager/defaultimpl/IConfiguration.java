@@ -26,6 +26,15 @@ public interface IConfiguration {
      */
     public String getAppHome();
 
+    // Dynomite
+    // ========
+
+    /**
+     * Get the name of the seed provider that Dynomite uses to learn the cluster's topology.
+     * @return the seed provider name
+     */
+    public String getDynomiteSeedProvider();
+
     /**
      * @return Path to target application startup script
      */
@@ -110,11 +119,6 @@ public interface IConfiguration {
     public String getBootClusterName();
 
     /**
-     * @return Get the name of seed provider
-     */
-    public String getSeedProviderName();
-
-    /**
      * @return Process Name
      */
     public String getProcessName();
@@ -124,6 +128,13 @@ public interface IConfiguration {
     public String getWriteConsistency();
 
     /**
+     * Get the client port used by Redis (i.e. RESP) clients to query Dynomite (default: 8102).
+     *
+     * @return the port that Dynomite listens on for client requests
+     */
+    public int getDynomiteClientPort();
+
+    /**
      * Get the peer-to-peer port used by Dynomite to communicate with other Dynomite nodes.
      *
      * @return the peer-to-peer port used for intra-cluster communication
@@ -131,13 +142,6 @@ public interface IConfiguration {
     public int getDynomitePeerPort();
 
     public int getSecuredPeerListenerPort();
-
-    /**
-     * Get the client port used by Redis (i.e. RESP) clients to query Dynomite (default: 8102).
-     *
-     * @return the port that Dynomite listens on for client requests
-     */
-    public int getDynomiteClientPort();
 
     public String getYamlLocation();
 

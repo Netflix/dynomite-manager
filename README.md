@@ -1,4 +1,4 @@
-# Dynomite-manager
+# Dynomite Manager
 
 [![Build Status](https://travis-ci.org/Netflix/dynomite-manager.svg)](https://travis-ci.org/Netflix/dynomite-manager)
 [![Dev chat at https://gitter.im/Netflix/dynomite](https://badges.gitter.im/Netflix/dynomite.svg)](https://gitter.im/Netflix/dynomite?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -19,23 +19,23 @@ Details about the features can be found in the [Wiki](https://github.com/Netflix
 
 ## Workflow
 
-The stable version of Dynomite-manager is the [master]( https://github.com/Netflix/dynomite-manager/tree/master ) branch. 
+The stable version of Dynomite Manager is the [master]( https://github.com/Netflix/dynomite-manager/tree/master ) branch. 
 
 For questions or contributions, please consider reading [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Build
 
-Dynomite-manager comes with a Gradle wrapper
+Dynomite Manager comes with a Gradle wrapper
 
     ./gradlew build
 
 The gradlew script will pull down all necessary gradle components/infrastructure automatically, then run the build.
 
-Dynomite-manager provides several default implementations (AWS, Configuration, credentials etc). You can use these or choose to create your own. Dynomite-manager is currently working on AWS and your local environment. We are open to contributions to support other platforms as well. 
+Dynomite Manager provides several default implementations (AWS, Configuration, credentials etc). You can use these or choose to create your own. Dynomite Manager is currently working on AWS and your local environment. We are open to contributions to support other platforms as well. 
 
 ## Howto
 
-The first step before building dynomite-manager is to configure the interfaces related to your environment in the [InjectedWebListener](https://github.com/Netflix/dynomite-manager/blob/dev/dynomitemanager/src/main/java/com/netflix/dynomitemanager/InjectedWebListener.java). Checkout the [Wiki](https://github.com/Netflix/dynomite-manager/wiki/Configuration) for further explanation on what interfaces to bind based on your environment. 
+The first step before building Dynomite Manager is to configure the interfaces related to your environment in the [InjectedWebListener](https://github.com/Netflix/dynomite-manager/blob/dev/dynomitemanager/src/main/java/com/netflix/dynomitemanager/InjectedWebListener.java). Checkout the [Wiki](https://github.com/Netflix/dynomite-manager/wiki/Configuration) for further explanation on what interfaces to bind based on your environment. 
 
 1. Build the dynomite-manager
 2. Set up Auto-Scale Group (ASG) and spin up instances

@@ -111,7 +111,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getSeedProviderName() {
+    public String getDynomiteSeedProvider() {
 	return null;
     }
 

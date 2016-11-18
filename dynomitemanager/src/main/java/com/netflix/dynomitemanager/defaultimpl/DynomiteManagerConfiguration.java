@@ -93,9 +93,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     // Cluster name is saved as tokens.appId in Cassandra.
     // The cluster name is used as the default AWS Security Group name, if SG name is null.
-    private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
     private static final String CONFIG_DYNOMITE_CLUSTER_NAME = DYNOMITE_PROPS + ".cluster.name";
-    private static final String CONFIG_SEED_PROVIDER_NAME = DYNOMITEMANAGER_PRE + ".dyno.seed.provider";
+    private static final String CONFIG_DYNOMITE_SEED_PROVIDER = DYNOMITE_PROPS + ".seed.provider";
     private static final String CONFIG_DYNOMITE_CLIENT_PORT = DYNOMITE_PROPS + ".client.port";
     private static final String CONFIG_DYNOMITE_PEER_PORT = DYNOMITE_PROPS + ".peer.port";
     private static final String CONFIG_DYN_SECURED_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.secured.peer.port";
@@ -178,7 +177,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     // Defaults
     private final String DEFAULT_DYNOMITE_CLUSTER_NAME = "dynomite_demo1";
-    private final String DEFAULT_SEED_PROVIDER = "florida_provider";
+    private final String DEFAULT_DYNOMITE_SEED_PROVIDER = "florida_provider";
     private final String DEFAULT_DYNOMITE_HOME_DIR = "/apps/dynomite";
     private final String DEFAULT_DYNOMITE_START_SCRIPT = "/apps/dynomite/bin/launch_dynomite.sh";
     private final String DEFAULT_DYNOMITE_STOP_SCRIPT = "/apps/dynomite/bin/kill_dynomite.sh";
@@ -488,11 +487,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getSeedProviderName() {
-	return configSource.get(CONFIG_SEED_PROVIDER_NAME, DEFAULT_SEED_PROVIDER);
-    }
-
-    @Override
     public String getProcessName() {
 	return configSource.get(CONFIG_DYN_PROCESS_NAME, DEFAULT_DYN_PROCESS_NAME);
     }
@@ -562,6 +556,16 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         }
 
         return getIntProperty(CONFIG_DYNOMITE_PEER_PORT, DEFAULT_DYNOMITE_PEER_PORT);
+    }
+
+    @Override
+    public String getDynomiteSeedProvider() {
+        String seedProvider = System.getenv("DM_DYNOMITE_SEED_PROVIDER");
+        if (seedProvider != null && !"".equals(seedProvider)) {
+            return seedProvider;
+        }
+
+        return getStringProperty(CONFIG_DYNOMITE_SEED_PROVIDER, DEFAULT_DYNOMITE_SEED_PROVIDER);
     }
 
     @Override
