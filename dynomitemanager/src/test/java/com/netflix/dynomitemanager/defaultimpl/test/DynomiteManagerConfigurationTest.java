@@ -199,6 +199,36 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("Stop script = default", conf.getDynomiteStopScript(), is("/apps/dynomite/bin/kill_dynomite.sh"));
     }
 
+    @Test
+    public void testGetDynomiteYaml() {
+        Assert.assertThat("dynomite.yml = default", conf.getDynomiteYaml(), is("/apps/dynomite/conf/dynomite.yml"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/dynomite/dynomite.yml";
+            }
+        };
+        Assert.assertThat("dynomite.yml = env var", conf.getDynomiteYaml(), is("/etc/dynomite/dynomite.yml"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "relative/dynomite.yml";
+            }
+        };
+        // This one's a bit odd. getDynomiteYaml() calls getDynomiteInstallDir(). Both return the fake env var above, so
+        // the result is a duplicate of the value above. Don't worry, this is working as expected and will give the
+        // correct path during runtime.
+        Assert.assertThat("dynomite.yml = env var", conf.getDynomiteYaml(), is("relative/dynomite.yml/relative/dynomite.yml"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("dynomite.yml = default", conf.getDynomiteYaml(), is("/apps/dynomite/conf/dynomite.yml"));
+    }
+
     // Cassandra
     // =========
 

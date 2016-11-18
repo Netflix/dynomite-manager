@@ -81,7 +81,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getYamlLocation() {
+    public String getDynomiteYaml() {
 	return null;
     }
 

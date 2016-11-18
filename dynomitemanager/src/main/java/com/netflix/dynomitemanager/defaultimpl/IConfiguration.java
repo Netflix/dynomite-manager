@@ -25,6 +25,13 @@ public interface IConfiguration {
     // ========
 
     /**
+     * Get the cluster name that is saved in tokens.appId in Cassandra. Cluster name is used to group Dynomite nodes
+     * that are part of the same cluster.
+     * @return the cluster name
+     */
+    public String getDynomiteClusterName();
+
+    /**
      * Get the full path to Dynomite's installation directory.
      *
      * @return full path to the Dynomite installation directory
@@ -52,11 +59,11 @@ public interface IConfiguration {
     public String getDynomiteStopScript();
 
     /**
-     * Get the cluster name that is saved in tokens.appId in Cassandra. Cluster name is used to group Dynomite nodes
-     * that are part of the same cluster.
-     * @return the cluster name
+     * Get the full path to the dynomite.yml configuration file.
+     *
+     * @return full path to the dynomite.yml file.
      */
-    public String getDynomiteClusterName();
+    public String getDynomiteYaml();
 
     /**
      * @return Zone (or zone for AWS)
@@ -148,8 +155,6 @@ public interface IConfiguration {
     public int getDynomitePeerPort();
 
     public int getSecuredPeerListenerPort();
-
-    public String getYamlLocation();
 
     public boolean getAutoEjectHosts();
 

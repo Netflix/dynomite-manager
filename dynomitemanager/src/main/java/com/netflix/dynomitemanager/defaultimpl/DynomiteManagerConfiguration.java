@@ -135,7 +135,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_AVAILABILITY_RACKS = DYNOMITEMANAGER_PRE + ".racks.available";
 
     private static final String CONFIG_DYN_PROCESS_NAME = DYNOMITEMANAGER_PRE + ".dyno.processname";
-    private static final String CONFIG_YAML_LOCATION = DYNOMITEMANAGER_PRE + ".yamlLocation";
+    private static final String CONFIG_DYNOMITE_YAML = DYNOMITE_PROPS + ".yaml";
     private static final String CONFIG_SECURED_OPTION = DYNOMITEMANAGER_PRE + ".secured.option";
     private static final String CONFIG_DYNO_AUTO_EJECT_HOSTS = DYNOMITEMANAGER_PRE + ".auto.eject.hosts";
 
@@ -197,6 +197,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private final String DEFAULT_DYNOMITE_INSTALL_DIR = "/apps/dynomite";
     private final String DEFAULT_DYNOMITE_START_SCRIPT = "/apps/dynomite/bin/launch_dynomite.sh";
     private final String DEFAULT_DYNOMITE_STOP_SCRIPT = "/apps/dynomite/bin/kill_dynomite.sh";
+    private final String DEFAULT_DYNOMITE_YAML = "/apps/dynomite/conf/dynomite.yml";
 
     private List<String> DEFAULT_AVAILABILITY_ZONES = ImmutableList.of();
     private List<String> DEFAULT_AVAILABILITY_RACKS = ImmutableList.of();
@@ -494,10 +495,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYN_PROCESS_NAME, DEFAULT_DYN_PROCESS_NAME);
     }
 
-    public String getYamlLocation() {
-        return configSource.get(CONFIG_YAML_LOCATION, getDynomiteInstallDir() + "/conf/dynomite.yml");
-    }
-
     @Override
     public boolean getAutoEjectHosts() {
 	return configSource.get(CONFIG_DYNO_AUTO_EJECT_HOSTS, true);
@@ -554,6 +551,17 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     public String getDynomiteStopScript() {
         return getStringProperty("DM_DYNOMITE_STOP_SCRIPT", CONFIG_DYNOMITE_STOP_SCRIPT, DEFAULT_DYNOMITE_STOP_SCRIPT);
+    }
+
+    public String getDynomiteYaml() {
+        String dynomiteYaml = getStringProperty("DM_DYNOMITE_YAML", CONFIG_DYNOMITE_YAML, DEFAULT_DYNOMITE_YAML);
+        // If a user sets a relative path to dynomite.yaml then we need to prepend the Dynomite installation directory
+        // in order to return a full path from /.
+        if (dynomiteYaml.charAt(0) == '/') {
+            return dynomiteYaml;
+        } else {
+            return getDynomiteInstallDir() + "/" + dynomiteYaml;
+        }
     }
 
     @Override

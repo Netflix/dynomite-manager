@@ -81,7 +81,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getYamlLocation() {
+	public String getDynomiteYaml() {
 		return null;
 	}
 
