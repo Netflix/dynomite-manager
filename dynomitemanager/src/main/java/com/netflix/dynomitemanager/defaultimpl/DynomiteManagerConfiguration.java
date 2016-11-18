@@ -88,8 +88,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     public static final String LOCAL_ADDRESS = "127.0.0.1";
 
     private static final String CONFIG_DYN_HOME_DIR = DYNOMITEMANAGER_PRE + ".dyno.home";
-    private static final String CONFIG_DYN_START_SCRIPT = DYNOMITEMANAGER_PRE + ".dyno.startscript";
-    private static final String CONFIG_DYN_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".dyno.stopscript";
+    private static final String CONFIG_DYNOMITE_START_SCRIPT = DYNOMITE_PROPS + ".start.script";
+    private static final String CONFIG_DYNOMITE_STOP_SCRIPT = DYNOMITE_PROPS + ".stop.script";
 
     // Cluster name is saved as tokens.appId in Cassandra.
     // The cluster name is used as the default AWS Security Group name, if SG name is null.
@@ -380,14 +380,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_USE_ASG_FOR_RACK_NAME, true);
     }
 
-    public String getDynomiteStartupScript() {
-	return configSource.get(CONFIG_DYN_START_SCRIPT, DEFAULT_DYNOMITE_START_SCRIPT);
-    }
-
-    public String getDynomiteStopScript() {
-	return configSource.get(CONFIG_DYN_STOP_SCRIPT, DEFAULT_DYNOMITE_STOP_SCRIPT);
-    }
-
     @Override
     public String getAppHome() {
 	return configSource.get(CONFIG_DYN_HOME_DIR, DEFAULT_DYNOMITE_HOME_DIR);
@@ -566,6 +558,24 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         }
 
         return getStringProperty(CONFIG_DYNOMITE_SEED_PROVIDER, DEFAULT_DYNOMITE_SEED_PROVIDER);
+    }
+
+    public String getDynomiteStartScript() {
+        String startScript = System.getenv("DM_DYNOMITE_START_SCRIPT");
+        if (startScript != null && !"".equals(startScript)) {
+            return startScript;
+        }
+
+        return getStringProperty(CONFIG_DYNOMITE_START_SCRIPT, DEFAULT_DYNOMITE_START_SCRIPT);
+    }
+
+    public String getDynomiteStopScript() {
+        String stopScript = System.getenv("DM_DYNOMITE_STOP_SCRIPT");
+        if (stopScript != null && !"".equals(stopScript)) {
+            return stopScript;
+        }
+
+        return getStringProperty(CONFIG_DYNOMITE_STOP_SCRIPT, DEFAULT_DYNOMITE_STOP_SCRIPT);
     }
 
     @Override

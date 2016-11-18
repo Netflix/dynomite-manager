@@ -98,7 +98,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 
     protected List<String> getStartCommand() {
 	List<String> startCmd = new LinkedList<String>();
-	for (String param : config.getDynomiteStartupScript().split(" ")) {
+	for (String param : config.getDynomiteStartScript().split(" ")) {
 	    if (StringUtils.isNotBlank(param))
 		startCmd.add(param);
 	}

@@ -139,6 +139,46 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("Seed provider = default", conf.getDynomiteSeedProvider(), is("florida_provider"));
     }
 
+    @Test
+    public void testGetDynomiteStartScript() throws Exception {
+        Assert.assertThat("Start script = default", conf.getDynomiteStartScript(), is("/apps/dynomite/bin/launch_dynomite.sh"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/init.d/dynomite-manager";
+            }
+        };
+        Assert.assertThat("Start script = env var", conf.getDynomiteStartScript(), is("/etc/init.d/dynomite-manager"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Start script = default", conf.getDynomiteStartScript(), is("/apps/dynomite/bin/launch_dynomite.sh"));
+    }
+
+    @Test
+    public void testGetDynomiteStopScript() throws Exception {
+        Assert.assertThat("Stop script = default", conf.getDynomiteStopScript(), is("/apps/dynomite/bin/kill_dynomite.sh"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/init.d/dynomite-manager";
+            }
+        };
+        Assert.assertThat("Stop script = env var", conf.getDynomiteStopScript(), is("/etc/init.d/dynomite-manager"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Stop script = default", conf.getDynomiteStopScript(), is("/apps/dynomite/bin/kill_dynomite.sh"));
+    }
+
     // Cassandra
     // =========
 

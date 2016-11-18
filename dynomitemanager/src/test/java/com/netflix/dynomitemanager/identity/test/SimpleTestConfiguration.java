@@ -276,7 +276,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getDynomiteStartupScript() {
+	public String getDynomiteStartScript() {
 		return null;
 	}
 

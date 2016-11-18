@@ -276,7 +276,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getDynomiteStartupScript() {
+    public String getDynomiteStartScript() {
 	return null;
     }
 

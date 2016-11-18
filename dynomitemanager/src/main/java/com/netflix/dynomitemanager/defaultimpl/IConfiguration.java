@@ -36,12 +36,16 @@ public interface IConfiguration {
     public String getDynomiteSeedProvider();
 
     /**
-     * @return Path to target application startup script
+     * Get the full path to the start Dynomite shell script.
+     *
+     * @return full path to the Dynomite start script
      */
-    public String getDynomiteStartupScript();
+    public String getDynomiteStartScript();
 
     /**
-     * @return Path to target application stop script
+     * Get the full path to the stop Dynomite shell script.
+     *
+     * @return full path to the Dynomite stop script
      */
     public String getDynomiteStopScript();
 
