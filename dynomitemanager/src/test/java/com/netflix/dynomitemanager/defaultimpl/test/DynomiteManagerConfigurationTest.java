@@ -100,6 +100,26 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteGossipInterval() throws Exception {
+        Assert.assertThat(conf.getDynomiteGossipInterval(), is(10000));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "999";
+            }
+        };
+        Assert.assertThat(conf.getDynomiteGossipInterval(), is(999));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat(conf.getDynomiteGossipInterval(), is(10000));
+    }
+
+    @Test
     public void testGetDynomiteInstallDir() throws Exception {
         Assert.assertThat("Install dir = default", conf.getDynomiteInstallDir(), is("/apps/dynomite"));
 

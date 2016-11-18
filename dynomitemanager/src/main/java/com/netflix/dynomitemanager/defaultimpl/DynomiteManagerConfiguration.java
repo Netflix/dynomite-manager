@@ -117,8 +117,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_TOKENS_DISTRIBUTION_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.distribution";
     private static final String CONFIG_DYNO_REQ_TIMEOUT_NAME = DYNOMITEMANAGER_PRE + ".dyno.request.timeout"; // in
 													      // milliseconds
-    private static final String CONFIG_DYNO_GOSSIP_INTERVAL_NAME = DYNOMITEMANAGER_PRE + ".dyno.gossip.interval"; // in
-														  // milliseconds
+    private static final String CONFIG_DYNOMITE_GOSSIP_INTERVAL = DYNOMITE_PROPS + ".gossip.interval"; // in ms
     private static final String CONFIG_DYNO_TOKENS_HASH_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.hash";
     private static final String CONFIG_DYNO_CONNECTIONS_PRECONNECT = DYNOMITEMANAGER_PRE
 	    + ".dyno.connections.preconnect";
@@ -209,7 +208,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private final String DEFAULT_DYN_RACK = "RAC1";
     private final String DEFAULT_TOKENS_DISTRIBUTION = "vnode";
     private final int DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC = 5000;
-    private final int DEFAULT_DYNO_GOSSIP_INTERVAL = 10000;
+    private final int DEFAULT_DYNOMITE_GOSSIP_INTERVAL = 10000;
     private final String DEFAULT_DYNO_TOKENS_HASH = "murmur";
 
     private final String DEFAULT_SECURED_OPTION = "datacenter";
@@ -514,16 +513,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getDynomiteInstallDir() {
-        return getStringProperty("DM_DYNOMITE_INSTALL_DIR", CONFIG_DYNOMITE_INSTALL_DIR, DEFAULT_DYNOMITE_INSTALL_DIR);
-    }
-
-    @Override
-    public String getClientListenPort() {
-        return "0.0.0.0:" + getDynomiteClientPort();
-    }
-
-    @Override
     public String getDynomiteClusterName() {
         // Maintain backward compatibility for env var
         String clusterNameOldEnvVar = System.getenv("NETFLIX_APP");
@@ -533,6 +522,22 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         }
 
         return getStringProperty("DM_DYNOMITE_CLUSTER_NAME", CONFIG_DYNOMITE_CLUSTER_NAME, DEFAULT_DYNOMITE_CLUSTER_NAME);
+    }
+
+    @Override
+    public int getDynomiteGossipInterval() {
+        return getIntProperty("DM_DYNOMITE_GOSSIP_INTERVAL", CONFIG_DYNOMITE_GOSSIP_INTERVAL,
+                DEFAULT_DYNOMITE_GOSSIP_INTERVAL);
+    }
+
+    @Override
+    public String getDynomiteInstallDir() {
+        return getStringProperty("DM_DYNOMITE_INSTALL_DIR", CONFIG_DYNOMITE_INSTALL_DIR, DEFAULT_DYNOMITE_INSTALL_DIR);
+    }
+
+    @Override
+    public String getClientListenPort() {
+        return "0.0.0.0:" + getDynomiteClientPort();
     }
 
     @Override
@@ -567,11 +572,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     @Override
     public String getDynListenPort() { // return full string
 	return "0.0.0.0:" + getDynomitePeerPort();
-    }
-
-    @Override
-    public int getGossipInterval() {
-	return configSource.get(CONFIG_DYNO_GOSSIP_INTERVAL_NAME, DEFAULT_DYNO_GOSSIP_INTERVAL);
     }
 
     @Override

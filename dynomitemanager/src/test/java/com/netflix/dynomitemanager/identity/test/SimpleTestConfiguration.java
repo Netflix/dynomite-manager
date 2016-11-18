@@ -206,7 +206,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getGossipInterval() {
+	public int getDynomiteGossipInterval() {
 		return 0;
 	}
 

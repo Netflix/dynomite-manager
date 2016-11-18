@@ -32,6 +32,14 @@ public interface IConfiguration {
     public String getDynomiteClusterName();
 
     /**
+     * Get the Dynomite gossip interval which is the amount of time (in ms) that Dynomite should wait between gossip
+     * rounds.
+     *
+     * @return the amount of time in ms to wait between gossip rounds
+     */
+    public int getDynomiteGossipInterval();
+
+    /**
      * Get the full path to Dynomite's installation directory.
      *
      * @return full path to the Dynomite installation directory
@@ -161,8 +169,6 @@ public interface IConfiguration {
     public String getDistribution();
 
     public String getDynListenPort();
-
-    public int getGossipInterval();
 
     public String getHash();
 
