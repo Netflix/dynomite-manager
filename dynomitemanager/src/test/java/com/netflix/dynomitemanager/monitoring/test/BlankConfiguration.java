@@ -42,12 +42,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public boolean isMultiRegionedCluster() {
-	return false;
-    }
-
-    @Override
-    public boolean isHealthCheckEnable() {
+    public boolean isDynomiteMultiDC() {
 	return false;
     }
 
@@ -81,7 +76,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getYamlLocation() {
+    public String getDynomiteYaml() {
 	return null;
     }
 
@@ -101,7 +96,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getStorageMemPercent() {
+    public int getStorageMaxMemoryPercent() {
 	return 0;
     }
 
@@ -111,13 +106,8 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getSeedProviderName() {
+    public String getDynomiteSeedProvider() {
 	return null;
-    }
-
-    @Override
-    public int getSecuredPeerListenerPort() {
-	return 0;
     }
 
     @Override
@@ -151,12 +141,12 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getProcessName() {
+    public String getDynomiteProcessName() {
 	return null;
     }
 
     @Override
-    public boolean getPreconnect() {
+    public boolean getDynomiteStoragePreconnect() {
 	return false;
     }
 
@@ -171,7 +161,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getMbufSize() {
+    public int getDynomiteMBufSize() {
 	return 0;
     }
 
@@ -201,12 +191,12 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getHash() {
+    public String getDynomiteHashAlgorithm() {
 	return null;
     }
 
     @Override
-    public int getGossipInterval() {
+    public int getDynomiteGossipInterval() {
 	return 0;
     }
 
@@ -276,17 +266,17 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getDynomiteStartupScript() {
+    public String getDynomiteStartScript() {
 	return null;
     }
 
     @Override
-    public String getAppName() {
+    public String getDynomiteClusterName() {
 	return null;
     }
 
     @Override
-    public String getAppHome() {
+    public String getDynomiteInstallDir() {
 	return null;
     }
 
@@ -296,7 +286,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getAllocatedMessages() {
+    public int getDynomiteMaxAllocatedMessages() {
 	return 0;
     }
 

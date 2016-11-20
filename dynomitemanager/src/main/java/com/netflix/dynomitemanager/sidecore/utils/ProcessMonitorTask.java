@@ -105,20 +105,20 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
 	 * if (instanceState.isBootstrapping()) { logger.
 	 * info("Instance is bootstrapping. Skipping further process checks.");
 	 * return; }
-	 * 
-	 * 
+	 *
+	 *
 	 * if (!instanceState.isStorageAlive()) {
 	 * if(instanceState.isStorageProxyAlive() ||
 	 * instanceState.isStorageProxyProcessAlive()) {
 	 * logger.info("Stopping Dynomite process before warm bootstrapping.");
 	 * dynProcess.stop(); }
-	 * 
+	 *
 	 * if (config.isWarmBootstrap()) {
 	 * logger.info("Warm bootstraping node. Scheduling BootstrapTask now!");
 	 * scheduler.runTaskNow(WarmBootstrapTask.class); } else { logger.
 	 * info("Cold bootstraping, launching dynomite and storage process.");
 	 * dynProcess.start(true); }
-	 * 
+	 *
 	 * logger.info(String.
 	 * format("After corrective action ProcessMonitor state: %s, time elapsed to check (micros): %s"
 	 * , instanceState, stopwatch.elapsed(MICROSECONDS))); } else
@@ -126,7 +126,7 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
 	 * logger.info("Launching dynomite process."); // starts launch dynomite
 	 * script, which starts Redis if it's not already running.
 	 * dynProcess.start(true);
-	 * 
+	 *
 	 * logger.info(String.
 	 * format("After corrective action ProcessMonitor state: %s, time elapsted to check (micros): %s"
 	 * , instanceState, stopwatch.elapsed(MICROSECONDS))); }
@@ -141,7 +141,7 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
 
     private boolean checkProxyProcess() {
 	try {
-	    String cmd = String.format("ps -ef | grep  '[/]apps/%1$s/bin/%1$s'", config.getProcessName());
+	    String cmd = String.format("ps -ef | grep  '[/]apps/%1$s/bin/%1$s'", config.getDynomiteProcessName());
 	    String[] cmdArray = { "/bin/sh", "-c", cmd };
 	    logger.info("Running checkProxyProcess command: " + cmd);
 

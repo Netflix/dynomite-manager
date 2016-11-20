@@ -56,9 +56,9 @@ public class DynomiteProcessManager implements IDynomiteProcess {
     }
 
     protected void setDynomiteEnv(Map<String, String> env) {
-	env.put("MBUF_SIZE", String.valueOf(config.getMbufSize()));
-	if (config.getAllocatedMessages() > 0) {
-	    env.put("ALLOC_MSGS", String.valueOf(config.getAllocatedMessages()));
+	env.put("MBUF_SIZE", String.valueOf(config.getDynomiteMBufSize()));
+	if (config.getDynomiteMaxAllocatedMessages() > 0) {
+	    env.put("ALLOC_MSGS", String.valueOf(config.getDynomiteMaxAllocatedMessages()));
 	}
     }
 
@@ -98,7 +98,7 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 
     protected List<String> getStartCommand() {
 	List<String> startCmd = new LinkedList<String>();
-	for (String param : config.getDynomiteStartupScript().split(" ")) {
+	for (String param : config.getDynomiteStartScript().split(" ")) {
 	    if (StringUtils.isNotBlank(param))
 		startCmd.add(param);
 	}

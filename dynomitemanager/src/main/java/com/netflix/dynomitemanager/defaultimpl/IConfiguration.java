@@ -21,27 +21,99 @@ public interface IConfiguration {
 
     public void initialize();
 
-    /**
-     * @return Path to the home dir of target application
-     */
-    public String getAppHome();
-
-    /**
-     * @return Path to target application startup script
-     */
-    public String getDynomiteStartupScript();
-
-    /**
-     * @return Path to target application stop script
-     */
-    public String getDynomiteStopScript();
+    // Dynomite
+    // ========
 
     /**
      * Get the cluster name that is saved in tokens.appId in Cassandra. Cluster name is used to group Dynomite nodes
      * that are part of the same cluster.
      * @return the cluster name
      */
-    public String getAppName();
+    public String getDynomiteClusterName();
+
+    /**
+     * Get the Dynomite gossip interval which is the amount of time (in ms) that Dynomite should wait between gossip
+     * rounds.
+     *
+     * @return the amount of time in ms to wait between gossip rounds
+     */
+    public int getDynomiteGossipInterval();
+
+    /**
+     * Get the hash algorithm that Dynomite uses to hash the data's key.
+     *
+     * @return the hash algorithm used to hash the data key
+     */
+    public String getDynomiteHashAlgorithm();
+
+    /**
+     * Get the full path to Dynomite's installation directory.
+     *
+     * @return full path to the Dynomite installation directory
+     */
+    public String getDynomiteInstallDir();
+
+    /**
+     * Get the maximum number of messages that Dynomite will hold in queue.
+     *
+     * @return the maximum number of messages that Dynomite will allocate
+     */
+    public int getDynomiteMaxAllocatedMessages();
+
+    /**
+     * Get the size (in bytes) of Dynomite's memory buffer (mbuf).
+     *
+     * @return size of Dynomite mbuf in bytes
+     */
+    public int getDynomiteMBufSize();
+
+    /**
+     * Get the Dynomite process name.
+     *
+     * @return the Dynomite process name
+     */
+    public String getDynomiteProcessName();
+
+    /**
+     * Get the name of the seed provider that Dynomite uses to learn the cluster's topology.
+     * @return the seed provider name
+     */
+    public String getDynomiteSeedProvider();
+
+    /**
+     * Get the full path to the start Dynomite shell script.
+     *
+     * @return full path to the Dynomite start script
+     */
+    public String getDynomiteStartScript();
+
+    /**
+     * Get the full path to the stop Dynomite shell script.
+     *
+     * @return full path to the Dynomite stop script
+     */
+    public String getDynomiteStopScript();
+
+    /**
+     * Should Dynomite preconnect to the backend storage engine.
+     *
+     * @return true if Dynomite should preconnect to the backend storage engine, false if it should not preconnect
+     */
+    public boolean getDynomiteStoragePreconnect();
+
+    /**
+     * Get the full path to the dynomite.yml configuration file.
+     *
+     * @return full path to the dynomite.yml file.
+     */
+    public String getDynomiteYaml();
+
+    /**
+     * Determine if Dynomite is configured as a multi-DC (data center) cluster).
+     *
+     * @return true if the Dynomite cluster is running across multiple DCs
+     */
+    public boolean isDynomiteMultiDC();
 
     /**
      * @return Zone (or zone for AWS)
@@ -109,28 +181,9 @@ public interface IConfiguration {
      */
     public String getBootClusterName();
 
-    /**
-     * @return Get the name of seed provider
-     */
-    public String getSeedProviderName();
-
-    /**
-     * @return Process Name
-     */
-    public String getProcessName();
-
     public String getReadConsistency();
 
     public String getWriteConsistency();
-
-    /**
-     * Get the peer-to-peer port used by Dynomite to communicate with other Dynomite nodes.
-     *
-     * @return the peer-to-peer port used for intra-cluster communication
-     */
-    public int getDynomitePeerPort();
-
-    public int getSecuredPeerListenerPort();
 
     /**
      * Get the client port used by Redis (i.e. RESP) clients to query Dynomite (default: 8102).
@@ -139,7 +192,12 @@ public interface IConfiguration {
      */
     public int getDynomiteClientPort();
 
-    public String getYamlLocation();
+    /**
+     * Get the peer-to-peer port used by Dynomite to communicate with other Dynomite nodes.
+     *
+     * @return the peer-to-peer port used for intra-cluster communication
+     */
+    public int getDynomitePeerPort();
 
     public boolean getAutoEjectHosts();
 
@@ -147,19 +205,11 @@ public interface IConfiguration {
 
     public String getDynListenPort();
 
-    public int getGossipInterval();
-
-    public String getHash();
-
     public String getClientListenPort();
-
-    public boolean getPreconnect();
 
     public int getServerRetryTimeout();
 
     public int getTimeout();
-
-    public boolean isMultiRegionedCluster();
 
     public String getSecuredOption();
 
@@ -167,21 +217,19 @@ public interface IConfiguration {
 
     public boolean isForceWarm();
 
-    public boolean isHealthCheckEnable();
-
     public int getAllowableBytesSyncDiff();
 
     public int getMaxTimeToBootstrap();
 
+    // Storage engine (aka backend)
+    // ============================
+
     /**
-     * @return the max percentage of system memory to be allocated to the
-     *         Dynomite fronted data store.
+     * Get the maximum percentage of system memory to be allocated to the backend storage engine, such as Redis or ARDB.
+     *
+     * @return the max percentage of memory allocated to the storage engine
      */
-    public int getStorageMemPercent();
-
-    public int getMbufSize();
-
-    public int getAllocatedMessages();
+    public int getStorageMaxMemoryPercent();
 
     // VPC
     public boolean isVpc();

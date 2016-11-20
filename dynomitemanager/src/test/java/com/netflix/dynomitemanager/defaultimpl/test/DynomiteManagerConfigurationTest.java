@@ -80,6 +80,127 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteClusterName() throws Exception {
+        Assert.assertThat("Cluster name = default", conf.getDynomiteClusterName(), is("dynomite_demo1"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "testcluster";
+            }
+        };
+        Assert.assertThat("Cluster name = env var", conf.getDynomiteClusterName(), is("testcluster"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Cluster name = default", conf.getDynomiteClusterName(), is("dynomite_demo1"));
+    }
+
+    @Test
+    public void testGetDynomiteGossipInterval() throws Exception {
+        Assert.assertThat(conf.getDynomiteGossipInterval(), is(10000));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "999";
+            }
+        };
+        Assert.assertThat(conf.getDynomiteGossipInterval(), is(999));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat(conf.getDynomiteGossipInterval(), is(10000));
+    }
+
+    @Test
+    public void testGetDynomiteHashAlgorithm() throws Exception {
+        Assert.assertThat(conf.getDynomiteHashAlgorithm(), is("murmur"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "murmur3";
+            }
+        };
+        Assert.assertThat(conf.getDynomiteHashAlgorithm(), is("murmur3"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat(conf.getDynomiteHashAlgorithm(), is("murmur"));
+    }
+
+    @Test
+    public void testGetDynomiteInstallDir() throws Exception {
+        Assert.assertThat("Install dir = default", conf.getDynomiteInstallDir(), is("/apps/dynomite"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/dynomite";
+            }
+        };
+        Assert.assertThat("Install dir = env var", conf.getDynomiteInstallDir(), is("/etc/dynomite"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Install dir = default", conf.getDynomiteInstallDir(), is("/apps/dynomite"));
+    }
+
+    @Test
+    public void testGetDynomiteMaxAllocatedMessages() throws Exception {
+        Assert.assertThat("max allocated messages = default", conf.getDynomiteMaxAllocatedMessages(), is(200000));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "400000";
+            }
+        };
+        Assert.assertThat("max allocated messages = env var", conf.getDynomiteMaxAllocatedMessages(), is(400000));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("max allocated messages = default", conf.getDynomiteMaxAllocatedMessages(), is(200000));
+    }
+
+
+    @Test
+    public void testGetDynomiteMBufSize() throws Exception {
+        Assert.assertThat("mbuf size = default", conf.getDynomiteMBufSize(), is(16384));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "32768";
+            }
+        };
+        Assert.assertThat("mbuf size = env var", conf.getDynomiteMBufSize(), is(32768));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("mbuf size = default", conf.getDynomiteMBufSize(), is(16384));
+    }
+
+    @Test
     public void testGetDynomitePeerPort() throws Exception {
         Assert.assertThat(conf.getDynomitePeerPort(), is(8101));
 
@@ -97,6 +218,179 @@ public class DynomiteManagerConfigurationTest {
             }
         };
         Assert.assertThat(conf.getDynomitePeerPort(), is(8101));
+    }
+
+    @Test
+    public void testGetDynomiteProcessName() throws Exception {
+        Assert.assertThat("Dynomite process name = default", conf.getDynomiteProcessName(), is("dynomite"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "renamed";
+            }
+        };
+        Assert.assertThat("Dynomite process name = env var", conf.getDynomiteProcessName(), is("renamed"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Dynomite process name = default", conf.getDynomiteProcessName(), is("dynomite"));
+    }
+
+    @Test
+    public void testGetDynomiteSeedProvider() throws Exception {
+        Assert.assertThat("Seed provider = default", conf.getDynomiteSeedProvider(), is("florida_provider"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "simple_provider";
+            }
+        };
+        Assert.assertThat("Seed provider = env var", conf.getDynomiteSeedProvider(), is("simple_provider"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Seed provider = default", conf.getDynomiteSeedProvider(), is("florida_provider"));
+    }
+
+    @Test
+    public void testGetDynomiteStartScript() throws Exception {
+        Assert.assertThat("Start script = default", conf.getDynomiteStartScript(), is("/apps/dynomite/bin/launch_dynomite.sh"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/init.d/dynomite-manager";
+            }
+        };
+        Assert.assertThat("Start script = env var", conf.getDynomiteStartScript(), is("/etc/init.d/dynomite-manager"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Start script = default", conf.getDynomiteStartScript(), is("/apps/dynomite/bin/launch_dynomite.sh"));
+    }
+
+    @Test
+    public void testGetDynomiteStopScript() throws Exception {
+        Assert.assertThat("Stop script = default", conf.getDynomiteStopScript(), is("/apps/dynomite/bin/kill_dynomite.sh"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/init.d/dynomite-manager";
+            }
+        };
+        Assert.assertThat("Stop script = env var", conf.getDynomiteStopScript(), is("/etc/init.d/dynomite-manager"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Stop script = default", conf.getDynomiteStopScript(), is("/apps/dynomite/bin/kill_dynomite.sh"));
+    }
+
+    @Test
+    public void testGetDynomiteStoragePreconnect() throws Exception {
+        Assert.assertThat("Dynomite storage preconnect = default", conf.getDynomiteStoragePreconnect(), is(true));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "false";
+            }
+        };
+        Assert.assertThat("Dynomite storage preconnect = env var", conf.getDynomiteStoragePreconnect(), is(false));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Dynomite storage preconnect = default", conf.getDynomiteStoragePreconnect(), is(true));
+    }
+
+    @Test
+    public void testGetDynomiteYaml() {
+        Assert.assertThat("dynomite.yml = default", conf.getDynomiteYaml(), is("/apps/dynomite/conf/dynomite.yml"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/dynomite/dynomite.yml";
+            }
+        };
+        Assert.assertThat("dynomite.yml = env var", conf.getDynomiteYaml(), is("/etc/dynomite/dynomite.yml"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "relative/dynomite.yml";
+            }
+        };
+        // This one's a bit odd. getDynomiteYaml() calls getDynomiteInstallDir(). Both return the fake env var above, so
+        // the result is a duplicate of the value above. Don't worry, this is working as expected and will give the
+        // correct path during runtime.
+        Assert.assertThat("dynomite.yml = env var", conf.getDynomiteYaml(), is("relative/dynomite.yml/relative/dynomite.yml"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("dynomite.yml = default", conf.getDynomiteYaml(), is("/apps/dynomite/conf/dynomite.yml"));
+    }
+
+    @Test
+    public void testIsDynomiteMultiDC() throws Exception {
+        Assert.assertThat("Dynomite multi-DC = default", conf.isDynomiteMultiDC(), is(true));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "false";
+            }
+        };
+        Assert.assertThat("Dynomite multi-DC = env var", conf.isDynomiteMultiDC(), is(false));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Dynomite multi-DC = default", conf.isDynomiteMultiDC(), is(true));
+    }
+
+    // Storage engine (aka backend)
+    // ============================
+
+    @Test
+    public void testGetStorageMaxMemoryPercent() throws Exception {
+        Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "70";
+            }
+        };
+        Assert.assertThat("storage max memory percent = env var", conf.getStorageMaxMemoryPercent(), is(70));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
     }
 
     // Cassandra

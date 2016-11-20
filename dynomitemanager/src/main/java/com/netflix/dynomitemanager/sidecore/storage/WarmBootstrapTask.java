@@ -22,7 +22,6 @@ import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
-import com.netflix.dynomitemanager.sidecore.storage.WarmBootstrapTask;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.dynomite.DynomiteRest;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
@@ -162,7 +161,7 @@ public class WarmBootstrapTask extends Task {
 	String tokens = ii.getTokens();
 
 	logger.info("Warming up node's own token(s) : " + tokens);
-	List<AppsInstance> instances = appsInstanceFactory.getLocalDCIds(config.getAppName(), config.getDataCenter());
+	List<AppsInstance> instances = appsInstanceFactory.getLocalDCIds(config.getDynomiteClusterName(), config.getDataCenter());
 	List<String> peers = new ArrayList<String>();
 
 	for (AppsInstance ins : instances) {

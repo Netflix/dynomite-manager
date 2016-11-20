@@ -14,6 +14,7 @@ package com.netflix.dynomitemanager.defaultimpl;
 
 import java.util.List;
 
+import com.netflix.config.DynamicBooleanProperty;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,8 +61,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     public static final String CASSANDRA_PREFIX = "cassandra";
     public static final String DYNOMITE_PREFIX = "dynomite";
     public static final String REDIS_PREFIX = "redis";
+    public static final String STORAGE_PREFIX = "storage"; // Storage engine (aka backend)
 
     public static final String DYNOMITE_PROPS = DYNOMITEMANAGER_PRE + "." + DYNOMITE_PREFIX;
+    public static final String STORAGE_PROPS = DYNOMITEMANAGER_PRE + "." + STORAGE_PREFIX;
     public static final String REDIS_PROPS = DYNOMITEMANAGER_PRE + "." + REDIS_PREFIX;
     public static final String CASSANDRA_PROPS = DYNOMITEMANAGER_PRE + "." + CASSANDRA_PREFIX;
 
@@ -72,12 +75,40 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         System.setProperty("archaius.configurationSource.defaultFileName", "dynomitemanager.properties");
     }
 
-    public String getStringProperty(String key, String defaultValue) {
+    private boolean getBooleanProperty(String envVar, String key, boolean defaultValue) {
+        String envVal = System.getenv(envVar);
+        if (envVal != null && !"".equals(envVal) && ("true".equals(envVal) || "false".equals(envVal))) {
+            try {
+                return Boolean.parseBoolean(envVal);
+            } catch (NumberFormatException e) {
+                logger.info(envVar + " must be a boolean (true, false). Using value from Archaius.");
+            }
+        }
+
+        DynamicBooleanProperty property = DynamicPropertyFactory.getInstance().getBooleanProperty(key, defaultValue);
+        return property.get();
+    }
+
+    private String getStringProperty(String envVar, String key, String defaultValue) {
+        String envVal = System.getenv(envVar);
+        if (envVal != null && !"".equals(envVal)) {
+            return envVal;
+        }
+
         DynamicStringProperty property = DynamicPropertyFactory.getInstance().getStringProperty(key, defaultValue);
         return property.get();
     }
 
-    public int getIntProperty(String key, int defaultValue) {
+    private int getIntProperty(String envVar, String key, int defaultValue) {
+        String envVal = System.getenv(envVar);
+        if (envVal != null && !"".equals(envVal)) {
+            try {
+                return Integer.parseInt(envVal);
+            } catch (NumberFormatException e) {
+                logger.info(envVar + " must be an integer. Using value from Archaius.");
+            }
+        }
+
         DynamicIntProperty property = DynamicPropertyFactory.getInstance().getIntProperty(key, defaultValue);
         return property.get();
     }
@@ -87,41 +118,34 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     public static final String LOCAL_ADDRESS = "127.0.0.1";
 
-    private static final String CONFIG_DYN_HOME_DIR = DYNOMITEMANAGER_PRE + ".dyno.home";
-    private static final String CONFIG_DYN_START_SCRIPT = DYNOMITEMANAGER_PRE + ".dyno.startscript";
-    private static final String CONFIG_DYN_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".dyno.stopscript";
+    private static final String CONFIG_DYNOMITE_INSTALL_DIR = DYNOMITE_PROPS + ".install.dir";
+    private static final String CONFIG_DYNOMITE_START_SCRIPT = DYNOMITE_PROPS + ".start.script";
+    private static final String CONFIG_DYNOMITE_STOP_SCRIPT = DYNOMITE_PROPS + ".stop.script";
 
     // Cluster name is saved as tokens.appId in Cassandra.
     // The cluster name is used as the default AWS Security Group name, if SG name is null.
-    private static final String CONFIG_CLUSTER_NAME = DYNOMITEMANAGER_PRE + ".dyno.clustername";
-    private static final String CONFIG_SEED_PROVIDER_NAME = DYNOMITEMANAGER_PRE + ".dyno.seed.provider";
+    private static final String CONFIG_DYNOMITE_CLUSTER_NAME = DYNOMITE_PROPS + ".cluster.name";
+    private static final String CONFIG_DYNOMITE_SEED_PROVIDER = DYNOMITE_PROPS + ".seed.provider";
     private static final String CONFIG_DYNOMITE_CLIENT_PORT = DYNOMITE_PROPS + ".client.port";
     private static final String CONFIG_DYNOMITE_PEER_PORT = DYNOMITE_PROPS + ".peer.port";
-    private static final String CONFIG_DYN_SECURED_PEER_PORT_NAME = DYNOMITEMANAGER_PRE + ".dyno.secured.peer.port";
     private static final String CONFIG_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.rack";
     private static final String CONFIG_USE_ASG_FOR_RACK_NAME = DYNOMITEMANAGER_PRE + ".dyno.asg.rack";
     private static final String CONFIG_TOKENS_DISTRIBUTION_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.distribution";
     private static final String CONFIG_DYNO_REQ_TIMEOUT_NAME = DYNOMITEMANAGER_PRE + ".dyno.request.timeout"; // in
 													      // milliseconds
-    private static final String CONFIG_DYNO_GOSSIP_INTERVAL_NAME = DYNOMITEMANAGER_PRE + ".dyno.gossip.interval"; // in
-														  // milliseconds
-    private static final String CONFIG_DYNO_TOKENS_HASH_NAME = DYNOMITEMANAGER_PRE + ".dyno.tokens.hash";
-    private static final String CONFIG_DYNO_CONNECTIONS_PRECONNECT = DYNOMITEMANAGER_PRE
-	    + ".dyno.connections.preconnect";
-    private static final String CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER = DYNOMITEMANAGER_PRE + ".dyno.multiregion";
-    private static final String CONFIG_DYNO_HEALTHCHECK_ENABLE = DYNOMITEMANAGER_PRE + ".dyno.healthcheck.enable";
-    // The max percentage of system memory to be allocated to the Dynomite
-    // fronted data store.
-    private static final String CONFIG_DYNO_STORAGE_MEM_PCT_INT = DYNOMITEMANAGER_PRE + ".dyno.storage.mem.pct.int";
+    private static final String CONFIG_DYNOMITE_GOSSIP_INTERVAL = DYNOMITE_PROPS + ".gossip.interval"; // in ms
+    private static final String CONFIG_DYNOMITE_HASH_ALGORITHM = DYNOMITE_PROPS + ".hash.algorithm";
+    private static final String CONFIG_DYNOMITE_STORAGE_PRECONNECT = DYNOMITE_PROPS + ".storage.preconnect";
+    private static final String CONFIG_DYNOMITE_MULTI_DC = DYNOMITE_PROPS + ".multi.dc";
 
-    private static final String CONFIG_DYNO_MBUF_SIZE = DYNOMITEMANAGER_PRE + ".dyno.mbuf.size";
-    private static final String CONFIG_DYNO_MAX_ALLOC_MSGS = DYNOMITEMANAGER_PRE + ".dyno.allocated.messages";
+    private static final String CONFIG_DYNOMITE_MBUF_SIZE = DYNOMITE_PROPS + ".mbuf.size";
+    private static final String CONFIG_DYNOMITE_MAX_ALLOCATED_MESSAGES = DYNOMITE_PROPS + ".max.allocated.messages";
 
     private static final String CONFIG_AVAILABILITY_ZONES = DYNOMITEMANAGER_PRE + ".zones.available";
     private static final String CONFIG_AVAILABILITY_RACKS = DYNOMITEMANAGER_PRE + ".racks.available";
 
-    private static final String CONFIG_DYN_PROCESS_NAME = DYNOMITEMANAGER_PRE + ".dyno.processname";
-    private static final String CONFIG_YAML_LOCATION = DYNOMITEMANAGER_PRE + ".yamlLocation";
+    private static final String CONFIG_DYNOMITE_PROCESS_NAME = DYNOMITE_PROPS + ".process.name";
+    private static final String CONFIG_DYNOMITE_YAML = DYNOMITE_PROPS + ".yaml";
     private static final String CONFIG_SECURED_OPTION = DYNOMITEMANAGER_PRE + ".secured.option";
     private static final String CONFIG_DYNO_AUTO_EJECT_HOSTS = DYNOMITEMANAGER_PRE + ".auto.eject.hosts";
 
@@ -130,6 +154,12 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
     private static final String CONFIG_CASSANDRA_THRIFT_PORT = DYNOMITEMANAGER_PRE + ".cassandra.thrift.port";
     private static final String CONFIG_CASSANDRA_SEEDS = CASSANDRA_PROPS + ".seeds";
+
+    // Storage engine (aka backend)
+    // ============================
+
+    // The max percentage of system memory to be allocated to the backend data storage engine (ex. Redis, ARDB).
+    private static final String CONFIG_STORAGE_MAX_MEMORY_PERCENT = STORAGE_PROPS + ".max.memory.percent";
 
     // Eureka
     private static final String CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED = DYNOMITEMANAGER_PRE
@@ -175,25 +205,27 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_MAX_WRITE_BUFFER_NUMBER = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.maxwritebuffernumber";
     private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.minwritebuffernametomerge";
 
-    // Defaults
-    private final String DEFAULT_CLUSTER_NAME = "dynomite_demo1";
-    private final String DEFAULT_SEED_PROVIDER = "florida_provider";
-    private final String DEFAULT_DYNOMITE_HOME_DIR = "/apps/dynomite";
+    // Defaults: Dynomite
+    // ==================
+
+    private final String DEFAULT_DYNOMITE_CLUSTER_NAME = "dynomite_demo1";
+    private final String DEFAULT_DYNOMITE_SEED_PROVIDER = "florida_provider";
+    private final String DEFAULT_DYNOMITE_INSTALL_DIR = "/apps/dynomite";
     private final String DEFAULT_DYNOMITE_START_SCRIPT = "/apps/dynomite/bin/launch_dynomite.sh";
     private final String DEFAULT_DYNOMITE_STOP_SCRIPT = "/apps/dynomite/bin/kill_dynomite.sh";
+    private final String DEFAULT_DYNOMITE_YAML = "/apps/dynomite/conf/dynomite.yml";
 
     private List<String> DEFAULT_AVAILABILITY_ZONES = ImmutableList.of();
     private List<String> DEFAULT_AVAILABILITY_RACKS = ImmutableList.of();
 
-    private final String DEFAULT_DYN_PROCESS_NAME = "dynomite";
+    private final String DEFAULT_DYNOMITE_PROCESS_NAME = "dynomite";
     private final int DEFAULT_DYNOMITE_CLIENT_PORT = 8102; // dyn_listen
-    private final int DEFAULT_DYN_SECURED_PEER_PORT = 8101;
     private final int DEFAULT_DYNOMITE_PEER_PORT = 8101;
     private final String DEFAULT_DYN_RACK = "RAC1";
     private final String DEFAULT_TOKENS_DISTRIBUTION = "vnode";
     private final int DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC = 5000;
-    private final int DEFAULT_DYNO_GOSSIP_INTERVAL = 10000;
-    private final String DEFAULT_DYNO_TOKENS_HASH = "murmur";
+    private final int DEFAULT_DYNOMITE_GOSSIP_INTERVAL = 10000;
+    private final String DEFAULT_DYNOMITE_HASH_ALGORITHM = "murmur";
 
     private final String DEFAULT_SECURED_OPTION = "datacenter";
 
@@ -380,29 +412,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_USE_ASG_FOR_RACK_NAME, true);
     }
 
-    public String getDynomiteStartupScript() {
-	return configSource.get(CONFIG_DYN_START_SCRIPT, DEFAULT_DYNOMITE_START_SCRIPT);
-    }
-
-    public String getDynomiteStopScript() {
-	return configSource.get(CONFIG_DYN_STOP_SCRIPT, DEFAULT_DYNOMITE_STOP_SCRIPT);
-    }
-
-    @Override
-    public String getAppName() {
-	String clusterName = System.getenv("NETFLIX_APP");
-
-	if (StringUtils.isBlank(clusterName))
-	    return configSource.get(CONFIG_CLUSTER_NAME, DEFAULT_CLUSTER_NAME);
-
-	return clusterName;
-    }
-
-    @Override
-    public String getAppHome() {
-	return configSource.get(CONFIG_DYN_HOME_DIR, DEFAULT_DYNOMITE_HOME_DIR);
-    }
-
     @Override
     public String getZone() {
 	return ZONE;
@@ -483,7 +492,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     @Override
     public String getACLGroupName() {
-	return configSource.get(CONFIG_ACL_GROUP_NAME, this.getAppName());
+        return configSource.get(CONFIG_ACL_GROUP_NAME, this.getDynomiteClusterName());
     }
 
     @Override
@@ -497,20 +506,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getSeedProviderName() {
-	return configSource.get(CONFIG_SEED_PROVIDER_NAME, DEFAULT_SEED_PROVIDER);
-    }
-
-    @Override
-    public String getProcessName() {
-	return configSource.get(CONFIG_DYN_PROCESS_NAME, DEFAULT_DYN_PROCESS_NAME);
-    }
-
-    public String getYamlLocation() {
-	return configSource.get(CONFIG_YAML_LOCATION, getAppHome() + "/conf/dynomite.yml");
-    }
-
-    @Override
     public boolean getAutoEjectHosts() {
 	return configSource.get(CONFIG_DYNO_AUTO_EJECT_HOSTS, true);
     }
@@ -520,18 +515,42 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_TOKENS_DISTRIBUTION_NAME, DEFAULT_TOKENS_DISTRIBUTION);
     }
 
+    // Dynomite
+    // ========
+
     @Override
     public int getDynomiteClientPort() {
-        String clientPort = System.getenv("DM_DYNOMITE_CLIENT_PORT");
-        if (clientPort != null && !"".equals(clientPort)) {
-            try {
-                return Integer.parseInt(clientPort);
-            } catch (NumberFormatException e) {
-                logger.info("DM_DYNOMITE_CLIENT_PORT must be an integer. Using value from Archaius.");
-            }
+        return getIntProperty("DM_DYNOMITE_CLIENT_PORT", CONFIG_DYNOMITE_CLIENT_PORT, DEFAULT_DYNOMITE_CLIENT_PORT);
+    }
+
+    @Override
+    public String getDynomiteClusterName() {
+        // Maintain backward compatibility for env var
+        String clusterNameOldEnvVar = System.getenv("NETFLIX_APP");
+        if (clusterNameOldEnvVar != null && !"".equals(clusterNameOldEnvVar)) {
+            logger.warn("NETFLIX_APP is deprecated. Use DM_DYNOMITE_CLUSTER_NAME.");
+            return clusterNameOldEnvVar;
         }
 
-        return getIntProperty(CONFIG_DYNOMITE_CLIENT_PORT, DEFAULT_DYNOMITE_CLIENT_PORT);
+        return getStringProperty("DM_DYNOMITE_CLUSTER_NAME", CONFIG_DYNOMITE_CLUSTER_NAME,
+                DEFAULT_DYNOMITE_CLUSTER_NAME);
+    }
+
+    @Override
+    public int getDynomiteGossipInterval() {
+        return getIntProperty("DM_DYNOMITE_GOSSIP_INTERVAL", CONFIG_DYNOMITE_GOSSIP_INTERVAL,
+                DEFAULT_DYNOMITE_GOSSIP_INTERVAL);
+    }
+
+    @Override
+    public String getDynomiteHashAlgorithm() {
+        return getStringProperty("DM_DYNOMITE_HASH_ALGORITHM", CONFIG_DYNOMITE_HASH_ALGORITHM,
+                DEFAULT_DYNOMITE_HASH_ALGORITHM);
+    }
+
+    @Override
+    public String getDynomiteInstallDir() {
+        return getStringProperty("DM_DYNOMITE_INSTALL_DIR", CONFIG_DYNOMITE_INSTALL_DIR, DEFAULT_DYNOMITE_INSTALL_DIR);
     }
 
     @Override
@@ -539,38 +558,63 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         return "0.0.0.0:" + getDynomiteClientPort();
     }
 
+    public int getDynomiteMaxAllocatedMessages() {
+        return getIntProperty("DM_DYNOMITE_MAX_ALLOCATED_MESSAGES", CONFIG_DYNOMITE_MAX_ALLOCATED_MESSAGES, 200000);
+    }
+
     @Override
     public int getDynomitePeerPort() {
-        String peerPort = System.getenv("DM_DYNOMITE_PEER_PORT");
-        if (peerPort != null && !"".equals(peerPort)) {
-            try {
-                return Integer.parseInt(peerPort);
-            } catch (NumberFormatException e) {
-                logger.info("DM_DYNOMITE_PEER_PORT must be an integer. Using value from Archaius.");
-            }
-        }
+        return getIntProperty("DM_DYNOMITE_PEER_PORT", CONFIG_DYNOMITE_PEER_PORT, DEFAULT_DYNOMITE_PEER_PORT);
+    }
 
-        return getIntProperty(CONFIG_DYNOMITE_PEER_PORT, DEFAULT_DYNOMITE_PEER_PORT);
+    public int getDynomiteMBufSize() {
+        return getIntProperty("DM_DYNOMITE_MBUF_SIZE", CONFIG_DYNOMITE_MBUF_SIZE, 16384);
+    }
+
+    @Override
+    public String getDynomiteProcessName() {
+        return getStringProperty("DM_DYNOMITE_PROCESS_NAME", CONFIG_DYNOMITE_PROCESS_NAME,
+                DEFAULT_DYNOMITE_PROCESS_NAME);
+    }
+
+    @Override
+    public String getDynomiteSeedProvider() {
+        return getStringProperty("DM_DYNOMITE_SEED_PROVIDER", CONFIG_DYNOMITE_SEED_PROVIDER,
+                DEFAULT_DYNOMITE_SEED_PROVIDER);
+    }
+
+    public String getDynomiteStartScript() {
+        return getStringProperty("DM_DYNOMITE_START_SCRIPT", CONFIG_DYNOMITE_START_SCRIPT,
+                DEFAULT_DYNOMITE_START_SCRIPT);
+    }
+
+    public String getDynomiteStopScript() {
+        return getStringProperty("DM_DYNOMITE_STOP_SCRIPT", CONFIG_DYNOMITE_STOP_SCRIPT, DEFAULT_DYNOMITE_STOP_SCRIPT);
+    }
+
+    @Override
+    public boolean getDynomiteStoragePreconnect() {
+        return getBooleanProperty("DM_DYNOMITE_STORAGE_PRECONNECT", CONFIG_DYNOMITE_STORAGE_PRECONNECT, true);
+    }
+
+    public String getDynomiteYaml() {
+        String dynomiteYaml = getStringProperty("DM_DYNOMITE_YAML", CONFIG_DYNOMITE_YAML, DEFAULT_DYNOMITE_YAML);
+        // If a user sets a relative path to dynomite.yaml then we need to prepend the Dynomite installation directory
+        // in order to return a full path from /.
+        if (dynomiteYaml.charAt(0) == '/') {
+            return dynomiteYaml;
+        } else {
+            return getDynomiteInstallDir() + "/" + dynomiteYaml;
+        }
+    }
+
+    public boolean isDynomiteMultiDC() {
+        return getBooleanProperty("DM_DYNOMITE_MULTI_DC", CONFIG_DYNOMITE_MULTI_DC, true);
     }
 
     @Override
     public String getDynListenPort() { // return full string
 	return "0.0.0.0:" + getDynomitePeerPort();
-    }
-
-    @Override
-    public int getGossipInterval() {
-	return configSource.get(CONFIG_DYNO_GOSSIP_INTERVAL_NAME, DEFAULT_DYNO_GOSSIP_INTERVAL);
-    }
-
-    @Override
-    public String getHash() {
-	return configSource.get(CONFIG_DYNO_TOKENS_HASH_NAME, DEFAULT_DYNO_TOKENS_HASH);
-    }
-
-    @Override
-    public boolean getPreconnect() {
-	return configSource.get(CONFIG_DYNO_CONNECTIONS_PRECONNECT, true);
     }
 
     @Override
@@ -583,21 +627,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_REQ_TIMEOUT_NAME, DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC);
     }
 
-    public boolean isMultiRegionedCluster() {
-	return configSource.get(CONFIG_DYNO_IS_MULTI_REGIONED_CLUSTER, true);
-    }
-
-    @Override
-    public int getSecuredPeerListenerPort() {
-	return configSource.get(CONFIG_DYN_SECURED_PEER_PORT_NAME, DEFAULT_DYN_SECURED_PEER_PORT);
-    }
-
     public String getSecuredOption() {
 	return configSource.get(CONFIG_SECURED_OPTION, DEFAULT_SECURED_OPTION);
-    }
-
-    public boolean isHealthCheckEnable() {
-	return configSource.get(CONFIG_DYNO_HEALTHCHECK_ENABLE, true);
     }
 
     public boolean isWarmBootstrap() {
@@ -624,17 +655,12 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_WRITE_CONS, "DC_ONE");
     }
 
+    // Storage engine (aka backend)
+    // ============================
+
     @Override
-    public int getStorageMemPercent() {
-	return configSource.get(CONFIG_DYNO_STORAGE_MEM_PCT_INT, 85);
-    }
-
-    public int getMbufSize() {
-	return configSource.get(CONFIG_DYNO_MBUF_SIZE, 16384);
-    }
-
-    public int getAllocatedMessages() {
-	return configSource.get(CONFIG_DYNO_MAX_ALLOC_MSGS, 200000);
+    public int getStorageMaxMemoryPercent() {
+        return getIntProperty("DM_STORAGE_MAX_MEMORY_PERCENT", CONFIG_STORAGE_MAX_MEMORY_PERCENT, 85);
     }
 
     public boolean isVpc() {
@@ -733,12 +759,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     @Override
     public String getCassandraSeeds() {
-        String envSeeds = System.getenv("DM_CASSANDRA_SEEDS");
-        if (envSeeds != null && !"".equals(envSeeds)) {
-            return envSeeds;
-        }
-
-        return getStringProperty(CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
+        return getStringProperty("DM_CASSANDRA_SEEDS", CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
     }
 
     @Override
