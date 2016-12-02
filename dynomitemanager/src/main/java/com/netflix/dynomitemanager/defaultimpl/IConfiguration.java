@@ -25,6 +25,13 @@ public interface IConfiguration {
     // ========
 
     /**
+     * Determine if Dynomite should auto-eject nodes from the cluster.
+     *
+     * @return true if Dynomite should auto-ejects hosts, false if not
+     */
+    public boolean getDynomiteAutoEjectHosts();
+
+    /**
      * Get the cluster name that is saved in tokens.appId in Cassandra. Cluster name is used to group Dynomite nodes
      * that are part of the same cluster.
      * @return the cluster name
@@ -206,8 +213,6 @@ public interface IConfiguration {
      * @return the peer-to-peer port used for intra-cluster communication
      */
     public int getDynomitePeerPort();
-
-    public boolean getAutoEjectHosts();
 
     public String getDistribution();
 

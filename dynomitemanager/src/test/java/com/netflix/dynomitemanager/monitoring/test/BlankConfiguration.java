@@ -256,7 +256,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public boolean getAutoEjectHosts() {
+    public boolean getDynomiteAutoEjectHosts() {
 	return false;
     }
 

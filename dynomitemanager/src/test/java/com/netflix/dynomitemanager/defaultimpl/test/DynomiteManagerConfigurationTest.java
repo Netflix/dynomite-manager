@@ -60,6 +60,26 @@ public class DynomiteManagerConfigurationTest {
     // ========
 
     @Test
+    public void testGetDynomiteAutoEjectHosts() throws Exception {
+        Assert.assertThat("Auto-eject hosts = default", conf.getDynomiteAutoEjectHosts(), is(true));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "false";
+            }
+        };
+        Assert.assertThat("Auto-eject hosts = env var", conf.getDynomiteAutoEjectHosts(), is(false));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Auto-eject hosts = default", conf.getDynomiteAutoEjectHosts(), is(true));
+    }
+
+    @Test
     public void testGetDynomiteClientPort() throws Exception {
         Assert.assertThat(conf.getDynomiteClientPort(), is(8102));
 

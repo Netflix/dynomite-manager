@@ -147,7 +147,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNOMITE_PROCESS_NAME = DYNOMITE_PROPS + ".process.name";
     private static final String CONFIG_DYNOMITE_YAML = DYNOMITE_PROPS + ".yaml";
     private static final String CONFIG_DYNOMITE_INTRA_CLUSTER_SECURITY = DYNOMITE_PROPS + ".intra.cluster.security";
-    private static final String CONFIG_DYNO_AUTO_EJECT_HOSTS = DYNOMITEMANAGER_PRE + ".auto.eject.hosts";
+    private static final String CONFIG_DYNOMITE_AUTO_EJECT_HOSTS = DYNOMITE_PROPS + ".auto.eject.hosts";
 
     // Cassandra Cluster for token management
     private static final String CONFIG_BOOTCLUSTER_NAME = DYNOMITEMANAGER_PRE + ".bootcluster";
@@ -208,6 +208,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // Defaults: Dynomite
     // ==================
 
+    private final boolean DEFAULT_DYNOMITE_AUTO_EJECT_HOSTS = true;
     private final String DEFAULT_DYNOMITE_CLUSTER_NAME = "dynomite_demo1";
     private final String DEFAULT_DYNOMITE_SEED_PROVIDER = "florida_provider";
     private final String DEFAULT_DYNOMITE_INSTALL_DIR = "/apps/dynomite";
@@ -506,17 +507,18 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public boolean getAutoEjectHosts() {
-	return configSource.get(CONFIG_DYNO_AUTO_EJECT_HOSTS, true);
-    }
-
-    @Override
     public String getDistribution() {
 	return configSource.get(CONFIG_TOKENS_DISTRIBUTION_NAME, DEFAULT_TOKENS_DISTRIBUTION);
     }
 
     // Dynomite
     // ========
+
+    @Override
+    public boolean getDynomiteAutoEjectHosts() {
+        return getBooleanProperty("DM_DYNOMITE_AUTO_EJECT_HOSTS", CONFIG_DYNOMITE_AUTO_EJECT_HOSTS,
+                DEFAULT_DYNOMITE_AUTO_EJECT_HOSTS);
+    }
 
     @Override
     public int getDynomiteClientPort() {
