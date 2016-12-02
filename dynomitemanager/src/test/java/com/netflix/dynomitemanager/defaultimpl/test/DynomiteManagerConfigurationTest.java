@@ -160,6 +160,26 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteIntraClusterSecurity() throws Exception {
+        Assert.assertThat("Intra-cluster security = default", conf.getDynomiteIntraClusterSecurity(), is("datacenter"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "none";
+            }
+        };
+        Assert.assertThat("Intra-cluster security = env var", conf.getDynomiteIntraClusterSecurity(), is("none"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Intra-cluster security = default", conf.getDynomiteIntraClusterSecurity(), is("datacenter"));
+    }
+
+    @Test
     public void testGetDynomiteMaxAllocatedMessages() throws Exception {
         Assert.assertThat("max allocated messages = default", conf.getDynomiteMaxAllocatedMessages(), is(200000));
 

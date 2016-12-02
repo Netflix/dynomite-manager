@@ -111,7 +111,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getSecuredOption() {
+	public String getDynomiteIntraClusterSecurity() {
 		return null;
 	}
 

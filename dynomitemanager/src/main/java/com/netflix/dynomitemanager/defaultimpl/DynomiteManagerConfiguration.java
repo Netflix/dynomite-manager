@@ -146,7 +146,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     private static final String CONFIG_DYNOMITE_PROCESS_NAME = DYNOMITE_PROPS + ".process.name";
     private static final String CONFIG_DYNOMITE_YAML = DYNOMITE_PROPS + ".yaml";
-    private static final String CONFIG_SECURED_OPTION = DYNOMITEMANAGER_PRE + ".secured.option";
+    private static final String CONFIG_DYNOMITE_INTRA_CLUSTER_SECURITY = DYNOMITE_PROPS + ".intra.cluster.security";
     private static final String CONFIG_DYNO_AUTO_EJECT_HOSTS = DYNOMITEMANAGER_PRE + ".auto.eject.hosts";
 
     // Cassandra Cluster for token management
@@ -227,7 +227,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private final int DEFAULT_DYNOMITE_GOSSIP_INTERVAL = 10000;
     private final String DEFAULT_DYNOMITE_HASH_ALGORITHM = "murmur";
 
-    private final String DEFAULT_SECURED_OPTION = "datacenter";
+    private final String DEFAULT_DYNOMITE_INTRA_CLUSTER_SECURITY = "datacenter";
 
     // Backup & Restore
     private static final boolean DEFAULT_BACKUP_ENABLED = false;
@@ -553,6 +553,11 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         return getStringProperty("DM_DYNOMITE_INSTALL_DIR", CONFIG_DYNOMITE_INSTALL_DIR, DEFAULT_DYNOMITE_INSTALL_DIR);
     }
 
+    public String getDynomiteIntraClusterSecurity() {
+        return getStringProperty("DM_DYNOMITE_INTRA_CLUSTER_SECURITY", CONFIG_DYNOMITE_INTRA_CLUSTER_SECURITY,
+                DEFAULT_DYNOMITE_INTRA_CLUSTER_SECURITY);
+    }
+
     @Override
     public String getClientListenPort() {
         return "0.0.0.0:" + getDynomiteClientPort();
@@ -625,10 +630,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     @Override
     public int getTimeout() {
 	return configSource.get(CONFIG_DYNO_REQ_TIMEOUT_NAME, DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC);
-    }
-
-    public String getSecuredOption() {
-	return configSource.get(CONFIG_SECURED_OPTION, DEFAULT_SECURED_OPTION);
     }
 
     public boolean isWarmBootstrap() {

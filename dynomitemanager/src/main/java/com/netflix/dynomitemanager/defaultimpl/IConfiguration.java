@@ -54,6 +54,14 @@ public interface IConfiguration {
     public String getDynomiteInstallDir();
 
     /**
+     * Get the intra-cluster (i.e. node-to-node) security option. Maps to the secure_server_option property in
+     * dynomite.yaml.
+     *
+     * @return the intra-cluster security option
+     */
+    public String getDynomiteIntraClusterSecurity();
+
+    /**
      * Get the maximum number of messages that Dynomite will hold in queue.
      *
      * @return the maximum number of messages that Dynomite will allocate
@@ -210,8 +218,6 @@ public interface IConfiguration {
     public int getServerRetryTimeout();
 
     public int getTimeout();
-
-    public String getSecuredOption();
 
     public boolean isWarmBootstrap();
 
