@@ -90,6 +90,13 @@ public interface IConfiguration {
     public String getDynomiteProcessName();
 
     /**
+     * Get the read consistency level.
+     *
+     * @return the read consistency level
+     */
+    public String getDynomiteReadConsistency();
+
+    /**
      * Get the name of the seed provider that Dynomite uses to learn the cluster's topology.
      * @return the seed provider name
      */
@@ -115,6 +122,13 @@ public interface IConfiguration {
      * @return true if Dynomite should preconnect to the backend storage engine, false if it should not preconnect
      */
     public boolean getDynomiteStoragePreconnect();
+
+    /**
+     * Get the write consistency level.
+     *
+     * @return the write consistency level
+     */
+    public String getDynomiteWriteConsistency();
 
     /**
      * Get the full path to the dynomite.yml configuration file.
@@ -188,10 +202,6 @@ public interface IConfiguration {
      * @return Get host IP
      */
     public String getHostIP();
-
-    public String getReadConsistency();
-
-    public String getWriteConsistency();
 
     /**
      * Get the client port used by Redis (i.e. RESP) clients to query Dynomite (default: 8102).

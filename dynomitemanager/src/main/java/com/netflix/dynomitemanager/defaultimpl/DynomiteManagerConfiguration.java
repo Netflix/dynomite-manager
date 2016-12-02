@@ -149,6 +149,9 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNOMITE_INTRA_CLUSTER_SECURITY = DYNOMITE_PROPS + ".intra.cluster.security";
     private static final String CONFIG_DYNOMITE_AUTO_EJECT_HOSTS = DYNOMITE_PROPS + ".auto.eject.hosts";
 
+    private static final String CONFIG_DYNOMITE_READ_CONSISTENCY = DYNOMITE_PROPS + ".read.consistency";
+    private static final String CONFIG_DYNOMITE_WRITE_CONSISTENCY = DYNOMITE_PROPS + ".write.consistency";
+
     // Cassandra
     // =========
     // Cassandra is used for token management.
@@ -179,10 +182,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_VPC_ROLE_ASSUMPTION_ARN = DYNOMITEMANAGER_PRE + ".vpc.roleassumption.arn";
     private static final String CONFIG_DUAL_ACCOUNT = DYNOMITEMANAGER_PRE + ".roleassumption.dualaccount";
     private static final String CONFIG_DUAL_ACCOUNT_AZ = DYNOMITEMANAGER_PRE + ".roleassumption.az";
-
-    // Dynomite Consistency
-    private static final String CONFIG_DYNO_READ_CONS = DYNOMITEMANAGER_PRE + ".dyno.read.consistency";
-    private static final String CONFIG_DYNO_WRITE_CONS = DYNOMITEMANAGER_PRE + ".dyno.write.consistency";
 
     // warm up
     private static final String CONFIG_DYNO_WARM_FORCE = DYNOMITEMANAGER_PRE + ".dyno.warm.force";
@@ -232,6 +231,9 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private final String DEFAULT_DYNOMITE_HASH_ALGORITHM = "murmur";
 
     private final String DEFAULT_DYNOMITE_INTRA_CLUSTER_SECURITY = "datacenter";
+
+    private final String DEFAULT_DYNOMITE_READ_CONSISTENCY = "DC_ONE";
+    private final String DEFAULT_DYNOMITE_WRITE_CONSISTENCY = "DC_ONE";
 
     // Backup & Restore
     private static final boolean DEFAULT_BACKUP_ENABLED = false;
@@ -585,6 +587,11 @@ public class DynomiteManagerConfiguration implements IConfiguration {
                 DEFAULT_DYNOMITE_PROCESS_NAME);
     }
 
+    public String getDynomiteReadConsistency() {
+        return getStringProperty("DM_DYNOMITE_READ_CONSISTENCY", CONFIG_DYNOMITE_READ_CONSISTENCY,
+                DEFAULT_DYNOMITE_READ_CONSISTENCY);
+    }
+
     @Override
     public String getDynomiteSeedProvider() {
         return getStringProperty("DM_DYNOMITE_SEED_PROVIDER", CONFIG_DYNOMITE_SEED_PROVIDER,
@@ -603,6 +610,11 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     @Override
     public boolean getDynomiteStoragePreconnect() {
         return getBooleanProperty("DM_DYNOMITE_STORAGE_PRECONNECT", CONFIG_DYNOMITE_STORAGE_PRECONNECT, true);
+    }
+
+    public String getDynomiteWriteConsistency() {
+        return getStringProperty("DM_DYNOMITE_WRITE_CONSISTENCY", CONFIG_DYNOMITE_WRITE_CONSISTENCY,
+                DEFAULT_DYNOMITE_WRITE_CONSISTENCY);
     }
 
     public String getDynomiteYaml() {
@@ -649,14 +661,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     public int getMaxTimeToBootstrap() {
 	return configSource.get(CONFIG_DYNO_MAX_TIME_BOOTSTRAP, 900000);
-    }
-
-    public String getReadConsistency() {
-	return configSource.get(CONFIG_DYNO_READ_CONS, "DC_ONE");
-    }
-
-    public String getWriteConsistency() {
-	return configSource.get(CONFIG_DYNO_WRITE_CONS, "DC_ONE");
     }
 
     // Storage engine (aka backend)

@@ -81,7 +81,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getWriteConsistency() {
+	public String getDynomiteWriteConsistency() {
 		return null;
 	}
 
@@ -126,7 +126,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getReadConsistency() {
+	public String getDynomiteReadConsistency() {
 		return null;
 	}
 

@@ -68,10 +68,10 @@ public class ProxyAndStorageResetTask extends Task {
 
     private void setConsistency() {
 	logger.info("Setting the consistency level for the cluster");
-	if (!DynomiteRest.sendCommand("/set_consistency/read/" + config.getReadConsistency()))
+	if (!DynomiteRest.sendCommand("/set_consistency/read/" + config.getDynomiteReadConsistency()))
 	    logger.error("REST call to Dynomite for read consistency failed --> using the default");
 
-	if (!DynomiteRest.sendCommand("/set_consistency/write/" + config.getReadConsistency()))
+	if (!DynomiteRest.sendCommand("/set_consistency/write/" + config.getDynomiteWriteConsistency()))
 	    logger.error("REST call to Dynomite for write consistency failed --> using the default");
     }
 

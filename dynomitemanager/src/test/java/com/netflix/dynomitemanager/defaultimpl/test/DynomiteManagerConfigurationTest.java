@@ -281,6 +281,26 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteReadConsistency() throws Exception {
+        Assert.assertThat("Read consistency = default", conf.getDynomiteReadConsistency(), is("DC_ONE"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "DC_QUORUM";
+            }
+        };
+        Assert.assertThat("Read consistency = env var", conf.getDynomiteReadConsistency(), is("DC_QUORUM"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Read consistency = default", conf.getDynomiteReadConsistency(), is("DC_ONE"));
+    }
+
+    @Test
     public void testGetDynomiteSeedProvider() throws Exception {
         Assert.assertThat("Seed provider = default", conf.getDynomiteSeedProvider(), is("florida_provider"));
 
@@ -358,6 +378,26 @@ public class DynomiteManagerConfigurationTest {
             }
         };
         Assert.assertThat("Dynomite storage preconnect = default", conf.getDynomiteStoragePreconnect(), is(true));
+    }
+
+    @Test
+    public void testGetDynomiteWriteConsistency() throws Exception {
+        Assert.assertThat("Write consistency = default", conf.getDynomiteWriteConsistency(), is("DC_ONE"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "DC_QUORUM";
+            }
+        };
+        Assert.assertThat("Write consistency = env var", conf.getDynomiteWriteConsistency(), is("DC_QUORUM"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Write consistency = default", conf.getDynomiteWriteConsistency(), is("DC_ONE"));
     }
 
     @Test
