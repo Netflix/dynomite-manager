@@ -480,7 +480,7 @@ public class DynomiteManagerConfigurationTest {
 
     @Test
     public void testGetCassandraSeeds() throws Exception {
-        Assert.assertThat(conf.getCassandraSeeds(), is("127.0.0.1"));
+        Assert.assertThat("Cassandra seeds = default", conf.getCassandraSeeds(), is("127.0.0.1"));
 
         new MockUp<System>() {
             @Mock
@@ -488,7 +488,15 @@ public class DynomiteManagerConfigurationTest {
                 return "10.0.0.10";
             }
         };
-        Assert.assertThat(conf.getCassandraSeeds(), is("10.0.0.10"));
+        Assert.assertThat("Cassandra seeds = env var", conf.getCassandraSeeds(), is("10.0.0.10"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Cassandra seeds = default", conf.getCassandraSeeds(), is("127.0.0.1"));
     }
 
     @Test

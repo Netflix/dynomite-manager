@@ -155,8 +155,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     private static final String CONFIG_CASSANDRA_CLUSTER_NAME = CASSANDRA_PROPS + ".cluster.name";
     private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = CASSANDRA_PROPS + ".keyspace.name";
-    private static final String CONFIG_CASSANDRA_THRIFT_PORT = CASSANDRA_PROPS + ".thrift.port";
     private static final String CONFIG_CASSANDRA_SEEDS = CASSANDRA_PROPS + ".seeds";
+    private static final String CONFIG_CASSANDRA_THRIFT_PORT = CASSANDRA_PROPS + ".thrift.port";
 
     // Storage engine (aka backend)
     // ============================
@@ -278,8 +278,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     private static final String DEFAULT_CASSANDRA_CLUSTER_NAME = "cass_dyno";
     private static final String DEFAULT_CASSANDRA_KEYSPACE_NAME = "dyno_bootstrap";
-    private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
     private static final String DEFAULT_CASSANDRA_SEEDS = "127.0.0.1"; // comma separated list
+    private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
 
     private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
 
@@ -766,14 +766,16 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
+    public String getCassandraSeeds() {
+        return getStringProperty("DM_CASSANDRA_SEEDS", CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
+    }
+
+    @Override
     public int getCassandraThriftPort() {
         return getIntProperty("DM_CASSANDRA_THRIFT_PORT", CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
     }
 
-    @Override
-    public String getCassandraSeeds() {
-        return getStringProperty("DM_CASSANDRA_SEEDS", CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
-    }
+
 
     @Override
     public boolean isEurekaHostSupplierEnabled() {
