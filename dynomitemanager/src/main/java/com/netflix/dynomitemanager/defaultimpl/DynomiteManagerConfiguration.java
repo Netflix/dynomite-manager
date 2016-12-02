@@ -155,7 +155,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     private static final String CONFIG_CASSANDRA_CLUSTER_NAME = CASSANDRA_PROPS + ".cluster.name";
     private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
-    private static final String CONFIG_CASSANDRA_THRIFT_PORT = DYNOMITEMANAGER_PRE + ".cassandra.thrift.port";
+    private static final String CONFIG_CASSANDRA_THRIFT_PORT = CASSANDRA_PROPS + ".thrift.port";
     private static final String CONFIG_CASSANDRA_SEEDS = CASSANDRA_PROPS + ".seeds";
 
     // Storage engine (aka backend)
@@ -506,15 +506,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return PUBLIC_IP;
     }
 
-    // Cassandra
-    // =========
-
-    @Override
-    public String getCassandraClusterName() {
-        return getStringProperty("DM_CASSANDRA_CLUSTER_NAME", CONFIG_CASSANDRA_CLUSTER_NAME,
-                DEFAULT_CASSANDRA_CLUSTER_NAME);
-    }
-
     @Override
     public String getDistribution() {
 	return configSource.get(CONFIG_TOKENS_DISTRIBUTION_NAME, DEFAULT_TOKENS_DISTRIBUTION);
@@ -758,7 +749,15 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DUAL_ACCOUNT, DEFAULT_DUAL_ACCOUNT);
     }
 
-    // Cassandra configuration for token management
+    // Cassandra
+    // =========
+
+    @Override
+    public String getCassandraClusterName() {
+        return getStringProperty("DM_CASSANDRA_CLUSTER_NAME", CONFIG_CASSANDRA_CLUSTER_NAME,
+                DEFAULT_CASSANDRA_CLUSTER_NAME);
+    }
+
     @Override
     public String getCassandraKeyspaceName() {
 	return configSource.get(CONFIG_CASSANDRA_KEYSPACE_NAME, DEFAULT_CASSANDRA_KEYSPACE_NAME);
@@ -766,7 +765,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     @Override
     public int getCassandraThriftPort() {
-	return configSource.get(CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
+        return getIntProperty("DM_CASSANDRA_THRIFT_PORT", CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
     }
 
     @Override

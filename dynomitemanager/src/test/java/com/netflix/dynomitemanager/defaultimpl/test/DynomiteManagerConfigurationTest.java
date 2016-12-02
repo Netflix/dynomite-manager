@@ -470,4 +470,25 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat(conf.getCassandraSeeds(), is("10.0.0.10"));
     }
 
+    @Test
+    public void testGetCassandraThriftPort() throws Exception {
+        Assert.assertThat("Cassandra thrift port = default", conf.getCassandraThriftPort(), is(9160));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "9999";
+            }
+        };
+        Assert.assertThat("Cassandra thrift port = env var", conf.getCassandraThriftPort(), is(9999));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("Cassandra thrift port = default", conf.getCassandraThriftPort(), is(9160));
+    }
+
 }
