@@ -374,7 +374,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getMinWriteBufferToMerge() {
+    public int getArdbRocksDBMinWriteBuffersToMerge() {
 	return 0;
     }
 

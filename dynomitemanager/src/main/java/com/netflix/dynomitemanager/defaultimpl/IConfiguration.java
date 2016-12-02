@@ -407,7 +407,12 @@ public interface IConfiguration {
      */
     public int getArdbRocksDBMaxWriteBufferNumber();
 
-    public int getMinWriteBufferToMerge();
+    /**
+     * Get the minimum number of memtables to be merged before flushing data to persistent storage.
+     *
+     * @return the minimum number of memtables that must exist before a flush occurs
+     */
+    public int getArdbRocksDBMinWriteBuffersToMerge();
 
     public int getWriteBufferSize();
 

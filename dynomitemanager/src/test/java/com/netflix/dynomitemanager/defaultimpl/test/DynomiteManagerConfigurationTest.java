@@ -583,4 +583,24 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("ARDB RocksDB max write buffer number = default", conf.getArdbRocksDBMaxWriteBufferNumber(), is(16));
     }
 
+    @Test
+    public void testGetArdbRocksDBMinWritesBufferToMerge() throws Exception {
+        Assert.assertThat("ARDB RocksDB min memtables before flush = default", conf.getArdbRocksDBMinWriteBuffersToMerge(), is(4));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "2";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB min memtables before flush = env var", conf.getArdbRocksDBMinWriteBuffersToMerge(), is(2));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB min memtables before flush = default", conf.getArdbRocksDBMinWriteBuffersToMerge(), is(4));
+    }
+
 }

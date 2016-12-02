@@ -176,7 +176,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     private static final String CONFIG_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER =
             ARDB_ROCKSDB_PROPS + ".max.write.buffer.number";
-    private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = ARDB_ROCKSDB_PROPS + ".min.write.buffer.name.to.merge";
+    private static final String CONFIG_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE =
+            ARDB_ROCKSDB_PROPS + ".min.write.buffer.number.to.merge";
     private static final String CONFIG_WRITE_BUFFER_SIZE_MB = ARDB_ROCKSDB_PROPS + ".write.buffer.mb";
 
 
@@ -290,7 +291,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // ===========================================
 
     private static final int DEFAULT_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER = 16;
-    private static final int DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE = 4;
+    private static final int DEFAULT_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE = 4;
     private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
 
 
@@ -875,8 +876,9 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getMinWriteBufferToMerge() {
-        return configSource.get(CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE,DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE);
+    public int getArdbRocksDBMinWriteBuffersToMerge() {
+        return getIntProperty("DM_ARDB_ROCKSDB_MIN_WRITE_BUFFER_NUMBER_TO_MERGE",
+                CONFIG_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE, DEFAULT_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE);
     }
 
     @Override
