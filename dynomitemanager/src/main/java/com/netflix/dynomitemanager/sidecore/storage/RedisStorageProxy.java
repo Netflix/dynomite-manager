@@ -549,7 +549,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
         if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
             ArdbRocksDbRedisCompatible rocksDb = new ArdbRocksDbRedisCompatible(storeMaxMem,
-                    config.getWriteBufferSize(), config.getMaxWriteBufferNumber(), config.getMinWriteBufferToMerge());
+                    config.getWriteBufferSize(), config.getArdbRocksDBMaxWriteBufferNumber(), config.getArdbRocksDBMinWriteBuffersToMerge());
             rocksDb.updateConfiguration(ArdbRocksDbRedisCompatible.DYNO_ARDB_CONF_PATH);
         } else {
 	    // Updating the file.

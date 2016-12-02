@@ -74,7 +74,7 @@ public class FloridaStandardTuner implements ProcessTuner {
 	Map map = (Map) yaml.load(new FileInputStream(yamlFile));
 	Map entries = (Map) map.get(ROOT_NAME);
 
-	entries.put("auto_eject_hosts", config.getAutoEjectHosts());
+	entries.put("auto_eject_hosts", config.getDynomiteAutoEjectHosts());
 	entries.put("rack", config.getRack());
 	entries.put("distribution", config.getDistribution());
 	entries.put("dyn_listen", config.getDynListenPort());
@@ -86,11 +86,11 @@ public class FloridaStandardTuner implements ProcessTuner {
 	entries.put("server_retry_timeout", config.getServerRetryTimeout());
 	entries.put("timeout", config.getTimeout());
 	entries.put("tokens", ii.getTokens());
-	entries.put("secure_server_option", config.getSecuredOption());
+	entries.put("secure_server_option", config.getDynomiteIntraClusterSecurity());
 	entries.remove("redis");
 	entries.put("datacenter", config.getDataCenter());
-	entries.put("read_consistency", config.getReadConsistency());
-	entries.put("write_consistency", config.getWriteConsistency());
+	entries.put("read_consistency", config.getDynomiteReadConsistency());
+	entries.put("write_consistency", config.getDynomiteWriteConsistency());
 	entries.put("pem_key_file", "/apps/dynomite/conf/dynomite.pem");
 
 	List seedp = (List) entries.get("dyn_seeds");

@@ -45,7 +45,7 @@ public class CassandraLocalHostsSupplier implements HostSupplier {
 	public Supplier<List<Host>> getSupplier(String clusterName) {
 		final List<Host> hosts = new ArrayList<Host>();
 
-		String bootCluster = config.getBootClusterName();
+		String bootCluster = config.getCassandraClusterName();
 
 		if (bootCluster == null)
 			bootCluster = "";

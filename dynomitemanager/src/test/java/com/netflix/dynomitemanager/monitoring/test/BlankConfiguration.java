@@ -81,7 +81,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getWriteConsistency() {
+    public String getDynomiteWriteConsistency() {
 	return null;
     }
 
@@ -111,7 +111,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getSecuredOption() {
+    public String getDynomiteIntraClusterSecurity() {
 	return null;
     }
 
@@ -126,7 +126,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getReadConsistency() {
+    public String getDynomiteReadConsistency() {
 	return null;
     }
 
@@ -236,7 +236,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getBootClusterName() {
+    public String getCassandraClusterName() {
 	return null;
     }
 
@@ -256,7 +256,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public boolean getAutoEjectHosts() {
+    public boolean getDynomiteAutoEjectHosts() {
 	return false;
     }
 
@@ -369,12 +369,12 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getMaxWriteBufferNumber() {
+    public int getArdbRocksDBMaxWriteBufferNumber() {
 	return 0;
     }
 
     @Override
-    public int getMinWriteBufferToMerge() {
+    public int getArdbRocksDBMinWriteBuffersToMerge() {
 	return 0;
     }
 

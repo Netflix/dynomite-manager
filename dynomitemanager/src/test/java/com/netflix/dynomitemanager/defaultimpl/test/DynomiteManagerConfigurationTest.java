@@ -60,6 +60,26 @@ public class DynomiteManagerConfigurationTest {
     // ========
 
     @Test
+    public void testGetDynomiteAutoEjectHosts() throws Exception {
+        Assert.assertThat("Auto-eject hosts = default", conf.getDynomiteAutoEjectHosts(), is(true));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "false";
+            }
+        };
+        Assert.assertThat("Auto-eject hosts = env var", conf.getDynomiteAutoEjectHosts(), is(false));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Auto-eject hosts = default", conf.getDynomiteAutoEjectHosts(), is(true));
+    }
+
+    @Test
     public void testGetDynomiteClientPort() throws Exception {
         Assert.assertThat(conf.getDynomiteClientPort(), is(8102));
 
@@ -160,6 +180,26 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteIntraClusterSecurity() throws Exception {
+        Assert.assertThat("Intra-cluster security = default", conf.getDynomiteIntraClusterSecurity(), is("datacenter"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "none";
+            }
+        };
+        Assert.assertThat("Intra-cluster security = env var", conf.getDynomiteIntraClusterSecurity(), is("none"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Intra-cluster security = default", conf.getDynomiteIntraClusterSecurity(), is("datacenter"));
+    }
+
+    @Test
     public void testGetDynomiteMaxAllocatedMessages() throws Exception {
         Assert.assertThat("max allocated messages = default", conf.getDynomiteMaxAllocatedMessages(), is(200000));
 
@@ -238,6 +278,26 @@ public class DynomiteManagerConfigurationTest {
             }
         };
         Assert.assertThat("Dynomite process name = default", conf.getDynomiteProcessName(), is("dynomite"));
+    }
+
+    @Test
+    public void testGetDynomiteReadConsistency() throws Exception {
+        Assert.assertThat("Read consistency = default", conf.getDynomiteReadConsistency(), is("DC_ONE"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "DC_QUORUM";
+            }
+        };
+        Assert.assertThat("Read consistency = env var", conf.getDynomiteReadConsistency(), is("DC_QUORUM"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Read consistency = default", conf.getDynomiteReadConsistency(), is("DC_ONE"));
     }
 
     @Test
@@ -321,6 +381,26 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetDynomiteWriteConsistency() throws Exception {
+        Assert.assertThat("Write consistency = default", conf.getDynomiteWriteConsistency(), is("DC_ONE"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "DC_QUORUM";
+            }
+        };
+        Assert.assertThat("Write consistency = env var", conf.getDynomiteWriteConsistency(), is("DC_QUORUM"));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Write consistency = default", conf.getDynomiteWriteConsistency(), is("DC_ONE"));
+    }
+
+    @Test
     public void testGetDynomiteYaml() {
         Assert.assertThat("dynomite.yml = default", conf.getDynomiteYaml(), is("/apps/dynomite/conf/dynomite.yml"));
 
@@ -370,6 +450,93 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("Dynomite multi-DC = default", conf.isDynomiteMultiDC(), is(true));
     }
 
+    // Cassandra
+    // =========
+
+    @Test
+    public void testGetCassandraClusterName() throws Exception {
+        Assert.assertThat("Cassandra cluster name = default", conf.getCassandraClusterName(), is("cass_dyno"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "dynomite_token_cluster";
+            }
+        };
+        Assert.assertThat("Cassandra cluster name = env var", conf.getCassandraClusterName(), is("dynomite_token_cluster"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Cassandra cluster name = default", conf.getCassandraClusterName(), is("cass_dyno"));
+    }
+
+    @Test
+    public void testGetCassandraKeyspaceName() throws Exception {
+        Assert.assertThat("Cassandra keyspace name = default", conf.getCassandraKeyspaceName(), is("dyno_bootstrap"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "tokens";
+            }
+        };
+        Assert.assertThat("Cassandra keyspace name = env var", conf.getCassandraKeyspaceName(), is("tokens"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Cassandra keyspace name = default", conf.getCassandraKeyspaceName(), is("dyno_bootstrap"));
+    }
+
+    @Test
+    public void testGetCassandraSeeds() throws Exception {
+        Assert.assertThat("Cassandra seeds = default", conf.getCassandraSeeds(), is("127.0.0.1"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "10.0.0.10";
+            }
+        };
+        Assert.assertThat("Cassandra seeds = env var", conf.getCassandraSeeds(), is("10.0.0.10"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Cassandra seeds = default", conf.getCassandraSeeds(), is("127.0.0.1"));
+    }
+
+    @Test
+    public void testGetCassandraThriftPort() throws Exception {
+        Assert.assertThat("Cassandra thrift port = default", conf.getCassandraThriftPort(), is(9160));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "9999";
+            }
+        };
+        Assert.assertThat("Cassandra thrift port = env var", conf.getCassandraThriftPort(), is(9999));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("Cassandra thrift port = default", conf.getCassandraThriftPort(), is(9160));
+    }
+
     // Storage engine (aka backend)
     // ============================
 
@@ -393,20 +560,47 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
     }
 
-    // Cassandra
-    // =========
+    // Storage engine: ARDB with RocksDB
+    // =================================
 
     @Test
-    public void testGetCassandraSeeds() throws Exception {
-        Assert.assertThat(conf.getCassandraSeeds(), is("127.0.0.1"));
+    public void testGetArdbRocksDBMaxWriteBufferNumber() throws Exception {
+        Assert.assertThat("ARDB RocksDB max write buffer number = default", conf.getArdbRocksDBMaxWriteBufferNumber(), is(16));
 
         new MockUp<System>() {
             @Mock
             String getenv(String name) {
-                return "10.0.0.10";
+                return "32";
             }
         };
-        Assert.assertThat(conf.getCassandraSeeds(), is("10.0.0.10"));
+        Assert.assertThat("ARDB RocksDB max write buffer number = env var", conf.getArdbRocksDBMaxWriteBufferNumber(), is(32));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB max write buffer number = default", conf.getArdbRocksDBMaxWriteBufferNumber(), is(16));
+    }
+
+    @Test
+    public void testGetArdbRocksDBMinWritesBufferToMerge() throws Exception {
+        Assert.assertThat("ARDB RocksDB min memtables before flush = default", conf.getArdbRocksDBMinWriteBuffersToMerge(), is(4));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "2";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB min memtables before flush = env var", conf.getArdbRocksDBMinWriteBuffersToMerge(), is(2));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB min memtables before flush = default", conf.getArdbRocksDBMinWriteBuffersToMerge(), is(4));
     }
 
 }

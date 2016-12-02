@@ -61,11 +61,15 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     public static final String CASSANDRA_PREFIX = "cassandra";
     public static final String DYNOMITE_PREFIX = "dynomite";
     public static final String REDIS_PREFIX = "redis";
+    public static final String ARDB_PREFIX = "ardb";
+    public static final String ROCKSDB_PREFIX = "rocksdb";
     public static final String STORAGE_PREFIX = "storage"; // Storage engine (aka backend)
 
     public static final String DYNOMITE_PROPS = DYNOMITEMANAGER_PRE + "." + DYNOMITE_PREFIX;
     public static final String STORAGE_PROPS = DYNOMITEMANAGER_PRE + "." + STORAGE_PREFIX;
     public static final String REDIS_PROPS = DYNOMITEMANAGER_PRE + "." + REDIS_PREFIX;
+    public static final String ARDB_PROPS = DYNOMITEMANAGER_PRE + "." + ARDB_PREFIX;
+    public static final String ARDB_ROCKSDB_PROPS = ARDB_PROPS + "." + ROCKSDB_PREFIX;
     public static final String CASSANDRA_PROPS = DYNOMITEMANAGER_PRE + "." + CASSANDRA_PREFIX;
 
     // Archaius
@@ -146,20 +150,36 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     private static final String CONFIG_DYNOMITE_PROCESS_NAME = DYNOMITE_PROPS + ".process.name";
     private static final String CONFIG_DYNOMITE_YAML = DYNOMITE_PROPS + ".yaml";
-    private static final String CONFIG_SECURED_OPTION = DYNOMITEMANAGER_PRE + ".secured.option";
-    private static final String CONFIG_DYNO_AUTO_EJECT_HOSTS = DYNOMITEMANAGER_PRE + ".auto.eject.hosts";
+    private static final String CONFIG_DYNOMITE_INTRA_CLUSTER_SECURITY = DYNOMITE_PROPS + ".intra.cluster.security";
+    private static final String CONFIG_DYNOMITE_AUTO_EJECT_HOSTS = DYNOMITE_PROPS + ".auto.eject.hosts";
 
-    // Cassandra Cluster for token management
-    private static final String CONFIG_BOOTCLUSTER_NAME = DYNOMITEMANAGER_PRE + ".bootcluster";
-    private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
-    private static final String CONFIG_CASSANDRA_THRIFT_PORT = DYNOMITEMANAGER_PRE + ".cassandra.thrift.port";
+    private static final String CONFIG_DYNOMITE_READ_CONSISTENCY = DYNOMITE_PROPS + ".read.consistency";
+    private static final String CONFIG_DYNOMITE_WRITE_CONSISTENCY = DYNOMITE_PROPS + ".write.consistency";
+
+    // Cassandra
+    // =========
+    // Cassandra is used for token management.
+
+    private static final String CONFIG_CASSANDRA_CLUSTER_NAME = CASSANDRA_PROPS + ".cluster.name";
+    private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = CASSANDRA_PROPS + ".keyspace.name";
     private static final String CONFIG_CASSANDRA_SEEDS = CASSANDRA_PROPS + ".seeds";
+    private static final String CONFIG_CASSANDRA_THRIFT_PORT = CASSANDRA_PROPS + ".thrift.port";
 
     // Storage engine (aka backend)
     // ============================
 
     // The max percentage of system memory to be allocated to the backend data storage engine (ex. Redis, ARDB).
     private static final String CONFIG_STORAGE_MAX_MEMORY_PERCENT = STORAGE_PROPS + ".max.memory.percent";
+
+    // Storage engine: ARDB with RocksDB
+    // =================================
+
+    private static final String CONFIG_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER =
+            ARDB_ROCKSDB_PROPS + ".max.write.buffer.number";
+    private static final String CONFIG_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE =
+            ARDB_ROCKSDB_PROPS + ".min.write.buffer.number.to.merge";
+    private static final String CONFIG_WRITE_BUFFER_SIZE_MB = ARDB_ROCKSDB_PROPS + ".write.buffer.mb";
+
 
     // Eureka
     private static final String CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED = DYNOMITEMANAGER_PRE
@@ -176,10 +196,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_VPC_ROLE_ASSUMPTION_ARN = DYNOMITEMANAGER_PRE + ".vpc.roleassumption.arn";
     private static final String CONFIG_DUAL_ACCOUNT = DYNOMITEMANAGER_PRE + ".roleassumption.dualaccount";
     private static final String CONFIG_DUAL_ACCOUNT_AZ = DYNOMITEMANAGER_PRE + ".roleassumption.az";
-
-    // Dynomite Consistency
-    private static final String CONFIG_DYNO_READ_CONS = DYNOMITEMANAGER_PRE + ".dyno.read.consistency";
-    private static final String CONFIG_DYNO_WRITE_CONS = DYNOMITEMANAGER_PRE + ".dyno.write.consistency";
 
     // warm up
     private static final String CONFIG_DYNO_WARM_FORCE = DYNOMITEMANAGER_PRE + ".dyno.warm.force";
@@ -200,14 +216,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // VPC
     private static final String CONFIG_INSTANCE_DATA_RETRIEVER = DYNOMITEMANAGER_PRE + ".instanceDataRetriever";
 
-    // RocksDB
-    private static final String CONFIG_WRITE_BUFFER_SIZE_MB = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.writebuffermb";
-    private static final String CONFIG_MAX_WRITE_BUFFER_NUMBER = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.maxwritebuffernumber";
-    private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.minwritebuffernametomerge";
-
     // Defaults: Dynomite
     // ==================
 
+    private final boolean DEFAULT_DYNOMITE_AUTO_EJECT_HOSTS = true;
     private final String DEFAULT_DYNOMITE_CLUSTER_NAME = "dynomite_demo1";
     private final String DEFAULT_DYNOMITE_SEED_PROVIDER = "florida_provider";
     private final String DEFAULT_DYNOMITE_INSTALL_DIR = "/apps/dynomite";
@@ -227,7 +239,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private final int DEFAULT_DYNOMITE_GOSSIP_INTERVAL = 10000;
     private final String DEFAULT_DYNOMITE_HASH_ALGORITHM = "murmur";
 
-    private final String DEFAULT_SECURED_OPTION = "datacenter";
+    private final String DEFAULT_DYNOMITE_INTRA_CLUSTER_SECURITY = "datacenter";
+
+    private final String DEFAULT_DYNOMITE_READ_CONSISTENCY = "DC_ONE";
+    private final String DEFAULT_DYNOMITE_WRITE_CONSISTENCY = "DC_ONE";
 
     // Backup & Restore
     private static final boolean DEFAULT_BACKUP_ENABLED = false;
@@ -247,11 +262,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String DEFAULT_BACKUP_SCHEDULE = "day";
     private static final int DEFAULT_BACKUP_HOUR = 12;
 
-    // Ardb
-    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
-    private static final int DEFAULT_MAX_WRITE_BUFFER_NUMBER = 16;
-    private static final int DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE = 4;
-
     // AWS Dual Account
     private static final boolean DEFAULT_DUAL_ACCOUNT = false;
 
@@ -269,11 +279,22 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private final InstanceEnvIdentity insEnvIdentity;
     private final IStorageProxy storageProxy;
 
-    // Cassandra default configuration
-    private static final String DEFAULT_BOOTCLUSTER_NAME = "cass_dyno";
-    private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
+    // Defaults: Cassandra
+    // ===================
+
+    private static final String DEFAULT_CASSANDRA_CLUSTER_NAME = "cass_dyno";
     private static final String DEFAULT_CASSANDRA_KEYSPACE_NAME = "dyno_bootstrap";
     private static final String DEFAULT_CASSANDRA_SEEDS = "127.0.0.1"; // comma separated list
+    private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
+
+    // Defaults: Storage engine: ARDB with RocksDB
+    // ===========================================
+
+    private static final int DEFAULT_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER = 16;
+    private static final int DEFAULT_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE = 4;
+    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
+
+
     private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
 
     // = instance identity meta data
@@ -501,22 +522,18 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getBootClusterName() {
-	return configSource.get(CONFIG_BOOTCLUSTER_NAME, DEFAULT_BOOTCLUSTER_NAME);
-    }
-
-    @Override
-    public boolean getAutoEjectHosts() {
-	return configSource.get(CONFIG_DYNO_AUTO_EJECT_HOSTS, true);
-    }
-
-    @Override
     public String getDistribution() {
 	return configSource.get(CONFIG_TOKENS_DISTRIBUTION_NAME, DEFAULT_TOKENS_DISTRIBUTION);
     }
 
     // Dynomite
     // ========
+
+    @Override
+    public boolean getDynomiteAutoEjectHosts() {
+        return getBooleanProperty("DM_DYNOMITE_AUTO_EJECT_HOSTS", CONFIG_DYNOMITE_AUTO_EJECT_HOSTS,
+                DEFAULT_DYNOMITE_AUTO_EJECT_HOSTS);
+    }
 
     @Override
     public int getDynomiteClientPort() {
@@ -553,6 +570,11 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         return getStringProperty("DM_DYNOMITE_INSTALL_DIR", CONFIG_DYNOMITE_INSTALL_DIR, DEFAULT_DYNOMITE_INSTALL_DIR);
     }
 
+    public String getDynomiteIntraClusterSecurity() {
+        return getStringProperty("DM_DYNOMITE_INTRA_CLUSTER_SECURITY", CONFIG_DYNOMITE_INTRA_CLUSTER_SECURITY,
+                DEFAULT_DYNOMITE_INTRA_CLUSTER_SECURITY);
+    }
+
     @Override
     public String getClientListenPort() {
         return "0.0.0.0:" + getDynomiteClientPort();
@@ -577,6 +599,11 @@ public class DynomiteManagerConfiguration implements IConfiguration {
                 DEFAULT_DYNOMITE_PROCESS_NAME);
     }
 
+    public String getDynomiteReadConsistency() {
+        return getStringProperty("DM_DYNOMITE_READ_CONSISTENCY", CONFIG_DYNOMITE_READ_CONSISTENCY,
+                DEFAULT_DYNOMITE_READ_CONSISTENCY);
+    }
+
     @Override
     public String getDynomiteSeedProvider() {
         return getStringProperty("DM_DYNOMITE_SEED_PROVIDER", CONFIG_DYNOMITE_SEED_PROVIDER,
@@ -595,6 +622,11 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     @Override
     public boolean getDynomiteStoragePreconnect() {
         return getBooleanProperty("DM_DYNOMITE_STORAGE_PRECONNECT", CONFIG_DYNOMITE_STORAGE_PRECONNECT, true);
+    }
+
+    public String getDynomiteWriteConsistency() {
+        return getStringProperty("DM_DYNOMITE_WRITE_CONSISTENCY", CONFIG_DYNOMITE_WRITE_CONSISTENCY,
+                DEFAULT_DYNOMITE_WRITE_CONSISTENCY);
     }
 
     public String getDynomiteYaml() {
@@ -627,10 +659,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_REQ_TIMEOUT_NAME, DEFAULT_DYNO_REQ_TIMEOUT_IN_MILLISEC);
     }
 
-    public String getSecuredOption() {
-	return configSource.get(CONFIG_SECURED_OPTION, DEFAULT_SECURED_OPTION);
-    }
-
     public boolean isWarmBootstrap() {
 	return configSource.get(CONFIG_DYNO_WARM_BOOTSTRAP, false);
     }
@@ -645,14 +673,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     public int getMaxTimeToBootstrap() {
 	return configSource.get(CONFIG_DYNO_MAX_TIME_BOOTSTRAP, 900000);
-    }
-
-    public String getReadConsistency() {
-	return configSource.get(CONFIG_DYNO_READ_CONS, "DC_ONE");
-    }
-
-    public String getWriteConsistency() {
-	return configSource.get(CONFIG_DYNO_WRITE_CONS, "DC_ONE");
     }
 
     // Storage engine (aka backend)
@@ -717,20 +737,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return NETWORK_VPC;
     }
 
-    // RocksDB
-    @Override
-    public int getWriteBufferSize() {
-	return configSource.get(CONFIG_WRITE_BUFFER_SIZE_MB,DEFAULT_WRITE_BUFFER_SIZE_MB);
-    }
-
-    public int getMaxWriteBufferNumber() {
-	return configSource.get(CONFIG_MAX_WRITE_BUFFER_NUMBER,DEFAULT_MAX_WRITE_BUFFER_NUMBER);
-    }
-
-    public int getMinWriteBufferToMerge() {
-	return configSource.get(CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE,DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE);
-    }
-
     @Override
     public String getClassicAWSRoleAssumptionArn() {
 	return configSource.get(CONFIG_EC2_ROLE_ASSUMPTION_ARN);
@@ -746,21 +752,32 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DUAL_ACCOUNT, DEFAULT_DUAL_ACCOUNT);
     }
 
-    // Cassandra configuration for token management
+    // Cassandra
+    // =========
+
     @Override
-    public String getCassandraKeyspaceName() {
-	return configSource.get(CONFIG_CASSANDRA_KEYSPACE_NAME, DEFAULT_CASSANDRA_KEYSPACE_NAME);
+    public String getCassandraClusterName() {
+        return getStringProperty("DM_CASSANDRA_CLUSTER_NAME", CONFIG_CASSANDRA_CLUSTER_NAME,
+                DEFAULT_CASSANDRA_CLUSTER_NAME);
     }
 
     @Override
-    public int getCassandraThriftPort() {
-	return configSource.get(CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
+    public String getCassandraKeyspaceName() {
+        return getStringProperty("DM_CASSANDRA_KEYSPACE_NAME", CONFIG_CASSANDRA_KEYSPACE_NAME,
+                DEFAULT_CASSANDRA_KEYSPACE_NAME);
     }
 
     @Override
     public String getCassandraSeeds() {
         return getStringProperty("DM_CASSANDRA_SEEDS", CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
     }
+
+    @Override
+    public int getCassandraThriftPort() {
+        return getIntProperty("DM_CASSANDRA_THRIFT_PORT", CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
+    }
+
+
 
     @Override
     public boolean isEurekaHostSupplierEnabled() {
@@ -828,8 +845,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_SERVER, DEFAULT_REDIS_COMPATIBLE_SERVER);
     }
 
-    // ARDB RocksDB
-    // ============
+    // Storage engine: ARDB with RocksDB
+    // =================================
 
     @Override
     public String getArdbRocksDBConf() {
@@ -851,4 +868,22 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         final String CONFIG_ARDB_ROCKSDB_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.init.stop";
         return configSource.get(CONFIG_ARDB_ROCKSDB_STOP_SCRIPT, DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT);
     }
+
+    @Override
+    public int getArdbRocksDBMaxWriteBufferNumber() {
+        return getIntProperty("DM_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER", CONFIG_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER,
+                DEFAULT_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER);
+    }
+
+    @Override
+    public int getArdbRocksDBMinWriteBuffersToMerge() {
+        return getIntProperty("DM_ARDB_ROCKSDB_MIN_WRITE_BUFFER_NUMBER_TO_MERGE",
+                CONFIG_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE, DEFAULT_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE);
+    }
+
+    @Override
+    public int getWriteBufferSize() {
+        return configSource.get(CONFIG_WRITE_BUFFER_SIZE_MB,DEFAULT_WRITE_BUFFER_SIZE_MB);
+    }
+
 }

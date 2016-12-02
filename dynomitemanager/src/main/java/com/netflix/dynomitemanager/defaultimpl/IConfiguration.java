@@ -25,6 +25,13 @@ public interface IConfiguration {
     // ========
 
     /**
+     * Determine if Dynomite should auto-eject nodes from the cluster.
+     *
+     * @return true if Dynomite should auto-ejects hosts, false if not
+     */
+    public boolean getDynomiteAutoEjectHosts();
+
+    /**
      * Get the cluster name that is saved in tokens.appId in Cassandra. Cluster name is used to group Dynomite nodes
      * that are part of the same cluster.
      * @return the cluster name
@@ -54,6 +61,14 @@ public interface IConfiguration {
     public String getDynomiteInstallDir();
 
     /**
+     * Get the intra-cluster (i.e. node-to-node) security option. Maps to the secure_server_option property in
+     * dynomite.yaml.
+     *
+     * @return the intra-cluster security option
+     */
+    public String getDynomiteIntraClusterSecurity();
+
+    /**
      * Get the maximum number of messages that Dynomite will hold in queue.
      *
      * @return the maximum number of messages that Dynomite will allocate
@@ -73,6 +88,13 @@ public interface IConfiguration {
      * @return the Dynomite process name
      */
     public String getDynomiteProcessName();
+
+    /**
+     * Get the read consistency level.
+     *
+     * @return the read consistency level
+     */
+    public String getDynomiteReadConsistency();
 
     /**
      * Get the name of the seed provider that Dynomite uses to learn the cluster's topology.
@@ -100,6 +122,13 @@ public interface IConfiguration {
      * @return true if Dynomite should preconnect to the backend storage engine, false if it should not preconnect
      */
     public boolean getDynomiteStoragePreconnect();
+
+    /**
+     * Get the write consistency level.
+     *
+     * @return the write consistency level
+     */
+    public String getDynomiteWriteConsistency();
 
     /**
      * Get the full path to the dynomite.yml configuration file.
@@ -175,17 +204,6 @@ public interface IConfiguration {
     public String getHostIP();
 
     /**
-     * Get the Cassandra cluster name for the topology database (i.e. the database that stores the complete Dynomite
-     * cluster topology).
-     * @return the Cassandra cluster name for the topology database
-     */
-    public String getBootClusterName();
-
-    public String getReadConsistency();
-
-    public String getWriteConsistency();
-
-    /**
      * Get the client port used by Redis (i.e. RESP) clients to query Dynomite (default: 8102).
      *
      * @return the port that Dynomite listens on for client requests
@@ -199,8 +217,6 @@ public interface IConfiguration {
      */
     public int getDynomitePeerPort();
 
-    public boolean getAutoEjectHosts();
-
     public String getDistribution();
 
     public String getDynListenPort();
@@ -210,8 +226,6 @@ public interface IConfiguration {
     public int getServerRetryTimeout();
 
     public int getTimeout();
-
-    public String getSecuredOption();
 
     public boolean isWarmBootstrap();
 
@@ -274,6 +288,19 @@ public interface IConfiguration {
     // =========
     // Cassandra is used to store the Dynomite cluster topology.
 
+    /**
+     * Get the Cassandra cluster name for the topology database (i.e. the database that stores the complete Dynomite
+     * cluster topology).
+     *
+     * @return the Cassandra cluster name for the topology database
+     */
+    public String getCassandraClusterName();
+
+    /**
+     * Get the name of the keyspace that stores tokens for the Dynomite cluster.
+     *
+     * @return the keyspace name
+     */
     public String getCassandraKeyspaceName();
 
     /**
@@ -349,38 +376,44 @@ public interface IConfiguration {
      */
     public String getRedisCompatibleEngine();
 
-    // ARDB RocksDB
-    // ============
+    // Storage engine: ARDB with RocksDB
+    // =================================
 
     /**
-     * Get the full path to the rocksdb.conf configuration file. Netflix:
-     * /apps/ardb/conf/rocksdb.conf DynomiteDB: /etc/dynomitedb/rocksdb.conf
+     * Get the full path to the rocksdb.conf configuration file.
      *
-     * @return the {@link String} full path to the rocksdb.conf configuration
-     *         file
+     * @return the {@link String} full path to the rocksdb.conf configuration file
      */
     public String getArdbRocksDBConf();
 
     /**
-     * Get the full path to the ARDB RocksDB init start script, including any
-     * arguments.
+     * Get the full path to the ARDB RocksDB init start script, including any arguments.
      *
      * @return the full path of the ARDB RocksDB init start script
      */
     public String getArdbRocksDBInitStart();
 
     /**
-     * Get the full path to the ARDB RocksDB init stop script, including any
-     * arguments.
+     * Get the full path to the ARDB RocksDB init stop script, including any arguments.
      *
      * @return the full path of the ARDB RocksDB init stop script
      */
     public String getArdbRocksDBInitStop();
 
+    /**
+     * Get the maximum number of memtables used by RocksDB. This number includes both active and immutable memtables.
+     *
+     * @return the maximum number of memtables
+     */
+    public int getArdbRocksDBMaxWriteBufferNumber();
+
+    /**
+     * Get the minimum number of memtables to be merged before flushing data to persistent storage.
+     *
+     * @return the minimum number of memtables that must exist before a flush occurs
+     */
+    public int getArdbRocksDBMinWriteBuffersToMerge();
+
     public int getWriteBufferSize();
-
-    public int getMaxWriteBufferNumber();
-
-    public int getMinWriteBufferToMerge();
 
 }
