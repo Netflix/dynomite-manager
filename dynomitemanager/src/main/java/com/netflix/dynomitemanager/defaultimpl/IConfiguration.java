@@ -380,31 +380,32 @@ public interface IConfiguration {
     // =================================
 
     /**
-     * Get the full path to the rocksdb.conf configuration file. Netflix:
-     * /apps/ardb/conf/rocksdb.conf DynomiteDB: /etc/dynomitedb/rocksdb.conf
+     * Get the full path to the rocksdb.conf configuration file.
      *
-     * @return the {@link String} full path to the rocksdb.conf configuration
-     *         file
+     * @return the {@link String} full path to the rocksdb.conf configuration file
      */
     public String getArdbRocksDBConf();
 
     /**
-     * Get the full path to the ARDB RocksDB init start script, including any
-     * arguments.
+     * Get the full path to the ARDB RocksDB init start script, including any arguments.
      *
      * @return the full path of the ARDB RocksDB init start script
      */
     public String getArdbRocksDBInitStart();
 
     /**
-     * Get the full path to the ARDB RocksDB init stop script, including any
-     * arguments.
+     * Get the full path to the ARDB RocksDB init stop script, including any arguments.
      *
      * @return the full path of the ARDB RocksDB init stop script
      */
     public String getArdbRocksDBInitStop();
 
-    public int getMaxWriteBufferNumber();
+    /**
+     * Get the maximum number of memtables used by RocksDB. This number includes both active and immutable memtables.
+     *
+     * @return the maximum number of memtables
+     */
+    public int getArdbRocksDBMaxWriteBufferNumber();
 
     public int getMinWriteBufferToMerge();
 

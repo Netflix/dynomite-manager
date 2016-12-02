@@ -371,7 +371,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getMaxWriteBufferNumber() {
+	public int getArdbRocksDBMaxWriteBufferNumber() {
 	    return 0;
 	}
 

@@ -174,7 +174,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // Storage engine: ARDB with RocksDB
     // =================================
 
-    private static final String CONFIG_MAX_WRITE_BUFFER_NUMBER = ARDB_ROCKSDB_PROPS + ".max.write.buffer.number";
+    private static final String CONFIG_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER =
+            ARDB_ROCKSDB_PROPS + ".max.write.buffer.number";
     private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = ARDB_ROCKSDB_PROPS + ".min.write.buffer.name.to.merge";
     private static final String CONFIG_WRITE_BUFFER_SIZE_MB = ARDB_ROCKSDB_PROPS + ".write.buffer.mb";
 
@@ -288,7 +289,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // Defaults: Storage engine: ARDB with RocksDB
     // ===========================================
 
-    private static final int DEFAULT_MAX_WRITE_BUFFER_NUMBER = 16;
+    private static final int DEFAULT_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER = 16;
     private static final int DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE = 4;
     private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
 
@@ -868,8 +869,9 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getMaxWriteBufferNumber() {
-        return configSource.get(CONFIG_MAX_WRITE_BUFFER_NUMBER,DEFAULT_MAX_WRITE_BUFFER_NUMBER);
+    public int getArdbRocksDBMaxWriteBufferNumber() {
+        return getIntProperty("DM_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER", CONFIG_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER,
+                DEFAULT_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER);
     }
 
     @Override

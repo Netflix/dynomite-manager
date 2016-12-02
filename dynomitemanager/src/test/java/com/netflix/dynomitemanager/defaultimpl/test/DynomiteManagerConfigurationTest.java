@@ -563,4 +563,24 @@ public class DynomiteManagerConfigurationTest {
     // Storage engine: ARDB with RocksDB
     // =================================
 
+    @Test
+    public void testGetArdbRocksDBMaxWriteBufferNumber() throws Exception {
+        Assert.assertThat("ARDB RocksDB max write buffer number = default", conf.getArdbRocksDBMaxWriteBufferNumber(), is(16));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "32";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB max write buffer number = env var", conf.getArdbRocksDBMaxWriteBufferNumber(), is(32));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB max write buffer number = default", conf.getArdbRocksDBMaxWriteBufferNumber(), is(16));
+    }
+
 }
