@@ -437,6 +437,27 @@ public class DynomiteManagerConfigurationTest {
     // =========
 
     @Test
+    public void testGetCassandraClusterName() throws Exception {
+        Assert.assertThat("Cassandra cluster name = default", conf.getCassandraClusterName(), is("cass_dyno"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "dynomite_token_cluster";
+            }
+        };
+        Assert.assertThat("Cassandra cluster name = env var", conf.getCassandraClusterName(), is("dynomite_token_cluster"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Cassandra cluster name = default", conf.getCassandraClusterName(), is("cass_dyno"));
+    }
+
+    @Test
     public void testGetCassandraSeeds() throws Exception {
         Assert.assertThat(conf.getCassandraSeeds(), is("127.0.0.1"));
 

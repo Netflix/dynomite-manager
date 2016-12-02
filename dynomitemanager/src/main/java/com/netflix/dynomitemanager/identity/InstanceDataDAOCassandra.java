@@ -87,11 +87,11 @@ public class InstanceDataDAOCassandra {
 	public InstanceDataDAOCassandra(IConfiguration config, HostSupplier hostSupplier) throws ConnectionException {
 		this.config = config;
 
-		BOOT_CLUSTER = config.getBootClusterName();
+		BOOT_CLUSTER = config.getCassandraClusterName();
 
 		if (BOOT_CLUSTER == null || BOOT_CLUSTER.isEmpty())
 			throw new RuntimeException(
-					"BootCluster can not be blank. Please use getBootClusterName() property.");
+					"Cassandra cluster name cannot be blank. Please use getCassandraClusterName() property.");
 
 		KS_NAME = config.getCassandraKeyspaceName();
 

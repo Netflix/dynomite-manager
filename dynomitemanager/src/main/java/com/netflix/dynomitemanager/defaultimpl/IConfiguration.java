@@ -189,13 +189,6 @@ public interface IConfiguration {
      */
     public String getHostIP();
 
-    /**
-     * Get the Cassandra cluster name for the topology database (i.e. the database that stores the complete Dynomite
-     * cluster topology).
-     * @return the Cassandra cluster name for the topology database
-     */
-    public String getBootClusterName();
-
     public String getReadConsistency();
 
     public String getWriteConsistency();
@@ -284,6 +277,14 @@ public interface IConfiguration {
     // Cassandra
     // =========
     // Cassandra is used to store the Dynomite cluster topology.
+
+    /**
+     * Get the Cassandra cluster name for the topology database (i.e. the database that stores the complete Dynomite
+     * cluster topology).
+     *
+     * @return the Cassandra cluster name for the topology database
+     */
+    public String getCassandraClusterName();
 
     public String getCassandraKeyspaceName();
 

@@ -236,7 +236,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getBootClusterName() {
+	public String getCassandraClusterName() {
 		return "DynomiteManagerClusterTest";
 	}
 

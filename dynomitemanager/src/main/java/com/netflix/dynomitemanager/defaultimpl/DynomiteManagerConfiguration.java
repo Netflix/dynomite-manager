@@ -149,8 +149,11 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_DYNOMITE_INTRA_CLUSTER_SECURITY = DYNOMITE_PROPS + ".intra.cluster.security";
     private static final String CONFIG_DYNOMITE_AUTO_EJECT_HOSTS = DYNOMITE_PROPS + ".auto.eject.hosts";
 
-    // Cassandra Cluster for token management
-    private static final String CONFIG_BOOTCLUSTER_NAME = DYNOMITEMANAGER_PRE + ".bootcluster";
+    // Cassandra
+    // =========
+    // Cassandra is used for token management.
+
+    private static final String CONFIG_CASSANDRA_CLUSTER_NAME = CASSANDRA_PROPS + ".cluster.name";
     private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
     private static final String CONFIG_CASSANDRA_THRIFT_PORT = DYNOMITEMANAGER_PRE + ".cassandra.thrift.port";
     private static final String CONFIG_CASSANDRA_SEEDS = CASSANDRA_PROPS + ".seeds";
@@ -270,8 +273,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private final InstanceEnvIdentity insEnvIdentity;
     private final IStorageProxy storageProxy;
 
-    // Cassandra default configuration
-    private static final String DEFAULT_BOOTCLUSTER_NAME = "cass_dyno";
+    // Defaults: Cassandra
+    // ===================
+
+    private static final String DEFAULT_CASSANDRA_CLUSTER_NAME = "cass_dyno";
     private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
     private static final String DEFAULT_CASSANDRA_KEYSPACE_NAME = "dyno_bootstrap";
     private static final String DEFAULT_CASSANDRA_SEEDS = "127.0.0.1"; // comma separated list
@@ -501,9 +506,13 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return PUBLIC_IP;
     }
 
+    // Cassandra
+    // =========
+
     @Override
-    public String getBootClusterName() {
-	return configSource.get(CONFIG_BOOTCLUSTER_NAME, DEFAULT_BOOTCLUSTER_NAME);
+    public String getCassandraClusterName() {
+        return getStringProperty("DM_CASSANDRA_CLUSTER_NAME", CONFIG_CASSANDRA_CLUSTER_NAME,
+                DEFAULT_CASSANDRA_CLUSTER_NAME);
     }
 
     @Override
