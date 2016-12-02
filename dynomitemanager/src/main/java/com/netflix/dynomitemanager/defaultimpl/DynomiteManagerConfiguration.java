@@ -61,11 +61,15 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     public static final String CASSANDRA_PREFIX = "cassandra";
     public static final String DYNOMITE_PREFIX = "dynomite";
     public static final String REDIS_PREFIX = "redis";
+    public static final String ARDB_PREFIX = "ardb";
+    public static final String ROCKSDB_PREFIX = "rocksdb";
     public static final String STORAGE_PREFIX = "storage"; // Storage engine (aka backend)
 
     public static final String DYNOMITE_PROPS = DYNOMITEMANAGER_PRE + "." + DYNOMITE_PREFIX;
     public static final String STORAGE_PROPS = DYNOMITEMANAGER_PRE + "." + STORAGE_PREFIX;
     public static final String REDIS_PROPS = DYNOMITEMANAGER_PRE + "." + REDIS_PREFIX;
+    public static final String ARDB_PROPS = DYNOMITEMANAGER_PRE + "." + ARDB_PREFIX;
+    public static final String ARDB_ROCKSDB_PROPS = ARDB_PROPS + "." + ROCKSDB_PREFIX;
     public static final String CASSANDRA_PROPS = DYNOMITEMANAGER_PRE + "." + CASSANDRA_PREFIX;
 
     // Archaius
@@ -167,6 +171,14 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // The max percentage of system memory to be allocated to the backend data storage engine (ex. Redis, ARDB).
     private static final String CONFIG_STORAGE_MAX_MEMORY_PERCENT = STORAGE_PROPS + ".max.memory.percent";
 
+    // Storage engine: ARDB with RocksDB
+    // =================================
+
+    private static final String CONFIG_MAX_WRITE_BUFFER_NUMBER = ARDB_ROCKSDB_PROPS + ".max.write.buffer.number";
+    private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = ARDB_ROCKSDB_PROPS + ".min.write.buffer.name.to.merge";
+    private static final String CONFIG_WRITE_BUFFER_SIZE_MB = ARDB_ROCKSDB_PROPS + ".write.buffer.mb";
+
+
     // Eureka
     private static final String CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED = DYNOMITEMANAGER_PRE
 	    + ".eureka.host.supplier.enabled";
@@ -201,11 +213,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     // VPC
     private static final String CONFIG_INSTANCE_DATA_RETRIEVER = DYNOMITEMANAGER_PRE + ".instanceDataRetriever";
-
-    // RocksDB
-    private static final String CONFIG_WRITE_BUFFER_SIZE_MB = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.writebuffermb";
-    private static final String CONFIG_MAX_WRITE_BUFFER_NUMBER = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.maxwritebuffernumber";
-    private static final String CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE = DYNOMITEMANAGER_PRE + ".dyno.ardb.rocksdb.minwritebuffernametomerge";
 
     // Defaults: Dynomite
     // ==================
@@ -253,11 +260,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String DEFAULT_BACKUP_SCHEDULE = "day";
     private static final int DEFAULT_BACKUP_HOUR = 12;
 
-    // Ardb
-    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
-    private static final int DEFAULT_MAX_WRITE_BUFFER_NUMBER = 16;
-    private static final int DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE = 4;
-
     // AWS Dual Account
     private static final boolean DEFAULT_DUAL_ACCOUNT = false;
 
@@ -282,6 +284,14 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String DEFAULT_CASSANDRA_KEYSPACE_NAME = "dyno_bootstrap";
     private static final String DEFAULT_CASSANDRA_SEEDS = "127.0.0.1"; // comma separated list
     private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
+
+    // Defaults: Storage engine: ARDB with RocksDB
+    // ===========================================
+
+    private static final int DEFAULT_MAX_WRITE_BUFFER_NUMBER = 16;
+    private static final int DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE = 4;
+    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
+
 
     private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
 
@@ -725,20 +735,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return NETWORK_VPC;
     }
 
-    // RocksDB
-    @Override
-    public int getWriteBufferSize() {
-	return configSource.get(CONFIG_WRITE_BUFFER_SIZE_MB,DEFAULT_WRITE_BUFFER_SIZE_MB);
-    }
-
-    public int getMaxWriteBufferNumber() {
-	return configSource.get(CONFIG_MAX_WRITE_BUFFER_NUMBER,DEFAULT_MAX_WRITE_BUFFER_NUMBER);
-    }
-
-    public int getMinWriteBufferToMerge() {
-	return configSource.get(CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE,DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE);
-    }
-
     @Override
     public String getClassicAWSRoleAssumptionArn() {
 	return configSource.get(CONFIG_EC2_ROLE_ASSUMPTION_ARN);
@@ -847,8 +843,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_SERVER, DEFAULT_REDIS_COMPATIBLE_SERVER);
     }
 
-    // ARDB RocksDB
-    // ============
+    // Storage engine: ARDB with RocksDB
+    // =================================
 
     @Override
     public String getArdbRocksDBConf() {
@@ -870,4 +866,20 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         final String CONFIG_ARDB_ROCKSDB_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.init.stop";
         return configSource.get(CONFIG_ARDB_ROCKSDB_STOP_SCRIPT, DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT);
     }
+
+    @Override
+    public int getMaxWriteBufferNumber() {
+        return configSource.get(CONFIG_MAX_WRITE_BUFFER_NUMBER,DEFAULT_MAX_WRITE_BUFFER_NUMBER);
+    }
+
+    @Override
+    public int getMinWriteBufferToMerge() {
+        return configSource.get(CONFIG_MIN_WRITE_BUFFER_NAME_TO_MERGE,DEFAULT_MIN_WRITE_BUFFER_NAME_TO_MERGE);
+    }
+
+    @Override
+    public int getWriteBufferSize() {
+        return configSource.get(CONFIG_WRITE_BUFFER_SIZE_MB,DEFAULT_WRITE_BUFFER_SIZE_MB);
+    }
+
 }

@@ -450,29 +450,6 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("Dynomite multi-DC = default", conf.isDynomiteMultiDC(), is(true));
     }
 
-    // Storage engine (aka backend)
-    // ============================
-
-    @Test
-    public void testGetStorageMaxMemoryPercent() throws Exception {
-        Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
-
-        new MockUp<System>() {
-            @Mock
-            String getenv(String name) {
-                return "70";
-            }
-        };
-        Assert.assertThat("storage max memory percent = env var", conf.getStorageMaxMemoryPercent(), is(70));
-        new MockUp<System>() {
-            @Mock
-            String getenv(String name) {
-                return "not-a-number";
-            }
-        };
-        Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
-    }
-
     // Cassandra
     // =========
 
@@ -559,5 +536,31 @@ public class DynomiteManagerConfigurationTest {
         };
         Assert.assertThat("Cassandra thrift port = default", conf.getCassandraThriftPort(), is(9160));
     }
+
+    // Storage engine (aka backend)
+    // ============================
+
+    @Test
+    public void testGetStorageMaxMemoryPercent() throws Exception {
+        Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "70";
+            }
+        };
+        Assert.assertThat("storage max memory percent = env var", conf.getStorageMaxMemoryPercent(), is(70));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
+    }
+
+    // Storage engine: ARDB with RocksDB
+    // =================================
 
 }

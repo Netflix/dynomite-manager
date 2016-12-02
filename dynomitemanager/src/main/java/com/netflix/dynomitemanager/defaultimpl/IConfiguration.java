@@ -376,8 +376,8 @@ public interface IConfiguration {
      */
     public String getRedisCompatibleEngine();
 
-    // ARDB RocksDB
-    // ============
+    // Storage engine: ARDB with RocksDB
+    // =================================
 
     /**
      * Get the full path to the rocksdb.conf configuration file. Netflix:
@@ -404,10 +404,10 @@ public interface IConfiguration {
      */
     public String getArdbRocksDBInitStop();
 
-    public int getWriteBufferSize();
-
     public int getMaxWriteBufferNumber();
 
     public int getMinWriteBufferToMerge();
+
+    public int getWriteBufferSize();
 
 }
