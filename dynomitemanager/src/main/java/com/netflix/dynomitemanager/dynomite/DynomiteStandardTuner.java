@@ -10,7 +10,7 @@
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-package com.netflix.dynomitemanager.defaultimpl;
+package com.netflix.dynomitemanager.dynomite;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -18,6 +18,7 @@ import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
 import com.netflix.dynomitemanager.IInstanceState;
+import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +36,9 @@ import java.util.Map;
  * Generate and write the dynomite.yaml configuration file to disk.
  */
 @Singleton
-public class FloridaStandardTuner implements ProcessTuner {
+public class DynomiteStandardTuner implements ProcessTuner {
 
-    private static final Logger logger = LoggerFactory.getLogger(FloridaStandardTuner.class);
+    private static final Logger logger = LoggerFactory.getLogger(DynomiteStandardTuner.class);
     private static final String ROOT_NAME = "dyn_o_mite";
 
     protected final IConfiguration config;
@@ -46,7 +47,7 @@ public class FloridaStandardTuner implements ProcessTuner {
     protected final IStorageProxy storageProxy;
 
     @Inject
-    public FloridaStandardTuner(IConfiguration config, InstanceIdentity ii, IInstanceState instanceState,
+    public DynomiteStandardTuner(IConfiguration config, InstanceIdentity ii, IInstanceState instanceState,
 	    IStorageProxy storageProxy) {
 	this.config = config;
 	this.ii = ii;
@@ -59,14 +60,10 @@ public class FloridaStandardTuner implements ProcessTuner {
      *
      * @param yamlLocation
      *            path to the dynomite.yaml file
-     * @param hostname
-     *            UNUSED ARGUMENT
-     * @param seedProvider
-     *            UNUSED ARGUMENT
      * @throws IOException
      */
     @SuppressWarnings("unchecked")
-    public void writeAllProperties(String yamlLocation, String hostname, String seedProvider) throws IOException {
+    public void writeAllProperties(String yamlLocation) throws IOException {
 	DumperOptions options = new DumperOptions();
 	options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 	Yaml yaml = new Yaml(options);

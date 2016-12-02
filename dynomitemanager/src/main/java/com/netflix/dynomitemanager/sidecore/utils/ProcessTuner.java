@@ -22,10 +22,8 @@ public interface ProcessTuner {
 	/**
 	 * Generate and write a yaml file
 	 * @param yamlLocation
-	 * @param hostname
-	 * @param seedProvider
 	 * @throws IOException
 	 */
-	void writeAllProperties(String yamlLocation, String hostname, String seedProvider) throws IOException;
+	void writeAllProperties(String yamlLocation) throws IOException;
 
 }

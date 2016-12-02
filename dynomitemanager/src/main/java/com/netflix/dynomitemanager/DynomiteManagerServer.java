@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
+import com.netflix.dynomitemanager.dynomite.DynomiteYamlTuneTask;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.monitoring.RedisInfoMetricsTask;
@@ -29,7 +30,6 @@ import com.netflix.dynomitemanager.sidecore.scheduler.TaskScheduler;
 import com.netflix.dynomitemanager.sidecore.utils.ProcessMonitorTask;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.sidecore.utils.ProxyAndStorageResetTask;
-import com.netflix.dynomitemanager.sidecore.utils.TuneTask;
 import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 import com.netflix.dynomitemanager.sidecore.storage.StorageProcessManager;
 import com.netflix.dynomitemanager.sidecore.storage.WarmBootstrapTask;
@@ -44,7 +44,7 @@ import com.netflix.servo.monitor.Monitors;
  * <li>{@link com.netflix.dynomitemanager.sidecore.aws.UpdateSecuritySettings}:
  * In a multi-DC deployment, update the AWS security group (SG) inbound traffic
  * filters.
- * <li>{@link com.netflix.dynomitemanager.sidecore.utils.TuneTask}: Write the
+ * <li>{@link com.netflix.dynomitemanager.dynomite.DynomiteYamlTuneTask}: Write the
  * dynomite.yaml configuration file.
  * <li>{@link com.netflix.dynomitemanager.sidecore.backup.RestoreTask}: If
  * restore mode, then restore data from an object store (i.e. S3).
@@ -70,7 +70,7 @@ public class DynomiteManagerServer {
     private final IConfiguration config;
     private final InstanceIdentity id;
     private final Sleeper sleeper;
-    private final TuneTask tuneTask;
+    private final DynomiteYamlTuneTask tuneTask;
     private final IDynomiteProcess dynProcess;
     private final StorageProcessManager storageProcess;
     private final InstanceState state;
@@ -78,7 +78,7 @@ public class DynomiteManagerServer {
 
     @Inject
     public DynomiteManagerServer(IConfiguration config, TaskScheduler scheduler, InstanceIdentity id, Sleeper sleeper,
-	    TuneTask tuneTask, InstanceState state, IDynomiteProcess dynProcess, StorageProcessManager storageProcess) {
+	    DynomiteYamlTuneTask tuneTask, InstanceState state, IDynomiteProcess dynProcess, StorageProcessManager storageProcess) {
 
 	this.config = config;
 	this.scheduler = scheduler;
