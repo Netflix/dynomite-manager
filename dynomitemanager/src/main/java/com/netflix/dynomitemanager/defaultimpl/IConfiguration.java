@@ -286,6 +286,11 @@ public interface IConfiguration {
      */
     public String getCassandraClusterName();
 
+    /**
+     * Get the name of the keyspace that stores tokens for the Dynomite cluster.
+     *
+     * @return the keyspace name
+     */
     public String getCassandraKeyspaceName();
 
     /**

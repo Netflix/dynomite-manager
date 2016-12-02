@@ -154,7 +154,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // Cassandra is used for token management.
 
     private static final String CONFIG_CASSANDRA_CLUSTER_NAME = CASSANDRA_PROPS + ".cluster.name";
-    private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = DYNOMITEMANAGER_PRE + ".cassandra.keyspace.name";
+    private static final String CONFIG_CASSANDRA_KEYSPACE_NAME = CASSANDRA_PROPS + ".keyspace.name";
     private static final String CONFIG_CASSANDRA_THRIFT_PORT = CASSANDRA_PROPS + ".thrift.port";
     private static final String CONFIG_CASSANDRA_SEEDS = CASSANDRA_PROPS + ".seeds";
 
@@ -277,9 +277,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // ===================
 
     private static final String DEFAULT_CASSANDRA_CLUSTER_NAME = "cass_dyno";
-    private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
     private static final String DEFAULT_CASSANDRA_KEYSPACE_NAME = "dyno_bootstrap";
+    private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
     private static final String DEFAULT_CASSANDRA_SEEDS = "127.0.0.1"; // comma separated list
+
     private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
 
     // = instance identity meta data
@@ -760,7 +761,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     @Override
     public String getCassandraKeyspaceName() {
-	return configSource.get(CONFIG_CASSANDRA_KEYSPACE_NAME, DEFAULT_CASSANDRA_KEYSPACE_NAME);
+        return getStringProperty("DM_CASSANDRA_KEYSPACE_NAME", CONFIG_CASSANDRA_KEYSPACE_NAME,
+                DEFAULT_CASSANDRA_KEYSPACE_NAME);
     }
 
     @Override

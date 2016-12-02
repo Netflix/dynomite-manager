@@ -458,6 +458,27 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetCassandraKeyspaceName() throws Exception {
+        Assert.assertThat("Cassandra keyspace name = default", conf.getCassandraKeyspaceName(), is("dyno_bootstrap"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "tokens";
+            }
+        };
+        Assert.assertThat("Cassandra keyspace name = env var", conf.getCassandraKeyspaceName(), is("tokens"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Cassandra keyspace name = default", conf.getCassandraKeyspaceName(), is("dyno_bootstrap"));
+    }
+
+    @Test
     public void testGetCassandraSeeds() throws Exception {
         Assert.assertThat(conf.getCassandraSeeds(), is("127.0.0.1"));
 
