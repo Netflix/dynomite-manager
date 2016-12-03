@@ -18,7 +18,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.netflix.astyanax.connectionpool.Host;
-import com.netflix.dynomitemanager.monitoring.test.BlankConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.test.BlankConfiguration;
 import com.netflix.dynomitemanager.supplier.CassandraLocalHostsSupplier;
 
 import static org.hamcrest.CoreMatchers.is;

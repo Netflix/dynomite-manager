@@ -14,8 +14,8 @@ import org.junit.Test;
 
 import com.google.common.base.Supplier;
 import com.netflix.astyanax.connectionpool.Host;
+import com.netflix.dynomitemanager.defaultimpl.test.BlankConfiguration;
 import com.netflix.dynomitemanager.identity.InstanceDataDAOCassandra;
-import com.netflix.dynomitemanager.monitoring.test.BlankConfiguration;
 import com.netflix.dynomitemanager.supplier.HostSupplier;
 
 /**

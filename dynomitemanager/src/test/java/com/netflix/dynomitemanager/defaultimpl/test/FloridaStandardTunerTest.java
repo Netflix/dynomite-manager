@@ -24,7 +24,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.netflix.dynomitemanager.dynomite.DynomiteStandardTuner;
-import com.netflix.dynomitemanager.monitoring.test.BlankConfiguration;
 
 /**
  *
@@ -38,7 +37,6 @@ public class FloridaStandardTunerTest {
 
     @Test
     public void testWriteAllProperties() throws Exception {
-        // TODO: we need to a FakeInstanceState in the future.
         DynomiteStandardTuner tuner = new DynomiteStandardTuner(new BlankConfiguration(), new FakeInstanceIdentity(),
                 new FakeInstanceState(), new FakeStorageProxy());
 
