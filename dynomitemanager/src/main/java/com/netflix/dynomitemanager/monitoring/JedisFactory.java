@@ -18,8 +18,9 @@ import redis.clients.jedis.Jedis;
  * Jedis factory to provide a fresh Jedis connection all the time.
  *
  * @author diegopacheco
+ * @author ipapapa
  *
  */
 public interface JedisFactory {
-	public Jedis newInstance();
+    public Jedis newInstance(String hostname, int port);
 }

@@ -30,6 +30,7 @@ import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
+import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.dynomitemanager.sidecore.storage.RedisInfoParser;
 import com.netflix.servo.DefaultMonitorRegistry;
 import com.netflix.servo.monitor.Counter;
@@ -41,130 +42,137 @@ import com.netflix.servo.monitor.NumericMonitor;
 @Singleton
 public class RedisInfoMetricsTask extends Task {
 
-	private static final Logger Logger = LoggerFactory.getLogger(RedisInfoMetricsTask.class);
+    private static final Logger Logger = LoggerFactory.getLogger(RedisInfoMetricsTask.class);
 
-	private static final Set<String> COUNTER_LIST = new HashSet<String>();
+    private static final Set<String> COUNTER_LIST = new HashSet<String>();
 
-	static {
-		COUNTER_LIST.add("Redis_Stats_instantaneous_ops_per_sec");
-	}
+    static {
+        COUNTER_LIST.add("Redis_Stats_instantaneous_ops_per_sec");
+    }
 
-	// The Task name for identification
-	public static final String TaskName = "Redis-Info-Task";
+    // The Task name for identification
+    public static final String TaskName = "Redis-Info-Task";
 
-	private final ConcurrentHashMap<String, LongGauge> redisInfoGaugeMetrics = new ConcurrentHashMap<String, LongGauge>();
-	private final ConcurrentHashMap<String, NumericMonitor<Number>> redisInfoCounterMap = new ConcurrentHashMap<String, NumericMonitor<Number>>();
+    private final ConcurrentHashMap<String, LongGauge> redisInfoGaugeMetrics = new ConcurrentHashMap<String, LongGauge>();
+    private final ConcurrentHashMap<String, NumericMonitor<Number>> redisInfoCounterMap = new ConcurrentHashMap<String, NumericMonitor<Number>>();
 
-	private JedisFactory jedisFactory;
+    private JedisFactory jedisFactory;
+    private IStorageProxy storageProxy;
 
-	/**
-	 * Default constructor
-	 * @param config
-	 */
-	@Inject
-	public RedisInfoMetricsTask(IConfiguration config, JedisFactory jedisFactory) {
-		super(config);
-		this.jedisFactory = jedisFactory;
-	}
+    /**
+     * Default constructor
+     * 
+     * @param config
+     * @param storageProxy
+     * @param jedisFactory
+     */
+    @Inject
+    public RedisInfoMetricsTask(IConfiguration config, IStorageProxy storageProxy, JedisFactory jedisFactory) {
+        super(config);
+        this.jedisFactory = jedisFactory;
+        this.storageProxy = storageProxy;
+    }
 
-	@Override
-	public void execute() throws Exception {
-		Jedis jedis = jedisFactory.newInstance();
-		try {
-			jedis.connect();
-			String s = jedis.info();
+    @Override
+    public void execute() throws Exception {
+        Jedis jedis = jedisFactory.newInstance(storageProxy.getIpAddress(),storageProxy.getPort());
 
-			InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(s.getBytes()));
-			RedisInfoParser infoParser = new RedisInfoParser();
-			Map<String, Long> metrics = infoParser.parse(reader);
+        try {
+            jedis.connect();
+            String s = jedis.info();
 
-			processMetrics(metrics);
+            InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(s.getBytes()));
+            RedisInfoParser infoParser = new RedisInfoParser();
+            Map<String, Long> metrics = infoParser.parse(reader);
 
-		} catch (Exception e) {
-			Logger.error("Could not get jedis info metrics", e);
-		} finally {
-			jedis.disconnect();
-		}
-	}
+            processMetrics(metrics);
 
-	private void processMetrics(Map<String, Long> metrics) {
-		for (String key : metrics.keySet()) {
+        } catch (Exception e) {
+            Logger.error("Could not get jedis info metrics", e);
+        } finally {
+            jedis.disconnect();
+        }
+    }
 
-			Long value = metrics.get(key);
+    private void processMetrics(Map<String, Long> metrics) {
+        for (String key : metrics.keySet()) {
 
-			if (COUNTER_LIST.contains(key)) {
-				processCounterMetric(key, value);
-			} else {
-				processGaugeMetric(key, value);
-			}
-		}
-	}
+            Long value = metrics.get(key);
 
-	private void processGaugeMetric(String key, Long value) {
-		if (Logger.isDebugEnabled()) {
-			Logger.debug("Process gauge: " + key + " " + value);
-		}
+            if (COUNTER_LIST.contains(key)) {
+                processCounterMetric(key, value);
+            } else {
+                processGaugeMetric(key, value);
+            }
+        }
+    }
 
-		LongGauge oldGauge = redisInfoGaugeMetrics.get(key);
-		if (oldGauge != null) {
-			oldGauge.set(value);
-			return;
-		}
+    private void processGaugeMetric(String key, Long value) {
+        if (Logger.isDebugEnabled()) {
+            Logger.debug("Process gauge: " + key + " " + value);
+        }
 
-		// create a new long gauge
-		LongGauge newGauge = new LongGauge(MonitorConfig.builder(key).build());
+        LongGauge oldGauge = redisInfoGaugeMetrics.get(key);
+        if (oldGauge != null) {
+            oldGauge.set(value);
+            return;
+        }
 
-		oldGauge = redisInfoGaugeMetrics.putIfAbsent(key, newGauge);
-		if (oldGauge == null) {
-			newGauge.set(value);
-			DefaultMonitorRegistry.getInstance().register(newGauge);
-		} else {
-			// someone else beat us to it. just use the oldGauge
-			oldGauge.set(value);
-		}
-	}
+        // create a new long gauge
+        LongGauge newGauge = new LongGauge(MonitorConfig.builder(key).build());
 
-	private void processCounterMetric(String counterName, Long val) {
+        oldGauge = redisInfoGaugeMetrics.putIfAbsent(key, newGauge);
+        if (oldGauge == null) {
+            newGauge.set(value);
+            DefaultMonitorRegistry.getInstance().register(newGauge);
+        } else {
+            // someone else beat us to it. just use the oldGauge
+            oldGauge.set(value);
+        }
+    }
 
-		if (Logger.isDebugEnabled()) {
-			Logger.debug("Process counter: " + counterName + " " + val);
-		}
+    private void processCounterMetric(String counterName, Long val) {
 
-		NumericMonitor<Number> counter = redisInfoCounterMap.get(counterName);
-		if (counter != null) {
-			long increment = val - counter.getValue().longValue();
-			((Counter) counter).increment(increment);
-			return;
-		}
+        if (Logger.isDebugEnabled()) {
+            Logger.debug("Process counter: " + counterName + " " + val);
+        }
 
-		counter = Monitors.newCounter(counterName);
-		NumericMonitor<Number> oldCounter = redisInfoCounterMap.putIfAbsent(counterName, counter);
+        NumericMonitor<Number> counter = redisInfoCounterMap.get(counterName);
+        if (counter != null) {
+            long increment = val - counter.getValue().longValue();
+            ((Counter) counter).increment(increment);
+            return;
+        }
 
-		if (oldCounter == null) {
-			// this is the 1st time
-			DefaultMonitorRegistry.getInstance().register(counter);
-		} else {
-			// someone beat us to it, take their obj instead
-			counter = oldCounter;
-		}
+        counter = Monitors.newCounter(counterName);
+        NumericMonitor<Number> oldCounter = redisInfoCounterMap.putIfAbsent(counterName, counter);
 
-		long increment = val - counter.getValue().longValue();
-		((Counter) counter).increment(increment);
+        if (oldCounter == null) {
+            // this is the 1st time
+            DefaultMonitorRegistry.getInstance().register(counter);
+        } else {
+            // someone beat us to it, take their obj instead
+            counter = oldCounter;
+        }
 
-	}
+        long increment = val - counter.getValue().longValue();
+        ((Counter) counter).increment(increment);
 
-	@Override
-	public String getName() {
-		return TaskName;
-	}
+    }
 
-	/**
-	 * Returns a timer that enables this task to run once every 60 seconds
-	 * @return TaskTimer
-	 */
-	public static TaskTimer getTimer() {
-		// run once every 30 seconds
-		return new SimpleTimer(TaskName, 30 * 1000);
-	}
+    @Override
+    public String getName() {
+        return TaskName;
+    }
+
+    /**
+     * Returns a timer that enables this task to run once every 60 seconds
+     * 
+     * @return TaskTimer
+     */
+    public static TaskTimer getTimer() {
+        // run once every 30 seconds
+        return new SimpleTimer(TaskName, 30 * 1000);
+    }
 
 }

@@ -14,17 +14,16 @@ package com.netflix.dynomitemanager.dynomite;
 
 import java.io.IOException;
 
-import com.google.inject.ImplementedBy;
-
 /**
  * Interface to aid in starting and stopping Dynomite.
  */
-@ImplementedBy(DynomiteProcessManager.class)
 public interface IDynomiteProcess {
     void start() throws IOException;
 
     void stop() throws IOException;
 
     boolean dynomiteCheck();
+    
+    boolean dynomiteProcessCheck();
 
 }

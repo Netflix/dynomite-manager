@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
+import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
@@ -68,105 +69,87 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
     private final IConfiguration config;
     private final InstanceState instanceState;
     private final IStorageProxy storageProxy;
+    private final IDynomiteProcess dynomiteProcess;
 
     @Inject
-    protected ProcessMonitorTask(IConfiguration config, InstanceState instanceState, IStorageProxy storageProxy) {
-	super(config);
-	this.config = config;
-	this.instanceState = instanceState;
-	this.storageProxy = storageProxy;
+    protected ProcessMonitorTask(IConfiguration config, InstanceState instanceState, IStorageProxy storageProxy,
+            IDynomiteProcess dynomiteProcess) {
+        super(config);
+        this.config = config;
+        this.instanceState = instanceState;
+        this.storageProxy = storageProxy;
+        this.dynomiteProcess = dynomiteProcess;
     }
 
     @Override
     public void execute() throws Exception {
-	Stopwatch stopwatch = Stopwatch.createStarted();
-	if (instanceState.getIsProcessMonitoringSuspended()) {
-	    return;
-	}
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        if (instanceState.getIsProcessMonitoringSuspended()) {
+            return;
+        }
 
-	instanceState.setStorageProxyProcessAlive(checkProxyProcess());
-	//TODO: this will not work for Memcached
-	instanceState.setStorageProxyAlive(
-		JedisUtils.isAliveWithRetry(storageProxy.getIpAddress(), storageProxy.getPort()));
-	instanceState.setStorageAlive(storageProxy.isAlive());
-	logger.info(String.format("ProcessMonitor state: %s, time elapsted to check (micros): %s", instanceState,
-		stopwatch.elapsed(MICROSECONDS)));
+        instanceState.setStorageProxyProcessAlive(this.dynomiteProcess.dynomiteProcessCheck());
+        instanceState
+                .setStorageProxyAlive(JedisUtils.isAliveWithRetry(storageProxy.getIpAddress(), storageProxy.getPort()));
+        instanceState.setStorageAlive(storageProxy.isAlive());
+        logger.info(String.format("ProcessMonitor state: %s, time elapsted to check (micros): %s", instanceState,
+                stopwatch.elapsed(MICROSECONDS)));
 
-	/*
-	 * if((!instanceState.isStorageProxyAlive() &&
-	 * instanceState.isStorageProxyProcessAlive())) { if
-	 * (!instanceState.isStorageAlive()) { logger.
-	 * info("Stopping dynomite process isStorageAlive=false. Restarting dynomite will restart storage"
-	 * ); } else { logger.info("Stopping hung dynomite process."); }
-	 * dynProcess.stop(); }
-	 */
+        /*
+         * if((!instanceState.isStorageProxyAlive() &&
+         * instanceState.isStorageProxyProcessAlive())) { if
+         * (!instanceState.isStorageAlive()) { logger.
+         * info("Stopping dynomite process isStorageAlive=false. Restarting dynomite will restart storage"
+         * ); } else { logger.info("Stopping hung dynomite process."); }
+         * dynProcess.stop(); }
+         */
 
-	/*
-	 * if (instanceState.isBootstrapping()) { logger.
-	 * info("Instance is bootstrapping. Skipping further process checks.");
-	 * return; }
-	 *
-	 *
-	 * if (!instanceState.isStorageAlive()) {
-	 * if(instanceState.isStorageProxyAlive() ||
-	 * instanceState.isStorageProxyProcessAlive()) {
-	 * logger.info("Stopping Dynomite process before warm bootstrapping.");
-	 * dynProcess.stop(); }
-	 *
-	 * if (config.isWarmBootstrap()) {
-	 * logger.info("Warm bootstraping node. Scheduling BootstrapTask now!");
-	 * scheduler.runTaskNow(WarmBootstrapTask.class); } else { logger.
-	 * info("Cold bootstraping, launching dynomite and storage process.");
-	 * dynProcess.start(true); }
-	 *
-	 * logger.info(String.
-	 * format("After corrective action ProcessMonitor state: %s, time elapsed to check (micros): %s"
-	 * , instanceState, stopwatch.elapsed(MICROSECONDS))); } else
-	 * if(!instanceState.isStorageProxyAlive()) {
-	 * logger.info("Launching dynomite process."); // starts launch dynomite
-	 * script, which starts Redis if it's not already running.
-	 * dynProcess.start(true);
-	 *
-	 * logger.info(String.
-	 * format("After corrective action ProcessMonitor state: %s, time elapsted to check (micros): %s"
-	 * , instanceState, stopwatch.elapsed(MICROSECONDS))); }
-	 */
+        /*
+         * if (instanceState.isBootstrapping()) { logger.
+         * info("Instance is bootstrapping. Skipping further process checks.");
+         * return; }
+         *
+         *
+         * if (!instanceState.isStorageAlive()) {
+         * if(instanceState.isStorageProxyAlive() ||
+         * instanceState.isStorageProxyProcessAlive()) {
+         * logger.info("Stopping Dynomite process before warm bootstrapping.");
+         * dynProcess.stop(); }
+         *
+         * if (config.isWarmBootstrap()) {
+         * logger.info("Warm bootstraping node. Scheduling BootstrapTask now!");
+         * scheduler.runTaskNow(WarmBootstrapTask.class); } else { logger.
+         * info("Cold bootstraping, launching dynomite and storage process.");
+         * dynProcess.start(true); }
+         *
+         * logger.info(String.
+         * format("After corrective action ProcessMonitor state: %s, time elapsed to check (micros): %s"
+         * , instanceState, stopwatch.elapsed(MICROSECONDS))); } else
+         * if(!instanceState.isStorageProxyAlive()) {
+         * logger.info("Launching dynomite process."); // starts launch dynomite
+         * script, which starts Redis if it's not already running.
+         * dynProcess.start(true);
+         *
+         * logger.info(String.
+         * format("After corrective action ProcessMonitor state: %s, time elapsted to check (micros): %s"
+         * , instanceState, stopwatch.elapsed(MICROSECONDS))); }
+         */
 
-	stopwatch.stop();
+        stopwatch.stop();
 
-	if (logger.isDebugEnabled()) {
-	    logger.debug(String.format("Time to run the check (micros): %s", stopwatch.elapsed(MICROSECONDS)));
-	}
-    }
-
-    private boolean checkProxyProcess() {
-	try {
-	    String cmd = String.format("ps -ef | grep  '[/]apps/%1$s/bin/%1$s'", config.getDynomiteProcessName());
-	    String[] cmdArray = { "/bin/sh", "-c", cmd };
-	    logger.info("Running checkProxyProcess command: " + cmd);
-
-	    // This returns pid for the Dynomite process
-	    Process p = Runtime.getRuntime().exec(cmdArray);
-	    BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-	    String line = input.readLine();
-	    if (logger.isDebugEnabled()) {
-		logger.debug("Output from checkProxyProcess command: " + line);
-	    }
-	    return line != null;
-	} catch (Exception e) {
-	    logger.warn("Exception thrown while checking if the process is running or not ", e);
-	    return false;
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Time to run the check (micros): %s", stopwatch.elapsed(MICROSECONDS)));
+        }
     }
 
     // Start every 15 seconds.
     public static TaskTimer getTimer() {
-	return new SimpleTimer(JOBNAME, 15L * 1000);
+        return new SimpleTimer(JOBNAME, 15L * 1000);
     }
 
     @Override
     public String getName() {
-	return JOBNAME;
+        return JOBNAME;
     }
 
 }
