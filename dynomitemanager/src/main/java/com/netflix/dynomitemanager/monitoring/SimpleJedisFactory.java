@@ -18,16 +18,17 @@ import redis.clients.jedis.Jedis;
  * SimpleJedisFactory create a redis connection with jedis.
  *
  * @author diegopacheco
+ * @author ipapapa
  *
  */
 public class SimpleJedisFactory implements JedisFactory {
 
-	public SimpleJedisFactory() {
-	}
+    public SimpleJedisFactory() {
+    }
 
-	@Override
-	public Jedis newInstance() {
-		return new Jedis("localhost", 22122);
-	}
+    @Override
+    public Jedis newInstance(String hostname, int port) {
+        return new Jedis(hostname, port);
+    }
 
 }

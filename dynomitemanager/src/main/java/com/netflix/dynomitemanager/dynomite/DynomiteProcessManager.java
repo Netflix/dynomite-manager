@@ -27,10 +27,12 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -217,6 +219,29 @@ public class DynomiteProcessManager implements IDynomiteProcess {
 	}
 
 	return true;
+    }
+    
+    public boolean dynomiteProcessCheck() {
+        try
+        {
+            String cmd = String.format("ps -ef | grep  '[/]apps/%1$s/bin/%1$s'", config.getDynomiteProcessName());
+            String[] cmdArray = {"/bin/sh", "-c", cmd};
+            logger.debug("Running checkProxyProcess command: " + cmd);
+
+            // This returns pid for the Dynomite process
+            Process p = Runtime.getRuntime().exec(cmdArray);
+            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line = input.readLine();
+            if (logger.isDebugEnabled()) {
+                logger.debug("Output from checkProxyProcess command: " + line);
+            }
+            return line != null;
+        }
+        catch(Exception e)
+        {
+            logger.warn("Exception thrown while checking if the process is running or not ", e);
+            return false;
+        }
     }
 
 }

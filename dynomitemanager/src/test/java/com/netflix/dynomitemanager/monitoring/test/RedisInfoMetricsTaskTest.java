@@ -18,8 +18,10 @@ import org.junit.runner.RunWith;
 
 import com.netflix.dynomitemanager.defaultimpl.IConfiguration;
 import com.netflix.dynomitemanager.defaultimpl.test.BlankConfiguration;
+import com.netflix.dynomitemanager.defaultimpl.test.FakeStorageProxy;
 import com.netflix.dynomitemanager.monitoring.JedisFactory;
 import com.netflix.dynomitemanager.monitoring.RedisInfoMetricsTask;
+import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 import com.netflix.servo.DefaultMonitorRegistry;
 
 import mockit.Expectations;
@@ -31,6 +33,7 @@ import redis.clients.jedis.Jedis;
  * Tests for RedisInfoMetricsTask
  *
  * @author diegopacheco
+ * @author ipapapa
  *
  */
 @RunWith(JMockit.class)
@@ -39,37 +42,40 @@ public class RedisInfoMetricsTaskTest {
     @Mocked
     Jedis jedis;
 
-	@Test
-	public void executeTest() throws Exception {
+    @Test
+    public void executeTest() throws Exception {
 
-		int metricsCountSampleRedisInfo = 26;
+        int metricsCountSampleRedisInfo = 26;
 
-		File file = new File(new File(".").getCanonicalPath() + "/src/test/resources/redis_info.txt");
-		final String info = new String(Files.readAllBytes((Paths.get(file.getPath()))));
+        File file = new File(new File(".").getCanonicalPath() + "/src/test/resources/redis_info.txt");
+        final String info = new String(Files.readAllBytes((Paths.get(file.getPath()))));
 
-		new Expectations() {{
-			jedis.connect();
-			jedis.info();
-			result = info;
-			jedis.disconnect();
-		}};
+        new Expectations() {
+            {
+                jedis.connect();
+                jedis.info();
+                result = info;
+                jedis.disconnect();
+            }
+        };
 
-		JedisFactory jedisFactory = new JedisFactory() {
-			@Override
-			public Jedis newInstance() {
-				return jedis;
-			}
-		};
+        JedisFactory jedisFactory = new JedisFactory() {
+            @Override
+            public Jedis newInstance(String hostname, int port) {
+                return jedis;
+            }
+        };
 
-		IConfiguration iConfig = new BlankConfiguration();
+        IConfiguration iConfig = new BlankConfiguration();
+        IStorageProxy storageProxy = new FakeStorageProxy();
 
-		RedisInfoMetricsTask mimt = new RedisInfoMetricsTask(iConfig, jedisFactory);
-		mimt.execute();
+        RedisInfoMetricsTask mimt = new RedisInfoMetricsTask(iConfig, storageProxy, jedisFactory);
+        mimt.execute();
 
-		Assert.assertNotNull(DefaultMonitorRegistry.getInstance().getRegisteredMonitors());
-		Assert.assertEquals(metricsCountSampleRedisInfo,
-				DefaultMonitorRegistry.getInstance().getRegisteredMonitors().size());
+        Assert.assertNotNull(DefaultMonitorRegistry.getInstance().getRegisteredMonitors());
+        Assert.assertEquals(metricsCountSampleRedisInfo,
+                DefaultMonitorRegistry.getInstance().getRegisteredMonitors().size());
 
-	}
+    }
 
 }
