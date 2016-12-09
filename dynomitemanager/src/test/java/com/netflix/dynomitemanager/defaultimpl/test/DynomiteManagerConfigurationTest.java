@@ -584,6 +584,48 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("Redis conf = default", conf.getRedisConf(), is("/apps/nfredis/conf/redis.conf"));
     }
 
+    @Test
+    public void testGetRedisStartScript() throws Exception {
+        Assert.assertThat("Redis start script = default", conf.getRedisStartScript(), is("/apps/nfredis/bin/launch_nfredis.sh"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/init.d/redis";
+            }
+        };
+        Assert.assertThat("Redis start script = env var", conf.getRedisStartScript(), is("/etc/init.d/redis"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Redis start script = default", conf.getRedisStartScript(), is("/apps/nfredis/bin/launch_nfredis.sh"));
+    }
+
+    @Test
+    public void testGetRedisStopScript() throws Exception {
+        Assert.assertThat("Redis stop script = default", conf.getRedisStopScript(), is("/apps/nfredis/bin/kill_redis.sh"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/init.d/redis";
+            }
+        };
+        Assert.assertThat("Redis stop script = env var", conf.getRedisStopScript(), is("/etc/init.d/redis"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Redis stop script = default", conf.getRedisStopScript(), is("/apps/nfredis/bin/kill_redis.sh"));
+    }
+
     // Data store: ARDB with RocksDB
     // =============================
 

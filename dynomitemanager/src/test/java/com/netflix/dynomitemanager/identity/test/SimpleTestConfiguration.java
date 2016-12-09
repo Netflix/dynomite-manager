@@ -338,12 +338,12 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getRedisInitStart() {
+	public String getRedisStartScript() {
 		return null;
 	}
 
 	@Override
-	public String getRedisInitStop() {
+	public String getRedisStopScript() {
 		return null;
 	}
 

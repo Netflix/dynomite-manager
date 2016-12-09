@@ -331,19 +331,18 @@ public interface IConfiguration {
     public String getRedisConf();
 
     /**
-     * Get the full path to the Redis init start script, including any
-     * arguments.
+     * Get the full path to the Redis init start script, including any arguments.
      *
      * @return the full path of the Redis init start script
      */
-    public String getRedisInitStart();
+    public String getRedisStartScript();
 
     /**
      * Get the full path to the Redis init stop script, including any arguments.
      *
      * @return the full path of the Redis init stop script
      */
-    public String getRedisInitStop();
+    public String getRedisStopScript();
 
     /**
      * Determines whether or not Redis will save data to disk.

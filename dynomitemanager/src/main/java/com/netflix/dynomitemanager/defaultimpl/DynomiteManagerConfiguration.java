@@ -175,6 +175,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // =================
 
     private static final String CONFIG_REDIS_CONF = REDIS_PROPS + ".conf";
+    private static final String CONFIG_REDIS_START_SCRIPT = REDIS_PROPS + ".start.script";
+    private static final String CONFIG_REDIS_STOP_SCRIPT = REDIS_PROPS + ".stop.script";
 
     // Data store: ARDB with RocksDB
     // =============================
@@ -300,6 +302,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // ===========================
 
     private static final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
+    private static final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
+    private static final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
 
     // Defaults: Data store: ARDB with RocksDB
     // =======================================
@@ -817,17 +821,13 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getRedisInitStart() {
-        final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
-        final String CONFIG_REDIS_START_SCRIPT = DYNOMITEMANAGER_PRE + ".redis.init.start";
-        return configSource.get(CONFIG_REDIS_START_SCRIPT, DEFAULT_REDIS_START_SCRIPT);
+    public String getRedisStartScript() {
+        return getStringProperty("DM_REDIS_START_SCRIPT", CONFIG_REDIS_START_SCRIPT, DEFAULT_REDIS_START_SCRIPT);
     }
 
     @Override
-    public String getRedisInitStop() {
-        final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
-        final String CONFIG_REDIS_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".redis.init.stop";
-        return configSource.get(CONFIG_REDIS_STOP_SCRIPT, DEFAULT_REDIS_STOP_SCRIPT);
+    public String getRedisStopScript() {
+        return getStringProperty("DM_REDIS_STOP_SCRIPT", CONFIG_REDIS_STOP_SCRIPT, DEFAULT_REDIS_STOP_SCRIPT);
     }
 
     @Override
