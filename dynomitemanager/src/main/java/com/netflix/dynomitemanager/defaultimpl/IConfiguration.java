@@ -414,6 +414,11 @@ public interface IConfiguration {
      */
     public String getArdbRocksDBStopScript();
 
-    public int getWriteBufferSize();
+    /**
+     * Get the ARDB RocksDB write buffer size in MB.
+     *
+     * @return the RocksDB write buffer size in MB
+     */
+    public int getArdbRocksDBWriteBufferSize();
 
 }

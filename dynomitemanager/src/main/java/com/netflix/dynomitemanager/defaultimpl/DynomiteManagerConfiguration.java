@@ -181,7 +181,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
             ARDB_ROCKSDB_PROPS + ".min.write.buffer.number.to.merge";
     private static final String CONFIG_ARDB_ROCKSDB_START_SCRIPT = ARDB_ROCKSDB_PROPS + ".start.script";
     private static final String CONFIG_ARDB_ROCKSDB_STOP_SCRIPT = ARDB_ROCKSDB_PROPS + ".stop.script";
-    private static final String CONFIG_WRITE_BUFFER_SIZE_MB = ARDB_ROCKSDB_PROPS + ".write.buffer.mb";
+    private static final String CONFIG_ARDB_ROCKSDB_WRITE_BUFFER_SIZE = ARDB_ROCKSDB_PROPS + ".write.buffer.size";
 
 
 
@@ -299,7 +299,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final int DEFAULT_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE = 4;
     private static final String DEFAULT_ARDB_ROCKSDB_START_SCRIPT = "/apps/ardb/bin/launch_ardb.sh";
     private static final String DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT = "/apps/ardb/bin/kill_ardb.sh";
-    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
+    private static final int DEFAULT_ARDB_ROCKSDB_WRITE_BUFFER_SIZE = 128; // MB
 
 
     private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
@@ -859,8 +859,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_SERVER, DEFAULT_REDIS_COMPATIBLE_SERVER);
     }
 
-    // Storage engine: ARDB with RocksDB
-    // =================================
+    // Data store: ARDB with RocksDB
+    // =============================
 
     @Override
     public String getArdbRocksDBConf() {
@@ -892,8 +892,9 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getWriteBufferSize() {
-        return configSource.get(CONFIG_WRITE_BUFFER_SIZE_MB,DEFAULT_WRITE_BUFFER_SIZE_MB);
+    public int getArdbRocksDBWriteBufferSize() {
+        return getIntProperty("DM_ARDB_ROCKSDB_WRITE_BUFFER_SIZE", CONFIG_ARDB_ROCKSDB_WRITE_BUFFER_SIZE,
+                DEFAULT_ARDB_ROCKSDB_WRITE_BUFFER_SIZE);
     }
 
 }

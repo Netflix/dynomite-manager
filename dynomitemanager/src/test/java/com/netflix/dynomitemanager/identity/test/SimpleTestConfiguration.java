@@ -366,7 +366,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getWriteBufferSize() {
+	public int getArdbRocksDBWriteBufferSize() {
 	    return 0;
 	}
 

@@ -537,11 +537,11 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("Cassandra thrift port = default", conf.getCassandraThriftPort(), is(9160));
     }
 
-    // Storage engine (aka backend)
-    // ============================
+    // Data store (aka backend)
+    // ========================
 
     @Test
-    public void testGetStorageMaxMemoryPercent() throws Exception {
+    public void testGetDatastoreMaxMemoryPercent() throws Exception {
         Assert.assertThat("storage max memory percent = default", conf.getDatastoreMaxMemoryPercent(), is(85));
 
         new MockUp<System>() {
@@ -560,8 +560,8 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("storage max memory percent = default", conf.getDatastoreMaxMemoryPercent(), is(85));
     }
 
-    // Storage engine: ARDB with RocksDB
-    // =================================
+    // Data store: ARDB with RocksDB
+    // =============================
 
     @Test
     public void testGetArdbRocksDBConf() throws Exception {
@@ -664,6 +664,27 @@ public class DynomiteManagerConfigurationTest {
             }
         };
         Assert.assertThat("ARDB RocksDB stop script = default", conf.getArdbRocksDBStopScript(), is("/apps/ardb/bin/kill_ardb.sh"));
+    }
+
+    @Test
+    public void testGetArdbRocksDBWriteBufferSize() throws Exception {
+        Assert.assertThat("ARDB RocksDB write buffer size in MB = default", conf.getArdbRocksDBWriteBufferSize(), is(128));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "256";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB write buffer size in MB = env var", conf.getArdbRocksDBWriteBufferSize(), is(256));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB write buffer size in MB = default", conf.getArdbRocksDBWriteBufferSize(), is(128));
     }
 
 }
