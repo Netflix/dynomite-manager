@@ -769,6 +769,13 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     @Override
     public String getCassandraSeeds() {
+        // Maintain backward compatibility for env var
+        String clusterNameOldEnvVar = System.getenv("DM_CASSANDRA_CLUSTER_SEEDS");
+        if (clusterNameOldEnvVar != null && !"".equals(clusterNameOldEnvVar)) {
+            logger.warn("DM_CASSANDRA_CLUSTER_SEEDS is deprecated. Use DM_CASSANDRA_SEEDS.");
+            return clusterNameOldEnvVar;
+        }
+
         return getStringProperty("DM_CASSANDRA_SEEDS", CONFIG_CASSANDRA_SEEDS, DEFAULT_CASSANDRA_SEEDS);
     }
 
