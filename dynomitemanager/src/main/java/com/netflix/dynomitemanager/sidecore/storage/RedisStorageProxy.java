@@ -646,7 +646,7 @@ public class RedisStorageProxy implements IStorageProxy {
      * @return the maximum amount of storage available for Redis or Memcached in KB.
      */
     public long getStoreMaxMem() {
-	int memPct = config.getStorageMaxMemoryPercent();
+	int memPct = config.getDatastoreMaxMemoryPercent();
 	// Long is big enough for the amount of ram is all practical systems
 	// that we deal with.
 	long totalMem = getTotalAvailableSystemMemory();

@@ -542,7 +542,7 @@ public class DynomiteManagerConfigurationTest {
 
     @Test
     public void testGetStorageMaxMemoryPercent() throws Exception {
-        Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
+        Assert.assertThat("storage max memory percent = default", conf.getDatastoreMaxMemoryPercent(), is(85));
 
         new MockUp<System>() {
             @Mock
@@ -550,14 +550,14 @@ public class DynomiteManagerConfigurationTest {
                 return "70";
             }
         };
-        Assert.assertThat("storage max memory percent = env var", conf.getStorageMaxMemoryPercent(), is(70));
+        Assert.assertThat("storage max memory percent = env var", conf.getDatastoreMaxMemoryPercent(), is(70));
         new MockUp<System>() {
             @Mock
             String getenv(String name) {
                 return "not-a-number";
             }
         };
-        Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
+        Assert.assertThat("storage max memory percent = default", conf.getDatastoreMaxMemoryPercent(), is(85));
     }
 
     // Storage engine: ARDB with RocksDB

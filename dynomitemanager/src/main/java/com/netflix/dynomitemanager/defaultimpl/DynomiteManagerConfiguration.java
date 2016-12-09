@@ -63,10 +63,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     public static final String REDIS_PREFIX = "redis";
     public static final String ARDB_PREFIX = "ardb";
     public static final String ROCKSDB_PREFIX = "rocksdb";
-    public static final String STORAGE_PREFIX = "storage"; // Storage engine (aka backend)
+    public static final String DATASTORE_PREFIX = "datastore"; // Storage engine (aka backend)
 
     public static final String DYNOMITE_PROPS = DYNOMITEMANAGER_PRE + "." + DYNOMITE_PREFIX;
-    public static final String STORAGE_PROPS = DYNOMITEMANAGER_PRE + "." + STORAGE_PREFIX;
+    public static final String DATASTORE_PROPS = DYNOMITEMANAGER_PRE + "." + DATASTORE_PREFIX;
     public static final String REDIS_PROPS = DYNOMITEMANAGER_PRE + "." + REDIS_PREFIX;
     public static final String ARDB_PROPS = DYNOMITEMANAGER_PRE + "." + ARDB_PREFIX;
     public static final String ARDB_ROCKSDB_PROPS = ARDB_PROPS + "." + ROCKSDB_PREFIX;
@@ -165,11 +165,11 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_CASSANDRA_SEEDS = CASSANDRA_PROPS + ".seeds";
     private static final String CONFIG_CASSANDRA_THRIFT_PORT = CASSANDRA_PROPS + ".thrift.port";
 
-    // Storage engine (aka backend)
-    // ============================
+    // Data store (aka backend)
+    // ========================
 
     // The max percentage of system memory to be allocated to the backend data storage engine (ex. Redis, ARDB).
-    private static final String CONFIG_STORAGE_MAX_MEMORY_PERCENT = STORAGE_PROPS + ".max.memory.percent";
+    private static final String CONFIG_DATASTORE_MAX_MEMORY_PERCENT = DATASTORE_PROPS + ".max.memory.percent";
 
     // Storage engine: ARDB with RocksDB
     // =================================
@@ -675,12 +675,12 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_MAX_TIME_BOOTSTRAP, 900000);
     }
 
-    // Storage engine (aka backend)
-    // ============================
+    // Data store (aka backend)
+    // ========================
 
     @Override
-    public int getStorageMaxMemoryPercent() {
-        return getIntProperty("DM_STORAGE_MAX_MEMORY_PERCENT", CONFIG_STORAGE_MAX_MEMORY_PERCENT, 85);
+    public int getDatastoreMaxMemoryPercent() {
+        return getIntProperty("DM_DATASTORE_MAX_MEMORY_PERCENT", CONFIG_DATASTORE_MAX_MEMORY_PERCENT, 85);
     }
 
     public boolean isVpc() {

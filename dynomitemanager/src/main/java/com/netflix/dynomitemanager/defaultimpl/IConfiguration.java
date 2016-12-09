@@ -235,15 +235,15 @@ public interface IConfiguration {
 
     public int getMaxTimeToBootstrap();
 
-    // Storage engine (aka backend)
-    // ============================
+    // Data store (aka backend)
+    // ========================
 
     /**
      * Get the maximum percentage of system memory to be allocated to the backend storage engine, such as Redis or ARDB.
      *
      * @return the max percentage of memory allocated to the storage engine
      */
-    public int getStorageMaxMemoryPercent();
+    public int getDatastoreMaxMemoryPercent();
 
     // VPC
     public boolean isVpc();
