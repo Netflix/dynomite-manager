@@ -174,6 +174,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // Storage engine: ARDB with RocksDB
     // =================================
 
+    private static final String CONFIG_ARDB_ROCKSDB_CONF = ARDB_ROCKSDB_PROPS + ".conf";
     private static final String CONFIG_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER =
             ARDB_ROCKSDB_PROPS + ".max.write.buffer.number";
     private static final String CONFIG_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE =
@@ -290,6 +291,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // Defaults: Storage engine: ARDB with RocksDB
     // ===========================================
 
+    private static final String DEFAULT_ARDB_ROCKSDB_CONF = "/apps/ardb/conf/rocksdb.conf";
     private static final int DEFAULT_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER = 16;
     private static final int DEFAULT_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE = 4;
     private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
@@ -857,9 +859,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     @Override
     public String getArdbRocksDBConf() {
-        String DEFAULT_ARDB_ROCKSDB_CONF = "/apps/ardb/conf/rocksdb.conf";
-        final String CONFIG_ARDB_ROCKSDB_CONF = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.conf";
-        return configSource.get(CONFIG_ARDB_ROCKSDB_CONF, DEFAULT_ARDB_ROCKSDB_CONF);
+        return getStringProperty("DM_ARDB_ROCKSDB_CONF", CONFIG_ARDB_ROCKSDB_CONF, DEFAULT_ARDB_ROCKSDB_CONF);
     }
 
     @Override

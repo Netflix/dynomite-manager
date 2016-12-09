@@ -564,6 +564,27 @@ public class DynomiteManagerConfigurationTest {
     // =================================
 
     @Test
+    public void testGetArdbRocksDBConf() throws Exception {
+        Assert.assertThat("ARDB RocksDB conf = default", conf.getArdbRocksDBConf(), is("/apps/ardb/conf/rocksdb.conf"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/ardb/rocksdb.conf";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB conf = env var", conf.getArdbRocksDBConf(), is("/etc/ardb/rocksdb.conf"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("ARDB RocksDB conf = default", conf.getArdbRocksDBConf(), is("/apps/ardb/conf/rocksdb.conf"));
+    }
+
+    @Test
     public void testGetArdbRocksDBMaxWriteBufferNumber() throws Exception {
         Assert.assertThat("ARDB RocksDB max write buffer number = default", conf.getArdbRocksDBMaxWriteBufferNumber(), is(16));
 
