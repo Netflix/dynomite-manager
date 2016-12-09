@@ -347,8 +347,7 @@ public interface IConfiguration {
     /**
      * Determines whether or not Redis will save data to disk.
      *
-     * @return true if Redis should persist in-memory data to disk or false if
-     *         Redis should only store data in-memory
+     * @return true if Redis should persist in-memory data to disk or false if Redis should only store data in-memory
      */
     public boolean isRedisPersistenceEnabled();
 

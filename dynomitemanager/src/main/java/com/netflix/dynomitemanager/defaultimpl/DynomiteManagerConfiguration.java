@@ -175,6 +175,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // =================
 
     private static final String CONFIG_REDIS_CONF = REDIS_PROPS + ".conf";
+    private static final String CONFIG_REDIS_PERSISTENCE_ENABLED = REDIS_PROPS + ".persistence.enabled";
     private static final String CONFIG_REDIS_START_SCRIPT = REDIS_PROPS + ".start.script";
     private static final String CONFIG_REDIS_STOP_SCRIPT = REDIS_PROPS + ".stop.script";
 
@@ -302,6 +303,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // ===========================
 
     private static final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
+    private static final boolean DEFAULT_REDIS_PERSISTENCE_ENABLED = false;
     private static final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
     private static final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
 
@@ -832,9 +834,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 
     @Override
     public boolean isRedisPersistenceEnabled() {
-        final boolean DEFAULT_REDIS_PERSISTENCE_ENABLED = false;
-        final String CONFIG_REDIS_PERSISTENCE_ENABLED = DYNOMITEMANAGER_PRE + ".dyno.persistence.enabled";
-        return configSource.get(CONFIG_REDIS_PERSISTENCE_ENABLED, DEFAULT_REDIS_PERSISTENCE_ENABLED);
+        return getBooleanProperty("DM_REDIS_PERSISTENCE_ENABLED", CONFIG_REDIS_PERSISTENCE_ENABLED,
+                DEFAULT_REDIS_PERSISTENCE_ENABLED);
     }
 
     @Override

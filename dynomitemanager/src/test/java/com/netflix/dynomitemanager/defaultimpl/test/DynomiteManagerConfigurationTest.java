@@ -626,6 +626,26 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("Redis stop script = default", conf.getRedisStopScript(), is("/apps/nfredis/bin/kill_redis.sh"));
     }
 
+    @Test
+    public void testIsRedisPersistenceEnabled() throws Exception {
+        Assert.assertThat("Redis persistence = default", conf.isRedisPersistenceEnabled(), is(false));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "true";
+            }
+        };
+        Assert.assertThat("Redis persistence = env var", conf.isRedisPersistenceEnabled(), is(true));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Redis persistence = default", conf.isRedisPersistenceEnabled(), is(false));
+    }
+
     // Data store: ARDB with RocksDB
     // =============================
 
