@@ -175,6 +175,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // =================
 
     private static final String CONFIG_REDIS_CONF = REDIS_PROPS + ".conf";
+    private static final String CONFIG_REDIS_DATA_DIR = REDIS_PROPS + ".data.dir";
     private static final String CONFIG_REDIS_PERSISTENCE_ENABLED = REDIS_PROPS + ".persistence.enabled";
     private static final String CONFIG_REDIS_START_SCRIPT = REDIS_PROPS + ".start.script";
     private static final String CONFIG_REDIS_STOP_SCRIPT = REDIS_PROPS + ".stop.script";
@@ -303,6 +304,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // ===========================
 
     private static final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
+    private static final String DEFAULT_REDIS_DATA_DIR = "/mnt/data/nfredis";
     private static final boolean DEFAULT_REDIS_PERSISTENCE_ENABLED = false;
     private static final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
     private static final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
@@ -823,6 +825,11 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
+    public String getRedisDataDir() {
+        return getStringProperty("DM_REDIS_DATA_DIR", CONFIG_REDIS_DATA_DIR, DEFAULT_REDIS_DATA_DIR);
+    }
+
+    @Override
     public String getRedisStartScript() {
         return getStringProperty("DM_REDIS_START_SCRIPT", CONFIG_REDIS_START_SCRIPT, DEFAULT_REDIS_START_SCRIPT);
     }
@@ -836,13 +843,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     public boolean isRedisPersistenceEnabled() {
         return getBooleanProperty("DM_REDIS_PERSISTENCE_ENABLED", CONFIG_REDIS_PERSISTENCE_ENABLED,
                 DEFAULT_REDIS_PERSISTENCE_ENABLED);
-    }
-
-    @Override
-    public String getRedisDataDir() {
-        final String DEFAULT_REDIS_DATA_DIR = "/mnt/data/nfredis";
-        final String CONFIG_REDIS_DATA_DIR = DYNOMITEMANAGER_PRE + ".dyno.persistence.directory";
-        return configSource.get(CONFIG_REDIS_DATA_DIR, DEFAULT_REDIS_DATA_DIR);
     }
 
     @Override

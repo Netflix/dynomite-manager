@@ -585,6 +585,27 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetRedisDataDir() throws Exception {
+        Assert.assertThat("Redis data dir = default", conf.getRedisDataDir(), is("/mnt/data/nfredis"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/usr/share/redis";
+            }
+        };
+        Assert.assertThat("Redis data dir = env var", conf.getRedisDataDir(), is("/usr/share/redis"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Redis data dir = default", conf.getRedisDataDir(), is("/mnt/data/nfredis"));
+    }
+
+    @Test
     public void testGetRedisStartScript() throws Exception {
         Assert.assertThat("Redis start script = default", conf.getRedisStartScript(), is("/apps/nfredis/bin/launch_nfredis.sh"));
 
