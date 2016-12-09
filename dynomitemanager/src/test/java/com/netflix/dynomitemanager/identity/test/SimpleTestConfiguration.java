@@ -356,12 +356,12 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getArdbRocksDBInitStart() {
+	public String getArdbRocksDBStartScript() {
 		return null;
 	}
 
 	@Override
-	public String getArdbRocksDBInitStop() {
+	public String getArdbRocksDBStopScript() {
 		return null;
 	}
 

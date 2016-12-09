@@ -387,20 +387,6 @@ public interface IConfiguration {
     public String getArdbRocksDBConf();
 
     /**
-     * Get the full path to the ARDB RocksDB init start script, including any arguments.
-     *
-     * @return the full path of the ARDB RocksDB init start script
-     */
-    public String getArdbRocksDBInitStart();
-
-    /**
-     * Get the full path to the ARDB RocksDB init stop script, including any arguments.
-     *
-     * @return the full path of the ARDB RocksDB init stop script
-     */
-    public String getArdbRocksDBInitStop();
-
-    /**
      * Get the maximum number of memtables used by RocksDB. This number includes both active and immutable memtables.
      *
      * @return the maximum number of memtables
@@ -413,6 +399,20 @@ public interface IConfiguration {
      * @return the minimum number of memtables that must exist before a flush occurs
      */
     public int getArdbRocksDBMinWriteBuffersToMerge();
+
+    /**
+     * Get the full path to the ARDB RocksDB init start script, including any arguments.
+     *
+     * @return the full path of the ARDB RocksDB init start script
+     */
+    public String getArdbRocksDBStartScript();
+
+    /**
+     * Get the full path to the ARDB RocksDB init stop script, including any arguments.
+     *
+     * @return the full path of the ARDB RocksDB init stop script
+     */
+    public String getArdbRocksDBStopScript();
 
     public int getWriteBufferSize();
 

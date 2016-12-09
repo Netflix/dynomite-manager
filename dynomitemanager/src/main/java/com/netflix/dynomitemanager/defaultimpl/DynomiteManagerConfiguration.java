@@ -179,7 +179,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
             ARDB_ROCKSDB_PROPS + ".max.write.buffer.number";
     private static final String CONFIG_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE =
             ARDB_ROCKSDB_PROPS + ".min.write.buffer.number.to.merge";
+    private static final String CONFIG_ARDB_ROCKSDB_START_SCRIPT = ARDB_ROCKSDB_PROPS + ".start.script";
+    private static final String CONFIG_ARDB_ROCKSDB_STOP_SCRIPT = ARDB_ROCKSDB_PROPS + ".stop.script";
     private static final String CONFIG_WRITE_BUFFER_SIZE_MB = ARDB_ROCKSDB_PROPS + ".write.buffer.mb";
+
 
 
     // Eureka
@@ -294,6 +297,8 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String DEFAULT_ARDB_ROCKSDB_CONF = "/apps/ardb/conf/rocksdb.conf";
     private static final int DEFAULT_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER = 16;
     private static final int DEFAULT_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE = 4;
+    private static final String DEFAULT_ARDB_ROCKSDB_START_SCRIPT = "/apps/ardb/bin/launch_ardb.sh";
+    private static final String DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT = "/apps/ardb/bin/kill_ardb.sh";
     private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
 
 
@@ -863,20 +868,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getArdbRocksDBInitStart() {
-        final String DEFAULT_ARDB_ROCKSDB_START_SCRIPT = "/apps/ardb/bin/launch_ardb.sh";
-        final String CONFIG_ARDB_ROCKSDB_START_SCRIPT = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.init.start";
-        return configSource.get(CONFIG_ARDB_ROCKSDB_START_SCRIPT, DEFAULT_ARDB_ROCKSDB_START_SCRIPT);
-    }
-
-    @Override
-    public String getArdbRocksDBInitStop() {
-        final String DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT = "/apps/ardb/bin/kill_ardb.sh";
-        final String CONFIG_ARDB_ROCKSDB_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.init.stop";
-        return configSource.get(CONFIG_ARDB_ROCKSDB_STOP_SCRIPT, DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT);
-    }
-
-    @Override
     public int getArdbRocksDBMaxWriteBufferNumber() {
         return getIntProperty("DM_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER", CONFIG_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER,
                 DEFAULT_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER);
@@ -886,6 +877,18 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     public int getArdbRocksDBMinWriteBuffersToMerge() {
         return getIntProperty("DM_ARDB_ROCKSDB_MIN_WRITE_BUFFER_NUMBER_TO_MERGE",
                 CONFIG_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE, DEFAULT_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE);
+    }
+
+    @Override
+    public String getArdbRocksDBStartScript() {
+        return getStringProperty("DM_ARDB_ROCKSDB_START_SCRIPT", CONFIG_ARDB_ROCKSDB_START_SCRIPT,
+                DEFAULT_ARDB_ROCKSDB_START_SCRIPT);
+    }
+
+    @Override
+    public String getArdbRocksDBStopScript() {
+        return getStringProperty("DM_ARDB_ROCKSDB_STOP_SCRIPT", CONFIG_ARDB_ROCKSDB_STOP_SCRIPT,
+                DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT);
     }
 
     @Override

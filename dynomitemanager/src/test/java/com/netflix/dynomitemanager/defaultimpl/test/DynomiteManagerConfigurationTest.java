@@ -624,4 +624,46 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("ARDB RocksDB min memtables before flush = default", conf.getArdbRocksDBMinWriteBuffersToMerge(), is(4));
     }
 
+    @Test
+    public void testGetArdbRocksDBStartScript() throws Exception {
+        Assert.assertThat("ARDB RocksDB start script = default", conf.getArdbRocksDBStartScript(), is("/apps/ardb/bin/launch_ardb.sh"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/init.d/ardb";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB start script = env var", conf.getArdbRocksDBStartScript(), is("/etc/init.d/ardb"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("ARDB RocksDB start script = default", conf.getArdbRocksDBStartScript(), is("/apps/ardb/bin/launch_ardb.sh"));
+    }
+
+    @Test
+    public void testGetArdbRocksDBStopScript() throws Exception {
+        Assert.assertThat("ARDB RocksDB stop script = default", conf.getArdbRocksDBStopScript(), is("/apps/ardb/bin/kill_ardb.sh"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/init.d/ardb";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB stop script = env var", conf.getArdbRocksDBStopScript(), is("/etc/init.d/ardb"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("ARDB RocksDB stop script = default", conf.getArdbRocksDBStopScript(), is("/apps/ardb/bin/kill_ardb.sh"));
+    }
+
 }
