@@ -171,8 +171,13 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // The max percentage of system memory to be allocated to the backend data storage engine (ex. Redis, ARDB).
     private static final String CONFIG_DATASTORE_MAX_MEMORY_PERCENT = DATASTORE_PROPS + ".max.memory.percent";
 
-    // Storage engine: ARDB with RocksDB
-    // =================================
+    // Data store: Redis
+    // =================
+
+    private static final String CONFIG_REDIS_CONF = REDIS_PROPS + ".conf";
+
+    // Data store: ARDB with RocksDB
+    // =============================
 
     private static final String CONFIG_ARDB_ROCKSDB_CONF = ARDB_ROCKSDB_PROPS + ".conf";
     private static final String CONFIG_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER =
@@ -291,8 +296,13 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String DEFAULT_CASSANDRA_SEEDS = "127.0.0.1"; // comma separated list
     private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
 
-    // Defaults: Storage engine: ARDB with RocksDB
-    // ===========================================
+    // Defaults: Data store: Redis
+    // ===========================
+
+    private static final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
+
+    // Defaults: Data store: ARDB with RocksDB
+    // =======================================
 
     private static final String DEFAULT_ARDB_ROCKSDB_CONF = "/apps/ardb/conf/rocksdb.conf";
     private static final int DEFAULT_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER = 16;
@@ -798,14 +808,12 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED, DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED);
     }
 
-    // Redis
-    // =====
+    // Data store: Redis
+    // =================
 
     @Override
     public String getRedisConf() {
-        final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
-        final String CONFIG_REDIS_CONF = DYNOMITEMANAGER_PRE + ".redis.conf";
-        return configSource.get(CONFIG_REDIS_CONF, DEFAULT_REDIS_CONF);
+        return getStringProperty("DM_REDIS_CONF", CONFIG_REDIS_CONF, DEFAULT_REDIS_CONF);
     }
 
     @Override

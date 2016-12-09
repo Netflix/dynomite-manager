@@ -560,6 +560,30 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("storage max memory percent = default", conf.getDatastoreMaxMemoryPercent(), is(85));
     }
 
+    // Data store: Redis
+    // =================
+
+    @Test
+    public void testGetRedisConf() throws Exception {
+        Assert.assertThat("Redis conf = default", conf.getRedisConf(), is("/apps/nfredis/conf/redis.conf"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/redis/redis.conf";
+            }
+        };
+        Assert.assertThat("Redis conf = env var", conf.getRedisConf(), is("/etc/redis/redis.conf"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Redis conf = default", conf.getRedisConf(), is("/apps/nfredis/conf/redis.conf"));
+    }
+
     // Data store: ARDB with RocksDB
     // =============================
 
