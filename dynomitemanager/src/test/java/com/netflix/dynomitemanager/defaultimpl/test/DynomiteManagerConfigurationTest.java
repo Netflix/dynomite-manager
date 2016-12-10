@@ -20,9 +20,7 @@ import com.netflix.dynomitemanager.sidecore.ICredential;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 
-import mockit.Mock;
-import mockit.MockUp;
-import mockit.Mocked;
+import mockit.*;
 import mockit.integration.junit4.JMockit;
 import org.junit.Assert;
 import org.junit.Before;
@@ -606,6 +604,27 @@ public class DynomiteManagerConfigurationTest {
     }
 
     @Test
+    public void testGetRedisPersistenceType() throws Exception {
+        Assert.assertThat("Redis persistence type = default", conf.getRedisPersistenceType(), is("aof"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "rdb";
+            }
+        };
+        Assert.assertThat("Redis persistence type = env var", conf.getRedisPersistenceType(), is("rdb"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Redis persistence type = default", conf.getRedisPersistenceType(), is("aof"));
+    }
+
+    @Test
     public void testGetRedisStartScript() throws Exception {
         Assert.assertThat("Redis start script = default", conf.getRedisStartScript(), is("/apps/nfredis/bin/launch_nfredis.sh"));
 
@@ -645,6 +664,20 @@ public class DynomiteManagerConfigurationTest {
             }
         };
         Assert.assertThat("Redis stop script = default", conf.getRedisStopScript(), is("/apps/nfredis/bin/kill_redis.sh"));
+    }
+
+    @Test
+    public void testIsRedisAofEnabled() throws Exception {
+
+        new StrictExpectations(conf) {{
+            conf.getRedisPersistenceType(); result = "aof";
+            conf.getRedisPersistenceType(); result = "rdb";
+            conf.getRedisPersistenceType(); result = "junk";
+        }};
+
+        Assert.assertThat("Redis aof enabled = aof", conf.isRedisAofEnabled(), is(true));
+        Assert.assertThat("Redis aof enabled = rdb", conf.isRedisAofEnabled(), is(false));
+        Assert.assertThat("Redis aof enabled = junk", conf.isRedisAofEnabled(), is(false));
     }
 
     @Test

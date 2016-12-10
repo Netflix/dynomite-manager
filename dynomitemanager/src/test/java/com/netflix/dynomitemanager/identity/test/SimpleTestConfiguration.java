@@ -41,7 +41,12 @@ public class SimpleTestConfiguration implements IConfiguration {
 		return false;
 	}
 
-	@Override
+    @Override
+    public String getRedisPersistenceType() {
+        return null;
+    }
+
+    @Override
 	public boolean isDynomiteMultiDC() {
 		return false;
 	}

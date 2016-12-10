@@ -177,6 +177,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_REDIS_CONF = REDIS_PROPS + ".conf";
     private static final String CONFIG_REDIS_DATA_DIR = REDIS_PROPS + ".data.dir";
     private static final String CONFIG_REDIS_PERSISTENCE_ENABLED = REDIS_PROPS + ".persistence.enabled";
+    private static final String CONFIG_REDIS_PERSISTENCE_TYPE = REDIS_PROPS + ".persistence.type";
     private static final String CONFIG_REDIS_START_SCRIPT = REDIS_PROPS + ".start.script";
     private static final String CONFIG_REDIS_STOP_SCRIPT = REDIS_PROPS + ".stop.script";
 
@@ -306,6 +307,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
     private static final String DEFAULT_REDIS_DATA_DIR = "/mnt/data/nfredis";
     private static final boolean DEFAULT_REDIS_PERSISTENCE_ENABLED = false;
+    private static final String DEFAULT_REDIS_PERSISTENCE_TYPE = "aof";
     private static final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
     private static final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
 
@@ -830,6 +832,12 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
+    public String getRedisPersistenceType() {
+        return getStringProperty("DM_REDIS_PERSISTENCE_TYPE", CONFIG_REDIS_PERSISTENCE_TYPE,
+                DEFAULT_REDIS_PERSISTENCE_TYPE);
+    }
+
+    @Override
     public String getRedisStartScript() {
         return getStringProperty("DM_REDIS_START_SCRIPT", CONFIG_REDIS_START_SCRIPT, DEFAULT_REDIS_START_SCRIPT);
     }
@@ -840,25 +848,25 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public boolean isRedisPersistenceEnabled() {
-        return getBooleanProperty("DM_REDIS_PERSISTENCE_ENABLED", CONFIG_REDIS_PERSISTENCE_ENABLED,
-                DEFAULT_REDIS_PERSISTENCE_ENABLED);
+    public boolean isRedisAofEnabled() {
+        // Call getRedisPersistenceType() only once to simplify testing. An alternative approach is to accept
+        // redisPersistenceType as an argument.
+        String redisPersistenceType = getRedisPersistenceType();
+        if (redisPersistenceType.equals("rdb")) {
+            return false;
+        } else if (redisPersistenceType.equals("aof")) {
+            return true;
+        } else {
+            logger.error("The persistence type FP is invalid: Must be aof or rdb");
+            logger.error("Using default of rdb");
+            return false;
+        }
     }
 
     @Override
-    public boolean isRedisAofEnabled() {
-        final String CONFIG_REDIS_PERSISTENCE_TYPE = DYNOMITEMANAGER_PRE + ".dyno.persistence.type";
-        final String DEFAULT_REDIS_PERSISTENCE_TYPE = "aof";
-
-        if (configSource.get(CONFIG_REDIS_PERSISTENCE_TYPE, DEFAULT_REDIS_PERSISTENCE_TYPE).equals("rdb")) {
-            return false;
-        } else if (configSource.get(CONFIG_REDIS_PERSISTENCE_TYPE, DEFAULT_REDIS_PERSISTENCE_TYPE).equals("aof")) {
-            return true;
-        } else {
-            logger.error("The persistence type FP is wrong: aof or rdb");
-            logger.error("Defaulting to rdb");
-            return false;
-        }
+    public boolean isRedisPersistenceEnabled() {
+        return getBooleanProperty("DM_REDIS_PERSISTENCE_ENABLED", CONFIG_REDIS_PERSISTENCE_ENABLED,
+                DEFAULT_REDIS_PERSISTENCE_ENABLED);
     }
 
     @Override

@@ -42,6 +42,11 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
+    public String getRedisPersistenceType() {
+        return null;
+    }
+
+    @Override
     public boolean isDynomiteMultiDC() {
 	return false;
     }
