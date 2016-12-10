@@ -307,8 +307,6 @@ public interface IConfiguration {
      */
     public String getCassandraSeeds();
 
-    public boolean isEurekaHostSupplierEnabled();
-
     // Data store (aka backend)
     // ========================
 
@@ -380,8 +378,8 @@ public interface IConfiguration {
      */
     public boolean isRedisPersistenceEnabled();
 
-    // Storage engine: ARDB with RocksDB
-    // =================================
+    // Data store: ARDB with RocksDB
+    // =============================
 
     /**
      * Get the full path to the rocksdb.conf configuration file.
@@ -424,5 +422,10 @@ public interface IConfiguration {
      * @return the RocksDB write buffer size in MB
      */
     public int getArdbRocksDBWriteBufferSize();
+
+    // Eureka
+    // ======
+
+    public boolean isEurekaHostsSupplierEnabled();
 
 }

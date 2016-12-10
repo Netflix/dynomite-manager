@@ -106,7 +106,7 @@ public class InstanceDataDAOCassandra {
 
 		this.hostSupplier = hostSupplier;
 
-		if (config.isEurekaHostSupplierEnabled())
+		if (config.isEurekaHostsSupplierEnabled())
 			ctx = initWithThriftDriverWithEurekaHostsSupplier();
 		else
 			ctx = initWithThriftDriverWithExternalHostsSupplier();

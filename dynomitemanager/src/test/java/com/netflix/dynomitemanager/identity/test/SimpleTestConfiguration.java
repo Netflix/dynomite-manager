@@ -52,7 +52,7 @@ public class SimpleTestConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public boolean isEurekaHostSupplierEnabled() {
+	public boolean isEurekaHostsSupplierEnabled() {
 		return false;
 	}
 

@@ -848,4 +848,27 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("ARDB RocksDB write buffer size in MB = default", conf.getArdbRocksDBWriteBufferSize(), is(128));
     }
 
+    // Eureka
+    // ======
+
+    @Test
+    public void testIsEurekaHostsSupplierEnabled() throws Exception {
+        Assert.assertThat("Eureka hosts supplier = default", conf.isEurekaHostsSupplierEnabled(), is(true));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "false";
+            }
+        };
+        Assert.assertThat("Eureka hosts supplier = env var", conf.isEurekaHostsSupplierEnabled(), is(false));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Eureka hosts supplier = default", conf.isEurekaHostsSupplierEnabled(), is(true));
+    }
+
 }

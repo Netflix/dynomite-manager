@@ -60,17 +60,25 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     public static final String DYNOMITEMANAGER_PRE = "dm";
     public static final String CASSANDRA_PREFIX = "cassandra";
     public static final String DYNOMITE_PREFIX = "dynomite";
+    public static final String EUREKA_PREFIX = "eureka";
     public static final String REDIS_PREFIX = "redis";
     public static final String ARDB_PREFIX = "ardb";
     public static final String ROCKSDB_PREFIX = "rocksdb";
     public static final String DATASTORE_PREFIX = "datastore"; // Storage engine (aka backend)
+    public static final String AWS_PREFIX = "aws";
+    public static final String AZURE_PREFIX = "azure";
+    public static final String GCP_PREFIX = "gcp";
 
     public static final String DYNOMITE_PROPS = DYNOMITEMANAGER_PRE + "." + DYNOMITE_PREFIX;
     public static final String DATASTORE_PROPS = DYNOMITEMANAGER_PRE + "." + DATASTORE_PREFIX;
+    public static final String EUREKA_PROPS = DYNOMITEMANAGER_PRE + "." + EUREKA_PREFIX;
     public static final String REDIS_PROPS = DYNOMITEMANAGER_PRE + "." + REDIS_PREFIX;
     public static final String ARDB_PROPS = DYNOMITEMANAGER_PRE + "." + ARDB_PREFIX;
     public static final String ARDB_ROCKSDB_PROPS = ARDB_PROPS + "." + ROCKSDB_PREFIX;
     public static final String CASSANDRA_PROPS = DYNOMITEMANAGER_PRE + "." + CASSANDRA_PREFIX;
+    public static final String AWS_PROPS = DYNOMITEMANAGER_PRE + "." + AWS_PREFIX;
+    public static final String AZURE_PROPS = DYNOMITEMANAGER_PRE + "." + AZURE_PREFIX;
+    public static final String GCP_PROPS = DYNOMITEMANAGER_PRE + "." + GCP_PREFIX;
 
     // Archaius
     // ========
@@ -194,11 +202,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_ARDB_ROCKSDB_STOP_SCRIPT = ARDB_ROCKSDB_PROPS + ".stop.script";
     private static final String CONFIG_ARDB_ROCKSDB_WRITE_BUFFER_SIZE = ARDB_ROCKSDB_PROPS + ".write.buffer.size";
 
-
-
     // Eureka
-    private static final String CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED = DYNOMITEMANAGER_PRE
-	    + ".eureka.host.supplier.enabled";
+    // ======
+
+    private static final String CONFIG_EUREKA_HOSTS_SUPPLIER_ENABLED = EUREKA_PROPS + ".hosts.supplier.enabled";
 
     // Amazon specific
     private static final String CONFIG_ASG_NAME = DYNOMITEMANAGER_PRE + ".az.asgname";
@@ -328,8 +335,10 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT = "/apps/ardb/bin/kill_ardb.sh";
     private static final int DEFAULT_ARDB_ROCKSDB_WRITE_BUFFER_SIZE = 128; // MB
 
+    // Defaults: Eureka
+    // ================
 
-    private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
+    private static final boolean DEFAULT_EUREKA_HOSTS_SUPPLIER_ENABLED = true;
 
     // = instance identity meta data
     private String RAC, ZONE, PUBLIC_HOSTNAME, PUBLIC_IP, INSTANCE_ID, INSTANCE_TYPE;
@@ -810,13 +819,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         return getIntProperty("DM_CASSANDRA_THRIFT_PORT", CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
     }
 
-
-
-    @Override
-    public boolean isEurekaHostSupplierEnabled() {
-	return configSource.get(CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED, DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED);
-    }
-
     // Data store (aka backend)
     // ========================
 
@@ -918,6 +920,15 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     public int getArdbRocksDBWriteBufferSize() {
         return getIntProperty("DM_ARDB_ROCKSDB_WRITE_BUFFER_SIZE", CONFIG_ARDB_ROCKSDB_WRITE_BUFFER_SIZE,
                 DEFAULT_ARDB_ROCKSDB_WRITE_BUFFER_SIZE);
+    }
+
+    // Eureka
+    // ======
+
+    @Override
+    public boolean isEurekaHostsSupplierEnabled() {
+        return getBooleanProperty("DM_EUREKA_HOSTS_SUPPLIER_ENABLED", CONFIG_EUREKA_HOSTS_SUPPLIER_ENABLED,
+                DEFAULT_EUREKA_HOSTS_SUPPLIER_ENABLED);
     }
 
 }
