@@ -547,7 +547,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
 	long storeMaxMem = getStoreMaxMem();
 
-        if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
+        if (config.getDatastoreEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
             ArdbRocksDbRedisCompatible rocksDb = new ArdbRocksDbRedisCompatible(storeMaxMem,
                     config.getArdbRocksDBWriteBufferSize(), config.getArdbRocksDBMaxWriteBufferNumber(), config.getArdbRocksDBMinWriteBuffersToMerge());
             rocksDb.updateConfiguration(ArdbRocksDbRedisCompatible.DYNO_ARDB_CONF_PATH);
@@ -689,7 +689,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
     @Override
     public String getStartupScript() {
-        if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
+        if (config.getDatastoreEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
             return config.getArdbRocksDBStartScript();
         }
         return config.getRedisStartScript();
@@ -697,7 +697,7 @@ public class RedisStorageProxy implements IStorageProxy {
 
     @Override
     public String getStopScript() {
-        if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
+        if (config.getDatastoreEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
             return config.getArdbRocksDBStopScript();
         }
         return config.getRedisStopScript();

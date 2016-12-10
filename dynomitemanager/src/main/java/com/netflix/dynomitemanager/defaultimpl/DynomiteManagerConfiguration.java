@@ -168,6 +168,7 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     // Data store (aka backend)
     // ========================
 
+    private static final String CONFIG_DATASTORE_ENGINE = DATASTORE_PROPS + ".engine";
     // The max percentage of system memory to be allocated to the backend data storage engine (ex. Redis, ARDB).
     private static final String CONFIG_DATASTORE_MAX_MEMORY_PERCENT = DATASTORE_PROPS + ".max.memory.percent";
 
@@ -300,6 +301,12 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String DEFAULT_CASSANDRA_KEYSPACE_NAME = "dyno_bootstrap";
     private static final String DEFAULT_CASSANDRA_SEEDS = "127.0.0.1"; // comma separated list
     private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
+
+    // Defaults: Data store
+    // ====================
+
+    private static final String DEFAULT_DATASTORE_ENGINE = "redis";
+    private static final int DEFAULT_DATASTORE_MAX_MEMORY_PERCENT = 85;
 
     // Defaults: Data store: Redis
     // ===========================
@@ -702,14 +709,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_MAX_TIME_BOOTSTRAP, 900000);
     }
 
-    // Data store (aka backend)
-    // ========================
-
-    @Override
-    public int getDatastoreMaxMemoryPercent() {
-        return getIntProperty("DM_DATASTORE_MAX_MEMORY_PERCENT", CONFIG_DATASTORE_MAX_MEMORY_PERCENT, 85);
-    }
-
     public boolean isVpc() {
 	return configSource.get(CONFIG_VPC, false);
     }
@@ -818,6 +817,20 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED, DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED);
     }
 
+    // Data store (aka backend)
+    // ========================
+
+    @Override
+    public String getDatastoreEngine() {
+        return getStringProperty("DM_DATASTORE_ENGINE", CONFIG_DATASTORE_ENGINE, DEFAULT_DATASTORE_ENGINE);
+    }
+
+    @Override
+    public int getDatastoreMaxMemoryPercent() {
+        return getIntProperty("DM_DATASTORE_MAX_MEMORY_PERCENT", CONFIG_DATASTORE_MAX_MEMORY_PERCENT,
+                DEFAULT_DATASTORE_MAX_MEMORY_PERCENT);
+    }
+
     // Data store: Redis
     // =================
 
@@ -867,13 +880,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     public boolean isRedisPersistenceEnabled() {
         return getBooleanProperty("DM_REDIS_PERSISTENCE_ENABLED", CONFIG_REDIS_PERSISTENCE_ENABLED,
                 DEFAULT_REDIS_PERSISTENCE_ENABLED);
-    }
-
-    @Override
-    public String getRedisCompatibleEngine() {
-        final String DEFAULT_REDIS_COMPATIBLE_SERVER = "redis";
-        final String CONFIG_DYNO_REDIS_COMPATIBLE_SERVER = DYNOMITEMANAGER_PRE + ".dyno.redis.compatible.engine";
-        return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_SERVER, DEFAULT_REDIS_COMPATIBLE_SERVER);
     }
 
     // Data store: ARDB with RocksDB

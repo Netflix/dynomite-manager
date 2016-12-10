@@ -539,6 +539,27 @@ public class DynomiteManagerConfigurationTest {
     // ========================
 
     @Test
+    public void testGetDatastoreEngine() throws Exception {
+        Assert.assertThat("Data store engine = default", conf.getDatastoreEngine(), is("redis"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "ardb-rocksdb";
+            }
+        };
+        Assert.assertThat("Data store engine = env var", conf.getDatastoreEngine(), is("ardb-rocksdb"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Data store engine = default", conf.getDatastoreEngine(), is("redis"));
+    }
+
+    @Test
     public void testGetDatastoreMaxMemoryPercent() throws Exception {
         Assert.assertThat("storage max memory percent = default", conf.getDatastoreMaxMemoryPercent(), is(85));
 

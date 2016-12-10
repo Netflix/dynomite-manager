@@ -235,16 +235,6 @@ public interface IConfiguration {
 
     public int getMaxTimeToBootstrap();
 
-    // Data store (aka backend)
-    // ========================
-
-    /**
-     * Get the maximum percentage of system memory to be allocated to the backend storage engine, such as Redis or ARDB.
-     *
-     * @return the max percentage of memory allocated to the storage engine
-     */
-    public int getDatastoreMaxMemoryPercent();
-
     // VPC
     public boolean isVpc();
 
@@ -319,8 +309,25 @@ public interface IConfiguration {
 
     public boolean isEurekaHostSupplierEnabled();
 
-    // Redis
-    // =====
+    // Data store (aka backend)
+    // ========================
+
+    /**
+     * Get the type of data store engine, such as Redis or ARDB with RocksDB.
+     *
+     * @return RESP backend data store server (redis, ardb-rocksdb)
+     */
+    public String getDatastoreEngine();
+
+    /**
+     * Get the maximum percentage of system memory to be allocated to the backend storage engine, such as Redis or ARDB.
+     *
+     * @return the max percentage of memory allocated to the storage engine
+     */
+    public int getDatastoreMaxMemoryPercent();
+
+    // Data store: Redis
+    // =================
 
     /**
      * Get the full path to the redis.conf configuration file.
@@ -372,13 +379,6 @@ public interface IConfiguration {
      * @return true if Redis should persist in-memory data to disk or false if Redis should only store data in-memory
      */
     public boolean isRedisPersistenceEnabled();
-
-    /**
-     * Get the type of Redis compatible (RESP) backend server.
-     *
-     * @return RESP backend server (redis, ardb-rocksdb)
-     */
-    public String getRedisCompatibleEngine();
 
     // Storage engine: ARDB with RocksDB
     // =================================
