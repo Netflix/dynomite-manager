@@ -42,12 +42,17 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
+    public String getRedisPersistenceType() {
+        return null;
+    }
+
+    @Override
     public boolean isDynomiteMultiDC() {
 	return false;
     }
 
     @Override
-    public boolean isEurekaHostSupplierEnabled() {
+    public boolean isEurekaHostsSupplierEnabled() {
 	return false;
     }
 
@@ -96,7 +101,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getStorageMaxMemoryPercent() {
+    public int getDatastoreMaxMemoryPercent() {
 	return 0;
     }
 
@@ -326,7 +331,7 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getRedisCompatibleEngine() {
+    public String getDatastoreEngine() {
 	return null;
     }
 
@@ -336,12 +341,12 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getRedisInitStart() {
+    public String getRedisStartScript() {
 	return null;
     }
 
     @Override
-    public String getRedisInitStop() {
+    public String getRedisStopScript() {
 	return null;
     }
 
@@ -354,17 +359,17 @@ public class BlankConfiguration implements IConfiguration {
     }
 
     @Override
-    public String getArdbRocksDBInitStart() {
+    public String getArdbRocksDBStartScript() {
 	return null;
     }
 
     @Override
-    public String getArdbRocksDBInitStop() {
+    public String getArdbRocksDBStopScript() {
 	return null;
     }
 
     @Override
-    public int getWriteBufferSize() {
+    public int getArdbRocksDBWriteBufferSize() {
 	return 0;
     }
 

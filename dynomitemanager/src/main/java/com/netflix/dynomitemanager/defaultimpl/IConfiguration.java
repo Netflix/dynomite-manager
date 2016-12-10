@@ -235,16 +235,6 @@ public interface IConfiguration {
 
     public int getMaxTimeToBootstrap();
 
-    // Storage engine (aka backend)
-    // ============================
-
-    /**
-     * Get the maximum percentage of system memory to be allocated to the backend storage engine, such as Redis or ARDB.
-     *
-     * @return the max percentage of memory allocated to the storage engine
-     */
-    public int getStorageMaxMemoryPercent();
-
     // VPC
     public boolean isVpc();
 
@@ -317,67 +307,79 @@ public interface IConfiguration {
      */
     public String getCassandraSeeds();
 
-    public boolean isEurekaHostSupplierEnabled();
-
-    // Redis
-    // =====
+    // Data store (aka backend)
+    // ========================
 
     /**
-     * Get the full path to the redis.conf configuration file. Netflix:
-     * /apps/nfredis/conf/redis.conf DynomiteDB: /etc/dynomitedb/redis.conf
+     * Get the type of data store engine, such as Redis or ARDB with RocksDB.
+     *
+     * @return RESP backend data store server (redis, ardb-rocksdb)
+     */
+    public String getDatastoreEngine();
+
+    /**
+     * Get the maximum percentage of system memory to be allocated to the backend storage engine, such as Redis or ARDB.
+     *
+     * @return the max percentage of memory allocated to the storage engine
+     */
+    public int getDatastoreMaxMemoryPercent();
+
+    // Data store: Redis
+    // =================
+
+    /**
+     * Get the full path to the redis.conf configuration file.
+     * Netflix: /apps/nfredis/conf/redis.conf
+     * DynomiteDB: /etc/dynomitedb/redis.conf
      *
      * @return the {@link String} full path to the redis.conf configuration file
      */
     public String getRedisConf();
 
     /**
-     * Get the full path to the Redis init start script, including any
-     * arguments.
-     *
-     * @return the full path of the Redis init start script
-     */
-    public String getRedisInitStart();
-
-    /**
-     * Get the full path to the Redis init stop script, including any arguments.
-     *
-     * @return the full path of the Redis init stop script
-     */
-    public String getRedisInitStop();
-
-    /**
-     * Determines whether or not Redis will save data to disk.
-     *
-     * @return true if Redis should persist in-memory data to disk or false if
-     *         Redis should only store data in-memory
-     */
-    public boolean isRedisPersistenceEnabled();
-
-    /**
-     * Get the full path to the directory where Redis stores its AOF or RDB data
-     * files.
+     * Get the full path to the directory where Redis stores its AOF or RDB data files.
      *
      * @return the full path to the directory where Redis stores its data files
      */
     public String getRedisDataDir();
 
     /**
+     * Get the persistence type of either AOF or RDB.
+     *
+     * @return the persistence type (aof, rdb)
+     */
+    public String getRedisPersistenceType();
+
+    /**
+     * Get the full path to the Redis init start script, including any arguments.
+     *
+     * @return the full path of the Redis init start script
+     */
+    public String getRedisStartScript();
+
+    /**
+     * Get the full path to the Redis init stop script, including any arguments.
+     *
+     * @return the full path of the Redis init stop script
+     */
+    public String getRedisStopScript();
+
+    /**
      * Checks if Redis append-only file (AOF) persistence is enabled.
      *
-     * @return true to indicate that AOF persistence is enabled or false to
-     *         indicate that RDB persistence is enabled
+     * @return true to indicate that AOF persistence is enabled or false to indicate that RDB persistence is enabled
      */
     public boolean isRedisAofEnabled();
 
     /**
-     * Get the type of Redis compatible (RESP) backend server.
+     * Determines whether or not Redis will save data to disk.
      *
-     * @return RESP backend server (redis, ardb-rocksdb)
+     * @return true if Redis should persist in-memory data to disk or false if Redis should only store data in-memory
      */
-    public String getRedisCompatibleEngine();
+    public boolean isRedisPersistenceEnabled();
 
-    // Storage engine: ARDB with RocksDB
-    // =================================
+    // Data store: ARDB with RocksDB
+    // =============================
 
     /**
      * Get the full path to the rocksdb.conf configuration file.
@@ -385,20 +387,6 @@ public interface IConfiguration {
      * @return the {@link String} full path to the rocksdb.conf configuration file
      */
     public String getArdbRocksDBConf();
-
-    /**
-     * Get the full path to the ARDB RocksDB init start script, including any arguments.
-     *
-     * @return the full path of the ARDB RocksDB init start script
-     */
-    public String getArdbRocksDBInitStart();
-
-    /**
-     * Get the full path to the ARDB RocksDB init stop script, including any arguments.
-     *
-     * @return the full path of the ARDB RocksDB init stop script
-     */
-    public String getArdbRocksDBInitStop();
 
     /**
      * Get the maximum number of memtables used by RocksDB. This number includes both active and immutable memtables.
@@ -414,6 +402,30 @@ public interface IConfiguration {
      */
     public int getArdbRocksDBMinWriteBuffersToMerge();
 
-    public int getWriteBufferSize();
+    /**
+     * Get the full path to the ARDB RocksDB init start script, including any arguments.
+     *
+     * @return the full path of the ARDB RocksDB init start script
+     */
+    public String getArdbRocksDBStartScript();
+
+    /**
+     * Get the full path to the ARDB RocksDB init stop script, including any arguments.
+     *
+     * @return the full path of the ARDB RocksDB init stop script
+     */
+    public String getArdbRocksDBStopScript();
+
+    /**
+     * Get the ARDB RocksDB write buffer size in MB.
+     *
+     * @return the RocksDB write buffer size in MB
+     */
+    public int getArdbRocksDBWriteBufferSize();
+
+    // Eureka
+    // ======
+
+    public boolean isEurekaHostsSupplierEnabled();
 
 }

@@ -547,9 +547,9 @@ public class RedisStorageProxy implements IStorageProxy {
 
 	long storeMaxMem = getStoreMaxMem();
 
-        if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
+        if (config.getDatastoreEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
             ArdbRocksDbRedisCompatible rocksDb = new ArdbRocksDbRedisCompatible(storeMaxMem,
-                    config.getWriteBufferSize(), config.getArdbRocksDBMaxWriteBufferNumber(), config.getArdbRocksDBMinWriteBuffersToMerge());
+                    config.getArdbRocksDBWriteBufferSize(), config.getArdbRocksDBMaxWriteBufferNumber(), config.getArdbRocksDBMinWriteBuffersToMerge());
             rocksDb.updateConfiguration(ArdbRocksDbRedisCompatible.DYNO_ARDB_CONF_PATH);
         } else {
 	    // Updating the file.
@@ -646,7 +646,7 @@ public class RedisStorageProxy implements IStorageProxy {
      * @return the maximum amount of storage available for Redis or Memcached in KB.
      */
     public long getStoreMaxMem() {
-	int memPct = config.getStorageMaxMemoryPercent();
+	int memPct = config.getDatastoreMaxMemoryPercent();
 	// Long is big enough for the amount of ram is all practical systems
 	// that we deal with.
 	long totalMem = getTotalAvailableSystemMemory();
@@ -689,18 +689,18 @@ public class RedisStorageProxy implements IStorageProxy {
 
     @Override
     public String getStartupScript() {
-        if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
-            return config.getArdbRocksDBInitStart();
+        if (config.getDatastoreEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
+            return config.getArdbRocksDBStartScript();
         }
-        return config.getRedisInitStart();
+        return config.getRedisStartScript();
     }
 
     @Override
     public String getStopScript() {
-        if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
-            return config.getArdbRocksDBInitStop();
+        if (config.getDatastoreEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
+            return config.getArdbRocksDBStopScript();
         }
-        return config.getRedisInitStop();
+        return config.getRedisStopScript();
     }
 
     @Override

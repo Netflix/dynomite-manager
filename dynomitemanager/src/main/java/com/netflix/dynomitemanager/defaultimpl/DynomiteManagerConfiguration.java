@@ -60,17 +60,25 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     public static final String DYNOMITEMANAGER_PRE = "dm";
     public static final String CASSANDRA_PREFIX = "cassandra";
     public static final String DYNOMITE_PREFIX = "dynomite";
+    public static final String EUREKA_PREFIX = "eureka";
     public static final String REDIS_PREFIX = "redis";
     public static final String ARDB_PREFIX = "ardb";
     public static final String ROCKSDB_PREFIX = "rocksdb";
-    public static final String STORAGE_PREFIX = "storage"; // Storage engine (aka backend)
+    public static final String DATASTORE_PREFIX = "datastore"; // Storage engine (aka backend)
+    public static final String AWS_PREFIX = "aws";
+    public static final String AZURE_PREFIX = "azure";
+    public static final String GCP_PREFIX = "gcp";
 
     public static final String DYNOMITE_PROPS = DYNOMITEMANAGER_PRE + "." + DYNOMITE_PREFIX;
-    public static final String STORAGE_PROPS = DYNOMITEMANAGER_PRE + "." + STORAGE_PREFIX;
+    public static final String DATASTORE_PROPS = DYNOMITEMANAGER_PRE + "." + DATASTORE_PREFIX;
+    public static final String EUREKA_PROPS = DYNOMITEMANAGER_PRE + "." + EUREKA_PREFIX;
     public static final String REDIS_PROPS = DYNOMITEMANAGER_PRE + "." + REDIS_PREFIX;
     public static final String ARDB_PROPS = DYNOMITEMANAGER_PRE + "." + ARDB_PREFIX;
     public static final String ARDB_ROCKSDB_PROPS = ARDB_PROPS + "." + ROCKSDB_PREFIX;
     public static final String CASSANDRA_PROPS = DYNOMITEMANAGER_PRE + "." + CASSANDRA_PREFIX;
+    public static final String AWS_PROPS = DYNOMITEMANAGER_PRE + "." + AWS_PREFIX;
+    public static final String AZURE_PROPS = DYNOMITEMANAGER_PRE + "." + AZURE_PREFIX;
+    public static final String GCP_PROPS = DYNOMITEMANAGER_PRE + "." + GCP_PREFIX;
 
     // Archaius
     // ========
@@ -165,25 +173,39 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String CONFIG_CASSANDRA_SEEDS = CASSANDRA_PROPS + ".seeds";
     private static final String CONFIG_CASSANDRA_THRIFT_PORT = CASSANDRA_PROPS + ".thrift.port";
 
-    // Storage engine (aka backend)
-    // ============================
+    // Data store (aka backend)
+    // ========================
 
+    private static final String CONFIG_DATASTORE_ENGINE = DATASTORE_PROPS + ".engine";
     // The max percentage of system memory to be allocated to the backend data storage engine (ex. Redis, ARDB).
-    private static final String CONFIG_STORAGE_MAX_MEMORY_PERCENT = STORAGE_PROPS + ".max.memory.percent";
+    private static final String CONFIG_DATASTORE_MAX_MEMORY_PERCENT = DATASTORE_PROPS + ".max.memory.percent";
 
-    // Storage engine: ARDB with RocksDB
-    // =================================
+    // Data store: Redis
+    // =================
 
+    private static final String CONFIG_REDIS_CONF = REDIS_PROPS + ".conf";
+    private static final String CONFIG_REDIS_DATA_DIR = REDIS_PROPS + ".data.dir";
+    private static final String CONFIG_REDIS_PERSISTENCE_ENABLED = REDIS_PROPS + ".persistence.enabled";
+    private static final String CONFIG_REDIS_PERSISTENCE_TYPE = REDIS_PROPS + ".persistence.type";
+    private static final String CONFIG_REDIS_START_SCRIPT = REDIS_PROPS + ".start.script";
+    private static final String CONFIG_REDIS_STOP_SCRIPT = REDIS_PROPS + ".stop.script";
+
+    // Data store: ARDB with RocksDB
+    // =============================
+
+    private static final String CONFIG_ARDB_ROCKSDB_CONF = ARDB_ROCKSDB_PROPS + ".conf";
     private static final String CONFIG_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER =
             ARDB_ROCKSDB_PROPS + ".max.write.buffer.number";
     private static final String CONFIG_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE =
             ARDB_ROCKSDB_PROPS + ".min.write.buffer.number.to.merge";
-    private static final String CONFIG_WRITE_BUFFER_SIZE_MB = ARDB_ROCKSDB_PROPS + ".write.buffer.mb";
-
+    private static final String CONFIG_ARDB_ROCKSDB_START_SCRIPT = ARDB_ROCKSDB_PROPS + ".start.script";
+    private static final String CONFIG_ARDB_ROCKSDB_STOP_SCRIPT = ARDB_ROCKSDB_PROPS + ".stop.script";
+    private static final String CONFIG_ARDB_ROCKSDB_WRITE_BUFFER_SIZE = ARDB_ROCKSDB_PROPS + ".write.buffer.size";
 
     // Eureka
-    private static final String CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED = DYNOMITEMANAGER_PRE
-	    + ".eureka.host.supplier.enabled";
+    // ======
+
+    private static final String CONFIG_EUREKA_HOSTS_SUPPLIER_ENABLED = EUREKA_PROPS + ".hosts.supplier.enabled";
 
     // Amazon specific
     private static final String CONFIG_ASG_NAME = DYNOMITEMANAGER_PRE + ".az.asgname";
@@ -287,15 +309,36 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     private static final String DEFAULT_CASSANDRA_SEEDS = "127.0.0.1"; // comma separated list
     private static final int DEFAULT_CASSANDRA_THRIFT_PORT = 9160; // 7102;
 
-    // Defaults: Storage engine: ARDB with RocksDB
-    // ===========================================
+    // Defaults: Data store
+    // ====================
 
+    private static final String DEFAULT_DATASTORE_ENGINE = "redis";
+    private static final int DEFAULT_DATASTORE_MAX_MEMORY_PERCENT = 85;
+
+    // Defaults: Data store: Redis
+    // ===========================
+
+    private static final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
+    private static final String DEFAULT_REDIS_DATA_DIR = "/mnt/data/nfredis";
+    private static final boolean DEFAULT_REDIS_PERSISTENCE_ENABLED = false;
+    private static final String DEFAULT_REDIS_PERSISTENCE_TYPE = "aof";
+    private static final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
+    private static final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
+
+    // Defaults: Data store: ARDB with RocksDB
+    // =======================================
+
+    private static final String DEFAULT_ARDB_ROCKSDB_CONF = "/apps/ardb/conf/rocksdb.conf";
     private static final int DEFAULT_ARDB_ROCKSDB_MAX_WRITE_BUFFER_NUMBER = 16;
     private static final int DEFAULT_ARDB_ROCKSDB_MIN_MEMTABLES_TO_MERGE = 4;
-    private static final int DEFAULT_WRITE_BUFFER_SIZE_MB = 128;
+    private static final String DEFAULT_ARDB_ROCKSDB_START_SCRIPT = "/apps/ardb/bin/launch_ardb.sh";
+    private static final String DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT = "/apps/ardb/bin/kill_ardb.sh";
+    private static final int DEFAULT_ARDB_ROCKSDB_WRITE_BUFFER_SIZE = 128; // MB
 
+    // Defaults: Eureka
+    // ================
 
-    private static final boolean DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED = true;
+    private static final boolean DEFAULT_EUREKA_HOSTS_SUPPLIER_ENABLED = true;
 
     // = instance identity meta data
     private String RAC, ZONE, PUBLIC_HOSTNAME, PUBLIC_IP, INSTANCE_ID, INSTANCE_TYPE;
@@ -675,14 +718,6 @@ public class DynomiteManagerConfiguration implements IConfiguration {
 	return configSource.get(CONFIG_DYNO_MAX_TIME_BOOTSTRAP, 900000);
     }
 
-    // Storage engine (aka backend)
-    // ============================
-
-    @Override
-    public int getStorageMaxMemoryPercent() {
-        return getIntProperty("DM_STORAGE_MAX_MEMORY_PERCENT", CONFIG_STORAGE_MAX_MEMORY_PERCENT, 85);
-    }
-
     public boolean isVpc() {
 	return configSource.get(CONFIG_VPC, false);
     }
@@ -784,96 +819,77 @@ public class DynomiteManagerConfiguration implements IConfiguration {
         return getIntProperty("DM_CASSANDRA_THRIFT_PORT", CONFIG_CASSANDRA_THRIFT_PORT, DEFAULT_CASSANDRA_THRIFT_PORT);
     }
 
-
+    // Data store (aka backend)
+    // ========================
 
     @Override
-    public boolean isEurekaHostSupplierEnabled() {
-	return configSource.get(CONFIG_IS_EUREKA_HOST_SUPPLIER_ENABLED, DEFAULT_IS_EUREKA_HOST_SUPPLIER_ENABLED);
+    public String getDatastoreEngine() {
+        return getStringProperty("DM_DATASTORE_ENGINE", CONFIG_DATASTORE_ENGINE, DEFAULT_DATASTORE_ENGINE);
     }
 
-    // Redis
-    // =====
+    @Override
+    public int getDatastoreMaxMemoryPercent() {
+        return getIntProperty("DM_DATASTORE_MAX_MEMORY_PERCENT", CONFIG_DATASTORE_MAX_MEMORY_PERCENT,
+                DEFAULT_DATASTORE_MAX_MEMORY_PERCENT);
+    }
+
+    // Data store: Redis
+    // =================
 
     @Override
     public String getRedisConf() {
-        final String DEFAULT_REDIS_CONF = "/apps/nfredis/conf/redis.conf";
-        final String CONFIG_REDIS_CONF = DYNOMITEMANAGER_PRE + ".redis.conf";
-        return configSource.get(CONFIG_REDIS_CONF, DEFAULT_REDIS_CONF);
-    }
-
-    @Override
-    public String getRedisInitStart() {
-        final String DEFAULT_REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
-        final String CONFIG_REDIS_START_SCRIPT = DYNOMITEMANAGER_PRE + ".redis.init.start";
-        return configSource.get(CONFIG_REDIS_START_SCRIPT, DEFAULT_REDIS_START_SCRIPT);
-    }
-
-    @Override
-    public String getRedisInitStop() {
-        final String DEFAULT_REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
-        final String CONFIG_REDIS_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".redis.init.stop";
-        return configSource.get(CONFIG_REDIS_STOP_SCRIPT, DEFAULT_REDIS_STOP_SCRIPT);
-    }
-
-    @Override
-    public boolean isRedisPersistenceEnabled() {
-        final boolean DEFAULT_REDIS_PERSISTENCE_ENABLED = false;
-        final String CONFIG_REDIS_PERSISTENCE_ENABLED = DYNOMITEMANAGER_PRE + ".dyno.persistence.enabled";
-        return configSource.get(CONFIG_REDIS_PERSISTENCE_ENABLED, DEFAULT_REDIS_PERSISTENCE_ENABLED);
+        return getStringProperty("DM_REDIS_CONF", CONFIG_REDIS_CONF, DEFAULT_REDIS_CONF);
     }
 
     @Override
     public String getRedisDataDir() {
-        final String DEFAULT_REDIS_DATA_DIR = "/mnt/data/nfredis";
-        final String CONFIG_REDIS_DATA_DIR = DYNOMITEMANAGER_PRE + ".dyno.persistence.directory";
-        return configSource.get(CONFIG_REDIS_DATA_DIR, DEFAULT_REDIS_DATA_DIR);
+        return getStringProperty("DM_REDIS_DATA_DIR", CONFIG_REDIS_DATA_DIR, DEFAULT_REDIS_DATA_DIR);
+    }
+
+    @Override
+    public String getRedisPersistenceType() {
+        return getStringProperty("DM_REDIS_PERSISTENCE_TYPE", CONFIG_REDIS_PERSISTENCE_TYPE,
+                DEFAULT_REDIS_PERSISTENCE_TYPE);
+    }
+
+    @Override
+    public String getRedisStartScript() {
+        return getStringProperty("DM_REDIS_START_SCRIPT", CONFIG_REDIS_START_SCRIPT, DEFAULT_REDIS_START_SCRIPT);
+    }
+
+    @Override
+    public String getRedisStopScript() {
+        return getStringProperty("DM_REDIS_STOP_SCRIPT", CONFIG_REDIS_STOP_SCRIPT, DEFAULT_REDIS_STOP_SCRIPT);
     }
 
     @Override
     public boolean isRedisAofEnabled() {
-        final String CONFIG_REDIS_PERSISTENCE_TYPE = DYNOMITEMANAGER_PRE + ".dyno.persistence.type";
-        final String DEFAULT_REDIS_PERSISTENCE_TYPE = "aof";
-
-        if (configSource.get(CONFIG_REDIS_PERSISTENCE_TYPE, DEFAULT_REDIS_PERSISTENCE_TYPE).equals("rdb")) {
+        // Call getRedisPersistenceType() only once to simplify testing. An alternative approach is to accept
+        // redisPersistenceType as an argument.
+        String redisPersistenceType = getRedisPersistenceType();
+        if (redisPersistenceType.equals("rdb")) {
             return false;
-        } else if (configSource.get(CONFIG_REDIS_PERSISTENCE_TYPE, DEFAULT_REDIS_PERSISTENCE_TYPE).equals("aof")) {
+        } else if (redisPersistenceType.equals("aof")) {
             return true;
         } else {
-            logger.error("The persistence type FP is wrong: aof or rdb");
-            logger.error("Defaulting to rdb");
+            logger.error("The persistence type FP is invalid: Must be aof or rdb");
+            logger.error("Using default of rdb");
             return false;
         }
     }
 
     @Override
-    public String getRedisCompatibleEngine() {
-        final String DEFAULT_REDIS_COMPATIBLE_SERVER = "redis";
-        final String CONFIG_DYNO_REDIS_COMPATIBLE_SERVER = DYNOMITEMANAGER_PRE + ".dyno.redis.compatible.engine";
-        return configSource.get(CONFIG_DYNO_REDIS_COMPATIBLE_SERVER, DEFAULT_REDIS_COMPATIBLE_SERVER);
+    public boolean isRedisPersistenceEnabled() {
+        return getBooleanProperty("DM_REDIS_PERSISTENCE_ENABLED", CONFIG_REDIS_PERSISTENCE_ENABLED,
+                DEFAULT_REDIS_PERSISTENCE_ENABLED);
     }
 
-    // Storage engine: ARDB with RocksDB
-    // =================================
+    // Data store: ARDB with RocksDB
+    // =============================
 
     @Override
     public String getArdbRocksDBConf() {
-        String DEFAULT_ARDB_ROCKSDB_CONF = "/apps/ardb/conf/rocksdb.conf";
-        final String CONFIG_ARDB_ROCKSDB_CONF = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.conf";
-        return configSource.get(CONFIG_ARDB_ROCKSDB_CONF, DEFAULT_ARDB_ROCKSDB_CONF);
-    }
-
-    @Override
-    public String getArdbRocksDBInitStart() {
-        final String DEFAULT_ARDB_ROCKSDB_START_SCRIPT = "/apps/ardb/bin/launch_ardb.sh";
-        final String CONFIG_ARDB_ROCKSDB_START_SCRIPT = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.init.start";
-        return configSource.get(CONFIG_ARDB_ROCKSDB_START_SCRIPT, DEFAULT_ARDB_ROCKSDB_START_SCRIPT);
-    }
-
-    @Override
-    public String getArdbRocksDBInitStop() {
-        final String DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT = "/apps/ardb/bin/kill_ardb.sh";
-        final String CONFIG_ARDB_ROCKSDB_STOP_SCRIPT = DYNOMITEMANAGER_PRE + ".ardb.rocksdb.init.stop";
-        return configSource.get(CONFIG_ARDB_ROCKSDB_STOP_SCRIPT, DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT);
+        return getStringProperty("DM_ARDB_ROCKSDB_CONF", CONFIG_ARDB_ROCKSDB_CONF, DEFAULT_ARDB_ROCKSDB_CONF);
     }
 
     @Override
@@ -889,8 +905,30 @@ public class DynomiteManagerConfiguration implements IConfiguration {
     }
 
     @Override
-    public int getWriteBufferSize() {
-        return configSource.get(CONFIG_WRITE_BUFFER_SIZE_MB,DEFAULT_WRITE_BUFFER_SIZE_MB);
+    public String getArdbRocksDBStartScript() {
+        return getStringProperty("DM_ARDB_ROCKSDB_START_SCRIPT", CONFIG_ARDB_ROCKSDB_START_SCRIPT,
+                DEFAULT_ARDB_ROCKSDB_START_SCRIPT);
+    }
+
+    @Override
+    public String getArdbRocksDBStopScript() {
+        return getStringProperty("DM_ARDB_ROCKSDB_STOP_SCRIPT", CONFIG_ARDB_ROCKSDB_STOP_SCRIPT,
+                DEFAULT_ARDB_ROCKSDB_STOP_SCRIPT);
+    }
+
+    @Override
+    public int getArdbRocksDBWriteBufferSize() {
+        return getIntProperty("DM_ARDB_ROCKSDB_WRITE_BUFFER_SIZE", CONFIG_ARDB_ROCKSDB_WRITE_BUFFER_SIZE,
+                DEFAULT_ARDB_ROCKSDB_WRITE_BUFFER_SIZE);
+    }
+
+    // Eureka
+    // ======
+
+    @Override
+    public boolean isEurekaHostsSupplierEnabled() {
+        return getBooleanProperty("DM_EUREKA_HOSTS_SUPPLIER_ENABLED", CONFIG_EUREKA_HOSTS_SUPPLIER_ENABLED,
+                DEFAULT_EUREKA_HOSTS_SUPPLIER_ENABLED);
     }
 
 }

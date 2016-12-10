@@ -20,9 +20,7 @@ import com.netflix.dynomitemanager.sidecore.ICredential;
 import com.netflix.dynomitemanager.sidecore.config.InstanceDataRetriever;
 import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
 
-import mockit.Mock;
-import mockit.MockUp;
-import mockit.Mocked;
+import mockit.*;
 import mockit.integration.junit4.JMockit;
 import org.junit.Assert;
 import org.junit.Before;
@@ -537,12 +535,33 @@ public class DynomiteManagerConfigurationTest {
         Assert.assertThat("Cassandra thrift port = default", conf.getCassandraThriftPort(), is(9160));
     }
 
-    // Storage engine (aka backend)
-    // ============================
+    // Data store (aka backend)
+    // ========================
 
     @Test
-    public void testGetStorageMaxMemoryPercent() throws Exception {
-        Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
+    public void testGetDatastoreEngine() throws Exception {
+        Assert.assertThat("Data store engine = default", conf.getDatastoreEngine(), is("redis"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "ardb-rocksdb";
+            }
+        };
+        Assert.assertThat("Data store engine = env var", conf.getDatastoreEngine(), is("ardb-rocksdb"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Data store engine = default", conf.getDatastoreEngine(), is("redis"));
+    }
+
+    @Test
+    public void testGetDatastoreMaxMemoryPercent() throws Exception {
+        Assert.assertThat("storage max memory percent = default", conf.getDatastoreMaxMemoryPercent(), is(85));
 
         new MockUp<System>() {
             @Mock
@@ -550,18 +569,181 @@ public class DynomiteManagerConfigurationTest {
                 return "70";
             }
         };
-        Assert.assertThat("storage max memory percent = env var", conf.getStorageMaxMemoryPercent(), is(70));
+        Assert.assertThat("storage max memory percent = env var", conf.getDatastoreMaxMemoryPercent(), is(70));
         new MockUp<System>() {
             @Mock
             String getenv(String name) {
                 return "not-a-number";
             }
         };
-        Assert.assertThat("storage max memory percent = default", conf.getStorageMaxMemoryPercent(), is(85));
+        Assert.assertThat("storage max memory percent = default", conf.getDatastoreMaxMemoryPercent(), is(85));
     }
 
-    // Storage engine: ARDB with RocksDB
-    // =================================
+    // Data store: Redis
+    // =================
+
+    @Test
+    public void testGetRedisConf() throws Exception {
+        Assert.assertThat("Redis conf = default", conf.getRedisConf(), is("/apps/nfredis/conf/redis.conf"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/redis/redis.conf";
+            }
+        };
+        Assert.assertThat("Redis conf = env var", conf.getRedisConf(), is("/etc/redis/redis.conf"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Redis conf = default", conf.getRedisConf(), is("/apps/nfredis/conf/redis.conf"));
+    }
+
+    @Test
+    public void testGetRedisDataDir() throws Exception {
+        Assert.assertThat("Redis data dir = default", conf.getRedisDataDir(), is("/mnt/data/nfredis"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/usr/share/redis";
+            }
+        };
+        Assert.assertThat("Redis data dir = env var", conf.getRedisDataDir(), is("/usr/share/redis"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Redis data dir = default", conf.getRedisDataDir(), is("/mnt/data/nfredis"));
+    }
+
+    @Test
+    public void testGetRedisPersistenceType() throws Exception {
+        Assert.assertThat("Redis persistence type = default", conf.getRedisPersistenceType(), is("aof"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "rdb";
+            }
+        };
+        Assert.assertThat("Redis persistence type = env var", conf.getRedisPersistenceType(), is("rdb"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Redis persistence type = default", conf.getRedisPersistenceType(), is("aof"));
+    }
+
+    @Test
+    public void testGetRedisStartScript() throws Exception {
+        Assert.assertThat("Redis start script = default", conf.getRedisStartScript(), is("/apps/nfredis/bin/launch_nfredis.sh"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/init.d/redis";
+            }
+        };
+        Assert.assertThat("Redis start script = env var", conf.getRedisStartScript(), is("/etc/init.d/redis"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Redis start script = default", conf.getRedisStartScript(), is("/apps/nfredis/bin/launch_nfredis.sh"));
+    }
+
+    @Test
+    public void testGetRedisStopScript() throws Exception {
+        Assert.assertThat("Redis stop script = default", conf.getRedisStopScript(), is("/apps/nfredis/bin/kill_redis.sh"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/init.d/redis";
+            }
+        };
+        Assert.assertThat("Redis stop script = env var", conf.getRedisStopScript(), is("/etc/init.d/redis"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Redis stop script = default", conf.getRedisStopScript(), is("/apps/nfredis/bin/kill_redis.sh"));
+    }
+
+    @Test
+    public void testIsRedisAofEnabled() throws Exception {
+
+        new StrictExpectations(conf) {{
+            conf.getRedisPersistenceType(); result = "aof";
+            conf.getRedisPersistenceType(); result = "rdb";
+            conf.getRedisPersistenceType(); result = "junk";
+        }};
+
+        Assert.assertThat("Redis aof enabled = aof", conf.isRedisAofEnabled(), is(true));
+        Assert.assertThat("Redis aof enabled = rdb", conf.isRedisAofEnabled(), is(false));
+        Assert.assertThat("Redis aof enabled = junk", conf.isRedisAofEnabled(), is(false));
+    }
+
+    @Test
+    public void testIsRedisPersistenceEnabled() throws Exception {
+        Assert.assertThat("Redis persistence = default", conf.isRedisPersistenceEnabled(), is(false));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "true";
+            }
+        };
+        Assert.assertThat("Redis persistence = env var", conf.isRedisPersistenceEnabled(), is(true));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Redis persistence = default", conf.isRedisPersistenceEnabled(), is(false));
+    }
+
+    // Data store: ARDB with RocksDB
+    // =============================
+
+    @Test
+    public void testGetArdbRocksDBConf() throws Exception {
+        Assert.assertThat("ARDB RocksDB conf = default", conf.getArdbRocksDBConf(), is("/apps/ardb/conf/rocksdb.conf"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/ardb/rocksdb.conf";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB conf = env var", conf.getArdbRocksDBConf(), is("/etc/ardb/rocksdb.conf"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("ARDB RocksDB conf = default", conf.getArdbRocksDBConf(), is("/apps/ardb/conf/rocksdb.conf"));
+    }
 
     @Test
     public void testGetArdbRocksDBMaxWriteBufferNumber() throws Exception {
@@ -601,6 +783,92 @@ public class DynomiteManagerConfigurationTest {
             }
         };
         Assert.assertThat("ARDB RocksDB min memtables before flush = default", conf.getArdbRocksDBMinWriteBuffersToMerge(), is(4));
+    }
+
+    @Test
+    public void testGetArdbRocksDBStartScript() throws Exception {
+        Assert.assertThat("ARDB RocksDB start script = default", conf.getArdbRocksDBStartScript(), is("/apps/ardb/bin/launch_ardb.sh"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/init.d/ardb";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB start script = env var", conf.getArdbRocksDBStartScript(), is("/etc/init.d/ardb"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("ARDB RocksDB start script = default", conf.getArdbRocksDBStartScript(), is("/apps/ardb/bin/launch_ardb.sh"));
+    }
+
+    @Test
+    public void testGetArdbRocksDBStopScript() throws Exception {
+        Assert.assertThat("ARDB RocksDB stop script = default", conf.getArdbRocksDBStopScript(), is("/apps/ardb/bin/kill_ardb.sh"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "/etc/init.d/ardb";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB stop script = env var", conf.getArdbRocksDBStopScript(), is("/etc/init.d/ardb"));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("ARDB RocksDB stop script = default", conf.getArdbRocksDBStopScript(), is("/apps/ardb/bin/kill_ardb.sh"));
+    }
+
+    @Test
+    public void testGetArdbRocksDBWriteBufferSize() throws Exception {
+        Assert.assertThat("ARDB RocksDB write buffer size in MB = default", conf.getArdbRocksDBWriteBufferSize(), is(128));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "256";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB write buffer size in MB = env var", conf.getArdbRocksDBWriteBufferSize(), is(256));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "not-a-number";
+            }
+        };
+        Assert.assertThat("ARDB RocksDB write buffer size in MB = default", conf.getArdbRocksDBWriteBufferSize(), is(128));
+    }
+
+    // Eureka
+    // ======
+
+    @Test
+    public void testIsEurekaHostsSupplierEnabled() throws Exception {
+        Assert.assertThat("Eureka hosts supplier = default", conf.isEurekaHostsSupplierEnabled(), is(true));
+
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return "false";
+            }
+        };
+        Assert.assertThat("Eureka hosts supplier = env var", conf.isEurekaHostsSupplierEnabled(), is(false));
+        new MockUp<System>() {
+            @Mock
+            String getenv(String name) {
+                return null;
+            }
+        };
+        Assert.assertThat("Eureka hosts supplier = default", conf.isEurekaHostsSupplierEnabled(), is(true));
     }
 
 }
