@@ -77,7 +77,7 @@ public class DynomiteAdmin {
     }
 
     @GET
-    @Path("/start")
+    @Path("/{start : (?i)start}")
     public Response dynoStart() throws IOException, InterruptedException, JSONException {
 	instanceState.setIsProcessMonitoringSuspended(false);
 	// Let the ProcessMonitorTask take over the job of starting the process
@@ -87,7 +87,7 @@ public class DynomiteAdmin {
     }
 
     @GET
-    @Path("/stop")
+    @Path("/{stop : (?i)stop}")
     public Response dynoStop() throws IOException, InterruptedException, JSONException {
 	instanceState.setIsProcessMonitoringSuspended(true);
 	dynoProcess.stop();
@@ -95,21 +95,21 @@ public class DynomiteAdmin {
     }
 
     @GET
-    @Path("/startstorageprocess")
+    @Path("/{startstorageprocess : (?i)startstorageprocess}")
     public Response storageProcessStart() throws IOException, InterruptedException, JSONException {
 	storageProcessMgr.start();
 	return Response.ok(REST_SUCCESS, MediaType.APPLICATION_JSON).build();
     }
 
     @GET
-    @Path("/stopstorageprocess")
+    @Path("/{stopstorageprocess : (?i)stopstorageprocess}")
     public Response storageProcessStop() throws IOException, InterruptedException, JSONException {
 	storageProcessMgr.stop();
 	return Response.ok(REST_SUCCESS, MediaType.APPLICATION_JSON).build();
     }
 
     @GET
-    @Path("/info")
+    @Path("/{info : (?i)info}")
     public Response dynoInfo() throws IOException, InterruptedException, JSONException {
 	logger.info("REST interface for INFO - not implemented");
 	// NodeProbe probe = new NodeProbe();
@@ -118,7 +118,7 @@ public class DynomiteAdmin {
     }
 
     @GET
-    @Path("/ring/{id}")
+    @Path("/{ring : (?i)ring}/{id}")
     public Response dynoRing(@PathParam("id") String keyspace) throws IOException, InterruptedException, JSONException {
 	logger.info("REST interface for RING - not implemented");
 	// NodeProbe probe = new NodeProbe();
@@ -129,7 +129,7 @@ public class DynomiteAdmin {
     }
 
     @GET
-    @Path("/repair")
+    @Path("/{repair : (?i)repair}")
     public Response dynoRepair(@QueryParam("sequential") boolean isSequential,
 	    @QueryParam("localDC") boolean localDCOnly,
 	    @DefaultValue("false") @QueryParam("primaryRange") boolean primaryRange)
@@ -138,27 +138,28 @@ public class DynomiteAdmin {
     }
 
     @GET
-    @Path("/version")
+    @Path("/{version : (?i)version}")
     public Response version() throws IOException, ExecutionException, InterruptedException {
 	logger.info("REST: version");
 	return Response.ok(new JSONArray().put("1.0.0"), MediaType.APPLICATION_JSON).build();
     }
 
     @GET
-    @Path("/move")
+    @Path("/{move : (?i)move}")
     public Response moveToken(@QueryParam(REST_HEADER_TOKEN) String newToken)
 	    throws IOException, ExecutionException, InterruptedException, ConfigurationException {
 	return Response.ok(REST_SUCCESS, MediaType.APPLICATION_JSON).build();
     }
 
     @GET
-    @Path("/drain")
+    @Path("/{drain : (?i)drain}")
     public Response dynoDrain() throws IOException, ExecutionException, InterruptedException {
+        logger.info("REST interface for DRAIN - not implemented");
 	return Response.ok(REST_SUCCESS, MediaType.APPLICATION_JSON).build();
     }
 
     @GET
-    @Path("/get_seeds")
+    @Path("/{get_seeds : (?i)get_seeds}")
     public Response getSeeds() {
 	try {
 	    final List<String> seeds = ii.getSeeds();
@@ -173,7 +174,7 @@ public class DynomiteAdmin {
     }
 
     @GET
-    @Path("/cluster_describe")
+    @Path("/{cluster_describe : (?i)cluster_describe}")
     public Response getClusterDescribe() {
 	try {
 	    final List<String> nodes = ii.getClusterInfo();
@@ -188,7 +189,7 @@ public class DynomiteAdmin {
     }
 
     @GET
-    @Path("/backup")
+    @Path("/{backup : (?i)backup}")
     public Response doBackup() {
 	try {
 	    logger.info("REST call: backups");
@@ -201,7 +202,7 @@ public class DynomiteAdmin {
     }
 
     @GET
-    @Path("/restore")
+    @Path("/{restore : (?i)restore}")
     public Response doRestore() {
 	try {
 	    logger.info("REST call: restore");
@@ -214,7 +215,7 @@ public class DynomiteAdmin {
     }
 
     @GET
-    @Path("/takesnapshot")
+    @Path("/{takesnapshot : (?i)takesnapshot}")
     public Response takeSnapshot() {
 	try {
 	    logger.info("REST call: Persisting Data to Disk");
@@ -227,11 +228,10 @@ public class DynomiteAdmin {
     }
 
     @GET
-    @Path("/Status")
+    @Path("/{status : (?i)status}")
     public Response floridaStatus() {
 	try {
 	    JSONObject statusJson = new JSONObject();
-
 	    /* Warm up status */
 	    JSONObject warmupJson = new JSONObject();
 	    if (!this.instanceState.firstBootstrap()) {
@@ -318,7 +318,5 @@ public class DynomiteAdmin {
 	    logger.error("Error requesting Florida status from REST call", e);
 	    return Response.serverError().build();
 	}
-
     }
-
 }
