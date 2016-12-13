@@ -1,0 +1,1 @@
+Here we will posting common questions asked by the community. However, if need some help with either getting up and going or some problems with the code please submit an issue on this github repo.

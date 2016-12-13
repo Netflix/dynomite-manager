@@ -1,0 +1,8 @@
+site_name: Dynomite Manager
+#pages:
+#  - Home: index.md
+#  - Features: Features.md
+#  - Getting Started: Getting-Started.md
+#  - How to Contribute: How-to-contribute.md
+#  - FAQ: FAQ.md 
+theme: readthedocs

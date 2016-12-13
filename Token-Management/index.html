@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Token Management - Dynomite Manager</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Token Management";
+    var mkdocs_page_input_path = "Token-Management.md";
+    var mkdocs_page_url = "/Token-Management/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Dynomite Manager</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="..">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../AWS-Deployment/">AWS Deployment</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Backups-and-Restores/">Backups and Restores</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Cold-Bootstraping/">Cold Bootstraping</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../FAQ/">FAQ</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Features/">Features</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Getting-Started/">Getting Started</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Home/">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../How-to-contribute/">How to contribute</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Monitoring-and-Insights-Integration/">Monitoring and Insights Integration</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../REST-API/">REST API</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Service-Discovery-and-Healthcheck/">Service Discovery and Healthcheck</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Step-by-step-installation/">Step by step installation</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Token Management</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#dynomite-vs-cassandra-tokens">Dynomite vs Cassandra tokens</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#token-calculation">Token calculation</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#node-replacement">Node Replacement</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#token-management">Token Management</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#how-can-i-see-the-token-assigned-token-on-each-dynomite-node">How can I see the token assigned token on each Dynomite node</a></li>
+                
+                    <li><a class="toctree-l4" href="#rest-api-to-dynomite-manager">REST API to Dynomite manager</a></li>
+                
+                    <li><a class="toctree-l4" href="#dynomites-yaml">Dynomite's YAML</a></li>
+                
+            
+            </ul>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../_Sidebar/"> Sidebar</a>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Dynomite Manager</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Token Management</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h2 id="dynomite-vs-cassandra-tokens">Dynomite vs Cassandra tokens</h2>
+<p>Dynomite and Cassandra share a lot of commonalities on the way they use tokens. The difference between the two is that Dynomite occupies the whole token range on a per rack basis, whereas Cassandra on a per zone basis (when using token static allocation and not virtual nodes). Therefore, tokens can repeat across racks and in the same datacenter. The rest of the token management is very much similar. In that perspective Dynomite-manager shares a lot of code with <a href="https://github.com/Netflix/Priam">Priam</a>, Netflix Cassandra sidecar.</p>
+<h2 id="token-calculation">Token calculation</h2>
+<p>Dynomite-manager calculates the token of every node by looking at the number of slots (nodes), by which the token range is divided in the rack, and the position of the node. The tokens are then stored in an external data store along with application id, availability zone, datacenter, instance id, hostname, and elastic IP.  Since nodes are by nature volatile in the cloud, if a node gets replaced, Dynomite-manager in the new node queries the data store to find if a token was pre-generated. At Netflix, we leverage a Cassandra cluster to store this information.</p>
+<h2 id="node-replacement">Node Replacement</h2>
+<p>Since we run Dynomite on the cloud at any point of time a node can die. A new instance is booted in the same auto-scaling group. Dynomite-manager loads along with the Tomcat server. Dynomite-manager queries AWS to receive the list of nodes in the same auto-scaling group, and queries the external Cassandra cluster for the list of nodes along with their tokens. It compares the two and determines, which node has been terminated and marks the token as <em>dead</em>. It then self-assigns the <em>dead</em> token, and follows the warm up procedure so that there is no data loss. After the warm up is complete, it starts Dynomite and the storage engine.</p>
+<p>During this process, Dyno is informed either through the discovery service that the node is down, or after N (N=10 by default) errors fails over to another node that has the same token in the same datacenter.</p>
+<h2 id="token-management">Token Management</h2>
+<p>An external structured persistent data store system has to be used. This can be done by implementing the interface <a href="https://github.com/Netflix/dynomite-manager/blob/dev/dynomitemanager/src/main/java/com/netflix/dynomitemanager/identity/IAppsInstanceFactory.java">IAppsInstanceFactory</a>.
+If you plan to use Cassandra to handle the tokens the following KEYSPACE and TABLE definitions can be used:</p>
+<pre><code>CREATE KEYSPACE dyno_bootstrap WITH replication = {'class': 'NetworkTopologyStrategy', 'eu-west': '3', 'us-east': '3', 'us-west': '3', 'us-west-2': '3'}  AND durable_writes = true;
+
+CREATE TABLE dyno_bootstrap.tokens (
+    key text PRIMARY KEY,
+    "Id" text,
+    "appId" text,
+    "availabilityZone" text,
+    datacenter text,
+     "elasticIP" text,
+    hostname text,
+    "instanceId" text,
+    location text,
+    "token" text,
+    updatetime timeuuid
+)
+
+CREATE TABLE dyno_bootstrap.locks (
+  key blob,
+  column1 text,
+  value blob,
+PRIMARY KEY (key, column1)
+) WITH COMPACT STORAGE
+  AND CLUSTERING ORDER BY (column1 ASC)
+  AND bloom_filter_fp_chance = 0.01
+  AND caching = '{"keys":"ALL", "rows_per_partition":"NONE"}'
+  AND comment = ''
+  AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy'}
+  AND compression = {'sstable_compression': 'org.apache.cassandra.io.compress.SnappyCompressor'}
+  AND dclocal_read_repair_chance = 0.0
+  AND default_time_to_live = 0
+  AND gc_grace_seconds = 864000
+  AND max_index_interval = 2048
+  AND memtable_flush_period_in_ms = 0
+  AND min_index_interval = 256
+  AND read_repair_chance = 1.0
+  AND speculative_retry = 'NONE';
+</code></pre>
+<p>The client code can be found in <a href="https://github.com/Netflix/dynomite-manager/blob/dev/dynomitemanager/src/main/java/com/netflix/dynomitemanager/identity/CassandraInstanceFactory.java">CassandraInstranceFactory</a>.</p>
+<h2 id="how-can-i-see-the-token-assigned-token-on-each-dynomite-node">How can I see the token assigned token on each Dynomite node</h2>
+<h3 id="rest-api-to-dynomite-manager">REST API to Dynomite manager</h3>
+<p><code>/get_seeds</code>: responds with the hostnames and tokens</p>
+<p><code>/cluster_describe</code>: responds with a JSON file of the cluster level information</p>
+<p><code>/status</code>: returns the status of the processes managed by Dynomite-manager and itself, including the token of the node</p>
+<h3 id="dynomites-yaml">Dynomite's YAML</h3>
+<p>The YAML contains the tokens. Dynomite-manager re-writes the YAML whenever a new node joins the ring, such that it is always up to date.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../_Sidebar/" class="btn btn-neutral float-right" title=" Sidebar">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../Step-by-step-installation/" class="btn btn-neutral" title="Step by step installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../Step-by-step-installation/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../_Sidebar/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script src="../js/theme.js"></script>
+
+</body>
+</html>
