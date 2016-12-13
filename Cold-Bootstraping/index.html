@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Cold Bootstraping - Dynomite Manager</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Cold Bootstraping";
+    var mkdocs_page_input_path = "Cold-Bootstraping.md";
+    var mkdocs_page_url = "/Cold-Bootstraping/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Dynomite Manager</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="..">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../AWS-Deployment/">AWS Deployment</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Backups-and-Restores/">Backups and Restores</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Cold Bootstraping</a>
+        
+            <ul>
+            
+            </ul>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../FAQ/">FAQ</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Features/">Features</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Getting-Started/">Getting Started</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Home/">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../How-to-contribute/">How to contribute</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Monitoring-and-Insights-Integration/">Monitoring and Insights Integration</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../REST-API/">REST API</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Service-Discovery-and-Healthcheck/">Service Discovery and Healthcheck</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Step-by-step-installation/">Step by step installation</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Token-Management/">Token Management</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../_Sidebar/"> Sidebar</a>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Dynomite Manager</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Cold Bootstraping</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <p>In designing our warm up feature, we considered the following principles:</p>
+<ul>
+<li>Do not introduce inconsistencies;</li>
+<li>Do not achieve a fully warmed up node, but get as many data as possible.</li>
+<li>Do not create any major issues to another node (i.e. node used as the source of truth)</li>
+</ul>
+<p>Based on these principles, a failure of the warm up process should not cause an issue in the cluster, and it should not stop the newly brought up node.</p>
+<p>The cold bootstrapping feature is currently designed around Redis. It leverages the master-slave diskless replication of Redis. Dynomite-manager sets the target node that needs to be warmed up as “slave”, and finds another peer with the same token in the local region. That peer is designated as the master, and therefore forces Redis to transfer an rdb file and load it to Redis. Once the warm up is complete then Redis is switched back to serve traffic as a normal master.</p>
+<p>Warm up or bootstrapping is triggered by a termination of a node. This is in turn causes a new token to be generated, which initiates the warm up process. The following is the sequence of operations:</p>
+<ol>
+<li>Searches for the correct token: Warming up node's own token(s) : 1383429731</li>
+<li>Determines which peer nodes have the same token. A random peer node within the local region is selected to be used for the warm up which avoids cross-region communication issues.</li>
+<li>Redis issues <a href="http://redis.io/commands/SLAVEOF">SLAVEOF</a> command to that peer. Effectively the target Redis instance sets itself as a slave of that node. In addition, Dynomite-manager sets Dynomite to be in standby mode so that traffic is not received and the node remains out of discovery.</li>
+<li>A Dynomite node is fully warmed up if it has received all the data from the remote at the time the warm up process started. To determine if a node is warmed up we use the difference between the Redis master and the Redis slave offset. Both offsets are calculated from the Redis master node that was selected as the source of warm up. This gives us the correct view of how much data the remote Redis master node has streamed and how much data it believes the Redis slave node has received.</li>
+<li>Once master and slave are in sync, Dynomite is set to allow writes only.</li>
+<li>Redis is stopped from peer syncing by using  Redis “SLAVEOF NO ONE” command</li>
+<li>Dynomite is set back to normal state. Process checks health of Dynomite, if there is an issue Dynomite gets restarted.</li>
+<li>Done!</li>
+</ol>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../FAQ/" class="btn btn-neutral float-right" title="FAQ">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../Backups-and-Restores/" class="btn btn-neutral" title="Backups and Restores"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../Backups-and-Restores/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../FAQ/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script src="../js/theme.js"></script>
+
+</body>
+</html>

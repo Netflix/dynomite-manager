@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    
+    <url>
+     <loc>/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/AWS-Deployment/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/Backups-and-Restores/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/Cold-Bootstraping/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/FAQ/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/Features/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/Getting-Started/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/Home/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/How-to-contribute/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/Monitoring-and-Insights-Integration/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/REST-API/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/Service-Discovery-and-Healthcheck/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/Step-by-step-installation/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/Token-Management/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/_Sidebar/</loc>
+     <lastmod>2016-12-13</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+</urlset>
