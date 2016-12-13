@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Backups and Restores - Dynomite Manager</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Backups and Restores";
+    var mkdocs_page_input_path = "Backups-and-Restores.md";
+    var mkdocs_page_url = "/Backups-and-Restores/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Dynomite Manager</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="..">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../AWS-Deployment/">AWS Deployment</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">Backups and Restores</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#how-it-works">How it works</a></li>
+                
+            
+                <li class="toctree-l3"><a href="#setting-up-backupsrestores">Setting up backups/restores</a></li>
+                
+            
+            </ul>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Cold-Bootstraping/">Cold Bootstraping</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../FAQ/">FAQ</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Features/">Features</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Getting-Started/">Getting Started</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Home/">Home</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../How-to-contribute/">How to contribute</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Monitoring-and-Insights-Integration/">Monitoring and Insights Integration</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../REST-API/">REST API</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Service-Discovery-and-Healthcheck/">Service Discovery and Healthcheck</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Step-by-step-installation/">Step by step installation</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../Token-Management/">Token Management</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../_Sidebar/"> Sidebar</a>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Dynomite Manager</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Backups and Restores</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <p>Dynomite can be used as a single point of truth (data store) as well as a cache. A dependable backup and recovery process is therefore critical for Disaster Recovery (DR) and Data Corruption (CR) when choosing a data store in the cloud. With Dynomite-manager, a daily snapshot for all clusters that leverage Dynomite as a data store is used to back them up to an object storage. The default implementation is currently S3; S3 was an obvious choice due to its simple interface and ability to access any amount of data from anywhere.</p>
+<h2 id="how-it-works">How it works</h2>
+<p><strong>Backup</strong>:
+Dynomite-manager initiates the S3 backups. The backups feature leverages the persistence feature of Redis to dump data to the drive. Dynomite-manager supports both the RDB and the AOF persistence of Redis, offering the ability to the users to use a readable format of their data for debugging or a memory direct snapshot. The backups leverage the IAM credentials in order to encrypt the communication. Backups (a) can be scheduled using a date in the configuration (or by leveraging Archaius, Netflix configuration management API), and (b) on demand using the REST API. </p>
+<p><strong>Restores</strong>:
+Dynomite-manager supports restoring a single node through a REST API, or the complete ring. When performing a restore, Dynomite-manager (on each node), shuts down Redis and Dynomite, locates the snapshot files in S3, and orchestrates the download of the files. Once the snapshot is transferred to the node, Dynomite-manager starts Redis and waits until the data are in memory, and then follows up with starting the Dynomite process. Dynomite-manager can also restore data to clusters with different names. This allows us to spin up multiple test clusters with the same data, enabling refreshes. Refreshes are very important at Netflix, because cluster users can leverage production data in a test environment, hence perform realistics benchmarks and offline analysis on production data. Finally, Dynomite-manager allows for targeted refreshes on a specific date, allowing cluster users to restore data to point prior to the data corruption, test production data for a specific time frame and opening the doors for many other use cases that we have not yet explored.</p>
+<h2 id="setting-up-backupsrestores">Setting up backups/restores</h2>
+<p>Dynomite-manager uses the fast properties, or external configuration, to define the backup/restore buckets as well as other related properties</p>
+<ul>
+<li><code>dynomitemanager.dyno.backup.bucket.name</code>: Object storage bucket name, where backed up files will be stored</li>
+<li><code>dynomitemanager.dyno.backup.restore.enabled</code>: <code>false</code> by default, enabling restores</li>
+<li><code>dynomitemanager.dyno.backup.snapshot.enabled</code>: <code>false</code> by default, enabling backups</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Cold-Bootstraping/" class="btn btn-neutral float-right" title="Cold Bootstraping">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../AWS-Deployment/" class="btn btn-neutral" title="AWS Deployment"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+    
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../AWS-Deployment/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../Cold-Bootstraping/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script src="../js/theme.js"></script>
+
+</body>
+</html>
