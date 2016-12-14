@@ -1,0 +1,8 @@
+- [Discovery and Healthcheck](https://github.com/Netflix/dynomite-manager/wiki/Discovery-and-Healthcheck)
+- Node Configuration and Token Management for multi-region deployments
+- [Dynomite/Redis cold bootstrap (warm up)](https://github.com/Netflix/dynomite-manager/wiki/Cold-Bootstraping)
+- [Monitoring and Insights Integration](https://github.com/Netflix/dynomite-manager/wiki/Monitoring-and-Insights-Integration)
+- Support multi-region Dynomite deployment via public IP.
+- Automated security group update in multi-region environment.
+- Object storage backups (AWS S3 implenentation provided)
+- REST API
