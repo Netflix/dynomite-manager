@@ -91,6 +91,17 @@ public class RedisStorageProxy implements IStorageProxy {
 	    this.localJedis = JedisUtils.connect(REDIS_ADDRESS, REDIS_PORT);
 	}
     }
+    
+    /**
+     * A wrapper function around JedisUtils to disconnect from Redis
+     */
+    private void localRedisDisconnect() {
+        if (this.localJedis != null) {
+            logger.info("Disconnecting from Redis.");
+            this.localJedis.disconnect();
+            this.localJedis = null;
+        }
+    }
 
     /**
      * Connect to the peer with the same token, in order to start the warm up
@@ -131,9 +142,11 @@ public class RedisStorageProxy implements IStorageProxy {
 		sleeper.sleepQuietly(1000);
 	    } catch (JedisConnectionException e) {
 		logger.error("JedisConnection Exception in SLAVEOF NO ONE: " + e.getMessage());
+                localRedisDisconnect();
 		localRedisConnect();
 	    } catch (Exception e) {
 		logger.error("Error: " + e.getMessage());
+                localRedisDisconnect();
 		localRedisConnect();
 	    }
 	}
