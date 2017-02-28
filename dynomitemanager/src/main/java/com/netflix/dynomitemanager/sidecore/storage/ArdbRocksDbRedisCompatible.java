@@ -53,6 +53,46 @@ public class ArdbRocksDbRedisCompatible {
         this.storeMaxMem = storeMaxMem;
     }
 
+    private String ConvertRocksDBOptions(String rocksDBOptions) {
+        // split the arguments based on the ";"
+        String[] allOptions  = rocksDBOptions.split(";");
+
+        // String builder to put the properties back
+        StringBuilder newProperties = new StringBuilder();
+
+        // parse the properties and replace
+        for (String pr : allOptions) {
+            logger.info("Checking Property: '" + pr + "'");
+
+            // change the properties to the updated values
+            if (pr.contains("write_buffer_size")) {
+                pr = "write_buffer_size=" + writeBufferSize + "MB";
+                logger.info("Updating to: '" + pr + "'");
+            } else if (pr.contains("max_write_buffer_number")) {
+                pr = "max_write_buffer_number=" + maxWriteBufferNumber;
+                logger.info("Updating to: '" + pr + "'");
+            } else if (pr.contains("min_write_buffer_number_to_merge")) {
+                pr = "min_write_buffer_number_to_merge=" + minWriteBufferToMerge;
+                logger.info("Updating to: '" + pr + "'");
+            }
+            /*
+             * reconstructing
+             */
+            if (pr.contains("\\")) {
+                pr = pr.replace("\\", "");
+                if (pr.length() > 0) {
+                    pr += ";";
+                }
+                pr = pr + "\\";
+                newProperties.append(pr);
+            }
+            else
+                newProperties.append(pr + ";");
+            logger.info("Appending Property: '" + pr +"'");
+        }
+        return newProperties.toString();
+
+    }
     public void updateConfiguration(String confPathName) throws IOException {
 
         /**
@@ -85,6 +125,8 @@ public class ArdbRocksDbRedisCompatible {
 
         String ardbRedisCompatibleMode = "^redis-compatible-mode \\s*[a-zA-Z]*";
 
+        String logLevel = "^loglevel \\s*[a-zA-Z]*";
+
         logger.info("Updating ARDB/RocksDB conf: " + confPathName);
         Path confPath = Paths.get(confPathName);
         Path backupPath = Paths.get(confPathName + ".bkp");
@@ -95,7 +137,6 @@ public class ArdbRocksDbRedisCompatible {
         }
 
         boolean rocksParse = false;
-        StringBuilder rocksProperties = new StringBuilder();
 
         // Not using Properties file to load as we want to retain all comments,
         // and for easy diffing with the ami baked version of the conf file.
@@ -111,61 +152,28 @@ public class ArdbRocksDbRedisCompatible {
                 continue;
             }
             if (line.matches(ardbRedisCompatibleMode)) {
-                String compatibable = "redis-compatible-mode yes";
-                logger.info("Updating ARDB property: " + compatibable);
-                newLines.add(compatibable);
+                String compatible = "redis-compatible-mode yes";
+                logger.info("Updating ARDB property: " + compatible);
+                newLines.add(compatible);
+                continue;
+            } else if (line.matches(logLevel)) {
+                String logWarn = "loglevel warn";
+                logger.info("Updating ARDB property: " + logWarn);
+                newLines.add(logWarn);
+                continue;
             } else if (line.contains(rocksdbOptions)) {
+                logger.info("Found rocksdb option");
                 rocksParse = true;
-                /*** KEY = rocksdb.options ***/
-                // split key and value pair of this line
                 String[] keyValue = line.split("\\s+");
-                rocksProperties.append(keyValue[1]);
-            } else if (rocksParse) { // we need this for multi-line options
-                                     // parsing
-                // remove the empty space in the front and then append the value
-                rocksProperties.append(line.replaceAll("\\s", ""));
-
-                // last line of parsing rocksdb.options will not have ";\"
+                newLines.add(keyValue[0] + spaces(15) + ConvertRocksDBOptions(keyValue[1]));
+                continue;
+            } else if (rocksParse) {
+                // we need this for multi-line options parsing
                 if (!line.contains("\\")) {
-                    // split the arguments based on the ";"
-                    String[] allProperties = rocksProperties.toString().split(";");
-
-                    // String builder to put the properties back
-                    StringBuilder newProperties = new StringBuilder();
-
-                    // parse the properties and replace
-                    for (String pr : allProperties) {
-
-                        boolean newLine = false;
-                        // removing any prepending "\" in the properties
-                        if (pr.contains("\\")) {
-                            pr = pr.replace("\\", "");
-                            newLine = true;
-                        }
-                        logger.info(pr);
-                        // change the properties to the updated values
-                        if (pr.contains("write_buffer_size")) {
-                            pr = "write_buffer_size=" + writeBufferSize + "MB";
-                            logger.info("property: " + pr);
-                        } else if (pr.contains("max_write_buffer_number")) {
-                            pr = "max_write_buffer_number=" + maxWriteBufferNumber;
-                            logger.info("property: " + pr);
-                        } else if (pr.contains("min_write_buffer_number_to_merge")) {
-                            pr = "min_write_buffer_number_to_merge=" + minWriteBufferToMerge;
-                            logger.info("updating property: " + pr);
-                        }
-                        /*
-                         * reconstructing
-                         */
-                        if (newLine == false) {
-                            newProperties.append(pr + ";");
-                        } else {
-                            newProperties.append(pr + ";\\" + System.lineSeparator() + spaces(30));
-                        }
-                    }
-                    newLines.add("rocksdb.options" + spaces(15) + newProperties.toString());
                     rocksParse = false;
                 }
+                newLines.add(ConvertRocksDBOptions(line));
+                continue;
             } else {
                 newLines.add(line);
             }
