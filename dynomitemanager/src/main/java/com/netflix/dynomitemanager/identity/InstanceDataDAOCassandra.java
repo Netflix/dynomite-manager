@@ -118,10 +118,22 @@ public class InstanceDataDAOCassandra {
 	public void createInstanceEntry(AppsInstance instance) throws Exception {
 		logger.info("*** Creating New Instance Entry ***");
 		String key = getRowKey(instance);
-		// If the key exists throw exception
+		
 		if (getInstance(instance.getApp(), instance.getRack(), instance.getId()) != null) {
-			logger.info(String.format("Key already exists: %s", key));
-			return;
+			logger.info(String.format("Key already exists: %s | This is a ASG Instance Replace Scenario - Will update CASS IPS", key));
+			
+			// Delete the OLD entry on CASS
+			getLock(instance);
+			try{
+				MutationBatch m = bootKeyspace.prepareMutationBatch();
+				m.withRow(CF_TOKENS, key).delete();
+				logger.info(String.format("Key %s DELETED from CASS | This key will be inserted again now... ", key));
+			}catch(Exception e) {
+				logger.info(e.getMessage());
+			} finally {
+				releaseLock(instance);
+			}
+			
 		}
 
 		getLock(instance);
@@ -147,6 +159,7 @@ public class InstanceDataDAOCassandra {
 				}
 			}
 			m.execute();
+			logger.info(String.format("Key %s INSERTED on CASS", key));
 		} catch (Exception e) {
 			logger.info(e.getMessage());
 		} finally {
