@@ -208,15 +208,18 @@ public class InstanceDataDAOCassandra {
 	}
 
 	public void deleteInstanceEntry(AppsInstance instance) throws Exception {
+		logger.info("deleteInstanceEntry(). Found Dead node trying to DELETE it {}", new Object[]{instance});
 		// Acquire the lock first
 		getLock(instance);
 
 		// Delete the row
 		String key = findKey(instance.getApp(), String.valueOf(instance.getId()), instance.getDatacenter(),
 				instance.getRack());
-		if (key == null)
+		if (key == null){
+			logger.info("deleteInstanceEntry(). Key not found - no delete - app: {}, id: {}, DC: {},  rack: {}", new Object[]{instance.getApp(), String.valueOf(instance.getId()), instance.getDatacenter(),instance.getRack()});
 			return;  //don't fail it
-
+		}
+		
 		MutationBatch m = bootKeyspace.prepareMutationBatch();
 		m.withRow(CF_TOKENS, key).delete();
 		m.execute();
@@ -233,7 +236,8 @@ public class InstanceDataDAOCassandra {
 		m = bootKeyspace.prepareMutationBatch();
 		m.withRow(CF_LOCKS, key).delete();
 		m.execute();
-
+		
+		logger.info("deleteInstanceEntry(). DELETED! ");
 	}
 
 	public AppsInstance getInstance(String app, String rack, int id) {
