@@ -273,7 +273,7 @@ public class InstanceIdentity {
 	    // String payload = tokenManager.createToken(my_slot,
 	    // membership.getRacCount(), membership.getRacMembershipSize(),
 	    // config.getDataCenter());
-	    String payload = tokenManager.createToken(my_slot, rackMembershipSize, config.getRack());
+	    String payload = tokenManager.createToken(my_slot, rackMembershipSize, config.getRack() + "_" + myInstanceId);
 	    return factory.create(config.getDynomiteClusterName(), my_slot + hash, config.getInstanceName(), config.getHostname(),
 		    config.getHostIP(), config.getZone(), null, payload, config.getRack());
 	}
