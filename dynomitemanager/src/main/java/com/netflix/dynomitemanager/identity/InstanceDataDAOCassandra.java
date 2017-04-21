@@ -117,12 +117,19 @@ public class InstanceDataDAOCassandra {
 
 	public void createInstanceEntry(AppsInstance instance) throws Exception {
 		logger.info("*** Creating New Instance Entry ***");
-		String key = getRowKey(instance);
 		
+		String key = getRowKey(instance);
 		logger.info("KEY fronm CASS: {}",new Object[]{key});
-		if (getInstance(instance.getApp(), instance.getRack(), instance.getId()) != null)
+		
+		String rackName = InstanceIdentityUniqueGenerator.createUniqueRackName(config.getRack(), instance.getInstanceId());
+		logger.info("*** Checking for Instances with app: {}, id: {}, rackName {} ",new Object[]{instance.getApp(),instance.getId(),rackName});
+		
+		if (getInstance(instance.getApp(), rackName, instance.getId()) != null){
+			logger.info("*** Not inserting new data into Cassandra. ***");
 			return;
+		}
 
+		logger.info("*** Will insert new data into Cassandra. ***");
 		getLock(instance);
 
 		try {
@@ -241,12 +248,14 @@ public class InstanceDataDAOCassandra {
 	}
 
 	public AppsInstance getInstance(String app, String rack, int id) {
-		logger.info("getInstance() app: {}, rack:{}, id: {} ", new Object[]{app,rack,id});
+		logger.info("Listing  instances in Cassandra... ");
 		Set<AppsInstance> set = getAllInstances(app);
+		
 		for (AppsInstance ins : set) {
-			logger.info("getInstance() INS ID:{}, INS RACK:{} ", new Object[]{ins.getId(),ins.getRack()});
-			if (ins.getId() == id && ins.getRack().equals(rack))
-				return ins;
+			logger.info("Instance ID:{} - RACK:{} ", new Object[]{ins.getId(),ins.getRack()});
+			if (ins.getId() == id && ins.getRack().equals(rack)){
+				return ins;	
+			}
 		}
 		return null;
 	}
