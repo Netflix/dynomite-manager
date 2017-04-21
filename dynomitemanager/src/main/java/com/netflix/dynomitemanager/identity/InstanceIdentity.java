@@ -53,10 +53,11 @@ public class InstanceIdentity {
 
     private final ListMultimap<String, AppsInstance> locMap = Multimaps
 	    .newListMultimap(new HashMap<String, Collection<AppsInstance>>(), new Supplier<List<AppsInstance>>() {
-		public List<AppsInstance> get() {
-		    return Lists.newArrayList();
-		}
-	    });
+			public List<AppsInstance> get() {
+			    return Lists.newArrayList();
+			}
+	});
+    
     private final IAppsInstanceFactory factory;
     private final IMembership membership;
     private final IConfiguration config;
@@ -65,11 +66,11 @@ public class InstanceIdentity {
     private final InstanceEnvIdentity insEnvIdentity;
 
     private final Predicate<AppsInstance> differentHostPredicate = new Predicate<AppsInstance>() {
-	@Override
-	public boolean apply(AppsInstance instance) {
-	    return (!instance.getInstanceId().equalsIgnoreCase(DUMMY_INSTANCE_ID)
-		    && !instance.getHostName().equals(myInstance.getHostName()));
-	}
+		@Override
+		public boolean apply(AppsInstance instance) {
+		    return (!instance.getInstanceId().equalsIgnoreCase(DUMMY_INSTANCE_ID)
+			    && !instance.getHostName().equals(myInstance.getHostName()));
+		}
     };
 
     private AppsInstance myInstance;
@@ -90,7 +91,7 @@ public class InstanceIdentity {
     }
 
     public AppsInstance getInstance() {
-	return myInstance;
+    	return myInstance;
     }
 
     public void init() throws Exception {
@@ -98,22 +99,22 @@ public class InstanceIdentity {
 		myInstance = new RetryableCallable<AppsInstance>() {
 		    @Override
 		    public AppsInstance retriableCall() throws Exception {
-			// Check if this node is decommissioned
-			for (AppsInstance ins : factory.getAllIds(config.getDynomiteClusterName() + "-dead")) {
-			    logger.debug(String.format("[Dead] Iterating though the hosts: %s", ins.getInstanceId()));
-			    if (ins.getInstanceId().equals(config.getInstanceName())) {
-				ins.setOutOfService(true);
-				return ins;
-			    }
-			}
-			for (AppsInstance ins : factory.getAllIds(config.getDynomiteClusterName())) {
-			    logger.debug(String.format("[Alive] Iterating though the hosts: %s My id = [%s]",
-				    ins.getInstanceId(), ins.getId()));
-			    if (ins.getInstanceId().equals(config.getInstanceName()))
-				return ins;
-			}
-			return null;
-		    }
+				// Check if this node is decommissioned
+				for (AppsInstance ins : factory.getAllIds(config.getDynomiteClusterName() + "-dead")) {
+				    logger.debug(String.format("[Dead] Iterating though the hosts: %s", ins.getInstanceId()));
+				    if (ins.getInstanceId().equals(config.getInstanceName())) {
+					ins.setOutOfService(true);
+					return ins;
+				    }
+				}
+				for (AppsInstance ins : factory.getAllIds(config.getDynomiteClusterName())) {
+				    logger.debug(String.format("[Alive] Iterating though the hosts: %s My id = [%s]",
+					    ins.getInstanceId(), ins.getId()));
+				    if (ins.getInstanceId().equals(config.getInstanceName()))
+					return ins;
+				}
+				return null;
+		   }
 		}.call();
 		
 		// Grab a dead token
@@ -201,39 +202,39 @@ public class InstanceIdentity {
     }
 
     public class GetPregeneratedToken extends RetryableCallable<AppsInstance> {
-	@Override
-	public AppsInstance retriableCall() throws Exception {
-	    logger.info("Looking for any pre-generated token");
-	    final List<AppsInstance> allIds = factory.getAllIds(config.getDynomiteClusterName());
-	    List<String> asgInstances = membership.getRacMembership();
-	    // Sleep random interval - upto 15 sec
-	    sleeper.sleep(new Random().nextInt(5000) + 10000);
-	    for (AppsInstance dead : allIds) {
-		// test same zone and is it is alive.
-		if (!dead.getRack().equals(config.getRack()) || asgInstances.contains(dead.getInstanceId())
-			|| !isInstanceDummy(dead))
-		    continue;
-		logger.info("Found pre-generated token: " + dead.getToken());
-		// AppsInstance markAsDead = factory.create(dead.getApp() +
-		// "-dead", dead.getId(), dead.getInstanceId(),
-		// dead.getHostName(), dead.getHostIP(), dead.getRack(),
-		// dead.getVolumes(),
-		// dead.getToken());
-		// remove it as we marked it down...
-		factory.delete(dead);
-		isTokenPregenerated = true;
-
-		String payLoad = dead.getToken();
-		logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getRack());
-		return factory.create(config.getDynomiteClusterName(), dead.getId(), config.getInstanceName(), config.getHostname(),
-			config.getHostIP(), config.getZone(), dead.getVolumes(), payLoad, config.getRack());
-	    }
-	    return null;
-	}
-
-	public void forEachExecution() {
-	    populateRacMap();
-	}
+		@Override
+		public AppsInstance retriableCall() throws Exception {
+		    logger.info("Looking for any pre-generated token");
+		    final List<AppsInstance> allIds = factory.getAllIds(config.getDynomiteClusterName());
+		    List<String> asgInstances = membership.getRacMembership();
+		    // Sleep random interval - upto 15 sec
+		    sleeper.sleep(new Random().nextInt(5000) + 10000);
+		    for (AppsInstance dead : allIds) {
+			// test same zone and is it is alive.
+			if (!dead.getRack().equals(config.getRack()) || asgInstances.contains(dead.getInstanceId())
+				|| !isInstanceDummy(dead))
+			    continue;
+			logger.info("Found pre-generated token: " + dead.getToken());
+			// AppsInstance markAsDead = factory.create(dead.getApp() +
+			// "-dead", dead.getId(), dead.getInstanceId(),
+			// dead.getHostName(), dead.getHostIP(), dead.getRack(),
+			// dead.getVolumes(),
+			// dead.getToken());
+			// remove it as we marked it down...
+			factory.delete(dead);
+			isTokenPregenerated = true;
+	
+			String payLoad = dead.getToken();
+			logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getRack());
+			return factory.create(config.getDynomiteClusterName(), dead.getId(), config.getInstanceName(), config.getHostname(),
+				config.getHostIP(), config.getZone(), dead.getVolumes(), payLoad, config.getRack());
+		    }
+		    return null;
+		}
+	
+		public void forEachExecution() {
+		    populateRacMap();
+		}
     }
 
     public class GetNewToken extends RetryableCallable<AppsInstance> {
