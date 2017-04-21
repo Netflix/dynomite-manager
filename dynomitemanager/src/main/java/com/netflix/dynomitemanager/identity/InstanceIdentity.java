@@ -81,13 +81,13 @@ public class InstanceIdentity {
     @Inject
     public InstanceIdentity(IAppsInstanceFactory factory, IMembership membership, IConfiguration config,
 	    Sleeper sleeper, ITokenManager tokenManager, InstanceEnvIdentity insEnvIdentity) throws Exception {
-	this.factory = factory;
-	this.membership = membership;
-	this.config = config;
-	this.sleeper = sleeper;
-	this.tokenManager = tokenManager;
-	this.insEnvIdentity = insEnvIdentity;
-	init();
+		this.factory = factory;
+		this.membership = membership;
+		this.config = config;
+		this.sleeper = sleeper;
+		this.tokenManager = tokenManager;
+		this.insEnvIdentity = insEnvIdentity;
+		init();
     }
 
     public AppsInstance getInstance() {
@@ -133,9 +133,9 @@ public class InstanceIdentity {
 		}
 		logger.info("My token: " + myInstance.getToken());
 	
-	    }
+	}
 	
-	    private void populateRacMap() {
+    private void populateRacMap() {
 		locMap.clear();
 		for (AppsInstance ins : factory.getAllIds(config.getDynomiteClusterName())) {
 		    locMap.put(ins.getZone(), ins);
@@ -215,11 +215,7 @@ public class InstanceIdentity {
 				|| !isInstanceDummy(dead))
 			    continue;
 			logger.info("Found pre-generated token: " + dead.getToken());
-			// AppsInstance markAsDead = factory.create(dead.getApp() +
-			// "-dead", dead.getId(), dead.getInstanceId(),
-			// dead.getHostName(), dead.getHostIP(), dead.getRack(),
-			// dead.getVolumes(),
-			// dead.getToken());
+
 			// remove it as we marked it down...
 			factory.delete(dead);
 			isTokenPregenerated = true;
@@ -287,7 +283,7 @@ public class InstanceIdentity {
 
 
     public List<String> getSeeds() throws UnknownHostException {
-		// populateRacMap();
+
 		List<String> seeds = new LinkedList<String>();
 	
 		for (AppsInstance ins : factory.getAllIds(config.getDynomiteClusterName())) {
