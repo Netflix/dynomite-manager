@@ -267,11 +267,11 @@ public class InstanceIdentity {
 			    my_slot, membership.getRacCount(), rackMembershipSize, config.getDataCenter()));
 	
 		    String payload = tokenManager.createToken(my_slot, rackMembershipSize, config.getRack());
-		    String rackName = InstanceIdentityUniqueGenerator.createUniqueRackName(config.getRack(), myInstanceId);
+		    String uniqueID = InstanceIdentityUniqueGenerator.createUniqueID(my_slot,myInstanceId);
 		    
 		    return factory.create(
-		    		config.getDynomiteClusterName(), my_slot + hash, config.getInstanceName(), config.getHostname(),
-		    		config.getHostIP(), config.getZone(), null, payload,  rackName
+		    		config.getDynomiteClusterName(), uniqueID + hash, config.getInstanceName(), config.getHostname(),
+		    		config.getHostIP(), config.getZone(), null, payload,  config.getRack()
 		    );
 		    
 		}

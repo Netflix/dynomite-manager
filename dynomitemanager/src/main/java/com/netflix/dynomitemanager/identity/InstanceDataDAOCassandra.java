@@ -121,10 +121,10 @@ public class InstanceDataDAOCassandra {
 		String key = getRowKey(instance);
 		logger.info("KEY fronm CASS: {}",new Object[]{key});
 		
-		String rackName = InstanceIdentityUniqueGenerator.createUniqueRackName(config.getRack(), instance.getInstanceId());
-		logger.info("*** Checking for Instances with app: {}, id: {}, rackName {} ",new Object[]{instance.getApp(),instance.getId(),rackName});
+		String uniqueID = InstanceIdentityUniqueGenerator.createUniqueID(instance.getToken(),instance.getInstanceId());
+		logger.info("*** Checking for Instances with app: {}, id: {}, rackName {} ",new Object[]{instance.getApp(),uniqueID,instance.getRack()});
 		
-		if (getInstance(instance.getApp(), rackName, instance.getId()) != null){
+		if (getInstance(instance.getApp(), config.getRack(), instance.getId()) != null){
 			logger.info("*** Not inserting new data into Cassandra. ***");
 			return;
 		}
@@ -135,7 +135,7 @@ public class InstanceDataDAOCassandra {
 		try {
 			MutationBatch m = bootKeyspace.prepareMutationBatch();
 			ColumnListMutation<String> clm = m.withRow(CF_TOKENS, key);
-			clm.putColumn(CN_ID, Integer.toString(instance.getId()), null);
+			clm.putColumn(CN_ID, uniqueID, null);
 			clm.putColumn(CN_APPID, instance.getApp(), null);
 			clm.putColumn(CN_AZ, instance.getZone(), null);
 			clm.putColumn(CN_DC, config.getRack(), null);
@@ -247,13 +247,13 @@ public class InstanceDataDAOCassandra {
 		logger.info("deleteInstanceEntry(). DELETED! ");
 	}
 
-	public AppsInstance getInstance(String app, String rack, int id) {
+	public AppsInstance getInstance(String app, String rack, String id) {
 		logger.info("Listing  instances in Cassandra... ");
 		Set<AppsInstance> set = getAllInstances(app);
 		
 		for (AppsInstance ins : set) {
 			logger.info("Instance ID:{} - RACK:{} ", new Object[]{ins.getId(),ins.getRack()});
-			if (ins.getId() == id && ins.getRack().equals(rack)){
+			if (id.equals(ins.getId()) && rack.equals(ins.getRack())){
 				return ins;	
 			}
 		}
@@ -337,7 +337,7 @@ public class InstanceDataDAOCassandra {
 		ins.setZone(cmap.get(CN_AZ));
 		ins.setHost(cmap.get(CN_HOSTNAME));
 		ins.setHostIP(cmap.get(CN_EIP));
-		ins.setId(Integer.parseInt(cmap.get(CN_ID)));
+		ins.setId(cmap.get(CN_ID));
 		ins.setInstanceId(cmap.get(CN_INSTANCEID));
 		ins.setDatacenter(cmap.get(CN_LOCATION));
 		ins.setRack(cmap.get(CN_DC));

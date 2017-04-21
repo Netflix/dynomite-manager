@@ -43,7 +43,7 @@ public interface IAppsInstanceFactory {
 	 * @param id the node id
 	 * @return the node with the given {@code id}, or {@code null} if none found
 	 */
-	public AppsInstance getInstance(String appName, String dc, int id);
+	public AppsInstance getInstance(String appName, String dc, String id);
 
     /**
      *Insert (create/register) this instance in a database. The database (ex. Cassandra) records the entire Dynomite
@@ -59,7 +59,7 @@ public interface IAppsInstanceFactory {
      * @param datacenter
      * @return the new node
      */
-	public AppsInstance create(String app, int id, String instanceID, String hostname, String ip, String rac,
+	public AppsInstance create(String app, String id, String instanceID, String hostname, String ip, String rac,
 			Map<String, Object> volumes, String token, String datacenter);
 
 	/**
