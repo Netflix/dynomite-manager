@@ -118,8 +118,8 @@ public class InstanceIdentity {
 		}.call();
 		
 		// Grab a dead token
-		//if (null == myInstance)
-		 //   myInstance = new GetDeadToken().call();
+		if (null == myInstance)
+		    myInstance = new GetDeadToken().call();
 	
 		// Grab a pre-generated token if there is such one
 //		if (null == myInstance)
@@ -181,17 +181,19 @@ public class InstanceIdentity {
 		    // Sleep random interval - upto 15 sec
 		    sleeper.sleep(new Random().nextInt(5000) + 10000);
 		    for (AppsInstance dead : allIds) {
-			// test same dc and is it is alive.
-			if (!dead.getRack().equals(config.getRack()) || asgInstances.contains(dead.getInstanceId()))
-			    continue;
-			logger.info("Found dead instances: " + dead.getInstanceId());
-
-			isReplace = true;
-			replacedIp = dead.getHostIP();
-			String payLoad = dead.getToken();
-			logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getZone());
-			return factory.create(config.getDynomiteClusterName(), dead.getId(), config.getInstanceName(), config.getHostname(),
-				config.getHostIP(), config.getZone(), dead.getVolumes(), payLoad, config.getRack());
+				// test same dc and is it is alive.
+				if (!dead.getRack().equals(config.getRack()) || asgInstances.contains(dead.getInstanceId()))
+				    continue;
+				logger.info("Found dead instances: " + dead.getInstanceId());
+				
+				factory.delete(dead);
+				
+//				isReplace = true;
+//				replacedIp = dead.getHostIP();
+//				String payLoad = dead.getToken();
+//				logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getZone());
+//				return factory.create(config.getDynomiteClusterName(), dead.getId(), config.getInstanceName(), config.getHostname(),
+//					config.getHostIP(), config.getZone(), dead.getVolumes(), payLoad, config.getRack());
 		    }
 		    return null;
 		}

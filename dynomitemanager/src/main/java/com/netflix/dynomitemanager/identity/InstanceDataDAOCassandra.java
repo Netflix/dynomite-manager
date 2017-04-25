@@ -220,11 +220,12 @@ public class InstanceDataDAOCassandra {
 		getLock(instance);
 
 		// Delete the row
-		String key = findKey(instance.getApp(), String.valueOf(instance.getId()), instance.getDatacenter(),
+		String uniqueID = InstanceIdentityUniqueGenerator.createUniqueID(instance.getToken(),instance.getInstanceId());
+		String key = findKey(instance.getApp(), uniqueID, instance.getDatacenter(),
 				instance.getRack());
 		if (key == null){
-			logger.info("deleteInstanceEntry(). Key not found - no delete - app: {}, id: {}, DC: {},  rack: {}", new Object[]{instance.getApp(), String.valueOf(instance.getId()), instance.getDatacenter(),instance.getRack()});
-			return;  //don't fail it
+			logger.info("Key not found - no delete - app: {}, id: {}, DC: {},  rack: {}", new Object[]{instance.getApp(), String.valueOf(instance.getId()), instance.getDatacenter(),instance.getRack()});
+			return;
 		}
 		
 		MutationBatch m = bootKeyspace.prepareMutationBatch();
