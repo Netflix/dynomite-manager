@@ -118,12 +118,12 @@ public class InstanceIdentity {
 		}.call();
 		
 		// Grab a dead token
-		if (null == myInstance)
-		    myInstance = new GetDeadToken().call();
+		//if (null == myInstance)
+		 //   myInstance = new GetDeadToken().call();
 	
 		// Grab a pre-generated token if there is such one
-		if (null == myInstance)
-		    myInstance = new GetPregeneratedToken().call();
+//		if (null == myInstance)
+//		    myInstance = new GetPregeneratedToken().call();
 	
 		// Grab a new token
 		if (null == myInstance) {
@@ -207,23 +207,25 @@ public class InstanceIdentity {
 		    logger.info("Looking for any pre-generated token");
 		    final List<AppsInstance> allIds = factory.getAllIds(config.getDynomiteClusterName());
 		    List<String> asgInstances = membership.getRacMembership();
+		    
 		    // Sleep random interval - upto 15 sec
 		    sleeper.sleep(new Random().nextInt(5000) + 10000);
 		    for (AppsInstance dead : allIds) {
-			// test same zone and is it is alive.
-			if (!dead.getRack().equals(config.getRack()) || asgInstances.contains(dead.getInstanceId())
-				|| !isInstanceDummy(dead))
-			    continue;
-			logger.info("Found pre-generated token: " + dead.getToken());
+		    	// test same zone and is it is alive.
+		    	if (!dead.getRack().equals(config.getRack()) || asgInstances.contains(dead.getInstanceId())
+		    			|| !isInstanceDummy(dead))
+		    		continue;
+		    	logger.info("Found pre-generated token: " + dead.getToken());
 
-			// remove it as we marked it down...
-			factory.delete(dead);
-			isTokenPregenerated = true;
+		    	// remove it as we marked it down...
+		    	factory.delete(dead);
+		    	isTokenPregenerated = true;
 	
-			String payLoad = dead.getToken();
-			logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getRack());
-			return factory.create(config.getDynomiteClusterName(), dead.getId(), config.getInstanceName(), config.getHostname(),
-				config.getHostIP(), config.getZone(), dead.getVolumes(), payLoad, config.getRack());
+		    	String payLoad = dead.getToken();
+			
+		    	logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getRack());
+		    	return factory.create(config.getDynomiteClusterName(), dead.getId(), config.getInstanceName(), config.getHostname(),
+		    			config.getHostIP(), config.getZone(), dead.getVolumes(), payLoad, config.getRack());
 		    }
 		    return null;
 		}
