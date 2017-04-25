@@ -95,35 +95,17 @@ public class InstanceIdentity {
     }
 
     public void init() throws Exception {
-		// try to grab the token which was already assigned
-		myInstance = new RetryableCallable<AppsInstance>() {
-		    @Override
-		    public AppsInstance retriableCall() throws Exception {
-				// Check if this node is decommissioned
-				for (AppsInstance ins : factory.getAllIds(config.getDynomiteClusterName() + "-dead")) {
-				    logger.debug(String.format("[Dead] Iterating though the hosts: %s", ins.getInstanceId()));
-				    if (ins.getInstanceId().equals(config.getInstanceName())) {
-					ins.setOutOfService(true);
-					return ins;
-				    }
-				}
-				for (AppsInstance ins : factory.getAllIds(config.getDynomiteClusterName())) {
-				    logger.debug(String.format("[Alive] Iterating though the hosts: %s My id = [%s]",
-					    ins.getInstanceId(), ins.getId()));
-				    if (ins.getInstanceId().equals(config.getInstanceName()))
-					return ins;
-				}
-				return null;
-		   }
-		}.call();
+
+    	// try to grab the token which was already assigned
+		myInstance = new GetDataFromCass().call();
 		
 		// Grab a dead token
 		if (null == myInstance)
 		    myInstance = new GetDeadToken().call();
 	
 		// Grab a pre-generated token if there is such one
-//		if (null == myInstance)
-//		    myInstance = new GetPregeneratedToken().call();
+		//if (null == myInstance)
+		    // myInstance = new GetPregeneratedToken().call();
 	
 		// Grab a new token
 		if (null == myInstance) {
@@ -135,6 +117,32 @@ public class InstanceIdentity {
 	
 	}
 	
+    public class GetDataFromCass extends RetryableCallable<AppsInstance> {
+		@Override
+		public AppsInstance retriableCall() throws Exception {
+			
+			// Check if this node is decommissioned
+			for (AppsInstance ins : factory.getAllIds(config.getDynomiteClusterName() + "-dead")) {
+			    logger.debug(String.format("[Dead] Iterating though the hosts: %s", ins.getInstanceId()));
+			    if (ins.getInstanceId().equals(config.getInstanceName())) {
+				ins.setOutOfService(true);
+				return ins;
+			    }
+			}
+			
+			for (AppsInstance ins : factory.getAllIds(config.getDynomiteClusterName())) {
+			    logger.debug(String.format("[Alive] Iterating though the hosts: %s My id = [%s]",
+				    ins.getInstanceId(), ins.getId()));
+			    if (ins.getInstanceId().equals(config.getInstanceName()))
+				return ins;
+			}
+			
+			return null;
+		}
+	
+		public void forEachExecution() {}
+    }
+    
     private void populateRacMap() {
 		locMap.clear();
 		for (AppsInstance ins : factory.getAllIds(config.getDynomiteClusterName())) {
