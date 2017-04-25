@@ -8,6 +8,6 @@ dependencies {
     compile project(':dynomitemanager')
 }
 
-jettyRun.contextPath = 'REST'
-jettyRunWar.contextPath = 'REST'
+jettyRun.contextPath = ''
+jettyRunWar.contextPath = ''
 
