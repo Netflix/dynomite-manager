@@ -22,7 +22,7 @@ public class AppsInstance implements Serializable {
 	private boolean outOfService;
 
 	private String app;
-	private int Id;
+	private String Id;
 	private String instanceId;
 	private String availabilityZone;
 	private String rack;
@@ -40,11 +40,11 @@ public class AppsInstance implements Serializable {
 		this.app = app;
 	}
 
-	public int getId() {
+	public String getId() {
 		return Id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		Id = id;
 	}
 

@@ -117,19 +117,25 @@ public class InstanceDataDAOCassandra {
 
 	public void createInstanceEntry(AppsInstance instance) throws Exception {
 		logger.info("*** Creating New Instance Entry ***");
+		
 		String key = getRowKey(instance);
-		// If the key exists throw exception
-		if (getInstance(instance.getApp(), instance.getRack(), instance.getId()) != null) {
-			logger.info(String.format("Key already exists: %s", key));
+		logger.info("KEY fronm CASS: {}",new Object[]{key});
+		
+		String uniqueID = InstanceIdentityUniqueGenerator.createUniqueID(instance.getInstanceId());
+		logger.info("*** Checking for Instances with app: {}, id: {}, rackName {} ",new Object[]{instance.getApp(),uniqueID,instance.getRack()});
+		
+		if (getInstance(instance.getApp(), config.getRack(), instance.getId()) != null){
+			logger.info("*** Not inserting new data into Cassandra. ***");
 			return;
 		}
 
+		logger.info("*** Will insert new data into Cassandra. ***");
 		getLock(instance);
 
 		try {
 			MutationBatch m = bootKeyspace.prepareMutationBatch();
 			ColumnListMutation<String> clm = m.withRow(CF_TOKENS, key);
-			clm.putColumn(CN_ID, Integer.toString(instance.getId()), null);
+			clm.putColumn(CN_ID, uniqueID, null);
 			clm.putColumn(CN_APPID, instance.getApp(), null);
 			clm.putColumn(CN_AZ, instance.getZone(), null);
 			clm.putColumn(CN_DC, config.getRack(), null);
@@ -147,6 +153,7 @@ public class InstanceDataDAOCassandra {
 				}
 			}
 			m.execute();
+			logger.info(String.format("Key %s INSERTED on CASS", key));
 		} catch (Exception e) {
 			logger.info(e.getMessage());
 		} finally {
@@ -208,15 +215,19 @@ public class InstanceDataDAOCassandra {
 	}
 
 	public void deleteInstanceEntry(AppsInstance instance) throws Exception {
+		logger.info("deleteInstanceEntry(). Found Dead node trying to DELETE it {}", new Object[]{instance});
 		// Acquire the lock first
 		getLock(instance);
 
 		// Delete the row
-		String key = findKey(instance.getApp(), String.valueOf(instance.getId()), instance.getDatacenter(),
-				instance.getRack());
-		if (key == null)
-			return;  //don't fail it
-
+		String uniqueID = InstanceIdentityUniqueGenerator.createUniqueID(instance.getInstanceId());
+		String key = findKey(instance.getApp(), uniqueID, instance.getDatacenter(),instance.getRack());
+		
+		if (key == null){
+			logger.info("Key not found - no delete - app: {}, id: {}, DC: {},  rack: {}", new Object[]{instance.getApp(), String.valueOf(instance.getId()), instance.getDatacenter(),instance.getRack()});
+			return;
+		}
+		
 		MutationBatch m = bootKeyspace.prepareMutationBatch();
 		m.withRow(CF_TOKENS, key).delete();
 		m.execute();
@@ -233,14 +244,19 @@ public class InstanceDataDAOCassandra {
 		m = bootKeyspace.prepareMutationBatch();
 		m.withRow(CF_LOCKS, key).delete();
 		m.execute();
-
+		
+		logger.info("deleteInstanceEntry(). DELETED! ");
 	}
 
-	public AppsInstance getInstance(String app, String rack, int id) {
+	public AppsInstance getInstance(String app, String rack, String id) {
+		logger.info("Listing  instances in Cassandra... ");
 		Set<AppsInstance> set = getAllInstances(app);
+		
 		for (AppsInstance ins : set) {
-			if (ins.getId() == id && ins.getRack().equals(rack))
-				return ins;
+			logger.info("Instance ID:{} - RACK:{} ", new Object[]{ins.getId(),ins.getRack()});
+			if (id.equals(ins.getId()) && rack.equals(ins.getRack())){
+				return ins;	
+			}
 		}
 		return null;
 	}
@@ -322,7 +338,7 @@ public class InstanceDataDAOCassandra {
 		ins.setZone(cmap.get(CN_AZ));
 		ins.setHost(cmap.get(CN_HOSTNAME));
 		ins.setHostIP(cmap.get(CN_EIP));
-		ins.setId(Integer.parseInt(cmap.get(CN_ID)));
+		ins.setId(cmap.get(CN_ID));
 		ins.setInstanceId(cmap.get(CN_INSTANCEID));
 		ins.setDatacenter(cmap.get(CN_LOCATION));
 		ins.setRack(cmap.get(CN_DC));

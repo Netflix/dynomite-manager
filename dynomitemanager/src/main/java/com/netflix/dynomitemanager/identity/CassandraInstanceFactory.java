@@ -68,15 +68,15 @@ public class CassandraInstanceFactory implements IAppsInstanceFactory {
 
 			@Override
 			public int compare(AppsInstance o1, AppsInstance o2) {
-				Integer c1 = o1.getId();
-				Integer c2 = o2.getId();
+				String c1 = o1.getId();
+				String c2 = o2.getId();
 				return c1.compareTo(c2);
 			}
 		};
 		Collections.sort(return_, comparator);
 	}
 
-	public AppsInstance create(String app, int id, String instanceID, String hostname, String ip, String zone,
+	public AppsInstance create(String app, String id, String instanceID, String hostname, String ip, String zone,
 			Map<String, Object> volumes, String payload, String rack) {
 		try {
 			Map<String, Object> v = (volumes == null) ? new HashMap<String, Object>() : volumes;
@@ -92,13 +92,6 @@ public class CassandraInstanceFactory implements IAppsInstanceFactory {
 			ins.setToken(payload);
 			ins.setVolumes(v);
 
-			// remove old data node which are dead.
-			//if (app.endsWith("-dead")) {
-			//       AppsInstance oldData = dao.getInstance(app, ins.getRack(), id);
-			// clean up a very old data...
-			//if (null != oldData)
-			//     dao.deleteInstanceEntry(oldData);
-			//}
 			dao.createInstanceEntry(ins);
 			return ins;
 		} catch (Exception e) {
@@ -129,7 +122,7 @@ public class CassandraInstanceFactory implements IAppsInstanceFactory {
 	}
 
 	@Override
-	public AppsInstance getInstance(String appName, String dc, int id) {
+	public AppsInstance getInstance(String appName, String dc, String id) {
 		return dao.getInstance(appName, dc, id);
 	}
 }
