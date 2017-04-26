@@ -9,12 +9,8 @@ package com.netflix.dynomitemanager.identity;
  */
 public class InstanceIdentityUniqueGenerator {
 	
-	public static String createUniqueID(Integer slotToken,String instanceId){
-		return createUniqueID(slotToken.toString(),instanceId);
-	}
-	
-	public static String createUniqueID(String slotToken,String instanceId){
-		return "slotToken_" + slotToken + "_InsID_" + instanceId;
+	public static String createUniqueID(String instanceId){
+		return "InsID_" + instanceId;
 	}
 	
 }

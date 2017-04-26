@@ -189,19 +189,23 @@ public class InstanceIdentity {
 		    // Sleep random interval - upto 15 sec
 		    sleeper.sleep(new Random().nextInt(5000) + 10000);
 		    for (AppsInstance dead : allIds) {
-				// test same dc and is it is alive.
+				
+		    	// test same dc and is it is alive.
 				if (!dead.getRack().equals(config.getRack()) || asgInstances.contains(dead.getInstanceId()))
 				    continue;
-				logger.info("Found dead instances: " + dead.getInstanceId());
 				
+				logger.info("Found dead instances: " + dead.getInstanceId());
 				factory.delete(dead);
 				
-//				isReplace = true;
-//				replacedIp = dead.getHostIP();
-//				String payLoad = dead.getToken();
-//				logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getZone());
-//				return factory.create(config.getDynomiteClusterName(), dead.getId(), config.getInstanceName(), config.getHostname(),
-//					config.getHostIP(), config.getZone(), dead.getVolumes(), payLoad, config.getRack());
+				String payLoad = dead.getToken();
+				String uniqueID = InstanceIdentityUniqueGenerator.createUniqueID(config.getInstanceName());
+				logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getZone());
+				
+				return factory.create(
+						config.getDynomiteClusterName(), uniqueID, config.getInstanceName(), config.getHostname(),
+						config.getHostIP(), config.getZone(), dead.getVolumes(), payLoad, config.getRack()
+				);				
+				
 		    }
 		    return null;
 		}
@@ -250,7 +254,7 @@ public class InstanceIdentity {
 		public AppsInstance retriableCall() throws Exception {
 		    // Sleep random interval - upto 15 sec
 		    sleeper.sleep(new Random().nextInt(15000));
-		    int hash = tokenManager.regionOffset(config.getRack());
+		    //int hash = tokenManager.regionOffset(config.getRack());
 		    
 		    // use this hash so that the nodes are spred far away from the other
 		    // regions.
@@ -279,12 +283,17 @@ public class InstanceIdentity {
 			    my_slot, membership.getRacCount(), rackMembershipSize, config.getDataCenter()));
 	
 		    String payload = tokenManager.createToken(my_slot, rackMembershipSize, config.getRack());
-		    String uniqueID = InstanceIdentityUniqueGenerator.createUniqueID(my_slot,myInstanceId);
+		    String uniqueID = InstanceIdentityUniqueGenerator.createUniqueID(myInstanceId);
 		    
 		    return factory.create(
-		    		config.getDynomiteClusterName(), uniqueID + hash, config.getInstanceName(), config.getHostname(),
+		    		config.getDynomiteClusterName(), uniqueID , config.getInstanceName(), config.getHostname(),
 		    		config.getHostIP(), config.getZone(), null, payload,  config.getRack()
 		    );
+		    
+//		    return factory.create(
+//		    		config.getDynomiteClusterName(), uniqueID + hash, config.getInstanceName(), config.getHostname(),
+//		    		config.getHostIP(), config.getZone(), null, payload,  config.getRack()
+//		    );
 		    
 		}
 		

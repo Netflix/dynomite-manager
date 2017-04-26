@@ -121,7 +121,7 @@ public class InstanceDataDAOCassandra {
 		String key = getRowKey(instance);
 		logger.info("KEY fronm CASS: {}",new Object[]{key});
 		
-		String uniqueID = InstanceIdentityUniqueGenerator.createUniqueID(instance.getToken(),instance.getInstanceId());
+		String uniqueID = InstanceIdentityUniqueGenerator.createUniqueID(instance.getInstanceId());
 		logger.info("*** Checking for Instances with app: {}, id: {}, rackName {} ",new Object[]{instance.getApp(),uniqueID,instance.getRack()});
 		
 		if (getInstance(instance.getApp(), config.getRack(), instance.getId()) != null){
@@ -220,9 +220,9 @@ public class InstanceDataDAOCassandra {
 		getLock(instance);
 
 		// Delete the row
-		String uniqueID = InstanceIdentityUniqueGenerator.createUniqueID(instance.getToken(),instance.getInstanceId());
-		String key = findKey(instance.getApp(), uniqueID, instance.getDatacenter(),
-				instance.getRack());
+		String uniqueID = InstanceIdentityUniqueGenerator.createUniqueID(instance.getInstanceId());
+		String key = findKey(instance.getApp(), uniqueID, instance.getDatacenter(),instance.getRack());
+		
 		if (key == null){
 			logger.info("Key not found - no delete - app: {}, id: {}, DC: {},  rack: {}", new Object[]{instance.getApp(), String.valueOf(instance.getId()), instance.getDatacenter(),instance.getRack()});
 			return;
