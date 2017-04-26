@@ -7,3 +7,6 @@ apply plugin: 'war'
 dependencies {
     compile project(':dynomitemanager')
 }
+
+jettyRun.contextPath = ''
+jettyRunWar.contextPath = ''
