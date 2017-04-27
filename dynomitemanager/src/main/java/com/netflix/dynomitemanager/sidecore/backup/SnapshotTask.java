@@ -15,14 +15,7 @@
  */
 package com.netflix.dynomitemanager.sidecore.backup;
 
-import static com.netflix.dynomitemanager.defaultimpl.DynomitemanagerConfiguration.LOCAL_ADDRESS;
-
 import java.io.File;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +28,6 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import com.netflix.dynomitemanager.InstanceState;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
@@ -45,7 +36,7 @@ import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
-import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+import com.netflix.dynomitemanager.sidecore.storage.StorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.ThreadSleeper;
 import com.netflix.dynomitemanager.sidecore.scheduler.CronTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.CronTimer.DayOfWeek;
@@ -62,7 +53,7 @@ public class SnapshotTask extends Task
     private final ICredential cred;
     private final InstanceIdentity iid;
     private final InstanceState state;
-    private final IStorageProxy storageProxy;
+    private final StorageProxy storageProxy;
     private final Backup backup;
 
     private final int storageRetries = 5;
@@ -70,7 +61,7 @@ public class SnapshotTask extends Task
     
     @Inject
     public SnapshotTask(IConfiguration config, InstanceIdentity id, ICredential cred, InstanceState state,
-    		IStorageProxy storageProxy, Backup backup)
+    		StorageProxy storageProxy, Backup backup)
     {
         super(config);
         this.cred = cred;

@@ -46,7 +46,7 @@ import com.netflix.dynomitemanager.identity.InstanceIdentity;
 import com.netflix.dynomitemanager.sidecore.backup.RestoreTask;
 import com.netflix.dynomitemanager.sidecore.backup.SnapshotTask;
 import com.netflix.dynomitemanager.resources.DynomiteAdmin;
-import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+import com.netflix.dynomitemanager.sidecore.storage.StorageProxy;
 import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
 
 
@@ -64,7 +64,7 @@ public class DynomiteAdmin
     private final InstanceState instanceState;
     private SnapshotTask snapshotBackup;
     private RestoreTask restoreBackup;
-    private IStorageProxy storage;
+    private StorageProxy storage;
 
     
     @Inject
@@ -74,7 +74,7 @@ public class DynomiteAdmin
     public DynomiteAdmin(IFloridaProcess dynoProcess,
                          InstanceIdentity ii, InstanceState instanceState,
                          SnapshotTask snapshotBackup, RestoreTask restoreBackup,
-                         IStorageProxy storage)
+                         StorageProxy storage)
     {
         this.dynoProcess = dynoProcess;
         this.ii = ii;

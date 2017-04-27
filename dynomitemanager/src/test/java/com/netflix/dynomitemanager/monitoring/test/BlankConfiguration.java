@@ -23,6 +23,7 @@ import com.netflix.dynomitemanager.sidecore.IConfiguration;
  * Blanck IConfiguration class used for tests.
  * 
  * @author diegopacheco
+ * @author ipapapa
  *
  */
 public class BlankConfiguration implements IConfiguration {
@@ -87,7 +88,7 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getYamlLocation() {
+	public String getDynomiteYaml() {
 		return null;
 	}
 
@@ -172,7 +173,7 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public String getProcessName() {
+	public String getDynomiteProcessName() {
 		return null;
 	}
 
@@ -197,7 +198,7 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getMbufSize() {
+	public int getDynomiteMbufSize() {
 		return 0;
 	}
 
@@ -297,17 +298,17 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public boolean getAutoEjectHosts() {
+	public boolean getDynomiteAutoEjectHosts() {
 		return false;
 	}
 
 	@Override
-	public String getAppStopScript() {
+	public String getDynomiteStopScript() {
 		return null;
 	}
 
 	@Override
-	public String getAppStartupScript() {
+	public String getDynomiteStartScript() {
 		return null;
 	}
 
@@ -327,7 +328,7 @@ public class BlankConfiguration implements IConfiguration {
 	}
 
 	@Override
-	public int getAllocatedMessages() {
+	public int getDynomiteMaxAllocatedMessages() {
 		return 0;
 	}
 
@@ -355,5 +356,35 @@ public class BlankConfiguration implements IConfiguration {
 	public boolean isDualAccount() {
 		return false;
 	}
+
+    @Override
+    public boolean isForceWarm() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public String getRedisCompatibleEngine() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int getWriteBufferSize() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getArdbRocksDBMaxWriteBufferNumber() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getArdbRocksDBMinWriteBuffersToMerge() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
 }

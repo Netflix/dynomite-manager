@@ -30,7 +30,7 @@ import redis.clients.jedis.Jedis;
 import com.netflix.dynomitemanager.IFloridaProcess;
 import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
-import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+import com.netflix.dynomitemanager.sidecore.storage.StorageProxy;
 
 
 @Singleton
@@ -40,12 +40,12 @@ public class ProxyAndStorageResetTask extends Task {
     
 
     private final IFloridaProcess dynProcess;
-    private final IStorageProxy storageProxy;
+    private final StorageProxy storageProxy;
     private final Sleeper sleeper;
 
     @Inject
 	public ProxyAndStorageResetTask(IConfiguration config,
-			IFloridaProcess dynProcess, IStorageProxy storageProxy, Sleeper sleeper)
+			IFloridaProcess dynProcess, StorageProxy storageProxy, Sleeper sleeper)
     {
             super(config);
             this.storageProxy = storageProxy;
