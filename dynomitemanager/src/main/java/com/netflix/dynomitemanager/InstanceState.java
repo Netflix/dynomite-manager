@@ -1,18 +1,3 @@
-/**
- * Copyright 2016 Netflix, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.netflix.dynomitemanager;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -29,7 +14,7 @@ import org.joda.time.DateTime;
  *
  */
 @Singleton
-public class InstanceState {
+public class InstanceState implements IInstanceState {
     private final AtomicBoolean isSideCarProcessAlive = new AtomicBoolean(false);
     private final AtomicBoolean isBootstrapping = new AtomicBoolean(false);
     private final AtomicBoolean firstBootstrap = new AtomicBoolean(true);
@@ -48,6 +33,8 @@ public class InstanceState {
     private long bootstrapTime;
     private long backupTime;
     private long restoreTime;
+    
+    private final AtomicBoolean isYmlWritten = new AtomicBoolean(false);
     
     // This is true if storage proxy and storage are alive.
     private final AtomicBoolean isHealthy = new AtomicBoolean(false);
@@ -252,6 +239,14 @@ public class InstanceState {
     //@Monitor(name="processMonitoringSuspended", type=DataSourceType.GAUGE)
     public int metricIsProcessMonitoringSuspended() {
         return getIsProcessMonitoringSuspended() ? 1 : 0;
+    }
+    
+    public boolean getYmlWritten(){
+    	return this.isYmlWritten.get();
+    }
+    
+    public void setYmlWritten(boolean yml){
+    	this.isYmlWritten.set(yml);
     }
 
 }

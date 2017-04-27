@@ -66,9 +66,9 @@ public class FloridaProcessManager implements IFloridaProcess
     }
 
     protected void setEnv(Map<String, String> env) {   
-        env.put("MBUF_SIZE", String.valueOf(config.getMbufSize()));
-        if (config.getAllocatedMessages() > 0) {
-            env.put("ALLOC_MSGS",String.valueOf(config.getAllocatedMessages()));
+        env.put("MBUF_SIZE", String.valueOf(config.getDynomiteMbufSize()));
+        if (config.getDynomiteMaxAllocatedMessages() > 0) {
+            env.put("ALLOC_MSGS",String.valueOf(config.getDynomiteMaxAllocatedMessages()));
         }
     }
         
@@ -110,7 +110,7 @@ public class FloridaProcessManager implements IFloridaProcess
     protected List<String> getStartCommand()
     {
         List<String> startCmd = new LinkedList<String>();
-        for(String param : config.getAppStartupScript().split(" ")){
+        for(String param : config.getDynomiteStartScript().split(" ")){
             if( StringUtils.isNotBlank(param))
                 startCmd.add(param);
         }
@@ -153,7 +153,7 @@ public class FloridaProcessManager implements IFloridaProcess
             command.add("-n");
             command.add("-E");
         }
-        for(String param : config.getAppStopScript().split(" ")){
+        for(String param : config.getDynomiteStopScript().split(" ")){
             if( StringUtils.isNotBlank(param))
                 command.add(param);
         }

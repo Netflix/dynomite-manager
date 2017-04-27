@@ -29,7 +29,7 @@ import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
-import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+import com.netflix.dynomitemanager.sidecore.storage.StorageProxy;
 import com.netflix.dynomitemanager.sidecore.utils.Sleeper;
 import com.netflix.dynomitemanager.sidecore.utils.WarmBootstrapTask;
 import com.netflix.dynomitemanager.sidecore.storage.Bootstrap;
@@ -56,7 +56,7 @@ public class WarmBootstrapTask extends Task
     
     public static final String JOBNAME = "Bootstrap-Task";
     private final IFloridaProcess dynProcess;
-    private final IStorageProxy storageProxy;
+    private final StorageProxy storageProxy;
     private final IAppsInstanceFactory appsInstanceFactory;
     private final InstanceIdentity ii;
     private final InstanceState state;
@@ -68,7 +68,7 @@ public class WarmBootstrapTask extends Task
     @Inject
     public WarmBootstrapTask(IConfiguration config, IAppsInstanceFactory appsInstanceFactory,
                              InstanceIdentity id, IFloridaProcess dynProcess,
-                             IStorageProxy storageProxy, InstanceState ss, Sleeper sleeper)
+                             StorageProxy storageProxy, InstanceState ss, Sleeper sleeper)
     {
         super(config);
         this.dynProcess = dynProcess;

@@ -17,41 +17,35 @@ package com.netflix.dynomitemanager.sidecore;
 
 import java.util.List;
 
-public interface IConfiguration
-{
-	
-	public void initialize();
+public interface IConfiguration {
+
+    public void initialize();
 
     /**
      * @return Path to the home dir of target application
      */
     public String getAppHome();
 
-
     /**
      * @return Path to target application startup script
      */
-    public String getAppStartupScript();
+    public String getDynomiteStartScript();
 
-    
     /**
      * @return Path to target application stop script
      */
-    public String getAppStopScript();
-   
+    public String getDynomiteStopScript();
+
     /**
      * @return Script that starts the storage layer
      */
     public String getStorageStartupScript();
-    
-    
+
     /*
      * 
      */
     public String getStorageStopScript();
-    
-    
-    
+
     /**
      * @return Cluster name
      */
@@ -78,43 +72,40 @@ public interface IConfiguration
     public String getInstanceName();
 
     /**
-     * @return Get the Region name 
+     * @return Get the Region name
      */
     public String getRegion();
-    
-    //public void setRegion(String region);
+
+    // public void setRegion(String region);
 
     /**
      * @return Get the Data Center name (or region for AWS)
      */
     public String getRack();
-    
+
     public List<String> getRacks();
 
-    
     /**
      * Amazon specific setting to query ASG Membership
      */
     public String getASGName();
-    
+
     /**
      * Get the security group associated with nodes in this cluster
      */
     public String getACLGroupName();
 
-   
     /**
      * @return Get host IP
      */
     public String getHostIP();
 
-   
     /**
      * @return Bootstrap cluster name (depends on another cass cluster)
      */
     public String getBootClusterName();
-    
-    /** 
+
+    /**
      * @return Get the name of seed provider
      */
     public String getSeedProviderName();
@@ -122,120 +113,130 @@ public interface IConfiguration
     /**
      * @return Process Name
      */
-    public String getProcessName();
+    public String getDynomiteProcessName();
 
     public String getReadConsistency();
 
     public String getWriteConsistency();
 
     public int getPeerListenerPort();
-    
-    public int getSecuredPeerListenerPort();
-    
-    public int getListenerPort();
-    
-    public String getYamlLocation();
-    
-	
-	public boolean getAutoEjectHosts();
-	
-	public String getDistribution();
-	
-	public String getDynListenPort();
-	
-	public int getGossipInterval();
-	
-	public String getHash();
-	
-	public String getClientListenPort();
-	
-	public boolean getPreconnect();
-	
-	public int getServerRetryTimeout();
-	
-	public int getTimeout();
-	
-	public String getTokens();
-	
-	public String getMetadataKeyspace();
-	
-	public int getClusterType();
-	
-	public boolean isMultiRegionedCluster();
-    
-	public String getSecuredOption();
-	
-	public boolean isWarmBootstrap();
-	
-	public boolean isHealthCheckEnable();
-	
-	public int getAllowableBytesSyncDiff();
-	
-	public int getMaxTimeToBootstrap();
 
-    /** The max percentage of system memory to be allocated to the Dynomite fronted data store. */
+    public int getSecuredPeerListenerPort();
+
+    public int getListenerPort();
+
+    public String getDynomiteYaml();
+
+    public boolean getDynomiteAutoEjectHosts();
+
+    public String getDistribution();
+
+    public String getDynListenPort();
+
+    public int getGossipInterval();
+
+    public String getHash();
+
+    public String getClientListenPort();
+
+    public boolean getPreconnect();
+
+    public int getServerRetryTimeout();
+
+    public int getTimeout();
+
+    public String getTokens();
+
+    public String getMetadataKeyspace();
+
+    public int getClusterType();
+
+    public boolean isMultiRegionedCluster();
+
+    public String getSecuredOption();
+
+    public boolean isWarmBootstrap();
+    
+    public boolean isForceWarm();
+
+    public boolean isHealthCheckEnable();
+
+    public int getAllowableBytesSyncDiff();
+
+    public int getMaxTimeToBootstrap();
+
+    /**
+     * The max percentage of system memory to be allocated to the Dynomite
+     * fronted data store.
+     */
     public int getStorageMemPercent();
-    
-    public int getMbufSize();
-    
-    public int getAllocatedMessages();
-    
-    
+
+    public int getDynomiteMbufSize();
+
+    public int getDynomiteMaxAllocatedMessages();
+
     // VPC
     public boolean isVpc();
-    
+
     /**
      * @return the VPC id of the running instance.
      */
     public String getVpcId();
-    
-    /*
-     * @return the Amazon Resource Name (ARN) for EC2 classic. 
-     */
-	public String getClassicAWSRoleAssumptionArn();
-		
-    /*
-     * @return the Amazon Resource Name (ARN) for VPC. 
-     */
-	public String getVpcAWSRoleAssumptionArn();
-	
-	/*
-	 * @return cross-account deployments
-	 */
-	public boolean isDualAccount();
 
-	   
+    /*
+     * @return the Amazon Resource Name (ARN) for EC2 classic.
+     */
+    public String getClassicAWSRoleAssumptionArn();
+
+    /*
+     * @return the Amazon Resource Name (ARN) for VPC.
+     */
+    public String getVpcAWSRoleAssumptionArn();
+
+    /*
+     * @return cross-account deployments
+     */
+    public boolean isDualAccount();
+
     // Backup and Restore
 
-	public String getBucketName();
+    public String getBucketName();
 
     public String getBackupLocation();
-    
+
     public boolean isBackupEnabled();
 
     public boolean isRestoreEnabled();
 
     public String getBackupSchedule();
-    
-	public int getBackupHour();
-	
+
+    public int getBackupHour();
+
     public String getRestoreDate();
-    
+
     // Persistence
-    
-	public String getPersistenceLocation();
 
-	public boolean isPersistenceEnabled();
+    public String getPersistenceLocation();
 
-	public boolean isAof();
-	
-	// Cassandra
+    public boolean isPersistenceEnabled();
+
+    public boolean isAof();
+
+    // Cassandra
     public String getCassandraKeyspaceName();
 
     public int getCassandraThriftPortForAstyanax();
-    
+
     public String getCommaSeparatedCassandraHostNames();
-    
+
     public boolean isEurekaHostSupplierEnabled();
+
+    String getRedisCompatibleEngine();
+
+    int getWriteBufferSize();
+
+    int getArdbRocksDBMaxWriteBufferNumber();
+
+    int getArdbRocksDBMinWriteBuffersToMerge();
 
 }

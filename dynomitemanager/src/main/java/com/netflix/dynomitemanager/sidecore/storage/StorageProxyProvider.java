@@ -24,10 +24,10 @@ public class StorageProxyProvider {
 
     @Inject
     private IConfiguration config;
-    private IStorageProxy storageProxy;
+    private StorageProxy storageProxy;
     
     
-    public IStorageProxy getStorageProxy() 
+    public StorageProxy getStorageProxy() 
     {
         if (config.getClusterType() == 0) {  //memcached
             if (storageProxy == null) {

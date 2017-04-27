@@ -17,8 +17,7 @@ package com.netflix.dynomitemanager.sidecore.utils;
 
 import java.io.IOException;
 
-public interface ProcessTuner
-{
-    void writeAllProperties(String yamlLocation, String hostname, String seedProvider) throws IOException;
+public interface ProcessTuner {
+    void writeAllProperties(String yamlLocation) throws IOException;
 
 }

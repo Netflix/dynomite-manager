@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.netflix.dynomitemanager.sidecore.utils;
-
-import java.io.IOException;
+package com.netflix.dynomitemanager.dynomite;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -23,23 +21,26 @@ import com.netflix.dynomitemanager.sidecore.IConfiguration;
 import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
+import com.netflix.dynomitemanager.sidecore.utils.ProcessTuner;
+
 
 @Singleton
-public class TuneTask extends Task
+public class DynomiteYamlTask extends Task
 {
     public static final String JOBNAME = "Tune-Task";
+
     private final ProcessTuner tuner;
 
     @Inject
-    public TuneTask(IConfiguration config, ProcessTuner tuner)
+    public DynomiteYamlTask(IConfiguration config, ProcessTuner tuner)
     {
         super(config);
         this.tuner = tuner;
     }
 
-    public void execute() throws IOException
+    public void execute() throws Exception
     {
-        tuner.writeAllProperties(config.getYamlLocation(), null, config.getSeedProviderName());
+        tuner.writeAllProperties(config.getDynomiteYaml());
     }
 
     @Override
@@ -48,8 +49,9 @@ public class TuneTask extends Task
         return "Tune-Task";
     }
 
+    // update the YML every 60 seconds.
     public static TaskTimer getTimer()
     {
-        return new SimpleTimer(JOBNAME);
+        return new SimpleTimer(JOBNAME, 60L * 1000);
     }
 }

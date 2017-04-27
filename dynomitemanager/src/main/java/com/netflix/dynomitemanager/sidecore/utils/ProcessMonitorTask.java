@@ -26,7 +26,7 @@ import com.netflix.dynomitemanager.sidecore.scheduler.SimpleTimer;
 import com.netflix.dynomitemanager.sidecore.scheduler.Task;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskScheduler;
 import com.netflix.dynomitemanager.sidecore.scheduler.TaskTimer;
-import com.netflix.dynomitemanager.sidecore.storage.IStorageProxy;
+import com.netflix.dynomitemanager.sidecore.storage.StorageProxy;
 
 import org.quartz.StatefulJob;
 import org.slf4j.Logger;
@@ -74,13 +74,13 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
     private static final Logger logger = LoggerFactory.getLogger(ProcessMonitorTask.class);
     private final IConfiguration config;
     private final InstanceState instanceState;
-    private final IStorageProxy iStorageProxy;
+    private final StorageProxy iStorageProxy;
     private final TaskScheduler scheduler;
     private final IFloridaProcess dynProcess;
 
     @Inject
     protected ProcessMonitorTask(IConfiguration config, InstanceState instanceState,
-                                 IStorageProxy iStorageProxy, TaskScheduler scheduler, IFloridaProcess dynProcess) {
+                                 StorageProxy iStorageProxy, TaskScheduler scheduler, IFloridaProcess dynProcess) {
         super(config);
         this.config = config;
         this.instanceState = instanceState;
@@ -160,7 +160,7 @@ public class ProcessMonitorTask extends Task implements StatefulJob {
     private boolean checkProxyProcess() {
         try
         {
-            String cmd = String.format("ps -ef | grep  '[/]apps/%1$s/bin/%1$s'", config.getProcessName());
+            String cmd = String.format("ps -ef | grep  '[/]apps/%1$s/bin/%1$s'", config.getDynomiteProcessName());
             String[] cmdArray = {"/bin/sh", "-c", cmd};
             logger.info("Running checkProxyProcess command: " + cmd);
 
