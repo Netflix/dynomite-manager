@@ -31,20 +31,20 @@ import com.netflix.dynomitemanager.supplier.HostSupplier;
  * @author diegopacheco
  *
  */
-public class InstanceDataDAOCassandraTest  {
-	
-	@Test(expected=RuntimeException.class)
-	public void testWorngCinfiguration() throws Exception{
-		
-		HostSupplier hs = new HostSupplier() {
-			@Override
-			public Supplier<List<Host>> getSupplier(String clusterName) {
-				return null;
-			}
-		};
-		
-		InstanceDataDAOCassandra dao = new InstanceDataDAOCassandra(new BlankConfiguration(),hs);
-		dao.createInstanceEntry(null);
-	}
-	
+public class InstanceDataDAOCassandraTest {
+
+    @Test(expected = RuntimeException.class)
+    public void testWorngCinfiguration() throws Exception {
+
+        HostSupplier hs = new HostSupplier() {
+            @Override
+            public Supplier<List<Host>> getSupplier(String clusterName) {
+                return null;
+            }
+        };
+
+        InstanceDataDAOCassandra dao = new InstanceDataDAOCassandra(new BlankConfiguration(), null);
+        dao.createInstanceEntry(null);
+    }
+
 }
