@@ -1,3 +1,0 @@
-rootProject.name='dynomite-manager'
-include 'dynomitemanager'
-include 'dynomitemanager-web'
