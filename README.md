@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/Netflix/dynomite-manager.svg)](https://travis-ci.org/Netflix/dynomite-manager)
 [![Dev chat at https://gitter.im/Netflix/dynomite](https://badges.gitter.im/Netflix/dynomite.svg)](https://gitter.im/Netflix/dynomite?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Apache V2 License](http://img.shields.io/badge/license-Apache%20V2-blue.svg)](https://github.com/Netflix/dynomite-manager/blob/dev/LICENSE)
 
 
 **Dynomite-manager** is a Java process/tool that can be used alongside [Dynomite](https://github.com/Netflix/dynomite) to manage a Dynomite cluster. Some of the features include:
@@ -36,7 +37,7 @@ Dynomite-manager provides several default implementations (AWS, Configuration, c
 
 ## Howto
 
-The first step before building dynomite-manager is to configure the interfaces related to your environment in the [InjectedWebListener](https://github.com/Netflix/dynomite-manager/blob/dev/dynomitemanager/src/main/java/com/netflix/dynomitemanager/defaultimpl/InjectedWebListener.java). Checkout the [Wiki](https://github.com/Netflix/dynomite-manager/wiki/Configuration) for further explanation on what interfaces to bind based on your environment. 
+The first step before building dynomite-manager is to configure the interfaces related to your environment in the [FloridaModule](https://github.com/Netflix/dynomite-manager/blob/dev/dynomitemanager-web/src/main/java/com/netflix/florida/startup/FloridaModule.java). Checkout the [Wiki](https://github.com/Netflix/dynomite-manager/wiki/Configuration) for further explanation on what interfaces to bind based on your environment. 
 
 1. Build the dynomite-manager
 2. Set up Auto-Scale Group (ASG) and spin up instances
@@ -49,7 +50,7 @@ Dynomite-manager changes the configuration files for Dynomite and data store (Re
 
 ## Configuration
 
-You can provide properties by using dynomite-manager{version}.jar in your web container and then implementing [IConfiguration Interface](https://github.com/Netflix/dynomite-manager/blob/master/dynomitemanager/src/main/java/com/netflix/dynomitemanager/sidecore/IConfiguration.java). More details on the how the configuration can be found in the [Wiki](https://github.com/Netflix/dynomite-manager/wiki/Configuration).
+You can provide properties by using dynomite-manager{version}.jar in your web container and then implementing [FloridaConfig Interface](https://github.com/Netflix/dynomite-manager/blob/dev/dynomitemanager-core/src/main/java/com/netflix/dynomitemanager/config/FloridaConfig.java). More details on the how the configuration can be found in the [Wiki](https://github.com/Netflix/dynomite-manager/wiki/Configuration).
 
 ## Help
 

@@ -59,4 +59,4 @@ dependencies {
 
 }
 
-war.archiveName = "florida.war"
+war.archiveName = "dynomite-manager.war"
