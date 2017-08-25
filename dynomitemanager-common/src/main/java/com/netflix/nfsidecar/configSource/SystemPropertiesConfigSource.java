@@ -8,7 +8,7 @@ import com.google.common.collect.Maps;
 
 /**
  * Loads {@link System#getProperties()} as a source.
- * <p/>
+ *
  * Implementation note: {@link #set(String, String)} does not write to system properties, but will write to a new map.
  * This means that setting values to this source has no effect on system properties or other instances of this class.
  */
