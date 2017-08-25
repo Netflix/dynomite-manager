@@ -23,13 +23,13 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.nfsidecar.config.CommonConfig;
 import com.netflix.nfsidecar.identity.AppsInstance;
-import com.netflix.nfsidecar.identity.IAppsInstanceFactory;
 import com.netflix.nfsidecar.identity.IMembership;
 import com.netflix.nfsidecar.identity.InstanceIdentity;
 import com.netflix.nfsidecar.resources.env.IEnvVariables;
 import com.netflix.nfsidecar.scheduler.SimpleTimer;
 import com.netflix.nfsidecar.scheduler.Task;
 import com.netflix.nfsidecar.scheduler.TaskTimer;
+import com.netflix.nfsidecar.tokensdb.IAppsInstanceFactory;
 
 @Singleton
 public class UpdateSecuritySettings extends Task {

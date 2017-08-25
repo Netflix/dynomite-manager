@@ -14,7 +14,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.nfsidecar.config.CommonConfig;
 import com.netflix.nfsidecar.identity.AppsInstance;
-import com.netflix.nfsidecar.identity.IAppsInstanceFactory;
 import com.netflix.nfsidecar.resources.env.IEnvVariables;
 
 /**

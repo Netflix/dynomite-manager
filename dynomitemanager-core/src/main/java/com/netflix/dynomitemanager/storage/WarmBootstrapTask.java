@@ -21,12 +21,12 @@ import com.netflix.dynomitemanager.config.InstanceState;
 import com.netflix.dynomitemanager.dynomite.DynomiteRest;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.nfsidecar.identity.AppsInstance;
-import com.netflix.nfsidecar.identity.IAppsInstanceFactory;
 import com.netflix.nfsidecar.identity.InstanceIdentity;
 import com.netflix.nfsidecar.resources.env.IEnvVariables;
 import com.netflix.nfsidecar.scheduler.SimpleTimer;
 import com.netflix.nfsidecar.scheduler.Task;
 import com.netflix.nfsidecar.scheduler.TaskTimer;
+import com.netflix.nfsidecar.tokensdb.IAppsInstanceFactory;
 import com.netflix.nfsidecar.utils.Sleeper;
 
 import org.slf4j.Logger;

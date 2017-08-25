@@ -36,6 +36,7 @@ import com.google.inject.Singleton;
 import com.netflix.nfsidecar.config.CommonConfig;
 import com.netflix.nfsidecar.instance.InstanceDataRetriever;
 import com.netflix.nfsidecar.resources.env.IEnvVariables;
+import com.netflix.nfsidecar.tokensdb.IAppsInstanceFactory;
 import com.netflix.nfsidecar.utils.ITokenManager;
 import com.netflix.nfsidecar.utils.RetryableCallable;
 import com.netflix.nfsidecar.utils.Sleeper;

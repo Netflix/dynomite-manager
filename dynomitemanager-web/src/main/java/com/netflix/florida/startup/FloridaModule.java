@@ -42,7 +42,6 @@ import com.netflix.nfsidecar.aws.IAMCredential;
 import com.netflix.nfsidecar.aws.ICredential;
 import com.netflix.nfsidecar.backup.Backup;
 import com.netflix.nfsidecar.backup.Restore;
-import com.netflix.nfsidecar.identity.IAppsInstanceFactory;
 import com.netflix.nfsidecar.identity.IInstanceState;
 import com.netflix.nfsidecar.identity.IMembership;
 import com.netflix.nfsidecar.identity.InstanceEnvIdentity;
@@ -53,6 +52,7 @@ import com.netflix.nfsidecar.resources.env.InstanceEnvVariables;
 import com.netflix.nfsidecar.supplier.HostSupplier;
 import com.netflix.nfsidecar.supplier.LocalHostSupplier;
 import com.netflix.nfsidecar.tokensdb.CassandraInstanceFactory;
+import com.netflix.nfsidecar.tokensdb.IAppsInstanceFactory;
 import com.netflix.nfsidecar.utils.ProcessTuner;
 import com.netflix.runtime.health.guice.HealthModule;
 

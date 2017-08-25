@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.netflix.nfsidecar.identity;
+package com.netflix.nfsidecar.tokensdb;
 
 import java.util.List;
 import java.util.Map;
+
+import com.netflix.nfsidecar.identity.AppsInstance;
 
 /**
  *  Interface for managing Dynomite instance data. Provides functionality
