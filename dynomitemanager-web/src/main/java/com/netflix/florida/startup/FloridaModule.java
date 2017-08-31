@@ -42,6 +42,7 @@ import com.netflix.nfsidecar.aws.IAMCredential;
 import com.netflix.nfsidecar.aws.ICredential;
 import com.netflix.nfsidecar.backup.Backup;
 import com.netflix.nfsidecar.backup.Restore;
+import com.netflix.nfsidecar.config.CommonConfig;
 import com.netflix.nfsidecar.identity.IInstanceState;
 import com.netflix.nfsidecar.identity.IMembership;
 import com.netflix.nfsidecar.identity.InstanceEnvIdentity;
@@ -107,6 +108,14 @@ public final class FloridaModule extends AbstractModule {
         // bind(HostSupplier.class).to(CassandraLocalHostsSupplier.class);
         // bind(HostSupplier.class).to(EurekaHostsSupplier.class);
 
+    }
+
+    @Provides
+    @Singleton
+    CommonConfig getCommonConfig(ConfigProxyFactory factory) {
+        // Here we turn the config interface into an implementation that can
+        // load dynamic properties.
+        return factory.newProxy(CommonConfig.class);
     }
 
     @Provides
