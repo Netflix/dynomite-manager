@@ -16,6 +16,7 @@ import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.config.FloridaConfig;
 import com.netflix.nfsidecar.aws.ICredential;
 import com.netflix.nfsidecar.backup.Restore;
+import com.netflix.nfsidecar.config.AWSCommonConfig;
 import com.netflix.nfsidecar.identity.InstanceIdentity;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -29,8 +30,11 @@ public class S3Restore implements Restore {
     private static final Logger logger = LoggerFactory.getLogger(S3Restore.class);
 
     @Inject
-    private FloridaConfig config;
+    private AWSCommonConfig commonConfig;
 
+    @Inject 
+    private FloridaConfig floridaConfig;
+    
     @Inject
     private ICredential cred;
 
@@ -49,27 +53,27 @@ public class S3Restore implements Restore {
 
             try {
                 /* construct the key for the backup data */
-                String keyName = config.getBackupLocation() + "/" + iid.getInstance().getDatacenter() + "/"
+                String keyName = commonConfig.getBackupLocation() + "/" + iid.getInstance().getDatacenter() + "/"
                         + iid.getInstance().getRack() + "/" + iid.getInstance().getToken() + "/" + time;
 
-                logger.info("S3 Bucket Name: " + config.getBucketName());
+                logger.info("S3 Bucket Name: " + commonConfig.getBucketName());
                 logger.info("Key in Bucket: " + keyName);
 
                 // Checking if the S3 bucket exists, and if does not, then we
                 // create it
-                if (!(s3Client.doesBucketExist(config.getBucketName()))) {
-                    logger.error("Bucket with name: " + config.getBucketName() + " does not exist");
+                if (!(s3Client.doesBucketExist(commonConfig.getBucketName()))) {
+                    logger.error("Bucket with name: " + commonConfig.getBucketName() + " does not exist");
                 } else {
-                    S3Object s3object = s3Client.getObject(new GetObjectRequest(config.getBucketName(), keyName));
+                    S3Object s3object = s3Client.getObject(new GetObjectRequest(commonConfig.getBucketName(), keyName));
 
                     logger.info("Content-Type: " + s3object.getObjectMetadata().getContentType());
 
                     String filepath = null;
 
-                    if (config.persistenceType().equals("aof")) {
-                        filepath = config.getPersistenceLocation() + "/appendonly.aof";
+                    if (floridaConfig.persistenceType().equals("aof")) {
+                        filepath = floridaConfig.getPersistenceLocation() + "/appendonly.aof";
                     } else {
-                        filepath = config.getPersistenceLocation() + "/nfredis.rdb";
+                        filepath = floridaConfig.getPersistenceLocation() + "/nfredis.rdb";
                     }
 
                     IOUtils.copy(s3object.getObjectContent(), new FileOutputStream(new File(filepath)));

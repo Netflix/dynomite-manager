@@ -6,12 +6,12 @@ import org.joda.time.DateTime;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.netflix.dynomitemanager.config.FloridaConfig;
 import com.netflix.dynomitemanager.config.InstanceState;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.storage.StorageProcessManager;
 import com.netflix.dynomitemanager.storage.StorageProxy;
 import com.netflix.nfsidecar.backup.Restore;
+import com.netflix.nfsidecar.config.CommonConfig;
 import com.netflix.nfsidecar.scheduler.Task;
 import com.netflix.nfsidecar.utils.Sleeper;
 
@@ -29,10 +29,10 @@ public class RestoreTask extends Task {
     private final Sleeper sleeper;
     private final Restore restore;
     private StorageProcessManager storageProcessMgr;
-    private final FloridaConfig config;
+    private final CommonConfig config;
 
     @Inject
-    public RestoreTask(FloridaConfig config, InstanceState state, StorageProxy storageProxy,
+    public RestoreTask(CommonConfig config, InstanceState state, StorageProxy storageProxy,
             IDynomiteProcess dynProcess, Sleeper sleeper, Restore restore, StorageProcessManager storageProcessMgr) {
         this.config = config;
         this.state = state;

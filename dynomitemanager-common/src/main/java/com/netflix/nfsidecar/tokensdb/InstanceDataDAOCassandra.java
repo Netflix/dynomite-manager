@@ -21,6 +21,7 @@ import com.netflix.astyanax.model.*;
 import com.netflix.astyanax.serializers.StringSerializer;
 import com.netflix.astyanax.thrift.ThriftFamilyFactory;
 import com.netflix.astyanax.util.TimeUUIDUtils;
+import com.netflix.nfsidecar.config.CassCommonConfig;
 import com.netflix.nfsidecar.config.CommonConfig;
 import com.netflix.nfsidecar.identity.AppsInstance;
 import com.netflix.nfsidecar.supplier.HostSupplier;
@@ -48,7 +49,8 @@ public class InstanceDataDAOCassandra {
     private String CF_NAME_LOCKS = "locks";
 
     private final Keyspace bootKeyspace;
-    private final CommonConfig config;
+    private final CommonConfig commonConfig;
+    private final CassCommonConfig cassCommonConfig;
     private final HostSupplier hostSupplier;
     private final String BOOT_CLUSTER;
     private final String KS_NAME;
@@ -73,29 +75,30 @@ public class InstanceDataDAOCassandra {
             StringSerializer.get(), StringSerializer.get());
 
     @Inject
-    public InstanceDataDAOCassandra(CommonConfig config, HostSupplier hostSupplier) throws ConnectionException {
-        this.config = config;
+    public InstanceDataDAOCassandra(CommonConfig commonConfig, CassCommonConfig cassCommonConfig, HostSupplier hostSupplier) throws ConnectionException {
+        this.cassCommonConfig = cassCommonConfig;
+        this.commonConfig = commonConfig;
 
-        BOOT_CLUSTER = config.getCassandraClusterName();
+        BOOT_CLUSTER = cassCommonConfig.getCassandraClusterName();
 
         if (BOOT_CLUSTER == null || BOOT_CLUSTER.isEmpty())
             throw new RuntimeException(
                     "Cassandra cluster name cannot be blank. Please use getCassandraClusterName() property.");
 
-        KS_NAME = config.getCassandraKeyspaceName();
+        KS_NAME = cassCommonConfig.getCassandraKeyspaceName();
 
         if (KS_NAME == null || KS_NAME.isEmpty())
             throw new RuntimeException(
                     "Cassandra Keyspace can not be blank. Please use getCassandraKeyspaceName() property.");
 
-        thriftPortForAstyanax = config.getCassandraThriftPort();
+        thriftPortForAstyanax = cassCommonConfig.getCassandraThriftPort();
         if (thriftPortForAstyanax <= 0)
             throw new RuntimeException(
                     "Thrift Port for Astyanax can not be blank. Please use getCassandraThriftPort() property.");
 
         this.hostSupplier = hostSupplier;
 
-        if (config.isEurekaHostsSupplierEnabled())
+        if (cassCommonConfig.isEurekaHostsSupplierEnabled())
             ctx = initWithThriftDriverWithEurekaHostsSupplier();
         else
             ctx = initWithThriftDriverWithExternalHostsSupplier();
@@ -121,7 +124,7 @@ public class InstanceDataDAOCassandra {
             clm.putColumn(CN_ID, Integer.toString(instance.getId()), null);
             clm.putColumn(CN_APPID, instance.getApp(), null);
             clm.putColumn(CN_AZ, instance.getZone(), null);
-            clm.putColumn(CN_DC, config.getRack(), null);
+            clm.putColumn(CN_DC, commonConfig.getRack(), null);
             clm.putColumn(CN_INSTANCEID, instance.getInstanceId(), null);
             clm.putColumn(CN_HOSTNAME, instance.getHostName(), null);
             clm.putColumn(CN_EIP, instance.getHostIP(), null);
@@ -366,7 +369,7 @@ public class InstanceDataDAOCassandra {
                 List<Host> hosts = new ArrayList<Host>();
 
                 List<String> cassHostnames = new ArrayList<String>(
-                        Arrays.asList(StringUtils.split(config.getCassandraSeeds(), ",")));
+                        Arrays.asList(StringUtils.split(cassCommonConfig.getCassandraSeeds(), ",")));
 
                 if (cassHostnames.size() == 0)
                     throw new RuntimeException(

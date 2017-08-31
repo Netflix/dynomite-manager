@@ -33,6 +33,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.netflix.nfsidecar.config.AWSCommonConfig;
 import com.netflix.nfsidecar.config.CommonConfig;
 import com.netflix.nfsidecar.instance.InstanceDataRetriever;
 import com.netflix.nfsidecar.resources.env.IEnvVariables;
@@ -60,7 +61,8 @@ public class InstanceIdentity {
             });
     private final IAppsInstanceFactory factory;
     private final IMembership membership;
-    private final CommonConfig config;
+    private final CommonConfig commonConfig;
+    private final AWSCommonConfig aWSCommonConfig;
     private final Sleeper sleeper;
     private final ITokenManager tokenManager;
     private final InstanceEnvIdentity insEnvIdentity;
@@ -82,12 +84,13 @@ public class InstanceIdentity {
     private String replacedIp = "";
 
     @Inject
-    public InstanceIdentity(IAppsInstanceFactory factory, IMembership membership, CommonConfig config,
+    public InstanceIdentity(IAppsInstanceFactory factory, IMembership membership, AWSCommonConfig aWSCommonConfig, CommonConfig commonConfig,
             Sleeper sleeper, ITokenManager tokenManager, InstanceEnvIdentity insEnvIdentity,
             InstanceDataRetriever retriever, IEnvVariables envVariables) throws Exception {
         this.factory = factory;
         this.membership = membership;
-        this.config = config;
+        this.commonConfig = commonConfig;
+        this.aWSCommonConfig = aWSCommonConfig;
         this.sleeper = sleeper;
         this.tokenManager = tokenManager;
         this.insEnvIdentity = insEnvIdentity;
@@ -179,7 +182,7 @@ public class InstanceIdentity {
         public AppsInstance retriableCall() throws Exception {
             final List<AppsInstance> allIds = factory.getAllIds(envVariables.getDynomiteClusterName());
             List<String> asgInstances = membership.getRacMembership();
-            if (config.isDualAccount()) {
+            if (aWSCommonConfig.isDualAccount()) {
                 asgInstances = getDualAccountRacMembership(asgInstances);
             } else {
                 logger.info("Single Account cluster");
@@ -272,14 +275,14 @@ public class InstanceIdentity {
             logger.info("my_slot ::: " + my_slot);
             isNewToken = true;
             int rackMembershipSize;
-            if (config.isDualAccount()) {
+            if (aWSCommonConfig.isDualAccount()) {
                 rackMembershipSize = membership.getRacMembershipSize() + membership.getCrossAccountRacMembershipSize();
             } else {
                 rackMembershipSize = membership.getRacMembershipSize();
             }
             logger.info(String.format(
                     "Trying to createToken with slot %d with rac count %d with rac membership size %d with dc %s",
-                    my_slot, config.getRacks().size(), rackMembershipSize, envVariables.getRegion()));
+                    my_slot, commonConfig.getRacks().size(), rackMembershipSize, envVariables.getRegion()));
             // String payload = tokenManager.createToken(my_slot,
             // membership.getRacCount(), membership.getRacMembershipSize(),
             // config.getDataCenter());
@@ -326,7 +329,7 @@ public class InstanceIdentity {
         for (AppsInstance ins : factory.getAllIds(envVariables.getDynomiteClusterName())) {
             if (!ins.getInstanceId().equals(myInstance.getInstanceId())) {
                 logger.debug("Adding node: " + ins.getInstanceId());
-                seeds.add(ins.getHostName() + ":" + config.getStoragePeerPort() + ":" + ins.getRack() + ":"
+                seeds.add(ins.getHostName() + ":" + commonConfig.getStoragePeerPort() + ":" + ins.getRack() + ":"
                         + ins.getDatacenter() + ":" + ins.getToken());
             }
         }

@@ -21,7 +21,7 @@ import com.netflix.archaius.api.annotations.PropertyName;
 import com.netflix.nfsidecar.config.CommonConfig;
 
 @Configuration(prefix = "florida")
-public interface FloridaConfig extends CommonConfig {
+public interface FloridaConfig {
 
     /**
      * Get the full path to Dynomite's installation directory.
