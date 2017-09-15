@@ -39,8 +39,9 @@ public class DynomiteStandardTuner implements ProcessTuner {
     public static final Pattern MEMINFO_PATTERN = Pattern.compile("MemTotal:\\s*([0-9]*)");
 
     @Inject
-    public DynomiteStandardTuner(FloridaConfig floridaConfig, CommonConfig commonConfig, InstanceIdentity ii, IInstanceState instanceState,
-            StorageProxy storageProxy, IEnvVariables envVariables, InstanceDataRetriever instanceDataRetriever) {
+    public DynomiteStandardTuner(FloridaConfig floridaConfig, CommonConfig commonConfig, InstanceIdentity ii,
+            IInstanceState instanceState, StorageProxy storageProxy, IEnvVariables envVariables,
+            InstanceDataRetriever instanceDataRetriever) {
         this.floridaConfig = floridaConfig;
         this.commonConfig = commonConfig;
         this.ii = ii;
@@ -116,6 +117,10 @@ public class DynomiteStandardTuner implements ProcessTuner {
         entries.put("mbuf_size", floridaConfig.getDynomiteMBufSize());
         entries.put("max_msgs", setMaxMsgs());
         entries.put("pem_key_file", floridaConfig.getDynomiteInstallDir() + "/conf/dynomite.pem");
+
+        if (!floridaConfig.getDynomiteHashtag().isEmpty()) {
+           entries.put("hashtag", floridaConfig.getDynomiteHashtag());
+        }
 
         List<String> seedp = (List) entries.get("dyn_seeds");
         if (seedp == null) {

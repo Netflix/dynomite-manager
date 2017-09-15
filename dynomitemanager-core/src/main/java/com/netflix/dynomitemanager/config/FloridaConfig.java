@@ -18,7 +18,6 @@ package com.netflix.dynomitemanager.config;
 import com.netflix.archaius.api.annotations.Configuration;
 import com.netflix.archaius.api.annotations.DefaultValue;
 import com.netflix.archaius.api.annotations.PropertyName;
-import com.netflix.nfsidecar.config.CommonConfig;
 
 @Configuration(prefix = "florida")
 public interface FloridaConfig {
@@ -125,6 +124,14 @@ public interface FloridaConfig {
     @PropertyName(name = "dyno.connections.peer.remote")
     public int getRemotePeerConnections();
 
+    
+    /** 
+     * Dynomite support of hashtags
+     * Link: https://github.com/Netflix/dynomite/blob/dev/notes/recommendation.md#hash-tags
+     */
+    @DefaultValue("")
+    @PropertyName(name = "dyno.hashtag")
+    public String getDynomiteHashtag();
 
     /**
      * Determine if Dynomite should auto-eject nodes from the cluster.
