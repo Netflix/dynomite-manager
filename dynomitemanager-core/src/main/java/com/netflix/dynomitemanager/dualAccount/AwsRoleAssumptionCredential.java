@@ -4,8 +4,8 @@ package com.netflix.dynomitemanager.dualAccount;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.STSAssumeRoleSessionCredentialsProvider;
 import com.google.inject.Inject;
-import com.netflix.dynomitemanager.config.FloridaConfig;
 import com.netflix.nfsidecar.aws.ICredential;
+import com.netflix.nfsidecar.config.AWSCommonConfig;
 import com.netflix.nfsidecar.identity.InstanceEnvIdentity;
 
 public class AwsRoleAssumptionCredential implements ICredential {
@@ -13,10 +13,10 @@ public class AwsRoleAssumptionCredential implements ICredential {
     private ICredential cred;
     private InstanceEnvIdentity insEnvIdentity;
     private AWSCredentialsProvider stsSessionCredentialsProvider;
-    private FloridaConfig config;
+    private AWSCommonConfig config;
 
     @Inject
-    public AwsRoleAssumptionCredential(ICredential cred, FloridaConfig config, InstanceEnvIdentity insEnvIdentity) {
+    public AwsRoleAssumptionCredential(ICredential cred, AWSCommonConfig config, InstanceEnvIdentity insEnvIdentity) {
         this.cred = cred;
         this.config = config;
         this.insEnvIdentity = insEnvIdentity;

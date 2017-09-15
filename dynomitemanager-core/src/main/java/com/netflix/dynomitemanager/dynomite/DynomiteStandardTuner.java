@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.config.FloridaConfig;
 import com.netflix.dynomitemanager.storage.StorageProxy;
+import com.netflix.nfsidecar.config.CommonConfig;
 import com.netflix.nfsidecar.identity.IInstanceState;
 import com.netflix.nfsidecar.identity.InstanceIdentity;
 import com.netflix.nfsidecar.instance.InstanceDataRetriever;
@@ -27,7 +28,8 @@ public class DynomiteStandardTuner implements ProcessTuner {
     private static final String ROOT_NAME = "dyn_o_mite";
     public static final long GB_2_IN_KB = 2L * 1024L * 1024L;
 
-    protected final FloridaConfig config;
+    protected final FloridaConfig floridaConfig;
+    protected final CommonConfig commonConfig;
     protected final InstanceIdentity ii;
     protected final StorageProxy storageProxy;
     protected final IInstanceState instanceState;
@@ -37,9 +39,10 @@ public class DynomiteStandardTuner implements ProcessTuner {
     public static final Pattern MEMINFO_PATTERN = Pattern.compile("MemTotal:\\s*([0-9]*)");
 
     @Inject
-    public DynomiteStandardTuner(FloridaConfig config, InstanceIdentity ii, IInstanceState instanceState,
+    public DynomiteStandardTuner(FloridaConfig floridaConfig, CommonConfig commonConfig, InstanceIdentity ii, IInstanceState instanceState,
             StorageProxy storageProxy, IEnvVariables envVariables, InstanceDataRetriever instanceDataRetriever) {
-        this.config = config;
+        this.floridaConfig = floridaConfig;
+        this.commonConfig = commonConfig;
         this.ii = ii;
         this.instanceState = instanceState;
         this.storageProxy = storageProxy;
@@ -54,7 +57,7 @@ public class DynomiteStandardTuner implements ProcessTuner {
      */
 
     public int setMaxMsgs() {
-        if (config.getDynomiteMaxAllocatedMessages() == 0) {
+        if (floridaConfig.getDynomiteMaxAllocatedMessages() == 0) {
 
             String instanceType = this.instanceDataRetriever.getInstanceType();
 
@@ -78,7 +81,7 @@ public class DynomiteStandardTuner implements ProcessTuner {
                 return 500000;
 
         }
-        return config.getDynomiteMaxAllocatedMessages();
+        return floridaConfig.getDynomiteMaxAllocatedMessages();
     }
 
     /**
@@ -93,26 +96,26 @@ public class DynomiteStandardTuner implements ProcessTuner {
         Map<String, Object> entries = (Map) map.get(ROOT_NAME);
         entries.clear();
 
-        entries.put("auto_eject_hosts", config.getDynomiteAutoEjectHosts());
+        entries.put("auto_eject_hosts", floridaConfig.getDynomiteAutoEjectHosts());
         entries.put("rack", envVariables.getRack());
-        entries.put("distribution", config.getDistribution());
-        entries.put("dyn_listen", "0.0.0.0:" + config.getStoragePeerPort());
-        entries.put("dyn_seed_provider", config.getDynomiteSeedProvider());
-        entries.put("gos_interval", config.getDynomiteGossipInterval());
-        entries.put("hash", config.getDynomiteHashAlgorithm());
-        entries.put("listen", "0.0.0.0:" + config.getDynomiteClientPort());
-        entries.put("preconnect", config.getDynomiteStoragePreconnect());
-        entries.put("server_retry_timeout", config.getServerRetryTimeout());
-        entries.put("timeout", config.getTimeout());
+        entries.put("distribution", floridaConfig.getDistribution());
+        entries.put("dyn_listen", "0.0.0.0:" + commonConfig.getStoragePeerPort());
+        entries.put("dyn_seed_provider", floridaConfig.getDynomiteSeedProvider());
+        entries.put("gos_interval", floridaConfig.getDynomiteGossipInterval());
+        entries.put("hash", floridaConfig.getDynomiteHashAlgorithm());
+        entries.put("listen", "0.0.0.0:" + floridaConfig.getDynomiteClientPort());
+        entries.put("preconnect", floridaConfig.getDynomiteStoragePreconnect());
+        entries.put("server_retry_timeout", floridaConfig.getServerRetryTimeout());
+        entries.put("timeout", floridaConfig.getTimeout());
         entries.put("tokens", ii.getTokens());
-        entries.put("secure_server_option", config.getDynomiteIntraClusterSecurity());
+        entries.put("secure_server_option", floridaConfig.getDynomiteIntraClusterSecurity());
         entries.remove("redis");
         entries.put("datacenter", envVariables.getRegion());
-        entries.put("read_consistency", config.getDynomiteReadConsistency());
-        entries.put("write_consistency", config.getDynomiteWriteConsistency());
-        entries.put("mbuf_size", config.getDynomiteMBufSize());
+        entries.put("read_consistency", floridaConfig.getDynomiteReadConsistency());
+        entries.put("write_consistency", floridaConfig.getDynomiteWriteConsistency());
+        entries.put("mbuf_size", floridaConfig.getDynomiteMBufSize());
         entries.put("max_msgs", setMaxMsgs());
-        entries.put("pem_key_file", config.getDynomiteInstallDir() + "/conf/dynomite.pem");
+        entries.put("pem_key_file", floridaConfig.getDynomiteInstallDir() + "/conf/dynomite.pem");
 
         List<String> seedp = (List) entries.get("dyn_seeds");
         if (seedp == null) {
@@ -146,10 +149,10 @@ public class DynomiteStandardTuner implements ProcessTuner {
             servers.add(storageProxy.getIpAddress() + ":" + storageProxy.getPort() + ":1");
         }
 
-        if (config.getConnectionPoolEnabled()) {
-            entries.put("datastore_connections", config.getDatastoreConnections());
-            entries.put("local_peer_connections", config.getLocalPeerConnections());
-            entries.put("remote_peer_connections", config.getRemotePeerConnections());
+        if (floridaConfig.getConnectionPoolEnabled()) {
+            entries.put("datastore_connections", floridaConfig.getDatastoreConnections());
+            entries.put("local_peer_connections", floridaConfig.getLocalPeerConnections());
+            entries.put("remote_peer_connections", floridaConfig.getRemotePeerConnections());
         }
 
         if (!this.instanceState.getYmlWritten()) {

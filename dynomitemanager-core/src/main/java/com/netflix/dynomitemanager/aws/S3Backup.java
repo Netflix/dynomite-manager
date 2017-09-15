@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
 
 import com.netflix.nfsidecar.aws.ICredential;
 import com.netflix.nfsidecar.backup.Backup;
-import com.netflix.nfsidecar.config.CommonConfig;
+import com.netflix.nfsidecar.config.AWSCommonConfig;
 import com.netflix.nfsidecar.identity.InstanceIdentity;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.PartETag;
@@ -35,7 +35,7 @@ public class S3Backup implements Backup {
     // and run out of heap space
 
     @Inject
-    private CommonConfig config;
+    private AWSCommonConfig config;
 
     @Inject
     private ICredential cred;

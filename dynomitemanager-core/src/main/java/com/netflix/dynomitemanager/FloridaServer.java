@@ -35,6 +35,7 @@ import com.netflix.dynomitemanager.monitoring.RedisInfoMetricsTask;
 import com.netflix.dynomitemanager.monitoring.ServoMetricsTask;
 import com.netflix.dynomitemanager.storage.*;
 import com.netflix.nfsidecar.aws.UpdateSecuritySettings;
+import com.netflix.nfsidecar.config.CommonConfig;
 import com.netflix.nfsidecar.identity.InstanceIdentity;
 import com.netflix.nfsidecar.scheduler.TaskScheduler;
 import com.netflix.nfsidecar.utils.Sleeper;
@@ -48,7 +49,8 @@ import com.netflix.servo.monitor.Monitors;
 @Singleton
 public class FloridaServer {
     private final TaskScheduler scheduler;
-    private final FloridaConfig config;
+    private final FloridaConfig floridaConfig;
+    private final CommonConfig commonConfig;
     private final InstanceIdentity id;
     private final Sleeper sleeper;
     private final DynomiteYamlTask tuneTask;
@@ -59,10 +61,11 @@ public class FloridaServer {
     private static final Logger logger = LoggerFactory.getLogger(FloridaServer.class);
 
     @Inject
-    public FloridaServer(FloridaConfig config, TaskScheduler scheduler, InstanceIdentity id, Sleeper sleeper,
-            DynomiteYamlTask tuneTask, InstanceState state, IDynomiteProcess dynProcess,
-            StorageProcessManager storageProcess, StorageProxy storageProxy) {
-        this.config = config;
+    public FloridaServer(FloridaConfig floridaConfig, CommonConfig commonConfig, TaskScheduler scheduler,
+            InstanceIdentity id, Sleeper sleeper, DynomiteYamlTask tuneTask, InstanceState state,
+            IDynomiteProcess dynProcess, StorageProcessManager storageProcess, StorageProxy storageProxy) {
+        this.floridaConfig = floridaConfig;
+        this.commonConfig = commonConfig;
         this.scheduler = scheduler;
         this.id = id;
         this.sleeper = sleeper;
@@ -81,7 +84,7 @@ public class FloridaServer {
     }
 
     public void initialize() throws Exception {
-        if (id.getInstance().isOutOfService()){
+        if (id.getInstance().isOutOfService()) {
             logger.error("Out of service");
             return;
         }
@@ -92,7 +95,7 @@ public class FloridaServer {
         state.setBootstrapStatus(Bootstrap.NOT_STARTED);
         state.setStorageAlive(storageProxy.isAlive());
 
-        if (config.isDynomiteMultiDC()) {
+        if (floridaConfig.isDynomiteMultiDC()) {
             scheduler.runTaskNow(UpdateSecuritySettings.class);
             /*
              * sleep for some random between 100 - 200 sec if this is a new node
@@ -123,7 +126,7 @@ public class FloridaServer {
         }
 
         // Determine if we need to restore from backup else start Dynomite.
-        if (config.isRestoreEnabled()) {
+        if (commonConfig.isRestoreEnabled()) {
             logger.info("Restore is enabled.");
             scheduler.runTaskNow(RestoreTask.class); // restore from the AWS
             logger.info("Scheduled task " + RestoreTask.TaskName);
@@ -131,19 +134,19 @@ public class FloridaServer {
             logger.info("Restore is disabled.");
 
             /**
-             * Bootstrapping cases
-             * 1. The user has enforced warm up through an FP
-             * 2. It is a new node that replaces an existing token (node termination)
-             * 3. An existing token exists and Storage is not alive (node reboot)
+             * Bootstrapping cases 1. The user has enforced warm up through an
+             * FP 2. It is a new node that replaces an existing token (node
+             * termination) 3. An existing token exists and Storage is not alive
+             * (node reboot)
              */
             boolean warmUp = false;
-            if (config.isForceWarm()) {
+            if (floridaConfig.isForceWarm()) {
                 logger.info("force bootstrap -> warm up");
                 warmUp = true;
-            } else if (config.isWarmBootstrap() && id.isReplace()) {
+            } else if (floridaConfig.isWarmBootstrap() && id.isReplace()) {
                 logger.info("Instance replacement -> warm up");
                 warmUp = true;
-            } else if (config.isWarmBootstrap() && !id.isNewToken() && !storageProxy.isAlive()) {
+            } else if (floridaConfig.isWarmBootstrap() && !id.isNewToken() && !storageProxy.isAlive()) {
                 logger.info("Not a new token and Storage is down -> warm up");
                 warmUp = true;
             }
@@ -164,8 +167,8 @@ public class FloridaServer {
         }
 
         // Backup
-        if (config.isBackupEnabled() && config.getBackupHour() >= 0) {
-            scheduler.addTask(SnapshotTask.TaskName, SnapshotTask.class, SnapshotTask.getTimer(config));
+        if (commonConfig.isBackupEnabled() && commonConfig.getBackupHour() >= 0) {
+            scheduler.addTask(SnapshotTask.TaskName, SnapshotTask.class, SnapshotTask.getTimer(commonConfig));
         }
 
         // Metrics
@@ -175,7 +178,8 @@ public class FloridaServer {
         // Routine monitoring and restarting dynomite or storage processes as
         // needed.
         scheduler.addTask(ProcessMonitorTask.JOBNAME, ProcessMonitorTask.class, ProcessMonitorTask.getTimer());
-        scheduler.addTask(DynomiteProcessManager.JOB_TASK_NAME, DynomiteProcessManager.class, DynomiteProcessManager.getTimer());
+        scheduler.addTask(DynomiteProcessManager.JOB_TASK_NAME, DynomiteProcessManager.class,
+                DynomiteProcessManager.getTimer());
 
         scheduler.addTask(RedisStorageProxy.JOB_TASK_NAME, RedisStorageProxy.class, RedisStorageProxy.getTimer());
 
@@ -196,7 +200,7 @@ public class FloridaServer {
     }
 
     public FloridaConfig getConfiguration() {
-        return config;
+        return floridaConfig;
     }
 
 }

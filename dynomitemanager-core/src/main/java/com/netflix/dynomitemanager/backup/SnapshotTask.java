@@ -27,6 +27,7 @@ import com.netflix.dynomitemanager.config.FloridaConfig;
 import com.netflix.dynomitemanager.config.InstanceState;
 import com.netflix.dynomitemanager.storage.StorageProxy;
 import com.netflix.nfsidecar.backup.Backup;
+import com.netflix.nfsidecar.config.CommonConfig;
 import com.netflix.nfsidecar.scheduler.CronTimer;
 import com.netflix.nfsidecar.scheduler.Task;
 import com.netflix.nfsidecar.scheduler.TaskTimer;
@@ -44,13 +45,13 @@ public class SnapshotTask extends Task {
     private final InstanceState state;
     private final StorageProxy storageProxy;
     private final Backup backup;
-    private final FloridaConfig config;
+    private final FloridaConfig floridaConfig;
 
     private final int storageRetries = 5;
 
     @Inject
-    public SnapshotTask(FloridaConfig config, InstanceState state, StorageProxy storageProxy, Backup backup) {
-        this.config = config;
+    public SnapshotTask(FloridaConfig floridaConfig, InstanceState state, StorageProxy storageProxy, Backup backup) {
+        this.floridaConfig = floridaConfig;
         this.state = state;
         this.storageProxy = storageProxy;
         this.backup = backup;
@@ -83,10 +84,10 @@ public class SnapshotTask extends Task {
                     // the storage proxy takes a snapshot or compacts data
                     boolean snapshot = this.storageProxy.takeSnapshot();
                     File file = null;
-                    if (config.persistenceType().equals("aof")) {
-                        file = new File(config.getPersistenceLocation() + "/appendonly.aof");
+                    if (floridaConfig.persistenceType().equals("aof")) {
+                        file = new File(floridaConfig.getPersistenceLocation() + "/appendonly.aof");
                     } else {
-                        file = new File(config.getPersistenceLocation() + "/nfredis.rdb");
+                        file = new File(floridaConfig.getPersistenceLocation() + "/nfredis.rdb");
                     }
                     // upload the data to S3
                     if (file.length() > 0 && snapshot == true) {
@@ -129,9 +130,9 @@ public class SnapshotTask extends Task {
      * 
      * @return TaskTimer
      */
-    public static TaskTimer getTimer(FloridaConfig config) {
-        int hour = config.getBackupHour();
-        if (config.getBackupSchedule().equals("week")) {
+    public static TaskTimer getTimer(CommonConfig commonConfig) {
+        int hour = commonConfig.getBackupHour();
+        if (commonConfig.getBackupSchedule().equals("week")) {
             return new CronTimer(DayOfWeek.MON, hour, 1, 0);
         }
         return new CronTimer(hour, 1, 0);

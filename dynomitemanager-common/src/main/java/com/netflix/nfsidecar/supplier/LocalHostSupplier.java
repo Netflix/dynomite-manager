@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 import com.netflix.astyanax.connectionpool.Host;
-import com.netflix.nfsidecar.config.CommonConfig;
+import com.netflix.nfsidecar.config.CassCommonConfig;
 
 /**
  * Use the {@code DM_CASSANDRA_CLUSTER_SEEDS} environment variable to provide a
@@ -18,10 +18,10 @@ import com.netflix.nfsidecar.config.CommonConfig;
 public class LocalHostSupplier implements HostSupplier {
 
     private static final String errMsg = "DM_CASSANDRA_CLUSTER_SEEDS cannot be empty. It must contain one or more Cassandra hosts.";
-    private CommonConfig config;
+    private CassCommonConfig config;
 
     @Inject
-    public LocalHostSupplier(CommonConfig config) {
+    public LocalHostSupplier(CassCommonConfig config) {
         this.config = config;
     }
 

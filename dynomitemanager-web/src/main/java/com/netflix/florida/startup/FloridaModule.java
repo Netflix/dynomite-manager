@@ -42,6 +42,9 @@ import com.netflix.nfsidecar.aws.IAMCredential;
 import com.netflix.nfsidecar.aws.ICredential;
 import com.netflix.nfsidecar.backup.Backup;
 import com.netflix.nfsidecar.backup.Restore;
+import com.netflix.nfsidecar.config.AWSCommonConfig;
+import com.netflix.nfsidecar.config.CassCommonConfig;
+import com.netflix.nfsidecar.config.CommonConfig;
 import com.netflix.nfsidecar.identity.IInstanceState;
 import com.netflix.nfsidecar.identity.IMembership;
 import com.netflix.nfsidecar.identity.InstanceEnvIdentity;
@@ -111,9 +114,25 @@ public final class FloridaModule extends AbstractModule {
 
     @Provides
     @Singleton
+    CommonConfig getCommonConfig(ConfigProxyFactory factory) {
+        return factory.newProxy(CommonConfig.class);
+    }
+    
+    @Provides
+    @Singleton
+    CassCommonConfig getCassCommonConfig(ConfigProxyFactory factory) {
+        return factory.newProxy(CassCommonConfig.class);
+    }
+    
+    @Provides
+    @Singleton
+    AWSCommonConfig getAWSCommonConfig(ConfigProxyFactory factory) {
+        return factory.newProxy(AWSCommonConfig.class);
+    }
+
+    @Provides
+    @Singleton
     FloridaConfig getFloridaConfig(ConfigProxyFactory factory) {
-        // Here we turn the config interface into an implementation that can
-        // load dynamic properties.
         return factory.newProxy(FloridaConfig.class);
     }
 }

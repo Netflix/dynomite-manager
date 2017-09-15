@@ -33,40 +33,6 @@ public interface CommonConfig {
     /*****************************************************************/
 
     /**
-     * @return Bootstrap cluster name (depends on another cass cluster)
-     */
-    @DefaultValue("cass_turtle")
-    @PropertyName(name = "dyno.sidecore.clusterName")
-    public String getCassandraClusterName();
-    
-    /**
-     * @return if Eureka is used to find the bootstrap cluster
-     */
-    @DefaultValue("false")
-    @PropertyName(name = "dyno.sidecore.eureka.enabled")
-    public boolean isEurekaHostsSupplierEnabled();
-    
-    /**
-     * @return the port that the bootstrap cluster can be contacted
-     */
-    @DefaultValue("7102")
-    @PropertyName(name = "dyno.sidecore.sidecore.port")
-    public int getCassandraThriftPort();
-    
-    @DefaultValue("127.0.0.1")
-    @PropertyName(name = "dyno.sidecore.seeds")
-    public String getCassandraSeeds();
-    
-    /**
-     * Get the name of the keyspace that stores tokens for the Dynomite cluster.
-     *
-     * @return the keyspace name
-     */
-    @DefaultValue("dyno_bootstrap")
-    @PropertyName(name = "metadata.keyspace")
-    public String getCassandraKeyspaceName();
-    
-    /**
      * Get the peer-to-peer port used by Dynomite to communicate with other
      * Dynomite nodes.
      *
@@ -75,35 +41,6 @@ public interface CommonConfig {
     @DefaultValue("8101") //TODO: For a common default value we probably have to result to defined FP
     public int getStoragePeerPort();
     
-
-    // Dual Account
-    /*
-     * @return the Amazon Resource Name (ARN) for EC2 classic.
-     */
-    @DefaultValue("null")
-    @PropertyName(name = "ec2.roleassumption.arn")
-    public String getClassicAWSRoleAssumptionArn();
-
-    /*
-     * @return the Amazon Resource Name (ARN) for VPC.
-     */
-    @DefaultValue("null")
-    @PropertyName(name = "vpc.roleassumption.arn")
-    public String getVpcAWSRoleAssumptionArn();
-
-    @DefaultValue("false")
-    @PropertyName(name = "roleassumption.dualaccount")
-    public boolean isDualAccount();
-
-    // Backup and Restore
-
-    @DefaultValue("us-east-1.dynomite-backup-test")
-    @PropertyName(name = "dyno.backup.bucket.name") //TODO: For a common default value we probably have to result to defined FP
-    public String getBucketName();
-
-    @DefaultValue("backup")
-    @PropertyName(name = "dyno.backup.s3.base_dir") //TODO: For a common default value we probably have to result to defined FP
-    public String getBackupLocation();
 
     @DefaultValue("false")
     @PropertyName(name = "dyno.backup.snapshot.enabled") //TODO: For a common default value we probably have to result to defined FP
