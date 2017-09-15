@@ -84,8 +84,8 @@ public class InstanceIdentity {
     private String replacedIp = "";
 
     @Inject
-    public InstanceIdentity(IAppsInstanceFactory factory, IMembership membership, AWSCommonConfig aWSCommonConfig, CommonConfig commonConfig,
-            Sleeper sleeper, ITokenManager tokenManager, InstanceEnvIdentity insEnvIdentity,
+    public InstanceIdentity(IAppsInstanceFactory factory, IMembership membership, AWSCommonConfig aWSCommonConfig,
+            CommonConfig commonConfig, Sleeper sleeper, ITokenManager tokenManager, InstanceEnvIdentity insEnvIdentity,
             InstanceDataRetriever retriever, IEnvVariables envVariables) throws Exception {
         this.factory = factory;
         this.membership = membership;
@@ -205,9 +205,9 @@ public class InstanceIdentity {
                 replacedIp = dead.getHostIP();
                 String payLoad = dead.getToken();
                 logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getZone());
-                return factory.create(envVariables.getDynomiteClusterName(), dead.getId(),  retriever.getInstanceId(),
-                        retriever.getPublicHostname(), retriever.getPublicIP(), retriever.getRac(), dead.getVolumes(), payLoad,
-                        envVariables.getRack());
+                return factory.create(envVariables.getDynomiteClusterName(), dead.getId(), retriever.getInstanceId(),
+                        retriever.getPublicHostname(), retriever.getPublicIP(), retriever.getRac(), dead.getVolumes(),
+                        payLoad, envVariables.getRack());
             }
             return null;
         }
@@ -243,8 +243,8 @@ public class InstanceIdentity {
                 String payLoad = dead.getToken();
                 logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getRack());
                 return factory.create(envVariables.getDynomiteClusterName(), dead.getId(), retriever.getInstanceId(),
-                        retriever.getPublicHostname(), retriever.getPublicIP(), retriever.getRac(), dead.getVolumes(), payLoad,
-                        envVariables.getRack());
+                        retriever.getPublicHostname(), retriever.getPublicIP(), retriever.getRac(), dead.getVolumes(),
+                        payLoad, envVariables.getRack());
             }
             return null;
         }
@@ -262,7 +262,7 @@ public class InstanceIdentity {
             int hash = tokenManager.regionOffset(envVariables.getRack());
             // use this hash so that the nodes are spred far away from the other
             // regions.
-            String myInstanceId =  retriever.getInstanceId();
+            String myInstanceId = retriever.getInstanceId();
             List<String> asgInstanceIds = membership.getRacMembership();
 
             logger.info("My Instance Id: " + myInstanceId);
@@ -337,17 +337,12 @@ public class InstanceIdentity {
         return seeds;
     }
 
-    public List<String> getClusterInfo() throws UnknownHostException {
-        List<String> nodes = new LinkedList<String>();
+    public List<AppsInstance> getClusterInfo() throws UnknownHostException {
 
+        List<AppsInstance> nodes = new LinkedList<AppsInstance>();
         for (AppsInstance ins : factory.getAllIds(envVariables.getDynomiteClusterName())) {
-            logger.debug("Adding node: " + ins.getInstanceId());
-            nodes.add("{" + "\"token\":" + "\"" + ins.getToken() + "\"," + "\"hostname\":" + "\"" + ins.getHostName()
-                    + "\"," + "\"rack\":" + "\"" + ins.getRack() + "\"," + "\"ip\":" + "\"" + ins.getHostIP() + "\","
-                    + "\"zone\":" + "\"" + ins.getZone() + "\"," + "\"dc\":" + "\"" + ins.getDatacenter() + "\"" + "}");
-
+            nodes.add(ins);
         }
-
         return nodes;
     }
 

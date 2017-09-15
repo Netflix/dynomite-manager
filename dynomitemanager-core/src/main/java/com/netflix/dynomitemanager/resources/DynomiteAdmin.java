@@ -1,6 +1,7 @@
 package com.netflix.dynomitemanager.resources;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -29,6 +30,7 @@ import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.storage.Bootstrap;
 import com.netflix.dynomitemanager.storage.StorageProcessManager;
 import com.netflix.dynomitemanager.storage.StorageProxy;
+import com.netflix.nfsidecar.identity.AppsInstance;
 import com.netflix.nfsidecar.identity.InstanceIdentity;
 
 @Path("/v1/admin")
@@ -157,11 +159,30 @@ public class DynomiteAdmin {
     @Path("/{cluster_describe : (?i)cluster_describe}")
     public Response getClusterDescribe() {
         try {
-            final List<String> nodes = ii.getClusterInfo();
+            List<String> nodes = new LinkedList<String>();
+
+            for (AppsInstance ins : ii.getClusterInfo()) {
+                logger.debug("Adding node: " + ins.getInstanceId());
+                if (config.getDynomiteHashtag().isEmpty()) {
+                    nodes.add("{" + "\"token\":" + "\"" + ins.getToken() + "\"," + "\"hostname\":" + "\""
+                            + ins.getHostName() + "\"," + "\"rack\":" + "\"" + ins.getRack() + "\"," + "\"ip\":" + "\""
+                            + ins.getHostIP() + "\"," + "\"zone\":" + "\"" + ins.getZone() + "\"," + "\"dc\":" + "\""
+                            + ins.getDatacenter() + "\"" + "}");
+                } else {
+                    nodes.add("{" + "\"token\":" + "\"" + ins.getToken() + "\"," + "\"hostname\":" + "\""
+                            + ins.getHostName() + "\"," + "\"rack\":" + "\"" + ins.getRack() + "\"," + "\"ip\":" + "\""
+                            + ins.getHostIP() + "\"," + "\"zone\":" + "\"" + ins.getZone() + "\"," + "\"dc\":" + "\""
+                            + ins.getDatacenter() + "\"" + "\"hashtag\":" + "\"" + config.getDynomiteHashtag() + "\""
+                            + "}");
+                }
+            }
+
             if (!nodes.isEmpty())
                 return Response.ok("[" + StringUtils.join(nodes, ',') + "]").build();
             logger.error("Cannot find the nodes");
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             logger.error("Error while executing cluster_describe", e);
             return Response.serverError().build();
         }
