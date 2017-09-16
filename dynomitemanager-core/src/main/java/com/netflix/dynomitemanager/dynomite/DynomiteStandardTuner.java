@@ -119,7 +119,13 @@ public class DynomiteStandardTuner implements ProcessTuner {
         entries.put("pem_key_file", floridaConfig.getDynomiteInstallDir() + "/conf/dynomite.pem");
 
         if (!floridaConfig.getDynomiteHashtag().isEmpty()) {
-           entries.put("hashtag", floridaConfig.getDynomiteHashtag());
+            if (floridaConfig.getDynomiteHashtag().length() != 2) {
+                logger.error("Hashtag must be of length 2. Provided hashtag: " + floridaConfig.getDynomiteHashtag()
+                        + " has length: " + floridaConfig.getDynomiteHashtag().length());
+                logger.error("Not setting any hashtag");
+            } else {
+                entries.put("hashtag", floridaConfig.getDynomiteHashtag());                
+            }
         }
 
         List<String> seedp = (List) entries.get("dyn_seeds");
