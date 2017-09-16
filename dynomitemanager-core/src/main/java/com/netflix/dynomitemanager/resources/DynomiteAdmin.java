@@ -163,26 +163,22 @@ public class DynomiteAdmin {
 
             for (AppsInstance ins : ii.getClusterInfo()) {
                 logger.debug("Adding node: " + ins.getInstanceId());
+                String node = "\"token\":" + "\"" + ins.getToken() + "\"," + "\"hostname\":" + "\"" + ins.getHostName()
+                        + "\"," + "\"rack\":" + "\"" + ins.getRack() + "\"," + "\"ip\":" + "\"" + ins.getHostIP()
+                        + "\"," + "\"zone\":" + "\"" + ins.getZone() + "\"," + "\"dc\":" + "\"" + ins.getDatacenter()
+                        + "\"";
+
                 if (config.getDynomiteHashtag().isEmpty()) {
-                    nodes.add("{" + "\"token\":" + "\"" + ins.getToken() + "\"," + "\"hostname\":" + "\""
-                            + ins.getHostName() + "\"," + "\"rack\":" + "\"" + ins.getRack() + "\"," + "\"ip\":" + "\""
-                            + ins.getHostIP() + "\"," + "\"zone\":" + "\"" + ins.getZone() + "\"," + "\"dc\":" + "\""
-                            + ins.getDatacenter() + "\"" + "}");
+                    nodes.add("{" + node + "}");
                 } else {
-                    nodes.add("{" + "\"token\":" + "\"" + ins.getToken() + "\"," + "\"hostname\":" + "\""
-                            + ins.getHostName() + "\"," + "\"rack\":" + "\"" + ins.getRack() + "\"," + "\"ip\":" + "\""
-                            + ins.getHostIP() + "\"," + "\"zone\":" + "\"" + ins.getZone() + "\"," + "\"dc\":" + "\""
-                            + ins.getDatacenter() + "\"" + "\"hashtag\":" + "\"" + config.getDynomiteHashtag() + "\""
-                            + "}");
+                    nodes.add("{" + node + "\"hashtag\":" + "\"" + config.getDynomiteHashtag() + "\"" + "}");
                 }
             }
 
             if (!nodes.isEmpty())
                 return Response.ok("[" + StringUtils.join(nodes, ',') + "]").build();
             logger.error("Cannot find the nodes");
-        } catch (
-
-        Exception e) {
+        } catch (Exception e) {
             logger.error("Error while executing cluster_describe", e);
             return Response.serverError().build();
         }
