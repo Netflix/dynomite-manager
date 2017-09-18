@@ -17,6 +17,7 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -87,8 +88,9 @@ public class DynomiteStandardTuner implements ProcessTuner {
 
     /**
      * we want to throw the exception for higher layer to handle it.
+     * @throws Exception 
      */
-    public void writeAllProperties(String yamlLocation) throws IOException {
+    public void writeAllProperties(String yamlLocation) throws Exception {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         Yaml yaml = new Yaml(options);
@@ -123,6 +125,7 @@ public class DynomiteStandardTuner implements ProcessTuner {
                 logger.error("Hashtag must be of length 2. Provided hashtag: " + floridaConfig.getDynomiteHashtag()
                         + " has length: " + floridaConfig.getDynomiteHashtag().length());
                 logger.error("Not setting any hashtag");
+                throw new RuntimeException("Hashtag is larger than 2 characters");
             } else {
                 entries.put("hashtag", floridaConfig.getDynomiteHashtag());                
             }

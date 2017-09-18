@@ -4,6 +4,6 @@ import java.io.IOException;
 
 public interface ProcessTuner
 {
-    void writeAllProperties(String yamlLocation) throws IOException;
+    void writeAllProperties(String yamlLocation) throws Exception;
 
 }
