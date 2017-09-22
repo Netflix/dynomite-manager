@@ -17,6 +17,7 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +40,9 @@ public class DynomiteStandardTuner implements ProcessTuner {
     public static final Pattern MEMINFO_PATTERN = Pattern.compile("MemTotal:\\s*([0-9]*)");
 
     @Inject
-    public DynomiteStandardTuner(FloridaConfig floridaConfig, CommonConfig commonConfig, InstanceIdentity ii, IInstanceState instanceState,
-            StorageProxy storageProxy, IEnvVariables envVariables, InstanceDataRetriever instanceDataRetriever) {
+    public DynomiteStandardTuner(FloridaConfig floridaConfig, CommonConfig commonConfig, InstanceIdentity ii,
+            IInstanceState instanceState, StorageProxy storageProxy, IEnvVariables envVariables,
+            InstanceDataRetriever instanceDataRetriever) {
         this.floridaConfig = floridaConfig;
         this.commonConfig = commonConfig;
         this.ii = ii;
@@ -86,8 +88,9 @@ public class DynomiteStandardTuner implements ProcessTuner {
 
     /**
      * we want to throw the exception for higher layer to handle it.
+     * @throws Exception 
      */
-    public void writeAllProperties(String yamlLocation) throws IOException {
+    public void writeAllProperties(String yamlLocation) throws Exception {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         Yaml yaml = new Yaml(options);
@@ -116,6 +119,17 @@ public class DynomiteStandardTuner implements ProcessTuner {
         entries.put("mbuf_size", floridaConfig.getDynomiteMBufSize());
         entries.put("max_msgs", setMaxMsgs());
         entries.put("pem_key_file", floridaConfig.getDynomiteInstallDir() + "/conf/dynomite.pem");
+
+        if (!floridaConfig.getDynomiteHashtag().isEmpty()) {
+            if (floridaConfig.getDynomiteHashtag().length() != 2) {
+                logger.error("Hashtag must be of length 2. Provided hashtag: " + floridaConfig.getDynomiteHashtag()
+                        + " has length: " + floridaConfig.getDynomiteHashtag().length());
+                logger.error("Not setting any hashtag");
+                throw new RuntimeException("Hashtag is larger than 2 characters");
+            } else {
+                entries.put("hashtag", floridaConfig.getDynomiteHashtag());                
+            }
+        }
 
         List<String> seedp = (List) entries.get("dyn_seeds");
         if (seedp == null) {
