@@ -17,7 +17,6 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -129,6 +128,9 @@ public class DynomiteStandardTuner implements ProcessTuner {
             } else {
                 entries.put("hashtag", floridaConfig.getDynomiteHashtag());                
             }
+        }
+        else {
+            logger.info("no hashtag FP defined");
         }
 
         List<String> seedp = (List) entries.get("dyn_seeds");
