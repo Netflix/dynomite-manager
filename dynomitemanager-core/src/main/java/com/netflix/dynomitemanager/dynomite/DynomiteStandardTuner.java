@@ -126,7 +126,7 @@ public class DynomiteStandardTuner implements ProcessTuner {
                 logger.error("Not setting any hashtag");
                 throw new RuntimeException("Hashtag is larger than 2 characters");
             } else {
-                entries.put("hashtag", floridaConfig.getDynomiteHashtag());                
+                entries.put("hash_tag", floridaConfig.getDynomiteHashtag());                
             }
         }
         else {
