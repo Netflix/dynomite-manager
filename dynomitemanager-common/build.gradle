@@ -7,8 +7,8 @@ dependencies {
     compile "com.google.inject:guice:3.0"
     compile "com.google.guava:guava:19.0"
 
-    compile 'com.amazonaws:aws-java-sdk:1.10.45'
-    compile 'com.amazonaws:aws-java-sdk-core:1.10.45'
+    compile 'com.amazonaws:aws-java-sdk:1.11.172'
+    compile 'com.amazonaws:aws-java-sdk-core:1.11.172'
     compile "org.quartz-scheduler:quartz:1.7.3"
     compile 'javax.inject:javax.inject:1'
     compile "org.slf4j:slf4j-log4j12:1.6.1"
