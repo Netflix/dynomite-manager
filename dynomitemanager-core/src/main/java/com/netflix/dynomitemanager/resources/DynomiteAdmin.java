@@ -171,7 +171,7 @@ public class DynomiteAdmin {
                 if (config.getDynomiteHashtag().isEmpty()) {
                     nodes.add("{" + node + "}");
                 } else {
-                    nodes.add("{" + node + "\"hashtag\":" + "\"" + config.getDynomiteHashtag() + "\"" + "}");
+                    nodes.add("{" + node + ",\"hashtag\":" + "\"" + config.getDynomiteHashtag() + "\"" + "}");
                 }
             }
 
