@@ -158,6 +158,7 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
     @Override
     public void stopPeerSync() {
         boolean isDone = false;
+        localRedisConnect();
 
         /*
          * Iterate until we succeed the SLAVE NO ONE command with some sleep
