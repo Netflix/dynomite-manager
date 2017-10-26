@@ -17,6 +17,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.netflix.archaius.ConfigProxyFactory;
+import com.netflix.archaius.guice.ArchaiusModule;
 import com.netflix.dynomitemanager.FloridaServer;
 import com.netflix.dynomitemanager.aws.S3Backup;
 import com.netflix.dynomitemanager.aws.S3Restore;
@@ -79,6 +80,7 @@ public final class FloridaModule extends AbstractModule {
             }
         });
         install(new JerseyModule());
+        install(new ArchaiusModule());
 /*
         install(new SwaggerServletModule());
         install(new JaxrsSwaggerModule());
