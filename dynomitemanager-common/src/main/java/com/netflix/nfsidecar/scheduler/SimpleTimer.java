@@ -44,7 +44,7 @@ public class SimpleTimer implements TaskTimer
     }
 
     /**
-     * Run immediatly and dont do that again.
+     * Run immediately and dont do that again.
      */
     public SimpleTimer(String name)
     {

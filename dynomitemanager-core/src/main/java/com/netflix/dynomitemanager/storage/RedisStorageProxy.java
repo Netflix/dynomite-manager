@@ -69,12 +69,12 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
 
     private Jedis localJedis;
     private boolean redisHealth = false;
-    
+
     private final FloridaConfig config;
 
     @Inject
     private Sleeper sleeper;
-    
+
     @Inject
     public RedisStorageProxy(FloridaConfig config) {
         this.config = config;
@@ -84,7 +84,6 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
     public static TaskTimer getTimer() {
         return new SimpleTimer(JOB_TASK_NAME, 15L * 1000);
     }
-
 
     @Override
     public String getName() {
@@ -128,15 +127,29 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
 
         localRedisConnect();
 
+        /*
+         * Iterate until we succeed the SLAVEOF command with some sleep time in
+         * between. We disconnect and reconnect if the jedis connection fails.
+         */
         while (!isDone) {
             try {
                 // only sync from one peer for now
                 isDone = (this.localJedis.slaveof(peer, port) != null);
                 sleeper.sleepQuietly(1000);
-            } catch (Exception e) {
+            } catch (JedisConnectionException e) {
+                logger.warn("JedisConnection Exception in SLAVEOF peer " + peer + " port " + port + " Exception: "
+                        + e.getMessage());
+                logger.warn("Trying to reconnect...");
+                localRedisDisconnect();
                 localRedisConnect();
+            } catch (Exception e) {
+                logger.error("Error: " + e.getMessage());
+
             }
         }
+
+        // clean up the Redis connection.
+        localRedisDisconnect();
     }
 
     /**
@@ -145,23 +158,30 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
     @Override
     public void stopPeerSync() {
         boolean isDone = false;
+        localRedisConnect();
 
-        // Iterate until we succeed the SLAVE NO ONE command
+        /*
+         * Iterate until we succeed the SLAVE NO ONE command with some sleep
+         * time in between. We disconnect and reconnect if the jedis connection
+         * fails.
+         */
         while (!isDone) {
             logger.info("calling SLAVEOF NO ONE");
             try {
                 isDone = (this.localJedis.slaveofNoOne() != null);
                 sleeper.sleepQuietly(1000);
             } catch (JedisConnectionException e) {
-                logger.error("JedisConnection Exception in SLAVEOF NO ONE: " + e.getMessage());
+                logger.warn("JedisConnection Exception in SLAVEOF NO ONE: " + e.getMessage());
+                logger.warn("Trying to reconnect...");
                 localRedisDisconnect();
                 localRedisConnect();
             } catch (Exception e) {
                 logger.error("Error: " + e.getMessage());
-                localRedisDisconnect();
-                localRedisConnect();
             }
         }
+
+        // clean up the Redis connection.
+        localRedisDisconnect();
     }
 
     @Override
@@ -205,6 +225,10 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
                 throw e;
             }
             logger.warn("Redis: There is already a pending BGREWRITEAOF/BGSAVE.");
+        } catch (JedisConnectionException e) {
+            logger.error("Redis: BGREWRITEAOF/BGSAVE cannot be completed");
+            localRedisDisconnect();
+            return false;
         }
 
         String peerRedisInfo = null;
@@ -228,7 +252,6 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
                             retry++;
                             logger.warn("Redis: BGREWRITEAOF/BGSAVE pending. Sleeping 30 secs...");
                             sleeper.sleepQuietly(30000);
-
                             if (retry > 20) {
                                 return false;
                             }
@@ -238,7 +261,9 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
             }
 
         } catch (JedisConnectionException e) {
-            logger.error("Cannot connect to Redis to perform BGREWRITEAOF/BGSAVE");
+            logger.error("Cannot connect to Redis to INFO to determine if BGREWRITEAOF/BGSAVE completed ");
+        } finally {
+            localRedisDisconnect();
         }
 
         logger.error("Redis BGREWRITEAOF/BGSAVE was not successful.");
@@ -277,7 +302,9 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
                 }
             }
         } catch (JedisConnectionException e) {
-            logger.error("Cannot connect to Redis to load the AOF");
+            logger.error("Cannot connect to Redis to INFO to checking loading AOF");
+        } finally {
+            localRedisDisconnect();
         }
 
         return false;
@@ -574,7 +601,8 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
 
         if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
             ArdbRocksDbRedisCompatible rocksDb = new ArdbRocksDbRedisCompatible(storeMaxMem,
-                    config.getWriteBufferSize(), config.getArdbRocksDBMaxWriteBufferNumber(), config.getArdbRocksDBMinWriteBuffersToMerge());
+                    config.getWriteBufferSize(), config.getArdbRocksDBMaxWriteBufferNumber(),
+                    config.getArdbRocksDBMinWriteBuffersToMerge());
             rocksDb.updateConfiguration(ArdbRocksDbRedisCompatible.DYNO_ARDB_CONF_PATH);
         } else {
 
@@ -606,17 +634,18 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
                 if (line.startsWith("#")) {
                     isComment = true;
                     String withoutHash = line.substring(1);
-                    if (!withoutHash.matches(REDIS_CONF_SAVE_SCHEDULE) &&
-                            !withoutHash.matches(REDIS_CONF_UNIXSOCKET) &&
-                            !withoutHash.matches(REDIS_CONF_UNIXSOCKETPERM)) {
+                    if (!withoutHash.matches(REDIS_CONF_SAVE_SCHEDULE) && !withoutHash.matches(REDIS_CONF_UNIXSOCKET)
+                            && !withoutHash.matches(REDIS_CONF_UNIXSOCKETPERM)) {
                         continue;
                     }
                     line = withoutHash;
                 }
                 if (line.matches(REDIS_CONF_UNIXSOCKET)) {
                     String unixSocket;
-                    // This empty check is to make sure we disable unixsocket when the FP is deleted.
-                    // Mostly this use case will not arise but the code is more complete now.
+                    // This empty check is to make sure we disable unixsocket
+                    // when the FP is deleted.
+                    // Mostly this use case will not arise but the code is more
+                    // complete now.
                     if (config.getRedisUnixPath().isEmpty()) {
                         unixSocket = "# unixsocket /tmp/redis.sock";
                         logger.info("Resetting Redis property: " + unixSocket);
@@ -795,6 +824,7 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
 
         }
     }
+
     public String getUnixPath() {
         return config.getRedisUnixPath();
     }

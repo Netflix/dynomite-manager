@@ -171,7 +171,7 @@ public class DynomiteAdmin {
                 if (config.getDynomiteHashtag().isEmpty()) {
                     nodes.add("{" + node + "}");
                 } else {
-                    nodes.add("{" + node + "\"hashtag\":" + "\"" + config.getDynomiteHashtag() + "\"" + "}");
+                    nodes.add("{" + node + ",\"hashtag\":" + "\"" + config.getDynomiteHashtag() + "\"" + "}");
                 }
             }
 
@@ -238,6 +238,26 @@ public class DynomiteAdmin {
             logger.error("Error getting consistency from REST call", e);
             return Response.serverError().build();
         }
+    }
+    
+    @GET
+    @Path("/{hashtag : (?i)hashtag}")
+    public Response getHashtag() {
+        try {
+            JSONObject hashtagJson = new JSONObject();
+            if(!config.getDynomiteHashtag().isEmpty()){ 
+                hashtagJson.put("hashtag", config.getDynomiteHashtag());
+            }
+            else {
+                hashtagJson.put("hashtag", "none");
+            }
+            return Response.ok(hashtagJson, MediaType.APPLICATION_JSON).build();
+
+        } catch (Exception e) {
+            logger.error("Error getting the hashtag from REST call", e);
+            return Response.serverError().build();
+        }
+        
     }
 
     @GET
@@ -332,6 +352,11 @@ public class DynomiteAdmin {
 
             /* My token */
             statusJson.put("tokens", this.ii.getTokens());
+
+            /* Hashtag */
+            if (!config.getDynomiteHashtag().isEmpty()) {
+                statusJson.put("hashtag", config.getDynomiteHashtag());
+            }
 
             logger.info("REST call: Florida Status");
             return Response.ok(statusJson, MediaType.APPLICATION_JSON).build();
