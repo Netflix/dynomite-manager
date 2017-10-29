@@ -31,9 +31,6 @@ public class LocalHostSupplier implements HostSupplier {
 
         String bootCluster = config.getCassandraClusterName();
 
-        if (bootCluster == null)
-            bootCluster = "";
-
         if (bootCluster.equals(clusterName)) {
 
             String seeds = System.getenv("DM_CASSANDRA_CLUSTER_SEEDS");
