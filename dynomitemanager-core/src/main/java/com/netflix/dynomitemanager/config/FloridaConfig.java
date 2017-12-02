@@ -46,7 +46,8 @@ public interface FloridaConfig {
     public String getDynomiteStopScript();
 
     /**
-     * @return Cluster name if the environment variable for cluster name does not exist
+     * @return Cluster name if the environment variable for cluster name does
+     *         not exist
      */
     @DefaultValue("dynomite_demo1")
     @PropertyName(name = "dyno.clustername")
@@ -54,12 +55,11 @@ public interface FloridaConfig {
 
     /**
      * YAML file to bootstrap Dynomite
+     * 
      * @return
      */
     @DefaultValue("/apps/dynomite/conf/dynomite.yml")
     public String getDynomiteYaml();
-
-
 
     /**
      * @return Get the name of seed provider
@@ -94,40 +94,42 @@ public interface FloridaConfig {
     @PropertyName(name = "dyno.write.consistency")
     public String getDynomiteWriteConsistency();
 
-
     @DefaultValue("8101")
-    @PropertyName(name ="dyno.secured.peer.port")
+    @PropertyName(name = "dyno.secured.peer.port")
     public int getSecuredPeerListenerPort();
 
     @DefaultValue("8102")
     public int getDynomiteClientPort();
-    
+
     @DefaultValue("127.0.0.1")
     public String getDynomiteLocalAddress();
 
     /**
-     * Dynomite now supports multiple connections to datastore and peer.
-     * These are the set of properties for each of them
+     * Dynomite now supports multiple connections to datastore and peer. These
+     * are the set of properties for each of them
+     * 
      * @return the peer-to-peer port used for intra-cluster communication
      */
     // we need this for backward compatibility.
     @DefaultValue("false")
     @PropertyName(name = "dyno.connections.pool.enable")
     public boolean getConnectionPoolEnabled();
+
     @DefaultValue("1")
     @PropertyName(name = "dyno.connections.storage")
     public int getDatastoreConnections();
+
     @DefaultValue("1")
     @PropertyName(name = "dyno.connections.peer.local")
     public int getLocalPeerConnections();
+
     @DefaultValue("1")
     @PropertyName(name = "dyno.connections.peer.remote")
     public int getRemotePeerConnections();
 
-    
-    /** 
-     * Dynomite support of hashtags
-     * Link: https://github.com/Netflix/dynomite/blob/dev/notes/recommendation.md#hash-tags
+    /**
+     * Dynomite support of hashtags Link:
+     * https://github.com/Netflix/dynomite/blob/dev/notes/recommendation.md#hash-tags
      */
     @DefaultValue("")
     @PropertyName(name = "dyno.hashtag")
@@ -179,7 +181,6 @@ public interface FloridaConfig {
     @DefaultValue("5000")
     @PropertyName(name = "dyno.request.timeout")
     public int getTimeout();
-
 
     /**
      * Determine if Dynomite is configured as a multi-DC (data center) cluster).
@@ -249,8 +250,8 @@ public interface FloridaConfig {
 
     /**
      * Get the maximum number of messages that Dynomite will hold in queue.
-     * Default is 0, such that we can let Florida automate the value based 
-     * on the instance type.
+     * Default is 0, such that we can let Florida automate the value based on
+     * the instance type.
      *
      * @return the maximum number of messages that Dynomite will allocate
      */
@@ -261,8 +262,6 @@ public interface FloridaConfig {
     // VPC
     @DefaultValue("true")
     public boolean isVpc();
-
-
 
     // Persistence
 
@@ -281,9 +280,20 @@ public interface FloridaConfig {
     // Storage engine: ARDB with RocksDB
     // =================================
 
+    /**
+     * Compaction strategy for RocksDB. RocksDB allows for optimized compaction
+     * strategies: OptimizeLevelStyleCompaction,
+     * OptimizeUniversalStyleCompaction or none.
+     * 
+     * @return the compaction strategy
+     */
+    @DefaultValue("none")
+    @PropertyName(name = "dyno.ardb.rocksdb.compactionStrategy")
+    public String getRocksDBCompactionStrategy();
+
     @DefaultValue("128")
     @PropertyName(name = "dyno.ardb.rocksdb.writebuffermb")
-    public int getWriteBufferSize();
+    public int getRocksDBWriteBufferSize();
 
     /**
      * Get the maximum number of memtables used by RocksDB. This number includes
@@ -293,7 +303,16 @@ public interface FloridaConfig {
      */
     @DefaultValue("16")
     @PropertyName(name = "dyno.ardb.rocksdb.maxwritebuffernumber")
-    public int getArdbRocksDBMaxWriteBufferNumber();
+    public int getRocksDBMaxWriteBufferNumber();
+
+    /**
+     * Loglevel
+     * 
+     * @return the loglevel to set for RocksDB
+     */
+    @DefaultValue("warn")
+    @PropertyName(name = "dyno.ardb.rocksdb.loglevel")
+    public String getArdbLoglevel();
 
     /**
      * Get the minimum number of memtables to be merged before flushing data to
@@ -304,7 +323,7 @@ public interface FloridaConfig {
      */
     @DefaultValue("4")
     @PropertyName(name = "dyno.ardb.rocksdb.minwritebuffernametomerge")
-    public int getArdbRocksDBMinWriteBuffersToMerge();
+    public int getRocksDBMinWriteBuffersToMerge();
 
     @DefaultValue("redis")
     @PropertyName(name = "dyno.redis.compatible.engine")

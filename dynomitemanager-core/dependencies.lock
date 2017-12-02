@@ -1,0 +1,1595 @@
+{
+    "compile": {
+        "com.amazonaws:aws-java-sdk": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.amazonaws:aws-java-sdk-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.google.guava:guava": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "19.0"
+        },
+        "com.google.inject.extensions:guice-multibindings": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.0",
+            "requested": "4.0"
+        },
+        "com.google.inject:guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.0",
+            "requested": "4.0"
+        },
+        "com.googlecode.json-simple:json-simple": {
+            "locked": "1.1",
+            "requested": "1.1"
+        },
+        "com.netflix.archaius:archaius2-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.archaius:archaius2-guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.0.1"
+        },
+        "com.netflix.dynomitemanager:dynomitemanager-common": {
+            "project": true
+        },
+        "com.netflix.runtime:health-api": {
+            "locked": "1.1.3",
+            "requested": "latest.release"
+        },
+        "com.netflix.servo:servo-core": {
+            "locked": "0.12.17",
+            "requested": "latest.release"
+        },
+        "commons-cli:commons-cli": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.3.1",
+            "requested": "1.3.1"
+        },
+        "commons-configuration:commons-configuration": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8",
+            "requested": "1.5"
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "requested": "3.1"
+        },
+        "commons-io:commons-io": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.5",
+            "requested": "2.5"
+        },
+        "commons-lang:commons-lang": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.6",
+            "requested": "2.6"
+        },
+        "javax.inject:javax.inject": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1",
+            "requested": "1"
+        },
+        "javax.ws.rs:jsr311-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.1.1",
+            "requested": "1.1.1"
+        },
+        "joda-time:joda-time": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.8.1",
+            "requested": "2.0"
+        },
+        "net.java.dev.jna:jna": {
+            "locked": "3.2.3",
+            "requested": "3.2.3"
+        },
+        "org.apache.cassandra:cassandra-thrift": {
+            "locked": "1.2.11",
+            "requested": "1.2.11"
+        },
+        "org.codehaus.jettison:jettison": {
+            "locked": "1.3.8",
+            "requested": "latest.release"
+        },
+        "org.quartz-scheduler:quartz": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8.6",
+            "requested": "1.8.6"
+        },
+        "org.slf4j:slf4j-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.21",
+            "requested": "1.6.1"
+        },
+        "org.slf4j:slf4j-log4j12": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.2",
+            "requested": "1.6.1"
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.0.5",
+            "requested": "1.0.4.1"
+        },
+        "org.yaml:snakeyaml": {
+            "locked": "1.17",
+            "requested": "1.17"
+        },
+        "redis.clients:jedis": {
+            "locked": "2.9.0",
+            "requested": "2.9.0"
+        }
+    },
+    "compileClasspath": {
+        "com.amazonaws:aws-java-sdk": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.amazonaws:aws-java-sdk-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.google.guava:guava": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "19.0"
+        },
+        "com.google.inject.extensions:guice-multibindings": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.0",
+            "requested": "4.0"
+        },
+        "com.google.inject:guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.0",
+            "requested": "4.0"
+        },
+        "com.googlecode.json-simple:json-simple": {
+            "locked": "1.1",
+            "requested": "1.1"
+        },
+        "com.netflix.archaius:archaius2-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.archaius:archaius2-guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.0.1"
+        },
+        "com.netflix.dynomitemanager:dynomitemanager-common": {
+            "project": true
+        },
+        "com.netflix.runtime:health-api": {
+            "locked": "1.1.3",
+            "requested": "latest.release"
+        },
+        "com.netflix.servo:servo-core": {
+            "locked": "0.12.17",
+            "requested": "latest.release"
+        },
+        "commons-cli:commons-cli": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.3.1",
+            "requested": "1.3.1"
+        },
+        "commons-configuration:commons-configuration": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8",
+            "requested": "1.5"
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "requested": "3.1"
+        },
+        "commons-io:commons-io": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.5",
+            "requested": "2.5"
+        },
+        "commons-lang:commons-lang": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.6",
+            "requested": "2.6"
+        },
+        "javax.inject:javax.inject": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1",
+            "requested": "1"
+        },
+        "javax.servlet:servlet-api": {
+            "locked": "2.5",
+            "requested": "2.5"
+        },
+        "javax.ws.rs:jsr311-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.1.1",
+            "requested": "1.1.1"
+        },
+        "joda-time:joda-time": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.8.1",
+            "requested": "2.0"
+        },
+        "net.java.dev.jna:jna": {
+            "locked": "3.2.3",
+            "requested": "3.2.3"
+        },
+        "org.apache.cassandra:cassandra-thrift": {
+            "locked": "1.2.11",
+            "requested": "1.2.11"
+        },
+        "org.codehaus.jettison:jettison": {
+            "locked": "1.3.8",
+            "requested": "latest.release"
+        },
+        "org.quartz-scheduler:quartz": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8.6",
+            "requested": "1.8.6"
+        },
+        "org.slf4j:slf4j-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.21",
+            "requested": "1.6.1"
+        },
+        "org.slf4j:slf4j-log4j12": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.2",
+            "requested": "1.6.1"
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.0.5",
+            "requested": "1.0.4.1"
+        },
+        "org.yaml:snakeyaml": {
+            "locked": "1.17",
+            "requested": "1.17"
+        },
+        "redis.clients:jedis": {
+            "locked": "2.9.0",
+            "requested": "2.9.0"
+        }
+    },
+    "compileOnly": {
+        "javax.servlet:servlet-api": {
+            "locked": "2.5",
+            "requested": "2.5"
+        }
+    },
+    "default": {
+        "com.amazonaws:aws-java-sdk": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.amazonaws:aws-java-sdk-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.google.guava:guava": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "19.0"
+        },
+        "com.google.inject.extensions:guice-multibindings": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.0",
+            "requested": "4.0"
+        },
+        "com.google.inject:guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.0",
+            "requested": "4.0"
+        },
+        "com.googlecode.json-simple:json-simple": {
+            "locked": "1.1",
+            "requested": "1.1"
+        },
+        "com.netflix.archaius:archaius2-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.archaius:archaius2-guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.0.1"
+        },
+        "com.netflix.dynomitemanager:dynomitemanager-common": {
+            "project": true
+        },
+        "com.netflix.runtime:health-api": {
+            "locked": "1.1.3",
+            "requested": "latest.release"
+        },
+        "com.netflix.servo:servo-core": {
+            "locked": "0.12.17",
+            "requested": "latest.release"
+        },
+        "commons-cli:commons-cli": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.3.1",
+            "requested": "1.3.1"
+        },
+        "commons-configuration:commons-configuration": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8",
+            "requested": "1.5"
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "requested": "3.1"
+        },
+        "commons-io:commons-io": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.5",
+            "requested": "2.5"
+        },
+        "commons-lang:commons-lang": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.6",
+            "requested": "2.6"
+        },
+        "javax.inject:javax.inject": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1",
+            "requested": "1"
+        },
+        "javax.ws.rs:jsr311-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.1.1",
+            "requested": "1.1.1"
+        },
+        "joda-time:joda-time": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.8.1",
+            "requested": "2.0"
+        },
+        "net.java.dev.jna:jna": {
+            "locked": "3.2.3",
+            "requested": "3.2.3"
+        },
+        "org.apache.cassandra:cassandra-thrift": {
+            "locked": "1.2.11",
+            "requested": "1.2.11"
+        },
+        "org.codehaus.jettison:jettison": {
+            "locked": "1.3.8",
+            "requested": "latest.release"
+        },
+        "org.quartz-scheduler:quartz": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8.6",
+            "requested": "1.8.6"
+        },
+        "org.slf4j:slf4j-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.21",
+            "requested": "1.6.1"
+        },
+        "org.slf4j:slf4j-log4j12": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.2",
+            "requested": "1.6.1"
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.0.5",
+            "requested": "1.0.4.1"
+        },
+        "org.yaml:snakeyaml": {
+            "locked": "1.17",
+            "requested": "1.17"
+        },
+        "redis.clients:jedis": {
+            "locked": "2.9.0",
+            "requested": "2.9.0"
+        }
+    },
+    "runtime": {
+        "com.amazonaws:aws-java-sdk": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.amazonaws:aws-java-sdk-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.google.guava:guava": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "19.0"
+        },
+        "com.google.inject.extensions:guice-multibindings": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.0",
+            "requested": "4.0"
+        },
+        "com.google.inject:guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.0",
+            "requested": "4.0"
+        },
+        "com.googlecode.json-simple:json-simple": {
+            "locked": "1.1",
+            "requested": "1.1"
+        },
+        "com.netflix.archaius:archaius2-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.archaius:archaius2-guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.0.1"
+        },
+        "com.netflix.dynomitemanager:dynomitemanager-common": {
+            "project": true
+        },
+        "com.netflix.runtime:health-api": {
+            "locked": "1.1.3",
+            "requested": "latest.release"
+        },
+        "com.netflix.servo:servo-core": {
+            "locked": "0.12.17",
+            "requested": "latest.release"
+        },
+        "commons-cli:commons-cli": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.3.1",
+            "requested": "1.3.1"
+        },
+        "commons-configuration:commons-configuration": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8",
+            "requested": "1.5"
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "requested": "3.1"
+        },
+        "commons-io:commons-io": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.5",
+            "requested": "2.5"
+        },
+        "commons-lang:commons-lang": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.6",
+            "requested": "2.6"
+        },
+        "javax.inject:javax.inject": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1",
+            "requested": "1"
+        },
+        "javax.ws.rs:jsr311-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.1.1",
+            "requested": "1.1.1"
+        },
+        "joda-time:joda-time": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.8.1",
+            "requested": "2.0"
+        },
+        "net.java.dev.jna:jna": {
+            "locked": "3.2.3",
+            "requested": "3.2.3"
+        },
+        "org.apache.cassandra:cassandra-thrift": {
+            "locked": "1.2.11",
+            "requested": "1.2.11"
+        },
+        "org.codehaus.jettison:jettison": {
+            "locked": "1.3.8",
+            "requested": "latest.release"
+        },
+        "org.quartz-scheduler:quartz": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8.6",
+            "requested": "1.8.6"
+        },
+        "org.slf4j:slf4j-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.21",
+            "requested": "1.6.1"
+        },
+        "org.slf4j:slf4j-log4j12": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.2",
+            "requested": "1.6.1"
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.0.5",
+            "requested": "1.0.4.1"
+        },
+        "org.yaml:snakeyaml": {
+            "locked": "1.17",
+            "requested": "1.17"
+        },
+        "redis.clients:jedis": {
+            "locked": "2.9.0",
+            "requested": "2.9.0"
+        }
+    },
+    "runtimeClasspath": {
+        "com.amazonaws:aws-java-sdk": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.amazonaws:aws-java-sdk-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.google.guava:guava": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "19.0"
+        },
+        "com.google.inject.extensions:guice-multibindings": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.0",
+            "requested": "4.0"
+        },
+        "com.google.inject:guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.0",
+            "requested": "4.0"
+        },
+        "com.googlecode.json-simple:json-simple": {
+            "locked": "1.1",
+            "requested": "1.1"
+        },
+        "com.netflix.archaius:archaius2-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.archaius:archaius2-guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.0.1"
+        },
+        "com.netflix.dynomitemanager:dynomitemanager-common": {
+            "project": true
+        },
+        "com.netflix.runtime:health-api": {
+            "locked": "1.1.3",
+            "requested": "latest.release"
+        },
+        "com.netflix.servo:servo-core": {
+            "locked": "0.12.17",
+            "requested": "latest.release"
+        },
+        "commons-cli:commons-cli": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.3.1",
+            "requested": "1.3.1"
+        },
+        "commons-configuration:commons-configuration": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8",
+            "requested": "1.5"
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "requested": "3.1"
+        },
+        "commons-io:commons-io": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.5",
+            "requested": "2.5"
+        },
+        "commons-lang:commons-lang": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.6",
+            "requested": "2.6"
+        },
+        "javax.inject:javax.inject": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1",
+            "requested": "1"
+        },
+        "javax.ws.rs:jsr311-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.1.1",
+            "requested": "1.1.1"
+        },
+        "joda-time:joda-time": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.8.1",
+            "requested": "2.0"
+        },
+        "net.java.dev.jna:jna": {
+            "locked": "3.2.3",
+            "requested": "3.2.3"
+        },
+        "org.apache.cassandra:cassandra-thrift": {
+            "locked": "1.2.11",
+            "requested": "1.2.11"
+        },
+        "org.codehaus.jettison:jettison": {
+            "locked": "1.3.8",
+            "requested": "latest.release"
+        },
+        "org.quartz-scheduler:quartz": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8.6",
+            "requested": "1.8.6"
+        },
+        "org.slf4j:slf4j-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.21",
+            "requested": "1.6.1"
+        },
+        "org.slf4j:slf4j-log4j12": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.2",
+            "requested": "1.6.1"
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.0.5",
+            "requested": "1.0.4.1"
+        },
+        "org.yaml:snakeyaml": {
+            "locked": "1.17",
+            "requested": "1.17"
+        },
+        "redis.clients:jedis": {
+            "locked": "2.9.0",
+            "requested": "2.9.0"
+        }
+    },
+    "testCompile": {
+        "com.amazonaws:aws-java-sdk": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.amazonaws:aws-java-sdk-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.google.guava:guava": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "19.0"
+        },
+        "com.google.inject.extensions:guice-multibindings": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.1.0",
+            "requested": "4.0"
+        },
+        "com.google.inject:guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.1.0",
+            "requested": "4.0"
+        },
+        "com.googlecode.json-simple:json-simple": {
+            "locked": "1.1",
+            "requested": "1.1"
+        },
+        "com.netflix.archaius:archaius2-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.archaius:archaius2-guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.0.1"
+        },
+        "com.netflix.dynomitemanager:dynomitemanager-common": {
+            "project": true
+        },
+        "com.netflix.governator:governator-test-junit": {
+            "locked": "1.17.4",
+            "requested": "[1.15.3,)"
+        },
+        "com.netflix.runtime:health-api": {
+            "locked": "1.1.3",
+            "requested": "latest.release"
+        },
+        "com.netflix.servo:servo-core": {
+            "locked": "0.12.17",
+            "requested": "latest.release"
+        },
+        "commons-cli:commons-cli": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.3.1",
+            "requested": "1.3.1"
+        },
+        "commons-configuration:commons-configuration": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8",
+            "requested": "1.5"
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "requested": "3.1"
+        },
+        "commons-io:commons-io": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.5",
+            "requested": "2.5"
+        },
+        "commons-lang:commons-lang": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.6",
+            "requested": "2.6"
+        },
+        "javax.inject:javax.inject": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1",
+            "requested": "1"
+        },
+        "javax.ws.rs:jsr311-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.1.1",
+            "requested": "1.1.1"
+        },
+        "joda-time:joda-time": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.8.1",
+            "requested": "2.0"
+        },
+        "junit:junit": {
+            "locked": "4.12",
+            "requested": "4.+"
+        },
+        "net.java.dev.jna:jna": {
+            "locked": "3.2.3",
+            "requested": "3.2.3"
+        },
+        "org.apache.cassandra:cassandra-thrift": {
+            "locked": "1.2.11",
+            "requested": "1.2.11"
+        },
+        "org.assertj:assertj-core": {
+            "locked": "3.3.0",
+            "requested": "3.3.0"
+        },
+        "org.codehaus.jettison:jettison": {
+            "locked": "1.3.8",
+            "requested": "latest.release"
+        },
+        "org.jmockit:jmockit": {
+            "locked": "1.19",
+            "requested": "1.19"
+        },
+        "org.mockito:mockito-all": {
+            "locked": "1.10.19",
+            "requested": "1.+"
+        },
+        "org.quartz-scheduler:quartz": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8.6",
+            "requested": "1.8.6"
+        },
+        "org.slf4j:slf4j-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.21",
+            "requested": "1.6.1"
+        },
+        "org.slf4j:slf4j-log4j12": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.2",
+            "requested": "1.6.1"
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.0.5",
+            "requested": "1.0.4.1"
+        },
+        "org.yaml:snakeyaml": {
+            "locked": "1.17",
+            "requested": "1.17"
+        },
+        "redis.clients:jedis": {
+            "locked": "2.9.0",
+            "requested": "2.9.0"
+        }
+    },
+    "testCompileClasspath": {
+        "com.amazonaws:aws-java-sdk": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.amazonaws:aws-java-sdk-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.google.guava:guava": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "19.0"
+        },
+        "com.google.inject.extensions:guice-multibindings": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.1.0",
+            "requested": "4.0"
+        },
+        "com.google.inject:guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.1.0",
+            "requested": "4.0"
+        },
+        "com.googlecode.json-simple:json-simple": {
+            "locked": "1.1",
+            "requested": "1.1"
+        },
+        "com.netflix.archaius:archaius2-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.archaius:archaius2-guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.0.1"
+        },
+        "com.netflix.dynomitemanager:dynomitemanager-common": {
+            "project": true
+        },
+        "com.netflix.governator:governator-test-junit": {
+            "locked": "1.17.4",
+            "requested": "[1.15.3,)"
+        },
+        "com.netflix.runtime:health-api": {
+            "locked": "1.1.3",
+            "requested": "latest.release"
+        },
+        "com.netflix.servo:servo-core": {
+            "locked": "0.12.17",
+            "requested": "latest.release"
+        },
+        "commons-cli:commons-cli": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.3.1",
+            "requested": "1.3.1"
+        },
+        "commons-configuration:commons-configuration": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8",
+            "requested": "1.5"
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "requested": "3.1"
+        },
+        "commons-io:commons-io": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.5",
+            "requested": "2.5"
+        },
+        "commons-lang:commons-lang": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.6",
+            "requested": "2.6"
+        },
+        "javax.inject:javax.inject": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1",
+            "requested": "1"
+        },
+        "javax.ws.rs:jsr311-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.1.1",
+            "requested": "1.1.1"
+        },
+        "joda-time:joda-time": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.8.1",
+            "requested": "2.0"
+        },
+        "junit:junit": {
+            "locked": "4.12",
+            "requested": "4.+"
+        },
+        "net.java.dev.jna:jna": {
+            "locked": "3.2.3",
+            "requested": "3.2.3"
+        },
+        "org.apache.cassandra:cassandra-thrift": {
+            "locked": "1.2.11",
+            "requested": "1.2.11"
+        },
+        "org.assertj:assertj-core": {
+            "locked": "3.3.0",
+            "requested": "3.3.0"
+        },
+        "org.codehaus.jettison:jettison": {
+            "locked": "1.3.8",
+            "requested": "latest.release"
+        },
+        "org.jmockit:jmockit": {
+            "locked": "1.19",
+            "requested": "1.19"
+        },
+        "org.mockito:mockito-all": {
+            "locked": "1.10.19",
+            "requested": "1.+"
+        },
+        "org.quartz-scheduler:quartz": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8.6",
+            "requested": "1.8.6"
+        },
+        "org.slf4j:slf4j-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.21",
+            "requested": "1.6.1"
+        },
+        "org.slf4j:slf4j-log4j12": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.2",
+            "requested": "1.6.1"
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.0.5",
+            "requested": "1.0.4.1"
+        },
+        "org.yaml:snakeyaml": {
+            "locked": "1.17",
+            "requested": "1.17"
+        },
+        "redis.clients:jedis": {
+            "locked": "2.9.0",
+            "requested": "2.9.0"
+        }
+    },
+    "testRuntime": {
+        "com.amazonaws:aws-java-sdk": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.amazonaws:aws-java-sdk-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.google.guava:guava": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "19.0"
+        },
+        "com.google.inject.extensions:guice-multibindings": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.1.0",
+            "requested": "4.0"
+        },
+        "com.google.inject:guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.1.0",
+            "requested": "4.0"
+        },
+        "com.googlecode.json-simple:json-simple": {
+            "locked": "1.1",
+            "requested": "1.1"
+        },
+        "com.netflix.archaius:archaius2-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.archaius:archaius2-guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.0.1"
+        },
+        "com.netflix.dynomitemanager:dynomitemanager-common": {
+            "project": true
+        },
+        "com.netflix.governator:governator-test-junit": {
+            "locked": "1.17.4",
+            "requested": "[1.15.3,)"
+        },
+        "com.netflix.runtime:health-api": {
+            "locked": "1.1.3",
+            "requested": "latest.release"
+        },
+        "com.netflix.servo:servo-core": {
+            "locked": "0.12.17",
+            "requested": "latest.release"
+        },
+        "commons-cli:commons-cli": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.3.1",
+            "requested": "1.3.1"
+        },
+        "commons-configuration:commons-configuration": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8",
+            "requested": "1.5"
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "requested": "3.1"
+        },
+        "commons-io:commons-io": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.5",
+            "requested": "2.5"
+        },
+        "commons-lang:commons-lang": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.6",
+            "requested": "2.6"
+        },
+        "javax.inject:javax.inject": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1",
+            "requested": "1"
+        },
+        "javax.ws.rs:jsr311-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.1.1",
+            "requested": "1.1.1"
+        },
+        "joda-time:joda-time": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.8.1",
+            "requested": "2.0"
+        },
+        "junit:junit": {
+            "locked": "4.12",
+            "requested": "4.+"
+        },
+        "net.java.dev.jna:jna": {
+            "locked": "3.2.3",
+            "requested": "3.2.3"
+        },
+        "org.apache.cassandra:cassandra-thrift": {
+            "locked": "1.2.11",
+            "requested": "1.2.11"
+        },
+        "org.assertj:assertj-core": {
+            "locked": "3.3.0",
+            "requested": "3.3.0"
+        },
+        "org.codehaus.jettison:jettison": {
+            "locked": "1.3.8",
+            "requested": "latest.release"
+        },
+        "org.jmockit:jmockit": {
+            "locked": "1.19",
+            "requested": "1.19"
+        },
+        "org.mockito:mockito-all": {
+            "locked": "1.10.19",
+            "requested": "1.+"
+        },
+        "org.quartz-scheduler:quartz": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8.6",
+            "requested": "1.8.6"
+        },
+        "org.slf4j:slf4j-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.21",
+            "requested": "1.6.1"
+        },
+        "org.slf4j:slf4j-log4j12": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.2",
+            "requested": "1.6.1"
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.0.5",
+            "requested": "1.0.4.1"
+        },
+        "org.yaml:snakeyaml": {
+            "locked": "1.17",
+            "requested": "1.17"
+        },
+        "redis.clients:jedis": {
+            "locked": "2.9.0",
+            "requested": "2.9.0"
+        }
+    },
+    "testRuntimeClasspath": {
+        "com.amazonaws:aws-java-sdk": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.amazonaws:aws-java-sdk-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.11.172"
+        },
+        "com.google.guava:guava": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "19.0"
+        },
+        "com.google.inject.extensions:guice-multibindings": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.1.0",
+            "requested": "4.0"
+        },
+        "com.google.inject:guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "4.1.0",
+            "requested": "4.0"
+        },
+        "com.googlecode.json-simple:json-simple": {
+            "locked": "1.1",
+            "requested": "1.1"
+        },
+        "com.netflix.archaius:archaius2-core": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.archaius:archaius2-guice": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.1.11",
+            "requested": "2.1.11"
+        },
+        "com.netflix.astyanax:astyanax": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.0.1"
+        },
+        "com.netflix.dynomitemanager:dynomitemanager-common": {
+            "project": true
+        },
+        "com.netflix.governator:governator-test-junit": {
+            "locked": "1.17.4",
+            "requested": "[1.15.3,)"
+        },
+        "com.netflix.runtime:health-api": {
+            "locked": "1.1.3",
+            "requested": "latest.release"
+        },
+        "com.netflix.servo:servo-core": {
+            "locked": "0.12.17",
+            "requested": "latest.release"
+        },
+        "commons-cli:commons-cli": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.3.1",
+            "requested": "1.3.1"
+        },
+        "commons-configuration:commons-configuration": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8",
+            "requested": "1.5"
+        },
+        "commons-httpclient:commons-httpclient": {
+            "locked": "3.1",
+            "requested": "3.1"
+        },
+        "commons-io:commons-io": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.5",
+            "requested": "2.5"
+        },
+        "commons-lang:commons-lang": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.6",
+            "requested": "2.6"
+        },
+        "javax.inject:javax.inject": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1",
+            "requested": "1"
+        },
+        "javax.ws.rs:jsr311-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.1.1",
+            "requested": "1.1.1"
+        },
+        "joda-time:joda-time": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "2.8.1",
+            "requested": "2.0"
+        },
+        "junit:junit": {
+            "locked": "4.12",
+            "requested": "4.+"
+        },
+        "net.java.dev.jna:jna": {
+            "locked": "3.2.3",
+            "requested": "3.2.3"
+        },
+        "org.apache.cassandra:cassandra-thrift": {
+            "locked": "1.2.11",
+            "requested": "1.2.11"
+        },
+        "org.assertj:assertj-core": {
+            "locked": "3.3.0",
+            "requested": "3.3.0"
+        },
+        "org.codehaus.jettison:jettison": {
+            "locked": "1.3.8",
+            "requested": "latest.release"
+        },
+        "org.jmockit:jmockit": {
+            "locked": "1.19",
+            "requested": "1.19"
+        },
+        "org.mockito:mockito-all": {
+            "locked": "1.10.19",
+            "requested": "1.+"
+        },
+        "org.quartz-scheduler:quartz": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.8.6",
+            "requested": "1.8.6"
+        },
+        "org.slf4j:slf4j-api": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.21",
+            "requested": "1.6.1"
+        },
+        "org.slf4j:slf4j-log4j12": {
+            "firstLevelTransitive": [
+                "com.netflix.dynomitemanager:dynomitemanager-common"
+            ],
+            "locked": "1.7.2",
+            "requested": "1.6.1"
+        },
+        "org.xerial.snappy:snappy-java": {
+            "locked": "1.0.5",
+            "requested": "1.0.4.1"
+        },
+        "org.yaml:snakeyaml": {
+            "locked": "1.17",
+            "requested": "1.17"
+        },
+        "redis.clients:jedis": {
+            "locked": "2.9.0",
+            "requested": "2.9.0"
+        }
+    }
+}
