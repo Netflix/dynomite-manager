@@ -600,9 +600,8 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
         long storeMaxMem = getStoreMaxMem();
 
         if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
-            ArdbRocksDbRedisCompatible rocksDb = new ArdbRocksDbRedisCompatible(storeMaxMem,
-                    config.getWriteBufferSize(), config.getArdbRocksDBMaxWriteBufferNumber(),
-                    config.getArdbRocksDBMinWriteBuffersToMerge());
+            ArdbRocksDbRedisCompatible rocksDb = new ArdbRocksDbRedisCompatible(storeMaxMem, config);
+           
             rocksDb.updateConfiguration(ArdbRocksDbRedisCompatible.DYNO_ARDB_CONF_PATH);
         } else {
 
