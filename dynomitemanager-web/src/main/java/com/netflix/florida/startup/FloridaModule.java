@@ -17,6 +17,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.netflix.archaius.ConfigProxyFactory;
+import com.netflix.archaius.guice.ArchaiusModule;
 import com.netflix.dynomitemanager.FloridaServer;
 import com.netflix.dynomitemanager.aws.S3Backup;
 import com.netflix.dynomitemanager.aws.S3Restore;
@@ -49,6 +50,7 @@ import com.netflix.nfsidecar.identity.IInstanceState;
 import com.netflix.nfsidecar.identity.IMembership;
 import com.netflix.nfsidecar.identity.InstanceEnvIdentity;
 import com.netflix.nfsidecar.instance.InstanceDataRetriever;
+import com.netflix.nfsidecar.instance.LocalInstanceDataRetriever;
 import com.netflix.nfsidecar.instance.VpcInstanceDataRetriever;
 import com.netflix.nfsidecar.resources.env.IEnvVariables;
 import com.netflix.nfsidecar.resources.env.InstanceEnvVariables;
@@ -79,6 +81,7 @@ public final class FloridaModule extends AbstractModule {
             }
         });
         install(new JerseyModule());
+        install(new ArchaiusModule());
 /*
         install(new SwaggerServletModule());
         install(new JaxrsSwaggerModule());
@@ -96,13 +99,17 @@ public final class FloridaModule extends AbstractModule {
         bind(IEnvVariables.class).to(InstanceEnvVariables.class);
 
         /* AWS binding */
-        bind(InstanceDataRetriever.class).to(VpcInstanceDataRetriever.class);
+        //bind(InstanceDataRetriever.class).to(VpcInstanceDataRetriever.class);
         bind(IMembership.class).to(AWSMembership.class);
         bind(ICredential.class).to(IAMCredential.class);
         bind(ICredential.class).annotatedWith(Names.named("awsroleassumption")).to(AwsRoleAssumptionCredential.class);
         bind(InstanceEnvIdentity.class).to(AwsInstanceEnvIdentity.class);
         bind(Backup.class).to(S3Backup.class);
         bind(Restore.class).to(S3Restore.class);
+        
+        /* Local */
+        bind(InstanceDataRetriever.class).to(LocalInstanceDataRetriever.class);
+
 
         /* Netflix */
         bind(IAppsInstanceFactory.class).to(CassandraInstanceFactory.class);

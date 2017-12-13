@@ -40,6 +40,7 @@ public class RestoreTask extends Task {
         this.dynProcess = dynProcess;
         this.sleeper = sleeper;
         this.restore = restore;
+        this.storageProcessMgr = storageProcessMgr;
     }
 
     public void execute() throws Exception {

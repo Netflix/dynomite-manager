@@ -1,3 +1,18 @@
+/**
+ * Copyright 2016 Netflix, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.netflix.dynomitemanager.storage;
 
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
@@ -15,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Charsets;
+import com.netflix.dynomitemanager.config.FloridaConfig;
 
 public class ArdbRocksDbRedisCompatible {
 
@@ -29,18 +45,36 @@ public class ArdbRocksDbRedisCompatible {
     private int maxWriteBufferNumber;
     private int minWriteBufferToMerge;
     private long storeMaxMem;
+    private String loglevel;
+    private String compactionStrategy;
 
-    public ArdbRocksDbRedisCompatible(long storeMaxMem, int writeBufferSize, int maxWriteBufferNumber,
-            int minWriteBufferToMerge) {
-        this.writeBufferSize = writeBufferSize;
-        this.maxWriteBufferNumber = maxWriteBufferNumber;
-        this.minWriteBufferToMerge = minWriteBufferToMerge;
+    public ArdbRocksDbRedisCompatible(long storeMaxMem, FloridaConfig config) {
+
+        this.writeBufferSize = config.getRocksDBWriteBufferSize();
+        this.maxWriteBufferNumber = config.getRocksDBMaxWriteBufferNumber();
+        this.minWriteBufferToMerge = config.getRocksDBMinWriteBuffersToMerge();
+        this.compactionStrategy = config.getRocksDBCompactionStrategy();
+
+        switch (this.compactionStrategy) {
+        case "OptimizeLevelStyleCompaction":
+            break;
+        case "OptimizeUniversalStyleCompaction":
+            break;
+        case "none":
+            break;
+        default:
+            throw new IllegalArgumentException("RocksDB unsupported compaction style: " + this.compactionStrategy);
+        }
+
+        this.loglevel = config.getArdbLoglevel();
+
         this.storeMaxMem = storeMaxMem;
+
     }
 
     private String ConvertRocksDBOptions(String rocksDBOptions) {
         // split the arguments based on the ";"
-        String[] allOptions  = rocksDBOptions.split(";");
+        String[] allOptions = rocksDBOptions.split(";");
 
         // String builder to put the properties back
         StringBuilder newProperties = new StringBuilder();
@@ -70,14 +104,14 @@ public class ArdbRocksDbRedisCompatible {
                 }
                 pr = pr + "\\";
                 newProperties.append(pr);
-            }
-            else
+            } else
                 newProperties.append(pr + ";");
-            logger.info("Appending Property: '" + pr +"'");
+            logger.info("Appending Property: '" + pr + "'");
         }
         return newProperties.toString();
 
     }
+
     public void updateConfiguration(String confPathName) throws IOException {
 
         /**
@@ -106,12 +140,6 @@ public class ArdbRocksDbRedisCompatible {
             }
         }
 
-        String rocksdbOptions = "rocksdb.options";
-
-        String ardbRedisCompatibleMode = "^redis-compatible-mode \\s*[a-zA-Z]*";
-
-        String logLevel = "^loglevel \\s*[a-zA-Z]*";
-
         logger.info("Updating ARDB/RocksDB conf: " + confPathName);
         Path confPath = Paths.get(confPathName);
         Path backupPath = Paths.get(confPathName + ".bkp");
@@ -137,18 +165,23 @@ public class ArdbRocksDbRedisCompatible {
                 newLines.add(line);
                 continue;
             }
-            if (line.matches(ardbRedisCompatibleMode)) {
+            if (line.matches("^redis-compatible-mode \\s*[a-zA-Z]*")) {
                 String compatible = "redis-compatible-mode yes";
                 logger.info("Updating ARDB property: " + compatible);
                 newLines.add(compatible);
                 continue;
-            } else if (line.matches(logLevel)) {
-                String logWarn = "loglevel warn";
-                logger.info("Updating ARDB property: " + logWarn);
-                newLines.add(logWarn);
+            } else if (line.matches("^loglevel \\s*[a-zA-Z]*")) {
+                String logLevel = "loglevel " + this.loglevel;
+                logger.info("Updating ARDB property: " + logLevel);
+                newLines.add(logLevel);
                 continue;
-            } else if (line.contains(rocksdbOptions)) {
-                logger.info("Found rocksdb option");
+            } else if (line.contains("rocksdb.compaction")) {
+                logger.info("RocksDB Compaction strategy");
+                String compactionStrategy = "rocksdb.compaction " + this.compactionStrategy;
+                logger.info("Updating RocksDB property: +" + compactionStrategy);
+                newLines.add(compactionStrategy);
+            } else if (line.contains("rocksdb.options")) {
+                logger.info("RocksDB options");
                 rocksParse = true;
                 String[] keyValue = line.split("\\s+");
                 newLines.add(keyValue[0] + spaces(15) + ConvertRocksDBOptions(keyValue[1]));
