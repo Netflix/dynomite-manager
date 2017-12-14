@@ -291,7 +291,7 @@ public interface FloridaConfig {
     @PropertyName(name = "dyno.ardb.rocksdb.compactionStrategy")
     public String getRocksDBCompactionStrategy();
 
-    @DefaultValue("128")
+    @DefaultValue("256")
     @PropertyName(name = "dyno.ardb.rocksdb.writebuffermb")
     public int getRocksDBWriteBufferSize();
 
