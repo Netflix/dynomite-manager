@@ -1,6 +1,8 @@
 package com.netflix.nfsidecar.tokensdb;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
@@ -56,7 +58,11 @@ public class InstanceDataDAOCassandra {
     private final String KS_NAME;
     private final int thriftPortForAstyanax;
     private final AstyanaxContext<Keyspace> ctx;
-
+    private long lastTimeCassandraPull = 0;
+    private Set<AppsInstance> appInstances;
+    private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private final Lock read  = readWriteLock.readLock();
+    private final Lock write = readWriteLock.writeLock();
     /*
      * Schema: create column family tokens with comparator=UTF8Type and
      * column_metadata=[ {column_name: appId, validation_class:
@@ -105,6 +111,11 @@ public class InstanceDataDAOCassandra {
 
         ctx.start();
         bootKeyspace = ctx.getClient();
+    }
+    private boolean isCassandraCacheExpired() {
+        if (lastTimeCassandraPull + cassCommonConfig.getTokenRefreshInterval() <= System.currentTimeMillis())
+            return true;
+        return false;
     }
 
     public void createInstanceEntry(AppsInstance instance) throws Exception {
@@ -246,7 +257,7 @@ public class InstanceDataDAOCassandra {
         return returnSet;
     }
 
-    public Set<AppsInstance> getAllInstances(String app) {
+    public Set<AppsInstance> getAllInstancesFromCassandra(String app) {
         Set<AppsInstance> set = new HashSet<AppsInstance>();
         try {
 
@@ -267,6 +278,22 @@ public class InstanceDataDAOCassandra {
             throw new RuntimeException(e);
         }
         return set;
+    }
+
+    public Set<AppsInstance> getAllInstances(String app) {
+        if (isCassandraCacheExpired() || appInstances.isEmpty()) {
+            write.lock();
+            if (isCassandraCacheExpired() || appInstances.isEmpty()) {
+                logger.info("lastpull %d current time %d getting instances from C*", lastTimeCassandraPull, System.currentTimeMillis());
+                appInstances = getAllInstancesFromCassandra(app);
+                lastTimeCassandraPull = System.currentTimeMillis();
+            }
+            write.unlock();
+        }
+        read.lock();
+        Set<AppsInstance> retInstances = appInstances;
+        read.unlock();
+        return retInstances;
     }
 
     public String findKey(String app, String id, String location, String datacenter) {
