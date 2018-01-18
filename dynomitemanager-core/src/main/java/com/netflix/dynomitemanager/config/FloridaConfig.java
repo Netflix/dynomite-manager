@@ -310,7 +310,7 @@ public interface FloridaConfig {
      * 
      * @return the loglevel to set for RocksDB
      */
-    @DefaultValue("warn")
+    @DefaultValue("info")
     @PropertyName(name = "dyno.ardb.loglevel")
     public String getArdbLoglevel();
 
