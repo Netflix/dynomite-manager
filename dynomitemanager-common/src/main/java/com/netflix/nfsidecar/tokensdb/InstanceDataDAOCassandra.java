@@ -284,7 +284,7 @@ public class InstanceDataDAOCassandra {
         if (isCassandraCacheExpired() || appInstances.isEmpty()) {
             write.lock();
             if (isCassandraCacheExpired() || appInstances.isEmpty()) {
-                logger.info("lastpull %d current time %d getting instances from C*", lastTimeCassandraPull, System.currentTimeMillis());
+                logger.debug("lastpull %d msecs ago, getting instances from C*", System.currentTimeMillis() - lastTimeCassandraPull);
                 appInstances = getAllInstancesFromCassandra(app);
                 lastTimeCassandraPull = System.currentTimeMillis();
             }
