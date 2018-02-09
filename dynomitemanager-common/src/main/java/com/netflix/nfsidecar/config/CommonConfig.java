@@ -53,24 +53,28 @@ public interface CommonConfig {
      *
      * @return the peer-to-peer port used for intra-cluster communication
      */
-    @DefaultValue("8101") //TODO: For a common default value we probably have to result to defined FP
+    @DefaultValue("8101")
+    @PropertyName(name = "dyno.peer.port")
     public int getStoragePeerPort();
-    
+
+    @DefaultValue("8102")
+    @PropertyName(name = "dyno.port")
+    public int getDynomitePort();
 
     @DefaultValue("false")
-    @PropertyName(name = "dyno.backup.snapshot.enabled") //TODO: For a common default value we probably have to result to defined FP
+    @PropertyName(name = "dyno.backup.snapshot.enabled")
     public boolean isBackupEnabled();
 
     @DefaultValue("false")
-    @PropertyName(name = "dyno.backup.restore.enabled") //TODO: For a common default value we probably have to result to defined FP
+    @PropertyName(name = "dyno.backup.restore.enabled")
     public boolean isRestoreEnabled();
 
     @DefaultValue("day")
-    @PropertyName(name = "dyno.backup.schedule") //TODO: For a common default value we probably have to result to defined FP
+    @PropertyName(name = "dyno.backup.schedule")
     public String getBackupSchedule();
 
     @DefaultValue("12")
-    @PropertyName(name = "dyno.backup.hour") //TODO: For a common default value we probably have to result to defined FP
+    @PropertyName(name = "dyno.backup.hour")
     public int getBackupHour();
 
     @DefaultValue("20101010")

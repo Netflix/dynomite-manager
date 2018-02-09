@@ -163,10 +163,13 @@ public class DynomiteAdmin {
 
 			for (AppsInstance ins : ii.getClusterInfo()) {
 				logger.debug("Adding node: " + ins.getInstanceId());
-				String node = "\"token\":" + "\"" + ins.getToken() + "\"," + "\"hostname\":" + "\"" + ins.getHostName()
-						+ "\"," + "\"rack\":" + "\"" + ins.getRack() + "\"," + "\"ip\":" + "\"" + ins.getHostIP()
-						+ "\"," + "\"zone\":" + "\"" + ins.getZone() + "\"," + "\"dc\":" + "\"" + ins.getDatacenter()
-						+ "\"";
+				String node = "\"token\":" + "\"" + ins.getToken() + "\","
+						+ "\"hostname\":" + "\"" + ins.getHostName() + "\","
+						+ "\"port\":" + "\"" + Integer.toString(ins.getDynomitePort()) + "\","
+						+ "\"rack\":" + "\"" + ins.getRack() + "\","
+						+ "\"ip\":" + "\"" + ins.getHostIP() + "\","
+						+ "\"zone\":" + "\"" + ins.getZone() + "\","
+						+ "\"dc\":" + "\"" + ins.getDatacenter() + "\"";
 
 				if (config.getDynomiteHashtag().isEmpty()) {
 					nodes.add("{" + node + "}");
