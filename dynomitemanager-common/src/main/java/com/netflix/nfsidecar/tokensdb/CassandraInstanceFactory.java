@@ -74,7 +74,7 @@ public class CassandraInstanceFactory implements IAppsInstanceFactory
         Collections.sort(return_, comparator);
     }
 
-    public AppsInstance create(String app, int id, String instanceID, String hostname, String ip, String zone, Map<String, Object> volumes, String payload, String rack)
+    public AppsInstance create(String app, int id, String instanceID, String hostname, int dynomitePort, int peerPort, String ip, String zone, Map<String, Object> volumes, String payload, String rack)
     {
         try {
             Map<String, Object> v = (volumes == null) ? new HashMap<String, Object>() : volumes;
@@ -83,6 +83,8 @@ public class CassandraInstanceFactory implements IAppsInstanceFactory
             ins.setZone(zone);
             ins.setRack(rack);
             ins.setHost(hostname);
+            ins.setDynomitePort(dynomitePort);
+            ins.setPeerPort(peerPort);
             ins.setHostIP(ip);
             ins.setId(id);
             ins.setInstanceId(instanceID);

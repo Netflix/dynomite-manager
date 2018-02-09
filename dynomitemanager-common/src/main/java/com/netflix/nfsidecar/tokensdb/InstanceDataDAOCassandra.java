@@ -42,6 +42,8 @@ public class InstanceDataDAOCassandra {
     private String CN_DC = "datacenter";
     private String CN_INSTANCEID = "instanceId";
     private String CN_HOSTNAME = "hostname";
+    private String CN_DYNOMITE_PORT = "dynomitePort";
+    private String CN_PEER_PORT = "peerPort";
     private String CN_EIP = "elasticIP";
     private String CN_TOKEN = "token";
     private String CN_LOCATION = "location";
@@ -138,6 +140,8 @@ public class InstanceDataDAOCassandra {
             clm.putColumn(CN_DC, commonConfig.getRack(), null);
             clm.putColumn(CN_INSTANCEID, instance.getInstanceId(), null);
             clm.putColumn(CN_HOSTNAME, instance.getHostName(), null);
+            clm.putColumn(CN_DYNOMITE_PORT, Integer.toString(instance.getDynomitePort()), null);
+            clm.putColumn(CN_PEER_PORT, Integer.toString(instance.getPeerPort()), null);
             clm.putColumn(CN_EIP, instance.getHostIP(), null);
             clm.putColumn(CN_TOKEN, instance.getToken(), null);
             clm.putColumn(CN_LOCATION, instance.getDatacenter(), null);
@@ -337,6 +341,8 @@ public class InstanceDataDAOCassandra {
         ins.setApp(cmap.get(CN_APPID));
         ins.setZone(cmap.get(CN_AZ));
         ins.setHost(cmap.get(CN_HOSTNAME));
+        ins.setDynomitePort((cmap.get(CN_DYNOMITE_PORT) != null) ? Integer.parseInt(cmap.get(CN_DYNOMITE_PORT)) : commonConfig.getDynomitePort());
+        ins.setPeerPort((cmap.get(CN_PEER_PORT) != null) ? Integer.parseInt(cmap.get(CN_PEER_PORT)) : commonConfig.getStoragePeerPort());
         ins.setHostIP(cmap.get(CN_EIP));
         ins.setId(Integer.parseInt(cmap.get(CN_ID)));
         ins.setInstanceId(cmap.get(CN_INSTANCEID));

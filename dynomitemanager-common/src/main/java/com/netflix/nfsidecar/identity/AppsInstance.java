@@ -22,6 +22,8 @@ public class AppsInstance implements Serializable
 {
     private static final long serialVersionUID = 5606412386974488659L;
     private String hostname;
+    private int dynomitePort;
+    private int peerPort;
     private long updatetime;
     private boolean outOfService;
 
@@ -168,4 +170,13 @@ public class AppsInstance implements Serializable
     {
         this.rack = rack;	
     }
+
+    public void setDynomitePort(int port) { this.dynomitePort = port; }
+
+    public int getDynomitePort() { return this.dynomitePort; }
+
+    public void setPeerPort(int port) { this.peerPort = port; }
+
+    public int getPeerPort() { return this.peerPort; }
+
 }
