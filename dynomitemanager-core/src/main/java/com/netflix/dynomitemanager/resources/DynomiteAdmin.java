@@ -166,6 +166,7 @@ public class DynomiteAdmin {
 				String node = "\"token\":" + "\"" + ins.getToken() + "\","
 						+ "\"hostname\":" + "\"" + ins.getHostName() + "\","
 						+ "\"port\":" + "\"" + Integer.toString(ins.getDynomitePort()) + "\","
+						+ "\"peer_port\":" + "\"" + Integer.toString(ins.getPeerPort()) + "\","
 						+ "\"rack\":" + "\"" + ins.getRack() + "\","
 						+ "\"ip\":" + "\"" + ins.getHostIP() + "\","
 						+ "\"zone\":" + "\"" + ins.getZone() + "\","
