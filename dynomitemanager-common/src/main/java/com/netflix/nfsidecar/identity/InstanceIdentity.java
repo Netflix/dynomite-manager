@@ -206,8 +206,9 @@ public class InstanceIdentity {
                 String payLoad = dead.getToken();
                 logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getZone());
                 return factory.create(envVariables.getDynomiteClusterName(), dead.getId(), retriever.getInstanceId(),
-                        retriever.getPublicHostname(), commonConfig.getDynomitePort(), commonConfig.getStoragePeerPort(),
-                        retriever.getPublicIP(), retriever.getRac(), dead.getVolumes(), payLoad, envVariables.getRack());
+                        retriever.getPublicHostname(), commonConfig.getDynomitePort(), commonConfig.getDynomiteSecurePort(),
+                        commonConfig.getStoragePeerPort(), retriever.getPublicIP(), retriever.getRac(), dead.getVolumes(),
+                        payLoad, envVariables.getRack());
             }
             return null;
         }
@@ -243,8 +244,9 @@ public class InstanceIdentity {
                 String payLoad = dead.getToken();
                 logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getRack());
                 return factory.create(envVariables.getDynomiteClusterName(), dead.getId(), retriever.getInstanceId(),
-                        retriever.getPublicHostname(), commonConfig.getDynomitePort(), commonConfig.getStoragePeerPort(),
-                        retriever.getPublicIP(), retriever.getRac(), dead.getVolumes(), payLoad, envVariables.getRack());
+                        retriever.getPublicHostname(), commonConfig.getDynomitePort(), commonConfig.getDynomiteSecurePort(),
+                        commonConfig.getStoragePeerPort(), retriever.getPublicIP(), retriever.getRac(), dead.getVolumes(),
+                        payLoad, envVariables.getRack());
             }
             return null;
         }
@@ -288,8 +290,9 @@ public class InstanceIdentity {
             // config.getDataCenter());
             String payload = tokenManager.createToken(my_slot, rackMembershipSize, envVariables.getRack());
             return factory.create(envVariables.getDynomiteClusterName(), my_slot + hash, retriever.getInstanceId(),
-                    retriever.getPublicHostname(), commonConfig.getDynomitePort(), commonConfig.getStoragePeerPort(),
-                    retriever.getPublicIP(), retriever.getRac(), null, payload, envVariables.getRack());
+                    retriever.getPublicHostname(), commonConfig.getDynomitePort(), commonConfig.getDynomiteSecurePort(),
+                    commonConfig.getStoragePeerPort(), retriever.getPublicIP(), retriever.getRac(), null,
+                    payload, envVariables.getRack());
         }
 
         public void forEachExecution() {
