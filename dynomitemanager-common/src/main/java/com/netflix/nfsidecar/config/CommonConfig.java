@@ -61,9 +61,15 @@ public interface CommonConfig {
     @PropertyName(name = "dyno.port")
     public int getDynomitePort();
 
-    @DefaultValue("11444")
+    // Default value of -1 means it is not having a secure port
+    @DefaultValue("-1")
     @PropertyName(name = "dyno.secure.port")
     public int getDynomiteSecurePort();
+
+    // Default value of -1 means it is not having a secure port
+    @DefaultValue("-1")
+    @PropertyName(name = "dyno.secure.storage.port")
+    public int getDynomiteSecureStoragePort();
 
     @DefaultValue("false")
     @PropertyName(name = "dyno.backup.snapshot.enabled")
