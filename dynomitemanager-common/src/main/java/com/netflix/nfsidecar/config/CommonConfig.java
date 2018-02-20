@@ -61,6 +61,10 @@ public interface CommonConfig {
     @PropertyName(name = "dyno.port")
     public int getDynomitePort();
 
+    @DefaultValue("11444")
+    @PropertyName(name = "dyno.secure.port")
+    public int getDynomiteSecurePort();
+
     @DefaultValue("false")
     @PropertyName(name = "dyno.backup.snapshot.enabled")
     public boolean isBackupEnabled();
