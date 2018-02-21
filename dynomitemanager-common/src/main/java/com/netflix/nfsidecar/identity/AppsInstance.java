@@ -24,6 +24,7 @@ public class AppsInstance implements Serializable
     private String hostname;
     private int dynomitePort;
     private int dynomiteSecurePort;
+    private int dynomiteSecureStoragePort;
     private int peerPort;
     private long updatetime;
     private boolean outOfService;
@@ -179,6 +180,10 @@ public class AppsInstance implements Serializable
     public void setDynomiteSecurePort(int port) { this.dynomiteSecurePort = port; }
 
     public int getDynomiteSecurePort() { return this.dynomiteSecurePort; }
+
+    public void setDynomiteSecureStoragePort(int port) { this.dynomiteSecureStoragePort = port; }
+
+    public int getDynomiteSecureStoragePort() { return this.dynomiteSecureStoragePort; }
 
     public void setPeerPort(int port) { this.peerPort = port; }
 

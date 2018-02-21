@@ -167,6 +167,7 @@ public class DynomiteAdmin {
 						+ "\"hostname\":" + "\"" + ins.getHostName() + "\","
 						+ "\"port\":" + "\"" + Integer.toString(ins.getDynomitePort()) + "\","
 						+ "\"secure_port\":" + "\"" + Integer.toString(ins.getDynomiteSecurePort()) + "\","
+						+ "\"secure_storage_port\":" + "\"" + Integer.toString(ins.getDynomiteSecureStoragePort()) + "\","
 						+ "\"peer_port\":" + "\"" + Integer.toString(ins.getPeerPort()) + "\","
 						+ "\"rack\":" + "\"" + ins.getRack() + "\","
 						+ "\"ip\":" + "\"" + ins.getHostIP() + "\","
