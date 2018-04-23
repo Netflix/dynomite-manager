@@ -55,11 +55,19 @@ public interface CommonConfig {
      */
     @DefaultValue("8101")
     @PropertyName(name = "dyno.peer.port")
-    public int getStoragePeerPort();
+    public int getDynomitePeerPort();
 
     @DefaultValue("8102")
     @PropertyName(name = "dyno.port")
     public int getDynomitePort();
+
+    @DefaultValue("22222")
+    @PropertyName(name = "dyno.stats.port")
+    public int getDynomiteStatsPort();
+
+    @DefaultValue("true")
+    @PropertyName(name = "dyno.stats.localhost.only")
+    public boolean isDynomiteStatsLocalHostOnly();
 
     // Default value of -1 means it is not having a secure port
     @DefaultValue("-1")
