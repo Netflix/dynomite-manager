@@ -101,7 +101,13 @@ public class DynomiteStandardTuner implements ProcessTuner {
         entries.put("auto_eject_hosts", floridaConfig.getDynomiteAutoEjectHosts());
         entries.put("rack", envVariables.getRack());
         entries.put("distribution", floridaConfig.getDistribution());
-        entries.put("dyn_listen", "0.0.0.0:" + commonConfig.getStoragePeerPort());
+        entries.put("dyn_listen", "0.0.0.0:" + commonConfig.getDynomitePeerPort());
+
+        if (commonConfig.isDynomiteStatsLocalHostOnly())
+            entries.put("stats_listen", "127.0.0.1:" + commonConfig.getDynomiteStatsPort());
+        else
+            entries.put("stats_listen", "0.0.0.0:" + commonConfig.getDynomiteStatsPort());
+        
         entries.put("dyn_seed_provider", floridaConfig.getDynomiteSeedProvider());
         entries.put("gos_interval", floridaConfig.getDynomiteGossipInterval());
         entries.put("hash", floridaConfig.getDynomiteHashAlgorithm());
