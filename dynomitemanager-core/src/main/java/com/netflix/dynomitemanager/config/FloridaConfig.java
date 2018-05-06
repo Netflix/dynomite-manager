@@ -67,6 +67,13 @@ public interface FloridaConfig {
     @DefaultValue("florida_provider")
     @PropertyName(name = "dyno.seed.provider")
     public String getDynomiteSeedProvider();
+    
+    /**
+     * @return Get the stats port
+     */
+    @DefaultValue("http://localhost:22222")
+    @PropertyName(name = "metrics.url")
+    public String getAdminUrl();   
 
     /**
      * Get the Dynomite process name.
