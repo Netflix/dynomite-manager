@@ -32,7 +32,7 @@ import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.dynomite.ProxyAndStorageResetTask;
 import com.netflix.dynomitemanager.monitoring.ProcessMonitorTask;
 import com.netflix.dynomitemanager.monitoring.RedisInfoMetricsTask;
-import com.netflix.dynomitemanager.monitoring.ServoMetricsTask;
+import com.netflix.dynomitemanager.monitoring.DynomiteServoMetricsTask;
 import com.netflix.dynomitemanager.storage.*;
 import com.netflix.nfsidecar.aws.UpdateSecuritySettings;
 import com.netflix.nfsidecar.config.CommonConfig;
@@ -172,9 +172,10 @@ public class FloridaServer {
         }
 
         // Metrics
-        scheduler.addTask(ServoMetricsTask.TaskName, ServoMetricsTask.class, ServoMetricsTask.getTimer());
+        scheduler.addTask(DynomiteServoMetricsTask.TaskName, DynomiteServoMetricsTask.class, DynomiteServoMetricsTask.getTimer());
         scheduler.addTask(RedisInfoMetricsTask.TaskName, RedisInfoMetricsTask.class, RedisInfoMetricsTask.getTimer());
 
+        
         // Routine monitoring and restarting dynomite or storage processes as
         // needed.
         scheduler.addTask(ProcessMonitorTask.JOBNAME, ProcessMonitorTask.class, ProcessMonitorTask.getTimer());
