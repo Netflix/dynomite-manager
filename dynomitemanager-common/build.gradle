@@ -17,9 +17,9 @@ dependencies {
     compile "javax.ws.rs:jsr311-api:1.1.1"
     compile "joda-time:joda-time:2.0"
     compile "commons-configuration:commons-configuration:1.5"
-    compile('com.netflix.astyanax:astyanax:2.0.1') {
-        exclude module: 'junit'
-    }
+    compile 'com.datastax.oss:java-driver-core:4.1.0'
+    compile 'com.datastax.oss:java-driver-query-builder:4.1.0'
+    compile 'com.netflix.eureka:eureka-client:1.9.12'
 
     //Unit test
     testCompile 'junit:junit:4.+'

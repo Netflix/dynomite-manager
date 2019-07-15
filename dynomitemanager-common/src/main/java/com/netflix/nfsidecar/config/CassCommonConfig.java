@@ -30,6 +30,12 @@ public interface CassCommonConfig {
     public String getCassandraClusterName();
 
     /**
+     * @return Name to use for Cassandra's "local datacenter" value
+     */
+    @PropertyName(name = "dyno.sidecore.datacenterName")
+    public String getCassandraDatacenterName();
+
+    /**
      * @return if Eureka is used to find the bootstrap cluster
      */
     @DefaultValue("false")
@@ -41,7 +47,7 @@ public interface CassCommonConfig {
      */
     @DefaultValue("7102")
     @PropertyName(name = "dyno.sidecore.port")
-    public int getCassandraThriftPort();
+    public int getCassandraPort();
 
     @DefaultValue("127.0.0.1")
     @PropertyName(name = "dyno.sidecore.seeds")
