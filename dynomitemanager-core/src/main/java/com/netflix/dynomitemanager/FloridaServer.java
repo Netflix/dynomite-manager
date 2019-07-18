@@ -88,8 +88,9 @@ public class FloridaServer {
 
         // TODO: Consider adding FastPropertyManager class.
         // Set Fast Property callbacks for dynamic updates.
+        DynamicPropertyFactory propertyFactory = DynamicPropertyFactory.getInstance();
         this.readConsistencyFP =
-                DynamicPropertyFactory.getInstance().getStringProperty(
+                propertyFactory.getStringProperty(
                         "florida.dyno.read.consistency", floridaConfig.getDynomiteReadConsistency());
         Runnable updateReadConsitencyFP = ()-> {
             logger.info("Updating FP: " + this.readConsistencyFP.getName());
@@ -100,7 +101,7 @@ public class FloridaServer {
         this.readConsistencyFP.addCallback(updateReadConsitencyFP);
 
         this.writeConsistencyFP =
-                DynamicPropertyFactory.getInstance().getStringProperty(
+                propertyFactory.getStringProperty(
                         "florida.dyno.write.consistency", floridaConfig.getDynomiteWriteConsistency());
         Runnable updateWriteConsitencyFP = ()-> {
             logger.info("Updating FP: " + this.writeConsistencyFP.getName());
@@ -109,7 +110,6 @@ public class FloridaServer {
             }
         };
         this.writeConsistencyFP.addCallback(updateWriteConsitencyFP);
-
 
         DefaultMonitorRegistry.getInstance().register(Monitors.newObjectMonitor(state));
     }
