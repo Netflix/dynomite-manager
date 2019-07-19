@@ -18,6 +18,10 @@ public interface RedisConfig {
     @PropertyName(name = "port")
     int getPort();
 
+    @DefaultValue("true")
+    @PropertyName(name = "daemonize")
+    boolean shouldDaemonize();
+
     @DefaultValue("/apps/nfredis/bin/launch_nfredis.sh")
     @PropertyName(name = "startScript")
     String getStartScript();

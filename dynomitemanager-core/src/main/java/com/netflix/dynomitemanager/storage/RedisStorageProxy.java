@@ -669,7 +669,7 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
                     lines.set(i, maxMemConf);
                 }
                 if (line.matches(REDIS_CONF_DAEMONIZE)) {
-                    String daemonize = "daemonize yes";
+                    String daemonize = String.format("daemonize %s", redisConfig.shouldDaemonize() ? "yes" : "no");
                     logger.info("Updating Redis property: " + daemonize);
                     lines.set(i, daemonize);
                 }
