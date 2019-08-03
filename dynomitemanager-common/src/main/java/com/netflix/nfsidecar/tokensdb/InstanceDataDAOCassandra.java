@@ -33,6 +33,7 @@ import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.insertInto;
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.literal;
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.now;
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.selectFrom;
+import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.update;
 
 @Singleton
 public class InstanceDataDAOCassandra {
@@ -114,15 +115,6 @@ public class InstanceDataDAOCassandra {
         getLock(instance);
 
         try {
-            final Map<String, String> volumes;
-            if (instance.getVolumes() == null) {
-                volumes = Collections.emptyMap();
-            } else {
-                volumes = instance.getVolumes().entrySet().stream()
-                        .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue().toString()))
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            }
-
             this.bootSession.execute(
                     insertInto(CF_NAME_TOKENS)
                             .value(CN_KEY, literal(key))
@@ -140,7 +132,7 @@ public class InstanceDataDAOCassandra {
                             .value(CN_EIP, literal(instance.getHostIP()))
                             // 'token' is a reserved name in cassandra, so it needs to be double-quoted
                             .value("\"" + CN_TOKEN + "\"", literal(instance.getToken()))
-                            .value(CN_VOLUMES, literal(volumes))
+                            .value(CN_VOLUMES, literal(formatVolumes(instance.getVolumes())))
                             .value(CN_UPDATETIME, now())
                             .build()
             );
@@ -148,6 +140,56 @@ public class InstanceDataDAOCassandra {
             logger.error(e.getMessage(), e);
         } finally {
             releaseLock(instance);
+        }
+    }
+
+    public void updateInstanceEntry(final AppsInstance instance) throws Exception {
+        logger.info("*** Updating Instance Entry ***");
+        String key = getRowKey(instance);
+        if (getInstance(instance.getApp(), instance.getRack(), instance.getId()) == null) {
+            logger.info(String.format("Key doesn't exist: %s", key));
+            createInstanceEntry(instance);
+            return;
+        }
+
+        getLock(instance);
+
+        try {
+            this.bootSession.execute(
+                    update(CF_NAME_TOKENS)
+                            .setColumn(CN_ID, literal(String.valueOf(instance.getId())))
+                            .setColumn(CN_APPID, literal(instance.getApp()))
+                            .setColumn(CN_AZ, literal(instance.getZone()))
+                            .setColumn(CN_DC, literal(instance.getDatacenter()))
+                            .setColumn(CN_LOCATION, literal(commonConfig.getRack()))
+                            .setColumn(CN_INSTANCEID, literal(instance.getInstanceId()))
+                            .setColumn(CN_HOSTNAME, literal(instance.getHostName()))
+                            .setColumn(CN_DYNOMITE_PORT, literal(instance.getDynomitePort()))
+                            .setColumn(CN_DYNOMITE_SECURE_PORT, literal(instance.getDynomiteSecurePort()))
+                            .setColumn(CN_DYNOMITE_SECURE_STORAGE_PORT, literal(instance.getDynomiteSecureStoragePort()))
+                            .setColumn(CN_PEER_PORT, literal(instance.getPeerPort()))
+                            .setColumn(CN_EIP, literal(instance.getHostIP()))
+                            // 'token' is a reserved name in cassandra, so it needs to be double-quoted
+                            .setColumn("\"" + CN_TOKEN + "\"", literal(instance.getToken()))
+                            .setColumn(CN_VOLUMES, literal(formatVolumes(instance.getVolumes())))
+                            .setColumn(CN_UPDATETIME, now())
+                            .whereColumn(CN_KEY).isEqualTo(literal(key))
+                            .build()
+            );
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            releaseLock(instance);
+        }
+    }
+
+    private Map<String, String> formatVolumes(final Map<String, Object> volumes) {
+        if (volumes == null) {
+            return Collections.emptyMap();
+        } else {
+            return volumes.entrySet().stream()
+                    .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue().toString()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
     }
 
