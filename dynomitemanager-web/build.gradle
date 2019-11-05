@@ -31,6 +31,8 @@ dependencies {
     compile project(':dynomitemanager-common')
     compile project(':dynomitemanager-core')
    
+    compile 'com.amazonaws:aws-java-sdk-dynamodb:1.11.172'
+
     compile 'com.google.inject.extensions:guice-servlet:4.0'
     compile 'com.google.inject:guice:4.0'
     compile group: 'com.owlike', name: 'genson', version: '1.4'
