@@ -291,12 +291,15 @@ public class InstanceDataDAOCassandra {
     public Set<AppsInstance> getAllInstances(String app) {
         if (isCassandraCacheExpired() || appInstances.isEmpty()) {
             write.lock();
-            if (isCassandraCacheExpired() || appInstances.isEmpty()) {
-                logger.debug("lastpull %d msecs ago, getting instances from C*", System.currentTimeMillis() - lastTimeCassandraPull);
-                appInstances = getAllInstancesFromCassandra(app);
-                lastTimeCassandraPull = System.currentTimeMillis();
+            try {
+                if (isCassandraCacheExpired() || appInstances.isEmpty()) {
+                    logger.debug("lastpull %d msecs ago, getting instances from C*", System.currentTimeMillis() - lastTimeCassandraPull);
+                    appInstances = getAllInstancesFromCassandra(app);
+                    lastTimeCassandraPull = System.currentTimeMillis();
+                }
+            } finally {
+                write.unlock();
             }
-            write.unlock();
         }
         read.lock();
         Set<AppsInstance> retInstances = appInstances;
