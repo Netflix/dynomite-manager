@@ -53,6 +53,7 @@ public class InstanceDataDAODynamoDB {
 
         AmazonDynamoDBClientBuilder amazonDynamoDBClientBuilder = AmazonDynamoDBClientBuilder.standard();
         amazonDynamoDBClientBuilder.setCredentials(new DefaultAWSCredentialsProviderChain());
+        amazonDynamoDBClientBuilder.setRegion(dynamoDBConfig.getDynamoDBRegion());
 
         AmazonDynamoDB amazonDynamoDB = amazonDynamoDBClientBuilder.build();
         TableNameOverride tableNameOverride = TableNameOverride.withTableNamePrefix(dynamoDBConfig.getDynamoDBTableNamePrefix());
