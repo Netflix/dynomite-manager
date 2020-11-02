@@ -1,6 +1,6 @@
 # Dynomite-manager
 
-[![Build Status](https://travis-ci.org/Netflix/dynomite-manager.svg)](https://travis-ci.org/Netflix/dynomite-manager)
+[![Build Status](https://travis-ci.com/Netflix/dynomite-manager.svg)](https://travis-ci.com/Netflix/dynomite-manager)
 [![Dev chat at https://gitter.im/Netflix/dynomite](https://badges.gitter.im/Netflix/dynomite.svg)](https://gitter.im/Netflix/dynomite?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Apache V2 License](http://img.shields.io/badge/license-Apache%20V2-blue.svg)](https://github.com/Netflix/dynomite-manager/blob/dev/LICENSE)
 
