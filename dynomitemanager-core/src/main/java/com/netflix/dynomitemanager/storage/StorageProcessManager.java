@@ -109,7 +109,7 @@ public class StorageProcessManager {
      */
     private List<String> getStopCommand() {
 	List<String> stopCmd = new LinkedList<String>();
-	for (String param : storageProxy.getStartupScript().split(" ")) {
+	for (String param : storageProxy.getStopScript().split(" ")) {
 	    if (StringUtils.isNotBlank(param))
 		stopCmd.add(param);
 	}
