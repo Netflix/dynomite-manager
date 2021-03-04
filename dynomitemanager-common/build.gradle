@@ -3,6 +3,7 @@ apply plugin: 'java'
 dependencies {
     // Archaius-2
     compile group: 'com.netflix.archaius', name: 'archaius2-guice', version: '2.1.11'
+    compile group: 'com.netflix.archaius', name: 'archaius2-api', version: '2.1.11'
 
     compile "com.google.inject:guice:3.0"
     compile "com.google.guava:guava:19.0"
