@@ -38,3 +38,6 @@ lib-cov
 *.classpath
 *.project
 */.settings/*
+
+# publishing secrets
+secrets/signing-key
