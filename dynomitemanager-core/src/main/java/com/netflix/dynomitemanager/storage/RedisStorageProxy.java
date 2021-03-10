@@ -63,7 +63,7 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
     private static final String REDIS_CONF_UNIXSOCKETPERM = "^\\s*unixsocketperm\\s*[0-9]*";
     private static final String REDIS_CONF_PUBSUB = "notify-keyspace-events";
     private static final String REDIS_CONF_DAEMONIZE = "^daemonize\\s*[a-zA-Z]*";
-    private static final String REDIS_CONF_ZSET_MAXZIPLISTVALUE = "^zset-max-ziplist-value\\s*[0-9][0-9]*[a-zA-Z]*";
+    private static final String REDIS_CONF_ZSET_MAXZIPLISTVALUE = "^zset-max-ziplist-value *[0-9]*";
 
     private static final Logger logger = LoggerFactory.getLogger(RedisStorageProxy.class);
     public static final String JOB_TASK_NAME = "REDIS HEALTH TRACKER";
