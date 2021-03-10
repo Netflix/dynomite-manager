@@ -277,6 +277,10 @@ public interface FloridaConfig {
     @PropertyName(name = "dyno.persistence.type")
     public String persistenceType();
 
+    @DefaultValue("-1")
+    @PropertyName(name = "dyno.redis.zset.maxZipListValue")
+    public int getRedisMaxZsetZiplistValue();
+
     // Storage engine: ARDB with RocksDB
     // =================================
 
