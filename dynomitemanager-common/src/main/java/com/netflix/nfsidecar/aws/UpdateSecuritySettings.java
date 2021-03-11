@@ -54,7 +54,7 @@ public class UpdateSecuritySettings extends Task {
     @Override
     public void execute() {
         // if seed dont execute.
-        int port = config.getStoragePeerPort();
+        int port = config.getDynomitePeerPort();
         List<String> acls = membership.listACL(port, port);
         List<AppsInstance> instances = factory.getAllIds(envVariables.getDynomiteClusterName());
 
