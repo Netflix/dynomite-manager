@@ -3,9 +3,6 @@ jdk:
 - openjdk8
 install: "./installViaTravis.sh"
 script: "./buildViaTravis.sh"
-cache:
-  directories:
-  - "$HOME/.gradle/caches"
 env:
   global:
   - secure: K5NkhfI7UIEmRPqB1X6izTkjG/jC+C/snkvSS/4K2zXutKTYCvDQum5IoFxvmxYPY6MRkVp9aO/FAiJcHluHVCTd42A7gNbWwHAxafM5Q5G3O+MeL5Y2wZRSkZLj/auYxQtpm8kAWlCHnePmMzlJM/ARBvLdfi+QPqDqpmBXU2K3kv2VQty2fdwYd+ovpEBK7FVdeKawRlbUuGXglrgaN2hZd2wiYw7/bHR1CPhvig85GZpJBisjzIbXz2oPuNVwbRGhPjpFzmWxhrcpfa1+o3gBQ+clcNV/osrFve4h+HysA0HUdc7+fZwbdKuopUTRWbNvcklnfbgCvsAN2hGcftQ19ts8LgW5na6BPp2vaPyNjlwpFnau1Iubmt5KBwHTW23HGHKzQ3DCd8PaugaOtBjMOKILMsvOfwHfA67vqHnIZxfU+KXONMgXStseKfShvyJCEHKELQFeM3qmkgUjHLOmlMEcmtb8LAhTihK38ehgLd/NNllDbXk3xdxGBcrwaz0J9AoMIHC9mIasT/U+s9MEXXpQyMEIgXTkZdsldIZflU02EO13ts1+94Q/K5yirM+atbdpv9ntXgn93pxLNih5lJRbN4KxL1Y83/qEY0FqZZxXJxE5uEmMSIR67/9zBuQzgJiTVMLNv9a3wCF4lU8Gxm8Pr0YjBjeN0b46Rag=
