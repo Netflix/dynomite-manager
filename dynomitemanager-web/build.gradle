@@ -41,6 +41,7 @@ dependencies {
     compile "com.netflix.governator:governator-core:latest.release"
     compile "com.netflix.governator:governator-servlet:latest.release"
     compile "com.netflix.governator:governator-jersey:latest.release"
+    compile "com.sun.jersey.contribs:jersey-guice:1.19"
 
     // This is here because it's the only reliable way to make IDEs pick up the proper dependencies when running
     // a main() function while also not packaging the dependencies to be deployed on EC2.

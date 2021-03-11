@@ -8,7 +8,7 @@ buildscript {
 }
 
 plugins {
-    id 'nebula.netflixoss' version '4.0.2'
+    id 'nebula.netflixoss' version '9.1.0'
 }
 
 ext.githubProjectName = rootProject.name // Change if github project name is not the same as the root project's name
@@ -26,7 +26,6 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'eclipse'
-    apply plugin: 'nebula.compile-api'
 
     group = "com.netflix.${githubProjectName}"
 
@@ -35,7 +34,7 @@ subprojects {
     targetCompatibility = '1.8'
     
     repositories {
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {

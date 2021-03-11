@@ -277,6 +277,10 @@ public interface FloridaConfig {
     @PropertyName(name = "dyno.persistence.type")
     public String persistenceType();
 
+    @DefaultValue("-1")
+    @PropertyName(name = "dyno.redis.zset.maxZipListValue")
+    public int getRedisMaxZsetZiplistValue();
+
     // Storage engine: ARDB with RocksDB
     // =================================
 
@@ -291,7 +295,7 @@ public interface FloridaConfig {
     @PropertyName(name = "dyno.ardb.rocksdb.compactionStrategy")
     public String getRocksDBCompactionStrategy();
 
-    @DefaultValue("256")
+    @DefaultValue("128")
     @PropertyName(name = "dyno.ardb.rocksdb.writebuffermb")
     public int getRocksDBWriteBufferSize();
 
@@ -310,7 +314,7 @@ public interface FloridaConfig {
      * 
      * @return the loglevel to set for RocksDB
      */
-    @DefaultValue("info")
+    @DefaultValue("warn")
     @PropertyName(name = "dyno.ardb.loglevel")
     public String getArdbLoglevel();
 
