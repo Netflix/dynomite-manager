@@ -53,46 +53,24 @@ public interface CommonConfig {
      *
      * @return the peer-to-peer port used for intra-cluster communication
      */
-    @DefaultValue("8101")
-    @PropertyName(name = "dyno.peer.port")
-    public int getDynomitePeerPort();
-
-    @DefaultValue("8102")
-    @PropertyName(name = "dyno.port")
-    public int getDynomitePort();
-
-    @DefaultValue("22222")
-    @PropertyName(name = "dyno.stats.port")
-    public int getDynomiteStatsPort();
-
-    @DefaultValue("true")
-    @PropertyName(name = "dyno.stats.localhost.only")
-    public boolean isDynomiteStatsLocalHostOnly();
-
-    // Default value of -1 means it is not having a secure port
-    @DefaultValue("-1")
-    @PropertyName(name = "dyno.secure.port")
-    public int getDynomiteSecurePort();
-
-    // Default value of -1 means it is not having a secure port
-    @DefaultValue("-1")
-    @PropertyName(name = "dyno.secure.storage.port")
-    public int getDynomiteSecureStoragePort();
+    @DefaultValue("8101") //TODO: For a common default value we probably have to result to defined FP
+    public int getStoragePeerPort();
+    
 
     @DefaultValue("false")
-    @PropertyName(name = "dyno.backup.snapshot.enabled")
+    @PropertyName(name = "dyno.backup.snapshot.enabled") //TODO: For a common default value we probably have to result to defined FP
     public boolean isBackupEnabled();
 
     @DefaultValue("false")
-    @PropertyName(name = "dyno.backup.restore.enabled")
+    @PropertyName(name = "dyno.backup.restore.enabled") //TODO: For a common default value we probably have to result to defined FP
     public boolean isRestoreEnabled();
 
     @DefaultValue("day")
-    @PropertyName(name = "dyno.backup.schedule")
+    @PropertyName(name = "dyno.backup.schedule") //TODO: For a common default value we probably have to result to defined FP
     public String getBackupSchedule();
 
     @DefaultValue("12")
-    @PropertyName(name = "dyno.backup.hour")
+    @PropertyName(name = "dyno.backup.hour") //TODO: For a common default value we probably have to result to defined FP
     public int getBackupHour();
 
     @DefaultValue("20101010")

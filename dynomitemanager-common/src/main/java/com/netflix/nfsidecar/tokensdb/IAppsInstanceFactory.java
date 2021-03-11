@@ -63,7 +63,7 @@ public interface IAppsInstanceFactory
      * @param token
      * @return the new node
      */
-    public AppsInstance create(String app, int id, String instanceID, String hostname, int dynomitePort, int dynomiteSecurePort, int dynomiteSecureStoragePort, int peerPort, String ip, String rac,
+    public AppsInstance create(String app, int id, String instanceID, String hostname, String ip, String rac, 
                                Map<String, Object> volumes, String token, String datacenter);
 
     /**
