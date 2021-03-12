@@ -22,11 +22,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
 import com.netflix.dynomitemanager.backup.RestoreTask;
 import com.netflix.dynomitemanager.backup.SnapshotTask;
 import com.netflix.dynomitemanager.config.FloridaConfig;
 import com.netflix.dynomitemanager.config.InstanceState;
 import com.netflix.dynomitemanager.dynomite.DynomiteProcessManager;
+import com.netflix.dynomitemanager.dynomite.DynomiteRest;
 import com.netflix.dynomitemanager.dynomite.DynomiteYamlTask;
 import com.netflix.dynomitemanager.dynomite.IDynomiteProcess;
 import com.netflix.dynomitemanager.dynomite.ProxyAndStorageResetTask;
@@ -60,6 +63,9 @@ public class FloridaServer {
     private final StorageProxy storageProxy;
     private static final Logger logger = LoggerFactory.getLogger(FloridaServer.class);
 
+    private final DynamicStringProperty readConsistencyFP;
+    private final DynamicStringProperty writeConsistencyFP;
+
     @Inject
     public FloridaServer(FloridaConfig floridaConfig, CommonConfig commonConfig, TaskScheduler scheduler,
             InstanceIdentity id, Sleeper sleeper, DynomiteYamlTask tuneTask, InstanceState state,
@@ -79,6 +85,31 @@ public class FloridaServer {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+
+        // TODO: Consider adding FastPropertyManager class.
+        // Set Fast Property callbacks for dynamic updates.
+        DynamicPropertyFactory propertyFactory = DynamicPropertyFactory.getInstance();
+        this.readConsistencyFP =
+                propertyFactory.getStringProperty(
+                        "florida.dyno.read.consistency", floridaConfig.getDynomiteReadConsistency());
+        Runnable updateReadConsitencyFP = ()-> {
+            logger.info("Updating FP: " + this.readConsistencyFP.getName());
+            if (!DynomiteRest.sendCommand("/set_consistency/read/" + floridaConfig.getDynomiteReadConsistency())) {
+                logger.error("REST call to Dynomite for read consistency failed --> using the default");
+            }
+        };
+        this.readConsistencyFP.addCallback(updateReadConsitencyFP);
+
+        this.writeConsistencyFP =
+                propertyFactory.getStringProperty(
+                        "florida.dyno.write.consistency", floridaConfig.getDynomiteWriteConsistency());
+        Runnable updateWriteConsitencyFP = ()-> {
+            logger.info("Updating FP: " + this.writeConsistencyFP.getName());
+            if (!DynomiteRest.sendCommand("/set_consistency/write/" + floridaConfig.getDynomiteWriteConsistency())) {
+                logger.error("REST call to Dynomite for write consistency failed --> using the default");
+            }
+        };
+        this.writeConsistencyFP.addCallback(updateWriteConsitencyFP);
 
         DefaultMonitorRegistry.getInstance().register(Monitors.newObjectMonitor(state));
     }
