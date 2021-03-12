@@ -56,4 +56,13 @@ public interface CassCommonConfig {
     @PropertyName(name = "metadata.keyspace")
     public String getCassandraKeyspaceName();
 
+    /**
+     * @return the refresh interval in msecs for getting the tokens
+     * 0 value means, do not cache the tokens. Every query to Dynomite-manager
+     * to get tokens will be forwarded to the token store
+     */
+    @DefaultValue("0")
+    @PropertyName(name = "dyno.sidecore.tokenRefreshInterval")
+    public long getTokenRefreshInterval();
+
 }

@@ -1,6 +1,8 @@
 package com.netflix.nfsidecar.tokensdb;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
@@ -40,6 +42,10 @@ public class InstanceDataDAOCassandra {
     private String CN_DC = "datacenter";
     private String CN_INSTANCEID = "instanceId";
     private String CN_HOSTNAME = "hostname";
+    private String CN_DYNOMITE_PORT = "dynomitePort";
+    private String CN_DYNOMITE_SECURE_PORT = "dynomiteSecurePort";
+    private String CN_DYNOMITE_SECURE_STORAGE_PORT = "dynomiteSecureStoragePort";
+    private String CN_PEER_PORT = "peerPort";
     private String CN_EIP = "elasticIP";
     private String CN_TOKEN = "token";
     private String CN_LOCATION = "location";
@@ -56,7 +62,11 @@ public class InstanceDataDAOCassandra {
     private final String KS_NAME;
     private final int thriftPortForAstyanax;
     private final AstyanaxContext<Keyspace> ctx;
-
+    private long lastTimeCassandraPull = 0;
+    private Set<AppsInstance> appInstances;
+    private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private final Lock read  = readWriteLock.readLock();
+    private final Lock write = readWriteLock.writeLock();
     /*
      * Schema: create column family tokens with comparator=UTF8Type and
      * column_metadata=[ {column_name: appId, validation_class:
@@ -106,6 +116,11 @@ public class InstanceDataDAOCassandra {
         ctx.start();
         bootKeyspace = ctx.getClient();
     }
+    private boolean isCassandraCacheExpired() {
+        if (lastTimeCassandraPull + cassCommonConfig.getTokenRefreshInterval() <= System.currentTimeMillis())
+            return true;
+        return false;
+    }
 
     public void createInstanceEntry(AppsInstance instance) throws Exception {
         logger.info("*** Creating New Instance Entry ***");
@@ -127,6 +142,10 @@ public class InstanceDataDAOCassandra {
             clm.putColumn(CN_DC, commonConfig.getRack(), null);
             clm.putColumn(CN_INSTANCEID, instance.getInstanceId(), null);
             clm.putColumn(CN_HOSTNAME, instance.getHostName(), null);
+            clm.putColumn(CN_DYNOMITE_PORT, Integer.toString(instance.getDynomitePort()), null);
+            clm.putColumn(CN_DYNOMITE_SECURE_PORT, Integer.toString(instance.getDynomiteSecurePort()), null);
+            clm.putColumn(CN_DYNOMITE_SECURE_STORAGE_PORT, Integer.toString(instance.getDynomiteSecureStoragePort()), null);
+            clm.putColumn(CN_PEER_PORT, Integer.toString(instance.getPeerPort()), null);
             clm.putColumn(CN_EIP, instance.getHostIP(), null);
             clm.putColumn(CN_TOKEN, instance.getToken(), null);
             clm.putColumn(CN_LOCATION, instance.getDatacenter(), null);
@@ -246,7 +265,7 @@ public class InstanceDataDAOCassandra {
         return returnSet;
     }
 
-    public Set<AppsInstance> getAllInstances(String app) {
+    public Set<AppsInstance> getAllInstancesFromCassandra(String app) {
         Set<AppsInstance> set = new HashSet<AppsInstance>();
         try {
 
@@ -267,6 +286,22 @@ public class InstanceDataDAOCassandra {
             throw new RuntimeException(e);
         }
         return set;
+    }
+
+    public Set<AppsInstance> getAllInstances(String app) {
+        if (isCassandraCacheExpired() || appInstances.isEmpty()) {
+            write.lock();
+            if (isCassandraCacheExpired() || appInstances.isEmpty()) {
+                logger.debug("lastpull %d msecs ago, getting instances from C*", System.currentTimeMillis() - lastTimeCassandraPull);
+                appInstances = getAllInstancesFromCassandra(app);
+                lastTimeCassandraPull = System.currentTimeMillis();
+            }
+            write.unlock();
+        }
+        read.lock();
+        Set<AppsInstance> retInstances = appInstances;
+        read.unlock();
+        return retInstances;
     }
 
     public String findKey(String app, String id, String location, String datacenter) {
@@ -310,6 +345,10 @@ public class InstanceDataDAOCassandra {
         ins.setApp(cmap.get(CN_APPID));
         ins.setZone(cmap.get(CN_AZ));
         ins.setHost(cmap.get(CN_HOSTNAME));
+        ins.setDynomitePort((cmap.get(CN_DYNOMITE_PORT) != null) ? Integer.parseInt(cmap.get(CN_DYNOMITE_PORT)) : commonConfig.getDynomitePort());
+        ins.setDynomiteSecurePort((cmap.get(CN_DYNOMITE_SECURE_PORT) != null) ? Integer.parseInt(cmap.get(CN_DYNOMITE_SECURE_PORT)) : commonConfig.getDynomiteSecurePort());
+        ins.setDynomiteSecureStoragePort((cmap.get(CN_DYNOMITE_SECURE_STORAGE_PORT) != null) ? Integer.parseInt(cmap.get(CN_DYNOMITE_SECURE_STORAGE_PORT)) : commonConfig.getDynomiteSecureStoragePort());
+        ins.setPeerPort((cmap.get(CN_PEER_PORT) != null) ? Integer.parseInt(cmap.get(CN_PEER_PORT)) : commonConfig.getDynomitePeerPort());
         ins.setHostIP(cmap.get(CN_EIP));
         ins.setId(Integer.parseInt(cmap.get(CN_ID)));
         ins.setInstanceId(cmap.get(CN_INSTANCEID));
