@@ -684,6 +684,11 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
                     lines.set(i, notifyKeySpaceEvents);
                 }
 
+                if (line.matches(REDIS_CONF_ZSET_MAXZIPLISTVALUE) && config.getRedisMaxZsetZiplistValue() != -1) {
+                        String zsetMaxZiplistValue = REDIS_CONF_ZSET_MAXZIPLISTVALUE + " " + config.getRedisMaxZsetZiplistValue();
+                        logger.info("Updating Redis property: " + zsetMaxZiplistValue);
+                        lines.set(i, zsetMaxZiplistValue);
+                }
                 // Persistence configuration
                 if (config.isPersistenceEnabled() && config.persistenceType().equals("aof")) {
                     if (line.matches(REDIS_CONF_APPENDONLY)) {
@@ -706,10 +711,6 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
                                                                  // RDB
                         logger.info("Updating Redis property: " + saveSchedule);
                         lines.set(i, saveSchedule);
-                    } else if (line.matches(REDIS_CONF_ZSET_MAXZIPLISTVALUE) && config.getRedisMaxZsetZiplistValue() != -1) {
-                        String zsetMaxZiplistValue = REDIS_CONF_ZSET_MAXZIPLISTVALUE + " " + config.getRedisMaxZsetZiplistValue();
-                        logger.info("Updating Redis property: " + zsetMaxZiplistValue);
-                        lines.set(i, zsetMaxZiplistValue);
                     }
                 } else if (config.isPersistenceEnabled() && !config.persistenceType().equals("aof")) {
                     if (line.matches(REDIS_CONF_STOP_WRITES_BGSAVE_ERROR)) {
