@@ -685,7 +685,7 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
                 }
 
                 if (line.matches(REDIS_CONF_ZSET_MAXZIPLISTVALUE) && config.getRedisMaxZsetZiplistValue() != -1) {
-                        String zsetMaxZiplistValue = REDIS_CONF_ZSET_MAXZIPLISTVALUE + " " + config.getRedisMaxZsetZiplistValue();
+                        String zsetMaxZiplistValue =  "zset-max-ziplist-value " + config.getRedisMaxZsetZiplistValue();
                         logger.info("Updating Redis property: " + zsetMaxZiplistValue);
                         lines.set(i, zsetMaxZiplistValue);
                 }
