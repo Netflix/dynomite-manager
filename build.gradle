@@ -1,6 +1,11 @@
 
 buildscript {
-  repositories { jcenter() }
+    repositories {
+        mavenCentral()
+        maven {
+            url = 'https://plugins.gradle.org/m2'
+        }
+    }
    dependencies {
         classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:latest.release'
         classpath "org.akhikhl.gretty:gretty:latest.release"
