@@ -18,6 +18,8 @@ package com.netflix.dynomitemanager.config;
 import com.netflix.archaius.api.annotations.Configuration;
 import com.netflix.archaius.api.annotations.DefaultValue;
 import com.netflix.archaius.api.annotations.PropertyName;
+import com.netflix.config.DynamicPropertyFactory;
+import com.netflix.config.DynamicStringProperty;
 
 @Configuration(prefix = "florida")
 public interface FloridaConfig {
@@ -67,6 +69,18 @@ public interface FloridaConfig {
     @DefaultValue("florida_provider")
     @PropertyName(name = "dyno.seed.provider")
     public String getDynomiteSeedProvider();
+    
+    /**
+     * Dynomite REST calls FPs
+     */
+    
+    /**
+     * @return Get the stats port
+     */
+    @DefaultValue("http://localhost:22222")
+    @PropertyName(name = "metrics.url")
+    public String getAdminUrl();   
+        
 
     /**
      * Get the Dynomite process name.

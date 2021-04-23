@@ -50,11 +50,12 @@ public class WarmBootstrapTask extends Task {
     private final Sleeper sleeper;
     private final StorageProcessManager storageProcessMgr;
     private final IEnvVariables envVariables;
+    private final DynomiteRest dynoRest;
 
     @Inject
     public WarmBootstrapTask(IAppsInstanceFactory appsInstanceFactory, InstanceIdentity id,
 	    IDynomiteProcess dynProcess, StorageProxy storageProxy, InstanceState ss, Sleeper sleeper,
-	    StorageProcessManager storageProcessMgr, IEnvVariables envVariables) {
+	    StorageProcessManager storageProcessMgr, IEnvVariables envVariables, DynomiteRest dynoRest) {
 
 	this.dynProcess = dynProcess;
 	this.storageProxy = storageProxy;
@@ -64,6 +65,7 @@ public class WarmBootstrapTask extends Task {
 	this.sleeper = sleeper;
 	this.storageProcessMgr = storageProcessMgr;
 	this.envVariables = envVariables;
+	this.dynoRest = dynoRest;
     }
 
     public void execute() throws IOException {
@@ -112,19 +114,19 @@ public class WarmBootstrapTask extends Task {
 		    // Set the state of bootstrap as successful.
 		    this.state.setBootstrapStatus(boostrap);
 
-		    logger.info("Set Dynomite to allow writes only!!!");
-		    DynomiteRest.sendCommand("/state/writes_only");
+		    logger.info("Set Dynomite to allow writes only!!!");		    
+		    dynoRest.sendCommand("/state/writes_only");
 
 		    logger.info("Stop Redis' Peer syncing!!!");
 		    this.storageProxy.stopPeerSync();
 
 		    logger.info("Set Dynomite to resuming state to allow writes and flush delayed writes");
-		    DynomiteRest.sendCommand("/state/resuming");
+		    dynoRest.sendCommand("/state/resuming");
 
 		    // sleep 15s for the flushing to catch up
 		    sleeper.sleepQuietly(15000);
 		    logger.info("Set Dynomite to normal state");
-		    DynomiteRest.sendCommand("/state/normal");
+		    dynoRest.sendCommand("/state/normal");
 		} else {
 		    logger.error("Warm up failed: Stop Redis' Peer syncing!!!");
 		    this.storageProxy.stopPeerSync();

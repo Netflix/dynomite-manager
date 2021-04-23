@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.config.DynamicPropertyFactory;
 import com.netflix.config.DynamicStringProperty;
+import com.netflix.dynomitemanager.config.FloridaConfig;
 import com.netflix.dynomitemanager.config.InstanceState;
 import com.netflix.nfsidecar.scheduler.SimpleTimer;
 import com.netflix.nfsidecar.scheduler.Task;
@@ -51,14 +52,10 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  */
 @Singleton
-public class ServoMetricsTask extends Task {
+public class DynomiteServoMetricsTask extends Task {
 
-    private static final Logger Logger = LoggerFactory.getLogger(ServoMetricsTask.class);
+    private static final Logger Logger = LoggerFactory.getLogger(DynomiteServoMetricsTask.class);
     public static final String TaskName = "Servo-Metrics-Task";
-
-    // Fast Property for configuring the remote resource to talk to
-    private final DynamicStringProperty ServerMetricsUrl = DynamicPropertyFactory.getInstance()
-            .getStringProperty("florida.metrics.url", "http://localhost:22222/info");
 
     // Fast Property for configuring a gauge whitelist (if needed)
     private final DynamicStringProperty GaugeWhitelist = DynamicPropertyFactory.getInstance()
@@ -73,11 +70,13 @@ public class ServoMetricsTask extends Task {
     private final ConcurrentHashMap<String, NumericMonitor<Number>> metricMap = new ConcurrentHashMap<String, NumericMonitor<Number>>();
 
     private final InstanceState state;
+    private final FloridaConfig config;
 
-    @Inject
-    public ServoMetricsTask(InstanceState state) {
+    @Inject 
+    public DynomiteServoMetricsTask(InstanceState state, FloridaConfig config) {
 
         this.state = state;
+        this.config = config;
 
         initGaugeWhitelist();
 
@@ -139,33 +138,35 @@ public class ServoMetricsTask extends Task {
         // Dynomite
         processGaugeMetric("dynomite__health", state.isHealthy() ? 1L : 0L);
 
+        String ServerMetricsUrl = config.getAdminUrl() + "/info";
+        
         try {
             client = new HttpClient();
             client.getHttpConnectionManager().getParams().setConnectionTimeout(2000);
-            get = new GetMethod(ServerMetricsUrl.get());
+            get = new GetMethod(ServerMetricsUrl);
 
             int statusCode = client.executeMethod(get);
             if (!(statusCode == 200)) {
-                Logger.error("Got non 200 status code from " + ServerMetricsUrl.get());
+                Logger.error("Got non 200 status code from " + ServerMetricsUrl);
                 return;
             }
 
             String response = get.getResponseBodyAsString();
             if (Logger.isDebugEnabled()) {
-                Logger.debug("Received response from " + ServerMetricsUrl.get() + "\n" + response);
+                Logger.debug("Received response from " + ServerMetricsUrl + "\n" + response);
             }
 
             if (!response.isEmpty()) {
                 processJsonResponse(response);
             } else {
-                Logger.error("Cannot parse empty response from " + ServerMetricsUrl.get());
+                Logger.error("Cannot parse empty response from " + ServerMetricsUrl);
             }
 
         } catch (Exception e) {
-            Logger.error("Failed to get metrics from Dynomite's REST endpoint: " + ServerMetricsUrl.get(), e);
+            Logger.error("Failed to get metrics from Dynomite's REST endpoint: " + ServerMetricsUrl, e);
             e.printStackTrace();
         } catch (Throwable t) {
-            Logger.error("FAILED to get metrics from Dynomite's REST endpoint: " + ServerMetricsUrl.get(), t);
+            Logger.error("FAILED to get metrics from Dynomite's REST endpoint: " + ServerMetricsUrl, t);
             t.printStackTrace();
         } finally {
             if (get != null) {

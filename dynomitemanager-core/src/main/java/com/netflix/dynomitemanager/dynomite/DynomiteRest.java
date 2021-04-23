@@ -7,19 +7,24 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
+import com.google.inject.Inject;
+import com.netflix.dynomitemanager.config.FloridaConfig;
 
 public class DynomiteRest {
     
     private static final Logger logger = LoggerFactory.getLogger(DynomiteRest.class);
 
+    private FloridaConfig config;
     
-    public static boolean sendCommand(String cmd) {
-    	DynamicStringProperty adminUrl = 
-                DynamicPropertyFactory.getInstance().getStringProperty("florida.metrics.url", "http://localhost:22222");
-    	
-        String url = adminUrl.get() + cmd;
+    @Inject
+    public DynomiteRest(FloridaConfig config) {
+    	this.config = config;
+    }
+
+    
+    public boolean sendCommand(String cmd) {
+    	    	    			
+        String url = config.getAdminUrl() + cmd;
         HttpClient client = new HttpClient();
         client.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, 
                                         new DefaultHttpMethodRetryHandler());

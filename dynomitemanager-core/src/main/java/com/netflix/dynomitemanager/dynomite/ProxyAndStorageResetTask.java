@@ -24,14 +24,16 @@ public class ProxyAndStorageResetTask extends Task {
     private final StorageProxy storageProxy;
     private final Sleeper sleeper;
     private final FloridaConfig config;
+    private final DynomiteRest dynoRest;
 
     @Inject
     public ProxyAndStorageResetTask(FloridaConfig config, IDynomiteProcess dynProcess, StorageProxy storageProxy,
-            Sleeper sleeper) {
+            Sleeper sleeper, DynomiteRest dynoRest) {
         this.config = config;
         this.storageProxy = storageProxy;
         this.dynProcess = dynProcess;
         this.sleeper = sleeper;
+        this.dynoRest = dynoRest;
     }
 
     public void execute() throws IOException {
@@ -47,10 +49,10 @@ public class ProxyAndStorageResetTask extends Task {
 
     private void setConsistency() {
         logger.info("Setting the consistency level for the cluster");
-        if (!DynomiteRest.sendCommand("/set_consistency/read/" + config.getDynomiteReadConsistency()))
+        if (!dynoRest.sendCommand("/set_consistency/read/" + config.getDynomiteReadConsistency()))
             logger.error("REST call to Dynomite for read consistency failed --> using the default");
 
-        if (!DynomiteRest.sendCommand("/set_consistency/write/" + config.getDynomiteWriteConsistency()))
+        if (!dynoRest.sendCommand("/set_consistency/write/" + config.getDynomiteWriteConsistency()))
             logger.error("REST call to Dynomite for write consistency failed --> using the default");
     }
 
@@ -85,6 +87,8 @@ public class ProxyAndStorageResetTask extends Task {
             } catch (IOException e1) {
                 logger.error("Dynomite cannot be restarted --> Requires manual restart" + e1.getMessage());
             }
+        } finally {
+        	dynomiteJedis.close();
         }
 
     }
