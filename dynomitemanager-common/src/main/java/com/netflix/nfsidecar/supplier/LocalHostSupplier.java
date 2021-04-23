@@ -1,15 +1,13 @@
 package com.netflix.nfsidecar.supplier;
 
+import com.google.common.base.Supplier;
+import com.google.inject.Inject;
+import com.netflix.nfsidecar.config.CassCommonConfig;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.base.Supplier;
-import com.google.inject.Inject;
-import com.netflix.astyanax.connectionpool.Host;
-import com.netflix.nfsidecar.config.CassCommonConfig;
 
 /**
  * Use the {@code DM_CASSANDRA_CLUSTER_SEEDS} environment variable to provide a

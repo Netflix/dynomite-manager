@@ -123,7 +123,7 @@ public class CassandraInstanceFactory implements IAppsInstanceFactory
     public void update(AppsInstance inst)
     {
         try {
-            dao.createInstanceEntry(inst);
+            dao.updateInstanceEntry(inst);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
