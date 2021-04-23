@@ -5,6 +5,7 @@ import com.google.common.base.Splitter;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.config.FloridaConfig;
+import com.netflix.nfsidecar.config.RedisConfig;
 import com.netflix.nfsidecar.scheduler.SimpleTimer;
 import com.netflix.nfsidecar.scheduler.Task;
 import com.netflix.nfsidecar.scheduler.TaskTimer;
@@ -43,15 +44,9 @@ import java.util.regex.Pattern;
 public class RedisStorageProxy extends Task implements StorageProxy, HealthIndicator {
 
     private static final String DYNO_REDIS = "redis";
-    private static final String DYNO_REDIS_CONF_PATH = "/apps/nfredis/conf/redis.conf";
-    private static final String REDIS_ADDRESS = "127.0.0.1";
-    private static final int REDIS_PORT = 22122;
     private static final long GB_2_IN_KB = 2L * 1024L * 1024L;
     private static final String PROC_MEMINFO_PATH = "/proc/meminfo";
     private static final Pattern MEMINFO_PATTERN = Pattern.compile("MemTotal:\\s*([0-9]*)");
-
-    private final String REDIS_START_SCRIPT = "/apps/nfredis/bin/launch_nfredis.sh";
-    private final String REDIS_STOP_SCRIPT = "/apps/nfredis/bin/kill_redis.sh";
 
     private static final String REDIS_CONF_MAXMEMORY_PATTERN = "^maxmemory\\s*[0-9][0-9]*[a-zA-Z]*";
     private static final String REDIS_CONF_APPENDONLY = "^appendonly\\s*[a-zA-Z]*";
@@ -72,13 +67,15 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
     private boolean redisHealth = false;
 
     private final FloridaConfig config;
+    private final RedisConfig redisConfig;
 
     @Inject
     private Sleeper sleeper;
 
     @Inject
-    public RedisStorageProxy(FloridaConfig config) {
+    public RedisStorageProxy(FloridaConfig config, RedisConfig redisConfig) {
         this.config = config;
+        this.redisConfig = redisConfig;
         // connect();
     }
 
@@ -102,7 +99,7 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
     private void localRedisConnect() {
         if (this.localJedis == null) {
             logger.info("Connecting to Redis.");
-            this.localJedis = JedisUtils.connect(REDIS_ADDRESS, REDIS_PORT);
+            this.localJedis = JedisUtils.connect(this.redisConfig.getAddress(), this.redisConfig.getPort());
         }
     }
 
@@ -316,7 +313,7 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
     public boolean isAlive() {
         // Not using localJedis variable as it can be used by
         // ProcessMonitorTask as well.
-        return JedisUtils.isAliveWithRetry(REDIS_ADDRESS, REDIS_PORT);
+        return JedisUtils.isAliveWithRetry(this.redisConfig.getAddress(), this.redisConfig.getPort());
     }
 
     public long getUptime() {
@@ -372,7 +369,7 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
         for (String peer : peers) { // Looking into the peers with the same
                                     // token
             logger.info("Peer node [" + peer + "] has the same token!");
-            peerJedis = JedisUtils.connect(peer, REDIS_PORT);
+            peerJedis = JedisUtils.connect(peer, this.redisConfig.getPort());
             if (peerJedis != null && isAlive()) { // Checking if there are
                                                   // peers, and if so if they
                                                   // are alive
@@ -401,8 +398,8 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
             String alivePeer = longestAlivePeer.selectedPeer;
             peerJedis = longestAlivePeer.selectedJedis;
 
-            logger.info("Issue slaveof command on peer [" + alivePeer + "] and port [" + REDIS_PORT + "]");
-            startPeerSync(alivePeer, REDIS_PORT);
+            logger.info("Issue slaveof command on peer [" + alivePeer + "] and port [" + this.redisConfig.getPort() + "]");
+            startPeerSync(alivePeer, this.redisConfig.getPort());
 
             long diff = 0;
             long previousDiff = 0;
@@ -607,9 +604,9 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
         } else {
 
             // Updating the file.
-            logger.info("Updating Redis conf: " + DYNO_REDIS_CONF_PATH);
-            Path confPath = Paths.get(DYNO_REDIS_CONF_PATH);
-            Path backupPath = Paths.get(DYNO_REDIS_CONF_PATH + ".bkp");
+            logger.info("Updating Redis conf: " + this.redisConfig.getConfPath());
+            Path confPath = Paths.get(this.redisConfig.getConfPath());
+            Path backupPath = Paths.get(this.redisConfig.getConfPath() + ".bkp");
 
             // backup the original baked in conf only and not subsequent updates
             if (!Files.exists(backupPath)) {
@@ -673,7 +670,7 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
                     lines.set(i, maxMemConf);
                 }
                 if (line.matches(REDIS_CONF_DAEMONIZE)) {
-                    String daemonize = "daemonize yes";
+                    String daemonize = String.format("daemonize %s", redisConfig.shouldDaemonize() ? "yes" : "no");
                     logger.info("Updating Redis property: " + daemonize);
                     lines.set(i, daemonize);
                 }
@@ -798,7 +795,7 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
         if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
             return ArdbRocksDbRedisCompatible.ARDB_ROCKSDB_START_SCRIPT;
         }
-        return REDIS_START_SCRIPT;
+        return this.redisConfig.getStartScript();
     }
 
     @Override
@@ -806,17 +803,17 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
         if (config.getRedisCompatibleEngine().equals(ArdbRocksDbRedisCompatible.DYNO_ARDB)) {
             return ArdbRocksDbRedisCompatible.ARDB_ROCKSDB_STOP_SCRIPT;
         }
-        return REDIS_STOP_SCRIPT;
+        return this.redisConfig.getStopScript();
     }
 
     @Override
     public String getIpAddress() {
-        return REDIS_ADDRESS;
+        return this.redisConfig.getAddress();
     }
 
     @Override
     public int getPort() {
-        return REDIS_PORT;
+        return this.redisConfig.getPort();
     }
 
     @Override
