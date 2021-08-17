@@ -58,13 +58,14 @@ public interface IAppsInstanceFactory
      * @param instanceID
      * @param hostname
      * @param ip
-     * @param rac
+     * @param zone
      * @param volumes
      * @param token
+     * @param rack
      * @return the new node
      */
-    public AppsInstance create(String app, int id, String instanceID, String hostname, int dynomitePort, int dynomiteSecurePort, int dynomiteSecureStoragePort, int peerPort, String ip, String rac,
-                               Map<String, Object> volumes, String token, String datacenter);
+    public AppsInstance create(String app, int id, String instanceID, String hostname, int dynomitePort, int dynomiteSecurePort, int dynomiteSecureStoragePort, int peerPort, String ip, String zone,
+                               Map<String, Object> volumes, String token, String rack);
 
     /**
      * Delete the server node from the registry

@@ -18,6 +18,7 @@ package com.netflix.nfsidecar.identity;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -205,10 +206,23 @@ public class InstanceIdentity {
                 replacedIp = dead.getHostIP();
                 String payLoad = dead.getToken();
                 logger.info("Trying to grab slot {} with availability zone {}", dead.getId(), dead.getZone());
-                return factory.create(envVariables.getDynomiteClusterName(), dead.getId(), retriever.getInstanceId(),
-                        retriever.getPublicHostname(), commonConfig.getDynomitePort(), commonConfig.getDynomiteSecurePort(),
-                        commonConfig.getDynomiteSecureStoragePort(), commonConfig.getDynomitePeerPort(), retriever.getPublicIP(),
-                        retriever.getRac(), dead.getVolumes(), payLoad, envVariables.getRack());
+                AppsInstance ins = new AppsInstance();
+                ins.setApp(dead.getApp());
+                ins.setZone(dead.getZone());
+                ins.setRack(dead.getRack());
+                ins.setHost(retriever.getPublicHostname());
+                ins.setDynomitePort(commonConfig.getDynomitePort());
+                ins.setDynomiteSecurePort(commonConfig.getDynomiteSecurePort());
+                ins.setDynomiteSecureStoragePort(commonConfig.getDynomiteSecureStoragePort());
+                ins.setPeerPort(commonConfig.getDynomitePeerPort());
+                ins.setHostIP(retriever.getPublicIP());
+                ins.setId(dead.getId());
+                ins.setInstanceId(retriever.getInstanceId());
+                ins.setDatacenter(envVariables.getRegion());
+                ins.setToken(payLoad);
+                ins.setVolumes(Collections.emptyMap());
+                factory.update(ins);
+                return ins;
             }
             return null;
         }
