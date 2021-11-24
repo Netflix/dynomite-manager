@@ -19,6 +19,7 @@
 
 Details about the features can be found in the [Wiki](https://github.com/Netflix/dynomite-manager/wiki)
 
+
 ## Workflow
 
 The stable version of Dynomite-manager is the [master]( https://github.com/Netflix/dynomite-manager/tree/master ) branch. 
