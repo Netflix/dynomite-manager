@@ -55,6 +55,9 @@ public abstract class Task implements Job, TaskMBean
     protected Task(MBeanServer mBeanServer) {
         // TODO: don't do mbean registration here
         String mbeanName = "com.netflix.florida.scheduler:type=" + this.getClass().getName();
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+            System.out.println("[MbeanInit] for bean " + mbeanName + " stacktrace: " + ste + "\n");
+        }
         try
         {
             mBeanServer.registerMBean(this, new ObjectName(mbeanName));
