@@ -38,16 +38,13 @@ public class DynomiteProcessManager extends Task implements IDynomiteProcess, He
     private final FloridaConfig config;
     private final Sleeper sleeper;
     private final IInstanceState instanceState;
-    private final IDynomiteProcess dynProcess;
     private boolean dynomiteHealth = false;
 
     @Inject
-    public DynomiteProcessManager(FloridaConfig config, Sleeper sleeper, IInstanceState instanceState,
-            IDynomiteProcess dynProcess) {
+    public DynomiteProcessManager(FloridaConfig config, Sleeper sleeper, IInstanceState instanceState) {
         this.config = config;
         this.sleeper = sleeper;
         this.instanceState = instanceState;
-        this.dynProcess = dynProcess;
     }
 
     public static TaskTimer getTimer() {
@@ -213,7 +210,7 @@ public class DynomiteProcessManager extends Task implements IDynomiteProcess, He
         if (!dynomiteRedisCheck()) {
             try {
                 logger.error("Dynomite was down");
-                this.dynProcess.stop();
+                this.stop();
                 sleeper.sleepQuietly(1000);
                 return false;
             } catch (IOException e) {
