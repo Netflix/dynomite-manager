@@ -87,6 +87,7 @@ public class InstanceIdentity {
     public InstanceIdentity(IAppsInstanceFactory factory, IMembership membership, AWSCommonConfig aWSCommonConfig,
             CommonConfig commonConfig, Sleeper sleeper, ITokenManager tokenManager, InstanceEnvIdentity insEnvIdentity,
             InstanceDataRetriever retriever, IEnvVariables envVariables) throws Exception {
+        logger.info("[InstanceIdentityToken]: Initializing idenity");
         this.factory = factory;
         this.membership = membership;
         this.commonConfig = commonConfig;
@@ -104,20 +105,22 @@ public class InstanceIdentity {
     }
 
     public void init() throws Exception {
+        logger.info("[InstanceIdentityToken]: Entering init");
+
         // try to grab the token which was already assigned
         myInstance = new RetryableCallable<AppsInstance>() {
             @Override
             public AppsInstance retriableCall() throws Exception {
                 // Check if this node is decommissioned
                 for (AppsInstance ins : factory.getAllIds(envVariables.getDynomiteClusterName() + "-dead")) {
-                    logger.debug(String.format("[Dead] Iterating though the hosts: %s", ins.getInstanceId()));
+                    logger.info(String.format("[Dead] Iterating though the hosts: %s", ins.getInstanceId()));
                     if (ins.getInstanceId().equals(retriever.getInstanceId())) {
                         ins.setOutOfService(true);
                         return ins;
                     }
                 }
                 for (AppsInstance ins : factory.getAllIds(envVariables.getDynomiteClusterName())) {
-                    logger.debug(String.format("[Alive] Iterating though the hosts: %s My id = [%s]",
+                    logger.info(String.format("[Alive] Iterating though the hosts: %s My id = [%s]",
                             ins.getInstanceId(), ins.getId()));
                     if (ins.getInstanceId().equals(retriever.getInstanceId()))
                         return ins;
@@ -125,16 +128,24 @@ public class InstanceIdentity {
                 return null;
             }
         }.call();
+
+
         // Grab a dead token
-        if (null == myInstance)
+        if (null == myInstance) {
+            logger.info("[InstanceIdentityToken]: Grabbing dead idenity");
+
             myInstance = new GetDeadToken().call();
-
+        }
         // Grab a pre-generated token if there is such one
-        if (null == myInstance)
-            myInstance = new GetPregeneratedToken().call();
+        if (null == myInstance) {
+            logger.info("[InstanceIdentityToken]: Grabbing pregenerated idenity");
 
+            myInstance = new GetPregeneratedToken().call();
+        }
         // Grab a new token
         if (null == myInstance) {
+            logger.info("[InstanceIdentityToken]: Grabbing new idenity");
+
             GetNewToken newToken = new GetNewToken();
             newToken.set(100, 100);
             myInstance = newToken.call();
