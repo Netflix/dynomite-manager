@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.config.FloridaConfig;
+import com.netflix.dynomitemanager.config.InstanceState;
 import com.netflix.dynomitemanager.storage.JedisUtils;
 import com.netflix.nfsidecar.identity.IInstanceState;
 import com.netflix.nfsidecar.scheduler.SimpleTimer;
@@ -37,17 +38,14 @@ public class DynomiteProcessManager extends Task implements IDynomiteProcess, He
     private static final int SCRIPT_EXECUTE_WAIT_TIME_MS = 5000;
     private final FloridaConfig config;
     private final Sleeper sleeper;
-    private final IInstanceState instanceState;
-    private final IDynomiteProcess dynProcess;
+    private final InstanceState instanceState;
     private boolean dynomiteHealth = false;
 
     @Inject
-    public DynomiteProcessManager(FloridaConfig config, Sleeper sleeper, IInstanceState instanceState,
-            IDynomiteProcess dynProcess) {
+    public DynomiteProcessManager(FloridaConfig config, Sleeper sleeper, InstanceState instanceState) {
         this.config = config;
         this.sleeper = sleeper;
         this.instanceState = instanceState;
-        this.dynProcess = dynProcess;
     }
 
     public static TaskTimer getTimer() {
@@ -213,7 +211,7 @@ public class DynomiteProcessManager extends Task implements IDynomiteProcess, He
         if (!dynomiteRedisCheck()) {
             try {
                 logger.error("Dynomite was down");
-                this.dynProcess.stop();
+                this.stop();
                 sleeper.sleepQuietly(1000);
                 return false;
             } catch (IOException e) {

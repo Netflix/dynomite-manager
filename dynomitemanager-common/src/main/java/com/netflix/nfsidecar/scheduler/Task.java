@@ -15,17 +15,11 @@
  */
 package com.netflix.nfsidecar.scheduler;
 
-import com.google.common.base.Throwables;
-
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -49,24 +43,8 @@ public abstract class Task implements Job, TaskMBean
 
     protected Task()
     {
-        this(ManagementFactory.getPlatformMBeanServer());
     }
 
-    protected Task(MBeanServer mBeanServer) {
-        // TODO: don't do mbean registration here
-        String mbeanName = "com.netflix.florida.scheduler:type=" + this.getClass().getName();
-        try
-        {
-            mBeanServer.registerMBean(this, new ObjectName(mbeanName));
-            initialize();
-        }
-        catch (Exception e)
-        {
-            throw Throwables.propagate(e);
-        }
-    }
-
-    
     /**
      * This method has to be implemented and cannot thow any exception.
      */

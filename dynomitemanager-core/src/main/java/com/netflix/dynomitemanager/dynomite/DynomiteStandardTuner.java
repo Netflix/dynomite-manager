@@ -3,6 +3,7 @@ package com.netflix.dynomitemanager.dynomite;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.netflix.dynomitemanager.config.FloridaConfig;
+import com.netflix.dynomitemanager.config.InstanceState;
 import com.netflix.dynomitemanager.storage.StorageProxy;
 import com.netflix.nfsidecar.config.CommonConfig;
 import com.netflix.nfsidecar.identity.IInstanceState;
@@ -32,7 +33,7 @@ public class DynomiteStandardTuner implements ProcessTuner {
     protected final CommonConfig commonConfig;
     protected final InstanceIdentity ii;
     protected final StorageProxy storageProxy;
-    protected final IInstanceState instanceState;
+    protected final InstanceState instanceState;
     protected final IEnvVariables envVariables;
     protected final InstanceDataRetriever instanceDataRetriever;
 
@@ -40,7 +41,7 @@ public class DynomiteStandardTuner implements ProcessTuner {
 
     @Inject
     public DynomiteStandardTuner(FloridaConfig floridaConfig, CommonConfig commonConfig, InstanceIdentity ii,
-            IInstanceState instanceState, StorageProxy storageProxy, IEnvVariables envVariables,
+            InstanceState instanceState, StorageProxy storageProxy, IEnvVariables envVariables,
             InstanceDataRetriever instanceDataRetriever) {
         this.floridaConfig = floridaConfig;
         this.commonConfig = commonConfig;
