@@ -9,6 +9,7 @@ import com.netflix.nfsidecar.scheduler.SimpleTimer;
 import com.netflix.nfsidecar.scheduler.Task;
 import com.netflix.nfsidecar.scheduler.TaskTimer;
 import com.netflix.nfsidecar.utils.Sleeper;
+import com.netflix.nfsidecar.utils.ThreadSleeper;
 import com.netflix.runtime.health.api.Health;
 import com.netflix.runtime.health.api.HealthIndicator;
 import com.netflix.runtime.health.api.HealthIndicatorCallback;
@@ -73,12 +74,12 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
 
     private final FloridaConfig config;
 
-    @Inject
-    private Sleeper sleeper;
+    private final Sleeper sleeper;
 
     @Inject
     public RedisStorageProxy(FloridaConfig config) {
         this.config = config;
+        this.sleeper = new ThreadSleeper();
         // connect();
     }
 
@@ -103,6 +104,8 @@ public class RedisStorageProxy extends Task implements StorageProxy, HealthIndic
         if (this.localJedis == null) {
             logger.info("Connecting to Redis.");
             this.localJedis = JedisUtils.connect(REDIS_ADDRESS, REDIS_PORT);
+            if (this.localJedis != null)
+                logger.info("Connected to Redis client.");
         }
     }
 
