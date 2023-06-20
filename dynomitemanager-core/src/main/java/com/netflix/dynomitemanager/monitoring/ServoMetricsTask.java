@@ -10,6 +10,9 @@ import com.netflix.nfsidecar.scheduler.Task;
 import com.netflix.nfsidecar.scheduler.TaskTimer;
 import com.netflix.servo.DefaultMonitorRegistry;
 import com.netflix.servo.monitor.*;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.json.simple.JSONObject;
@@ -21,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -130,7 +134,7 @@ public class ServoMetricsTask extends Task {
     @Override
     public void execute() throws Exception {
 
-        HttpClient client = null;
+        OkHttpClient client = null;
         GetMethod get = null;
 
         // update health state. I think we can merge the health check and info
@@ -140,17 +144,19 @@ public class ServoMetricsTask extends Task {
         processGaugeMetric("dynomite__health", state.isHealthy() ? 1L : 0L);
 
         try {
-            client = new HttpClient();
-            client.getHttpConnectionManager().getParams().setConnectionTimeout(2000);
+            client = new OkHttpClient();
+            client.setConnectTimeout(2, TimeUnit.SECONDS);
             get = new GetMethod(ServerMetricsUrl.get());
-
-            int statusCode = client.executeMethod(get);
+            Request request = new Request.Builder()
+                    .url(ServerMetricsUrl.get()).build();
+            Response httpResponse = client.newCall(request).execute();
+            int statusCode = httpResponse.code();
             if (!(statusCode == 200)) {
                 Logger.error("Got non 200 status code from " + ServerMetricsUrl.get());
                 return;
             }
 
-            String response = get.getResponseBodyAsString();
+            String response = httpResponse.body().string();
             if (Logger.isDebugEnabled()) {
                 Logger.debug("Received response from " + ServerMetricsUrl.get() + "\n" + response);
             }
@@ -167,14 +173,6 @@ public class ServoMetricsTask extends Task {
         } catch (Throwable t) {
             Logger.error("FAILED to get metrics from Dynomite's REST endpoint: " + ServerMetricsUrl.get(), t);
             t.printStackTrace();
-        } finally {
-            if (get != null) {
-                get.releaseConnection();
-            }
-            if (client != null) {
-                client.getHttpConnectionManager().closeIdleConnections(10);
-            }
-
         }
     }
 

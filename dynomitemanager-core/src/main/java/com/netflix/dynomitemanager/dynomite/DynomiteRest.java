@@ -1,5 +1,8 @@
 package com.netflix.dynomitemanager.dynomite;
 
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -20,19 +23,21 @@ public class DynomiteRest {
                 DynamicPropertyFactory.getInstance().getStringProperty("florida.metrics.url", "http://localhost:22222");
     	
         String url = adminUrl.get() + cmd;
-        HttpClient client = new HttpClient();
-        client.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, 
-                                        new DefaultHttpMethodRetryHandler());
+        OkHttpClient client = new OkHttpClient();
+
         
         GetMethod get = new GetMethod(url);
         try {
-            int statusCode = client.executeMethod(get);
+            Request request = new Request.Builder()
+                    .url(url).build();
+            Response httpResponse = client.newCall(request).execute();
+            int statusCode = httpResponse.code();
             if (!(statusCode == 200)) {
                 logger.error("Got non 200 status code from " + url);
                 return false;
             }
             
-            String response = get.getResponseBodyAsString();
+            String response = httpResponse.body().string();
             //logger.info("Received response from " + url + "\n" + response);
             
             if (!response.isEmpty()) {

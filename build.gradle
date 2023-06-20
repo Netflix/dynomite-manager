@@ -41,6 +41,8 @@ subprojects {
       //StringUtils
       compile 'commons-lang:commons-lang:2.6'
 
+      compile 'com.squareup.okhttp:okhttp:2.5.0'
+
       //Jersey & Servlet
       compileOnly 'javax.servlet:servlet-api:2.5'
 
