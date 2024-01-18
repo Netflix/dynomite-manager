@@ -7,13 +7,12 @@ buildscript {
         }
     }
    dependencies {
-        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:latest.release'
-       classpath "gradle.plugin.org.gretty:gretty:2.1.0"
+       classpath "org.gretty:gretty:3.1.2"
    }
 }
 
 plugins {
-    id 'nebula.netflixoss' version '9.1.0'
+    id "com.netflix.nebula.netflixoss" version "11.5.0"
 }
 
 ext.githubProjectName = rootProject.name // Change if github project name is not the same as the root project's name
@@ -44,27 +43,26 @@ subprojects {
 
     dependencies {
       //StringUtils
-      compile 'commons-lang:commons-lang:2.6'
+      implementation 'commons-lang:commons-lang:2.6'
 
       //Jersey & Servlet
       compileOnly 'javax.servlet:servlet-api:2.5'
 
       //Logging
-      compile 'org.slf4j:slf4j-api:1.6.1'
-      compile 'org.slf4j:slf4j-log4j12:1.6.1'
+      implementation 'org.slf4j:slf4j-api:1.6.1'
+      implementation 'org.slf4j:slf4j-log4j12:1.6.1'
 
         // Archaius-2
-        compile group: 'com.netflix.archaius', name: 'archaius2-core', version: '2.1.11'
+        implementation group: 'com.netflix.archaius', name: 'archaius2-core', version: '2.1.11'
 
       //Unit Testing
-      testCompile 'org.jmockit:jmockit:1.19'
-      testCompile 'junit:junit:latest.release'
+      testImplementation 'org.jmockit:jmockit:1.19'
+      testImplementation 'junit:junit:latest.release'
 
       //Google Injections
-      compile  'com.google.inject:guice:4.0'
-      compile  'com.google.inject.extensions:guice-multibindings:4.0'
-
-      compile  'javax.inject:javax.inject:1'
+      implementation  'com.google.inject:guice:4.0'
+      implementation  'com.google.inject.extensions:guice-multibindings:4.0'
+      implementation  'javax.inject:javax.inject:1'
 
     }
 }
