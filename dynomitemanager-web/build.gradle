@@ -1,5 +1,5 @@
 apply plugin: 'war'
-apply plugin: "org.akhikhl.gretty"
+apply plugin: "org.gretty"
 apply plugin: 'jacoco'
 
 
@@ -11,7 +11,7 @@ if (!gradle.startParameter.taskRequests.isEmpty()) {
         jacocoEnabled = false
         httpPort = development_properties.getProperty("netflix.appinfo.port", "8080").toInteger()
         contextPath = '/'
-        servletContainer = 'tomcat8'
+        servletContainer = 'tomcat85'
         systemProperties = development_properties
         scanDirs = ['**/src/main/resources/**']
         scanDependencies = true
@@ -19,37 +19,34 @@ if (!gradle.startParameter.taskRequests.isEmpty()) {
         // http://akhikhl.github.io/gretty-doc/Gretty-configuration.html
     }
     // Required exclusions to work around a bug in gretty: log4j-over-slf4j is accidentally included
-    configurations.grettyRunnerTomcat7 {
-        exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
-    }
-    configurations.grettyRunnerTomcat8 {
+    configurations.grettyRunnerTomcat85 {
         exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
     }
 }
 
 dependencies {
-    compile project(':dynomitemanager-common')
-    compile project(':dynomitemanager-core')
+    implementation  project(':dynomitemanager-common')
+    implementation  project(':dynomitemanager-core')
    
-    compile 'com.google.inject.extensions:guice-servlet:4.0'
-    compile 'com.google.inject:guice:4.0'
-    compile group: 'com.owlike', name: 'genson', version: '1.4'
+    implementation  'com.google.inject.extensions:guice-servlet:4.0'
+    implementation  'com.google.inject:guice:4.0'
+    implementation  group: 'com.owlike', name: 'genson', version: '1.4'
     
-    compile "com.netflix.runtime:health-guice:latest.release"    
+    implementation  "com.netflix.runtime:health-guice:latest.release"    
    
     // Governator wires up all of our dependencies in dependency injection fashion.
-    compile "com.netflix.governator:governator-core:latest.release"
-    compile "com.netflix.governator:governator-servlet:latest.release"
-    compile "com.netflix.governator:governator-jersey:latest.release"
-    compile "com.sun.jersey.contribs:jersey-guice:1.19"
+    implementation  "com.netflix.governator:governator-core:latest.release"
+    implementation  "com.netflix.governator:governator-servlet:latest.release"
+    implementation  "com.netflix.governator:governator-jersey:latest.release"
+    implementation  "com.sun.jersey.contribs:jersey-guice:1.19"
 
     // This is here because it's the only reliable way to make IDEs pick up the proper dependencies when running
     // a main() function while also not packaging the dependencies to be deployed on EC2.
     if (gradle.startParameter.taskRequests.isEmpty()) {
-        compile("com.netflix.governator:governator-jetty:latest.release") { transitive = false }
-        compile "org.eclipse.jetty:jetty-servlet:latest.release"
-        compile "org.eclipse.jetty:jetty-webapp:latest.release"
-        compile "javax.servlet:javax.servlet-api:latest.release"
+        implementation ("com.netflix.governator:governator-jetty:latest.release") { transitive = false }
+        implementation  "org.eclipse.jetty:jetty-servlet:latest.release"
+        implementation  "org.eclipse.jetty:jetty-webapp:latest.release"
+        implementation  "javax.servlet:javax.servlet-api:latest.release"
     } else {
         compileOnly("com.netflix.governator:governator-jetty:latest.release") { transitive = false }
         compileOnly "org.eclipse.jetty:jetty-servlet:latest.release"
@@ -60,4 +57,4 @@ dependencies {
 
 }
 
-war.archiveName = "dynomite-manager.war"
+war.archiveFileName = "dynomite-manager.war"
