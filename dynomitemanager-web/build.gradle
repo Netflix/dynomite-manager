@@ -1,5 +1,5 @@
 apply plugin: 'war'
-apply plugin: "org.akhikhl.gretty"
+apply plugin: "org.gretty"
 apply plugin: 'jacoco'
 
 

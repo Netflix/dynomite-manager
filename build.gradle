@@ -8,7 +8,7 @@ buildscript {
     }
    dependencies {
         classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:latest.release'
-        classpath "org.akhikhl.gretty:gretty:latest.release"
+       classpath "gradle.plugin.org.gretty:gretty:2.1.0"
    }
 }
 
