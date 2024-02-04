@@ -58,7 +58,7 @@ public class DynomiteStandardTuner implements ProcessTuner {
      * allocation is based on the instancy type 2GB for Florida + 85% for Redis
      */
 
-    public int setMaxMsgs() {
+    private int setMaxMsgs() {
         if (floridaConfig.getDynomiteMaxAllocatedMessages() == 0) {
 
             String instanceType = this.instanceDataRetriever.getInstanceType();
