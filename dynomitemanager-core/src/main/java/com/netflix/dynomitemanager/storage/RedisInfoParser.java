@@ -33,6 +33,7 @@ public class RedisInfoParser {
 	WHITE_LIST.add("total_connections_received");
 	WHITE_LIST.add("total_commands_processed");
 	WHITE_LIST.add("instantaneous_ops_per_sec");
+	WHITE_LIST.add("connected_slaves");
 	WHITE_LIST.add("rejected_connections");
 	WHITE_LIST.add("expired_keys");
 	WHITE_LIST.add("evicted_keys");
