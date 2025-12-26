@@ -98,8 +98,10 @@ public interface CommonConfig {
     @DefaultValue("20101010")
     @PropertyName(name = "dyno.backup.restore.date")
     public String getRestoreDate();
-    
 
-    
-    
+    @DefaultValue("cassandra")
+    @PropertyName(name = "persistence.store.to.use")
+    public String getPersistenceStoreToUse();
+
+
 }

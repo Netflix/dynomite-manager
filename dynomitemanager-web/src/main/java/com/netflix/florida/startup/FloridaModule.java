@@ -13,7 +13,6 @@
 package com.netflix.florida.startup;
 
 import com.google.inject.AbstractModule;
-// Common module dependencies
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.netflix.archaius.ConfigProxyFactory;
@@ -31,12 +30,6 @@ import com.netflix.dynomitemanager.monitoring.JedisFactory;
 import com.netflix.dynomitemanager.monitoring.SimpleJedisFactory;
 import com.netflix.dynomitemanager.storage.RedisStorageProxy;
 import com.netflix.dynomitemanager.storage.StorageProxy;
-
-import javax.inject.Singleton;
-
-import org.quartz.SchedulerFactory;
-import org.quartz.impl.StdSchedulerFactory;
-
 import com.netflix.nfsidecar.aws.AWSMembership;
 import com.netflix.nfsidecar.aws.AwsInstanceEnvIdentity;
 import com.netflix.nfsidecar.aws.IAMCredential;
@@ -46,20 +39,27 @@ import com.netflix.nfsidecar.backup.Restore;
 import com.netflix.nfsidecar.config.AWSCommonConfig;
 import com.netflix.nfsidecar.config.CassCommonConfig;
 import com.netflix.nfsidecar.config.CommonConfig;
+import com.netflix.nfsidecar.config.DynamoDBConfig;
 import com.netflix.nfsidecar.identity.IInstanceState;
 import com.netflix.nfsidecar.identity.IMembership;
 import com.netflix.nfsidecar.identity.InstanceEnvIdentity;
 import com.netflix.nfsidecar.instance.InstanceDataRetriever;
 import com.netflix.nfsidecar.instance.LocalInstanceDataRetriever;
-import com.netflix.nfsidecar.instance.VpcInstanceDataRetriever;
 import com.netflix.nfsidecar.resources.env.IEnvVariables;
 import com.netflix.nfsidecar.resources.env.InstanceEnvVariables;
 import com.netflix.nfsidecar.supplier.HostSupplier;
 import com.netflix.nfsidecar.supplier.LocalHostSupplier;
 import com.netflix.nfsidecar.tokensdb.CassandraInstanceFactory;
 import com.netflix.nfsidecar.tokensdb.IAppsInstanceFactory;
+import com.netflix.nfsidecar.tokensdb.dynamodb.DynamoDBInstanceFactory;
 import com.netflix.nfsidecar.utils.ProcessTuner;
 import com.netflix.runtime.health.guice.HealthModule;
+import org.quartz.SchedulerFactory;
+import org.quartz.impl.StdSchedulerFactory;
+
+import javax.inject.Singleton;
+
+// Common module dependencies
 
 /**
  * This is the "main" module where we wire everything up. If you see this module
@@ -110,9 +110,12 @@ public final class FloridaModule extends AbstractModule {
         /* Local */
         bind(InstanceDataRetriever.class).to(LocalInstanceDataRetriever.class);
 
+        /* Use DynamoDB as persistence store */
+        bind(IAppsInstanceFactory.class).to(DynamoDBInstanceFactory.class);
+
 
         /* Netflix */
-        bind(IAppsInstanceFactory.class).to(CassandraInstanceFactory.class);
+//        bind(IAppsInstanceFactory.class).to(CassandraInstanceFactory.class);
         bind(HostSupplier.class).to(LocalHostSupplier.class);
         // bind(HostSupplier.class).to(CassandraLocalHostsSupplier.class);
         // bind(HostSupplier.class).to(EurekaHostsSupplier.class);
@@ -141,5 +144,11 @@ public final class FloridaModule extends AbstractModule {
     @Singleton
     FloridaConfig getFloridaConfig(ConfigProxyFactory factory) {
         return factory.newProxy(FloridaConfig.class);
+    }
+
+    @Provides
+    @Singleton
+    DynamoDBConfig getDynamoDBConfig(ConfigProxyFactory factory) {
+        return factory.newProxy(DynamoDBConfig.class);
     }
 }
